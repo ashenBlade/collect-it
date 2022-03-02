@@ -1,1 +1,1 @@
-# collect-it
+# Collect It
