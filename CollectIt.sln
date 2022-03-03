@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.Auth", "CollectIt.Auth\CollectIt.Auth\CollectIt.Auth.csproj", "{E335C794-4714-4406-BE63-7A3BD6FE479A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.Auth.WebAPI", "CollectIt.Auth\CollectIt.Auth.WebAPI\CollectIt.Auth.WebAPI.csproj", "{E335C794-4714-4406-BE63-7A3BD6FE479A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CollectIt.Auth", "CollectIt.Auth", "{DAED99B4-C6C5-44A8-BA91-7A79EF4EDB16}"
 EndProject
