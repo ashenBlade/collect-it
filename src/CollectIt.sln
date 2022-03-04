@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CollectIt.MVC", "CollectIt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.MVC.View", "CollectIt.MVC\CollectIt.MVC.View\CollectIt.MVC.View.csproj", "{874A0D48-AD7C-4128-BD50-DFF1CE63A020}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.MVC.Account.IdentityEntities", "CollectIt.MVC\CollectIt.MVC.Account.IdentityEntities\CollectIt.MVC.Account.IdentityEntities.csproj", "{5BAB2DFA-3559-4C7F-940E-760AF941DCCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.MVC.Account.Infrastructure", "CollectIt.MVC\CollectIt.MVC.Account.Infrastructure\CollectIt.MVC.Account.Infrastructure.csproj", "{A1490BF3-F353-4F8C-8DF9-346A2A205216}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +24,14 @@ Global
 		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BAB2DFA-3559-4C7F-940E-760AF941DCCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BAB2DFA-3559-4C7F-940E-760AF941DCCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BAB2DFA-3559-4C7F-940E-760AF941DCCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BAB2DFA-3559-4C7F-940E-760AF941DCCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1490BF3-F353-4F8C-8DF9-346A2A205216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1490BF3-F353-4F8C-8DF9-346A2A205216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1490BF3-F353-4F8C-8DF9-346A2A205216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1490BF3-F353-4F8C-8DF9-346A2A205216}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7ACB0273-CDF9-4225-965E-7C6451281749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -27,5 +39,7 @@ Global
 		{7ACB0273-CDF9-4225-965E-7C6451281749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ACB0273-CDF9-4225-965E-7C6451281749}.Release|Any CPU.Build.0 = Release|Any CPU
 		{874A0D48-AD7C-4128-BD50-DFF1CE63A020} = {DC116A32-10E3-402C-8601-7CA57F3F3C90}
+		{5BAB2DFA-3559-4C7F-940E-760AF941DCCD} = {DC116A32-10E3-402C-8601-7CA57F3F3C90}
+		{A1490BF3-F353-4F8C-8DF9-346A2A205216} = {DC116A32-10E3-402C-8601-7CA57F3F3C90}
 	EndGlobalSection
 EndGlobal
