@@ -1,7 +1,7 @@
 create schema accounts;
 
 create table accounts.subscriptions (
-    id serial primary key,
+    subscription_id serial primary key,
     name varchar(50) not null,
     description varchar not null,
     duration int not null,
@@ -11,15 +11,15 @@ create table accounts.subscriptions (
 );
 
 create table accounts.roles (
-    id serial primary key,
+    role_id serial primary key,
     name varchar not null,
     normalized_name varchar generated always as ( upper(name) ) stored
 );
 
 create table accounts.users (
-    id serial primary key,
-    name varchar not null,
-    normalized_name varchar generated always as ( upper(name) ) stored,
+    user_id serial primary key,
+    username varchar not null,
+    normalized_username varchar generated always as ( upper(username) ) stored,
     email varchar not null,
     normalized_email varchar generated always as ( upper(email) ) stored,
     password_hash varchar not null
@@ -29,9 +29,9 @@ create table accounts.users (
 create extension btree_gist;
 
 create table accounts.users_subscriptions (
-    id serial primary key,
-    user_id int references accounts.users(id) not null,
-    subscription_id int references accounts.subscriptions(id) not null,
+    user_subscription_id serial primary key,
+    user_id int references accounts.users(user_id) not null,
+    subscription_id int references accounts.subscriptions(subscription_id) not null,
     during daterange not null,
     constraint max_1_subscription_per_user_at_time exclude using gist(user_id with =, during with &&)
 );
