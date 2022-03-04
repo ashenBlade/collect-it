@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.Auth.WebAPI", "CollectIt.Auth\CollectIt.Auth.WebAPI\CollectIt.Auth.WebAPI.csproj", "{E335C794-4714-4406-BE63-7A3BD6FE479A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CollectIt.MVC", "CollectIt.MVC", "{DC116A32-10E3-402C-8601-7CA57F3F3C90}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CollectIt.Auth", "CollectIt.Auth", "{DAED99B4-C6C5-44A8-BA91-7A79EF4EDB16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollectIt.MVC.View", "CollectIt.MVC\CollectIt.MVC.View\CollectIt.MVC.View.csproj", "{874A0D48-AD7C-4128-BD50-DFF1CE63A020}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,12 +16,16 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E335C794-4714-4406-BE63-7A3BD6FE479A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E335C794-4714-4406-BE63-7A3BD6FE479A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E335C794-4714-4406-BE63-7A3BD6FE479A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E335C794-4714-4406-BE63-7A3BD6FE479A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874A0D48-AD7C-4128-BD50-DFF1CE63A020}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{E335C794-4714-4406-BE63-7A3BD6FE479A} = {DAED99B4-C6C5-44A8-BA91-7A79EF4EDB16}
+		{7ACB0273-CDF9-4225-965E-7C6451281749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ACB0273-CDF9-4225-965E-7C6451281749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ACB0273-CDF9-4225-965E-7C6451281749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ACB0273-CDF9-4225-965E-7C6451281749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874A0D48-AD7C-4128-BD50-DFF1CE63A020} = {DC116A32-10E3-402C-8601-7CA57F3F3C90}
 	EndGlobalSection
 EndGlobal
