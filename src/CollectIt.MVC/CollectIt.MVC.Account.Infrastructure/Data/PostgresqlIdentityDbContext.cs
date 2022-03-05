@@ -1,9 +1,10 @@
 ﻿using CollectIt.MVC.Account.IdentityEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.MVC.Account.Infrastructure.Data;
 
-public class PostgresqlIdentityDbContext : DbContext
+public class PostgresqlIdentityDbContext : IdentityDbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
