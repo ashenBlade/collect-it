@@ -1,18 +1,57 @@
 html {
   font-size: 14px;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
   html {
     font-size: 16px;
   }
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+  .registration form {
+    padding:50px 20px;
+  }
 }
 
 body {
   margin-bottom: 60px;
+}
+
+.registration{
+  padding:50px 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.registration form {
+  max-width:800px;
+  padding:50px 70px;
+  border-radius:10px;
+  box-shadow:4px 4px 15px rgba(0, 0, 0, 0.2);
+  background-color:#fff;
+}
+
+.registration form h3 {
+  font-weight:bold;
+  margin-bottom:30px;
+}
+
+.registration .item {
+  border-radius:10px;
+  margin-bottom:25px;
+  padding:10px 20px;
+}
+
+.registration .create-account {
+  display:flex;
+  align-items:center;
+  border-radius:30px;
+  padding:10px 20px;
+  font-size:18px;
+  font-weight:bold;
+  background-color:#3f93ff;
+  border:none;
+  color:white;
+  margin-top:20px;
 }
