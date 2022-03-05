@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace CollectIt.MVC.Account.IdentityEntities;
@@ -6,6 +7,7 @@ namespace CollectIt.MVC.Account.IdentityEntities;
 [Table("users", Schema = "accounts")]
 public class User : IdentityUser<int>
 {
+    [Key]
     [Column("user_id")]
     public override int Id { get; set; }
 
