@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\CollectIt.MVC.Account.Abstractions\CollectIt.MVC.Account.Abstractions.csproj" />
       <ProjectReference Include="..\CollectIt.MVC.Account.IdentityEntities\CollectIt.MVC.Account.IdentityEntities.csproj" />
     </ItemGroup>
 
