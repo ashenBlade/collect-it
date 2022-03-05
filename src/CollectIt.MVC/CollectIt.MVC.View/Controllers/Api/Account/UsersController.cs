@@ -6,5 +6,5 @@ namespace CollectIt.MVC.View.Controllers.Api;
 [Route("api/v1/users")]
 public class UsersController : ControllerBase
 {
-    
+        
 }
