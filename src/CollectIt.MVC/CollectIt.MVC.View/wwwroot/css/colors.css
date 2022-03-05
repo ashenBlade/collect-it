@@ -1,0 +1,29 @@
+body{
+    background: #eeeeee;
+}
+
+.c-0{
+    background: #d2d2d2;
+    color: var(--bs-body-color);;
+}
+
+.c-0:hover{
+    background: rgba(0, 0, 0, 0.51);
+    color: rgba(255, 255, 255, 0.49) !important;
+}
+
+.c-1{
+    background: #bbbbbb;
+}
+
+.blur-dark{
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.transparent{
+    background: transparent;
+}
+
+.transparent:hover{
+    background: rgba(255, 255, 255, 0.54);
+}
