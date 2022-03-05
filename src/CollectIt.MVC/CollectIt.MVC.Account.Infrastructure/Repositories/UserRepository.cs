@@ -37,6 +37,8 @@ public class UserRepository : IUserRepository
         {
             
         }
+
+        throw new NotImplementedException();
     }
 
     public Task RemoveAsync(User item)
