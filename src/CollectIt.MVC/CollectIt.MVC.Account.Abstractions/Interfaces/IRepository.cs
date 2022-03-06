@@ -1,9 +1,9 @@
-namespace CollectIt.MVC.Account.Abstractions;
+namespace CollectIt.MVC.Account.Abstractions.Interfaces;
 
 public interface IRepository<TItem, TId>
 {
     Task<TId> AddAsync(TItem item);
-    Task RemoveAsync(TItem item);
     Task<TItem> FindByIdAsync(TId id);
     Task UpdateAsync(TItem item);
+    Task RemoveAsync(TItem item);
 }

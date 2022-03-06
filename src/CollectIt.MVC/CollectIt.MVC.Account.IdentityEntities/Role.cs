@@ -15,6 +15,7 @@ public class Role : IdentityRole<int>
     public override string Name { get; set; }
 
     [Column("normalized_name")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public override string NormalizedName { get; set; }
     
     public ICollection<User> Users { get; set; }

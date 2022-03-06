@@ -14,16 +14,13 @@ public class User : IdentityUser<int>
     [Column("email")]
     public override string Email { get; set; }
     [Column("normalized_email")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public override string NormalizedEmail { get; set; }
 
-    [Column("role_id")]
-    public int RoleId { get; set; }
-    [ForeignKey(nameof(RoleId))]
-    public Role Role { get; set; }
-    
     [Column("username")]
     public override string UserName { get; set; }
     [Column("normalized_username")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public override string NormalizedUserName { get; set; }
 
     [Column("password_hash")]

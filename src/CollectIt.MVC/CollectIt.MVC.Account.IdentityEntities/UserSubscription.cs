@@ -8,7 +8,7 @@ namespace CollectIt.MVC.Account.IdentityEntities;
 public class UserSubscription
 {
     [Key]
-    [Column("id")]
+    [Column("user_subscription_id")]
     public int Id { get; set; }
     
     [Column("user_id")]
@@ -21,7 +21,7 @@ public class UserSubscription
 
     [ForeignKey(nameof(SubscriptionId))]
     public Subscription Subscription { get; set; }
-    
+
     [Column("during")]
     public NpgsqlRange<DateTime> During { get; set; } 
 }
