@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.MVC.Account.Infrastructure.Data;
 
-public class PostgresqlIdentityDbContext : IdentityDbContext
+public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
