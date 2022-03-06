@@ -10,7 +10,7 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Role> Roles { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserSubscription> UsersSubscriptions { get; set; }
-
+    public DbSet<ActiveUserSubscription> ActiveUserSubscriptions { get; set; }
     public PostgresqlIdentityDbContext(DbContextOptions<PostgresqlIdentityDbContext> options)
         : base(options)
     { }
@@ -21,5 +21,7 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
                .HasMany(u => u.Subscriptions)
                .WithMany(s => s.Subscribers)
                .UsingEntity<UserSubscription>();
+        builder.Entity<ActiveUserSubscription>()
+               .ToView("active_users_subscriptions");
     }
 }
