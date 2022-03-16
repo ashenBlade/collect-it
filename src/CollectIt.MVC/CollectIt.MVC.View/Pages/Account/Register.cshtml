@@ -1,7 +1,13 @@
 ﻿@page
 @model CollectIt.MVC.View.Pages.Account.RegisterModel
 @{
-    Layout = "Account_Layout.cshtml";
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    Layout = null;
 }
 <div class="registration">  
     <form>
@@ -16,9 +22,9 @@
             <input class="form-control item" type="password" name="Пароль" minlength="6" id="password" placeholder="Подтверждение пароля" required>
         </div>
         <div class="form-group">
-            <button class="create-account" type="submit">Зарегестрироваться</button>
+            <button class="create-account" type="submit">Зарегистрироваться</button>
         </div>
-        <div class="form-group">
+        <div class="text-center">
             <a href="Login">Есть аккаунт?</a>
         </div>
     </form>
