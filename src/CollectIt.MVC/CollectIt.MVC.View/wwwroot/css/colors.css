@@ -1,3 +1,7 @@
+.blur{
+    background: rgba(0, 0, 0, 0.57);
+}
+
 body{
     background: #eeeeee;
 }
@@ -20,10 +24,35 @@ body{
     background: rgba(0, 0, 0, 0.24);
 }
 
+.blur-light{
+    background: rgba(255, 255, 255, 0.4);
+}
+
 .transparent{
     background: transparent;
 }
 
 .transparent:hover{
     background: rgba(255, 255, 255, 0.54);
+}
+
+.wh-0{
+    color: white;
+}
+
+.tool:hover{
+    background: rgba(0, 0, 0, 0.75);
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.res-prev{
+    background: #bbbbbb;
+}
+
+.more:hover{
+    background: rgba(0, 0, 0, 0.57);
+}
+
+.red{
+    background: red;
 }

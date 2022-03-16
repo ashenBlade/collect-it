@@ -9,42 +9,27 @@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
 <body>
 <header id="header" class="reveal alt">
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light box-shadow blur-dark p-0">
-        <div class="container m-w-0 m-0 ms-4 me-4">
-            <a class="navbar-brand" asp-area="" asp-page="/Index">Collect It</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item me-4">
-                        @await Html.PartialAsync("Dropdowns/_ImagesDropdown")
-                    </li>
-                    <li class="nav-item me-4">
-                        @await Html.PartialAsync("Dropdowns/_MusicDropdown")
-                    </li>
-                    <li class="nav-item">
-                        @await Html.PartialAsync("Dropdowns/_VideoDropdown")
-                    </li>
-                </ul>
-                <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-area="" asp-page="/Login">Войти</a>
-            </div>
-        </div>
-    </nav>
+    @await Html.PartialAsync("_Navbar")
 </header>
 
 <section id="banner">
     <form class="input-group rounded-pill m-w-1 ms-6 me-6">
-        <input type="text" class="form-control rounded-start-1 rounded-end-0"/>
+        <select class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
+            <option>Все</option>
+            <option>Изображения</option>
+            <option>Музыка</option>
+            <option>Видео</option>
+        </select>
+        <input type="text" class="form-control rounded-start-0 rounded-end-0"/>
         <button class="btn btn-light w-0 border rounded-end-1 rounded-start-0">Найти</button>
     </form>
 </section>
-
-
+    
+    
 <section id="ind" class="test-3">
     <main role="main" class="pb-3 main">
         <div class="test-4 rounded shadow">
@@ -52,6 +37,8 @@
         </div>
     </main>
 </section>
+
+
 
 
 <footer class="border-top footer text-muted">
