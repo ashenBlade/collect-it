@@ -18,6 +18,7 @@ body {
 }
 
 .registration{
+  margin-top: 200px;
   padding:50px 0;
   display:flex;
   align-items:center;
