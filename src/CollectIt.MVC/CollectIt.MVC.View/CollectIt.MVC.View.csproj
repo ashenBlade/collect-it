@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CollectIt.MVC.Account.Infrastructure\CollectIt.MVC.Account.Infrastructure.csproj" />
-      <ProjectReference Include="..\CollectIt.MVC.Infrastructure\CollectIt.MVC.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
     </ItemGroup>
@@ -24,6 +19,10 @@
       <_ContentIncludedByDefault Remove="Pages\Shared\_ValidationScriptsPartial.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewImports.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\_ViewStart.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CollectIt.MVC.Infrastructure\CollectIt.MVC.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>
