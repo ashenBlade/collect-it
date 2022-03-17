@@ -1,8 +1,21 @@
 
+using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.MVC.Account.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<PostgresqlIdentityDbContext>(config =>
+{
+    config.UseNpgsql(builder.Configuration.GetConnectionString("NpgsqlTestConnection"), npgsql => npgsql.MigrationsAssembly("CollectIt.MVC.View"));
+});
+builder.Services.AddIdentity<User, Role>()
+       .AddUserManager<UserManager>()
+       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
