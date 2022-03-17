@@ -6,8 +6,6 @@ namespace CollectIt.MVC.Account.Infrastructure.Data;
 
 public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserSubscription> UsersSubscriptions { get; set; }
     public PostgresqlIdentityDbContext(DbContextOptions<PostgresqlIdentityDbContext> options)
@@ -17,6 +15,7 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        
         builder.Entity<User>()
                .HasMany(u => u.Subscriptions)
                .WithMany(s => s.Subscribers)
