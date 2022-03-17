@@ -1,5 +1,6 @@
 using CollectIt.MVC.Account.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -27,21 +28,31 @@ public class UserManager: UserManager<User>
 
     public async Task AddSubscriptionAsync(UserSubscription userSubscription)
     {
-        throw new NotImplementedException();
+        await _context.UsersSubscriptions.AddAsync(userSubscription);
+        await _context.SaveChangesAsync();
     }
 
     public async Task RemoveSubscriptionAsync(UserSubscription userSubscription)
     {
-        throw new NotImplementedException();
+        _context.UsersSubscriptions.Remove(userSubscription);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<UserSubscription>> GetSubscriptionsForUserAsync(User user)
+    public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserAsync(User user)
     {
-        throw new NotImplementedException();
+        return _context.UsersSubscriptions
+                       .Where(us => us.UserId == user.Id)
+                       .AsAsyncEnumerable();
     }
 
-    public async Task<IEnumerable<UserSubscription>> GetActiveSubscriptionsForUserAsync(User user)
+    public IAsyncEnumerable<UserSubscription> GetActiveSubscriptionsForUserAsync(User user)
     {
-        throw new NotImplementedException();
+        var today = DateTime.Now;
+        return _context.UsersSubscriptions
+                       .Where(us => us.UserId == user.Id
+                                 && us.LeftResourcesCount > 0
+                                 && us.During.UpperBound > today
+                                 && us.During.LowerBound < today)
+                       .AsAsyncEnumerable();
     }
 }

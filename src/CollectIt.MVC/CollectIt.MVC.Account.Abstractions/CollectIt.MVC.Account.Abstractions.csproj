@@ -10,8 +10,4 @@
       <ProjectReference Include="..\CollectIt.MVC.Account.Entities\CollectIt.MVC.Account.Entities.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Exceptions" />
-    </ItemGroup>
-
 </Project>
