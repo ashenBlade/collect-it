@@ -1,15 +1,8 @@
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<PostgresqlIdentityDbContext>();
-builder.Services.AddIdentity<User, Role>()
-       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
-       .AddDefaultTokenProviders();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
