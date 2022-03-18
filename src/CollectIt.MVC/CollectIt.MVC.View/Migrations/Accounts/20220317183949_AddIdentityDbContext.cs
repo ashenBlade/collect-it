@@ -189,7 +189,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     SubscriptionId = table.Column<int>(type: "integer", nullable: false),
-                    During = table.Column<NpgsqlRange<DateTime>>(type: "tstzrange", nullable: false),
+                    During = table.Column<NpgsqlRange<DateTime>>(type: "daterange", nullable: false),
                     LeftResourcesCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
