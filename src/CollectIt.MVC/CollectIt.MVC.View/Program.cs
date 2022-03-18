@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<PostgresqlIdentityDbContext>(config =>
 {
-    config.UseNpgsql(builder.Configuration.GetConnectionString("NpgsqlTestConnection"), npgsql => npgsql.MigrationsAssembly("CollectIt.MVC.View"));
+    config.UseNpgsql(builder.Configuration["Accounts:PostgresqlDevelopmentConnectionString"], npgsql => npgsql.MigrationsAssembly("CollectIt.MVC.View"));
 });
 builder.Services.AddIdentity<User, Role>()
        .AddUserManager<UserManager>()
