@@ -66,6 +66,10 @@
     max-width: 80%;
 }
 
+.m-w-2{
+    max-width: 100px;
+}
+
 .rounded-start-0{
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
