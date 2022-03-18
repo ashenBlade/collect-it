@@ -219,6 +219,10 @@ namespace CollectIt.MVC.View.Migrations.Accounts
         EXCLUDE USING gist(""Id"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&);
                 ");
             }
+            else
+            {
+                throw new DbUpdateException("Database must be PostgreSQL");
+            }
             
             builder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
