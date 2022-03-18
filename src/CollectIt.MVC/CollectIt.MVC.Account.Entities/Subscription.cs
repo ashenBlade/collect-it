@@ -24,5 +24,9 @@ public class Subscription
 
     [Required]
     public ResourceType AppliedResourceType { get; set; }
+
+    [Required]
+    [Range(1, int.MaxValue)]
+    public int MaxResourcesCount { get; set; }
     public ICollection<User> Subscribers { get; set; }
 }
