@@ -15,10 +15,14 @@ public class Subscription
     public string Description { get; set; }
 
     [Range(1, int.MaxValue)]
+    [Required]
     public int MonthDuration { get; set; }
     
     [Range(0, int.MaxValue)]
+    [Required]
     public int Price { get; set; }
-    
+
+    [Required]
+    public ResourceType AppliedResourceType { get; set; }
     public ICollection<User> Subscribers { get; set; }
 }

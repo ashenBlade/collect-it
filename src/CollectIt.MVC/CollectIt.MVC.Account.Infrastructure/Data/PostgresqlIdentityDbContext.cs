@@ -15,10 +15,12 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
         builder.Entity<User>()
                .HasMany(u => u.Subscriptions)
                .WithMany(s => s.Subscribers)
                .UsingEntity<UserSubscription>();
+        builder.Entity<Subscription>()
+               .Property(s => s.AppliedResourceType)
+               .HasConversion<string>();
     }
 }
