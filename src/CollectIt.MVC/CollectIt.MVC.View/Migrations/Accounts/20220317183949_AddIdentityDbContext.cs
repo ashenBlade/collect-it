@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
 
@@ -8,9 +9,9 @@ namespace CollectIt.MVC.View.Migrations.Accounts
 {
     public partial class AddIdentityDbContext : Migration
     {
-        protected override void Up(MigrationBuilder migrationBuilder)
+        protected override void Up(MigrationBuilder builder)
         {
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -25,7 +26,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "Subscriptions",
                 columns: table => new
                 {
@@ -42,7 +43,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                     table.PrimaryKey("PK_Subscriptions", x => x.Id);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -63,7 +64,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
                 {
@@ -95,7 +96,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -116,7 +117,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
@@ -136,7 +137,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
@@ -160,7 +161,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
@@ -180,7 +181,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
+            builder.CreateTable(
                 name: "UsersSubscriptions",
                 columns: table => new
                 {
@@ -208,54 +209,65 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
+            if (builder.IsNpgsql())
+            {
+                builder.Sql("CREATE EXTENSION btree_gist;");
+
+                builder.Sql(@"
+        ALTER TABLE ""UsersSubscriptions"" 
+        ADD CONSTRAINT ""MAX_1_SUBSCRIPTION_PER_USER_AT_TIME"" 
+        EXCLUDE USING gist(""Id"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&);
+                ");
+            }
+            
+            builder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
                 column: "UserId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_AspNetUsers_RoleId",
                 table: "AspNetUsers",
                 column: "RoleId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_UsersSubscriptions_SubscriptionId",
                 table: "UsersSubscriptions",
                 column: "SubscriptionId");
 
-            migrationBuilder.CreateIndex(
+            builder.CreateIndex(
                 name: "IX_UsersSubscriptions_UserId",
                 table: "UsersSubscriptions",
                 column: "UserId");
