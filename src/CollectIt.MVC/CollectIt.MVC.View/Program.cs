@@ -1,7 +1,24 @@
+using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.MVC.Account.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Accounts:PostgresqlDevelopment"],
+                      config =>
+                      {
+                          config.MigrationsAssembly("CollectIt.MVC.View");
+                      });
+});
+builder.Services.AddIdentity<User, Role>()
+       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
+       .AddUserManager<UserManager>()
+       .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
