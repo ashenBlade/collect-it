@@ -15,7 +15,32 @@ builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
                           config.MigrationsAssembly("CollectIt.MVC.View");
                       });
 });
-builder.Services.AddIdentity<User, Role>()
+builder.Services.AddIdentity<User, Role>(config =>
+        {
+            config.User = new UserOptions
+                          {
+                              RequireUniqueEmail = true,
+                          };
+            config.Password = new PasswordOptions
+                              {
+                                  RequireDigit = true,
+                                  RequiredLength = 6,
+                                  RequireLowercase = false,
+                                  RequireUppercase = false,
+                                  RequiredUniqueChars = 1,
+                                  RequireNonAlphanumeric = false,
+                              };
+            config.SignIn = new SignInOptions
+                            {
+                                RequireConfirmedEmail = false,
+                                RequireConfirmedAccount = false,
+                                RequireConfirmedPhoneNumber = false,
+                            };
+            config.Stores = new StoreOptions
+                            {
+                                ProtectPersonalData = true,
+                            };
+        })
        .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
