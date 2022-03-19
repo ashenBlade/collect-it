@@ -45,14 +45,10 @@ public class UserManager: UserManager<User>
                        .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<UserSubscription> GetActiveSubscriptionsForUserAsync(User user)
+    public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserAsync(User user)
     {
-        var today = DateTime.Now;
-        return _context.UsersSubscriptions
-                       .Where(us => us.UserId == user.Id
-                                 && us.LeftResourcesCount > 0
-                                 && us.During.UpperBound > today
-                                 && us.During.LowerBound < today)
+        return _context.ActiveUsersSubscriptions
+                       .Where(us => us.UserId == user.Id)
                        .AsAsyncEnumerable();
     }
 }

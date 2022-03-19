@@ -8,7 +8,7 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
 {
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserSubscription> UsersSubscriptions { get; set; }
-    public DbSet<UserSubscription> ActiveUsersSubscriptions { get; set; }
+    public DbSet<ActiveUserSubscription> ActiveUsersSubscriptions { get; set; }
     public PostgresqlIdentityDbContext(DbContextOptions<PostgresqlIdentityDbContext> options)
         : base(options)
     { }
