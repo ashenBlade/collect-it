@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Migrations;
 using NpgsqlTypes;
 
 #nullable disable
@@ -36,11 +37,15 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                     Description = table.Column<string>(type: "text", nullable: false),
                     MonthDuration = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<int>(type: "integer", nullable: false),
-                    AppliedResourceType = table.Column<string>(type: "text", nullable: false)
+                    AppliedResourceType = table.Column<string>(type: "text", nullable: false),
+                    MaxResourcesCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subscriptions", x => x.Id);
+                    table.CheckConstraint("MAX_RESOURCES_COUNT_POSITIVE", @"""MaxResourcesCount"" > 0");
+                    table.CheckConstraint("MONTH_DURATION_POSITIVE", @"""MonthDuration"" > 0");
+                    table.CheckConstraint("PRICE_NOT_NEGATIVE", @"""Price"" >= 0");
                 });
 
             builder.CreateTable(

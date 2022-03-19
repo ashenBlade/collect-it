@@ -10,12 +10,13 @@ namespace CollectIt.MVC.View.Migrations.Accounts
         {
             builder.Sql(@"
     CREATE VIEW ""ActiveUsersSubscriptions"" AS (
-        SELECT us.* FROM ""UsersSubscriptions"" AS us 
-        JOIN ""Subscriptions"" AS s ON us.""SubscriptionId"" = s.""Id""
+        SELECT us.""UserId"", us.""SubscriptionId"", us.""During"", us.""LeftResourcesCount"", s.""MaxResourcesCount"" 
+        FROM ""UsersSubscriptions"" AS us 
+            JOIN ""Subscriptions"" AS s ON us.""SubscriptionId"" = s.""Id""
         WHERE 
               us.""LeftResourcesCount"" > 0 AND
               us.""During"" @> current_date 
-);
+        );
 ");
         }
 
