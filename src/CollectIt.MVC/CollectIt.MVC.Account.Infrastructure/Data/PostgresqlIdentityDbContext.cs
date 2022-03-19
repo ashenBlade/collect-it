@@ -24,6 +24,7 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
                .Property(s => s.AppliedResourceType)
                .HasConversion<string>();
         builder.Entity<ActiveUserSubscription>()
-               .ToView("ActiveUsersSubscriptions");
+               .ToView("ActiveUsersSubscriptions")
+               .HasNoKey();
     }
 }
