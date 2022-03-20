@@ -1,6 +1,5 @@
 ﻿using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
-using CollectIt.MVC.View.DTO.Account;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
