@@ -88,4 +88,9 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
+    
+    public IActionResult Profile()
+    {
+        return View();
+    }
 }
