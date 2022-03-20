@@ -20,4 +20,19 @@
       <ProjectReference Include="..\CollectIt.MVC.Infrastructure\CollectIt.MVC.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="Views\Account\_ProfileLayout.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
+      <Content Update="Views\Account\Account.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
+      <Content Update="Views\Account\Options.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
+      <Content Update="Views\Account\Subscribes.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
+    </ItemGroup>
+
 </Project>
