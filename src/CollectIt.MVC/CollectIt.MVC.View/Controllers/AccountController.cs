@@ -63,24 +63,29 @@ public class AccountController : Controller
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> Login(LoginDTO dto)
+    public async Task<IActionResult> Login(LoginViewModel model)
     {
-        _logger.LogInformation("User with email: {Email} wants to login", dto.Email);
-
-        var user = await _userManager.FindByEmailAsync(dto.Email);
-        if (user is null)
+        if (!ModelState.IsValid)
         {
-            ModelState.AddModelError("", $"No user with such email: {dto.Email}");
-            return View();
+            return View(model);
         }
         
-        if (await _userManager.CheckPasswordAsync(user, dto.Password))
-        {
-            await _signInManager.SignInAsync(user, true);
-            return RedirectToAction("Index", "Home");
-        }
-        ModelState.AddModelError("", "Invalid password");
-        return View();
+        _logger.LogInformation("User with email: {Email} wants to login", model.Email);
 
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user is null)
+        {
+            ModelState.AddModelError("", "Пользователя с такой почтой не существует");
+            return View();
+        }
+
+        if (!await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            ModelState.AddModelError("Password", "Неправильный пароль");
+            return View();
+        }
+
+        await _signInManager.SignInAsync(user, model.RememberMe);
+        return RedirectToAction("Index", "Home");
     }
 }
