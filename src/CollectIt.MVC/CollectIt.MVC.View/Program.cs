@@ -36,10 +36,6 @@ builder.Services.AddIdentity<User, Role>(config =>
                                 RequireConfirmedAccount = false,
                                 RequireConfirmedPhoneNumber = false,
                             };
-            config.Stores = new StoreOptions
-                            {
-                                ProtectPersonalData = true,
-                            };
         })
        .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
        .AddUserManager<UserManager>()
