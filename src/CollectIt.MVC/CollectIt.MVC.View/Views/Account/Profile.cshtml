@@ -2,4 +2,29 @@
     Layout = "_ProfileLayout";
 }
 
-<h2>title</h2>
+<div class="container blur shadow row mi-h">
+    <ul class="nav nav-pills flex-column border-right pt-3 col-0-5" role="tablist">
+        <li class="nav-item" title="Аккаунт" role="presentation">
+            <a class="nav-link text-blur active" data-bs-toggle="pill" data-bs-target="#account"><i class="far fa-user-circle t-s-1"></i></a>
+        </li>
+        <li class="nav-item" title="Подписки" role="presentation">
+            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#subscribes"><i class="fas fa-users t-s-1"></i></a>
+        </li>
+        <li class="nav-item" title="Настройки" role="presentation">
+            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#options"><i class="fas fa-cogs t-s-1"></i></a>
+        </li>
+        <form method="post"><button class="btn btn-secondary" type="submit" formmethod="post" id="exit" asp-page-handler="Exit">Выход</button></form>
+    </ul>
+
+    <div class="tab-content pt-3 pl-3 pb-3 pr-0 col-11-5">
+        <div class="tab-pane fade active show" id="account" role="tabpanel">
+            @await Html.PartialAsync("Account")
+        </div>
+        <div class="tab-pane fade" id="subscribes" role="tabpanel">
+            @await Html.PartialAsync("Subscribes")   
+        </div>
+        <div class="tab-pane fade" id="options" role="tabpanel">
+            @await Html.PartialAsync("Options")   
+        </div>
+    </div>
+</div>
