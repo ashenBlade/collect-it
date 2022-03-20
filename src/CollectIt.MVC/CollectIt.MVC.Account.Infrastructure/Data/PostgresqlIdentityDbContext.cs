@@ -26,5 +26,9 @@ public class PostgresqlIdentityDbContext : IdentityDbContext<User, Role, int>
         builder.Entity<ActiveUserSubscription>()
                .ToView("ActiveUsersSubscriptions")
                .HasNoKey();
+        builder.Entity<Role>()
+               .HasData(new Role() { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP" },
+                        new Role() { Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP" },
+                        new Role() { Id = 3, Name = "Technical Support", NormalizedName = "TECHNICAL SUPPORT", ConcurrencyStamp = "DEFAULT_STAMP" });
     }
 }
