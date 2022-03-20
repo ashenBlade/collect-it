@@ -6,15 +6,15 @@ public class RegisterViewModel
 {
     [Required(ErrorMessage = "Адрес почты обязателен")]
     [DataType(DataType.EmailAddress)]
-    public string Email { get; set; }
-    
+    public string? Email { get; set; }
+
     [Required(ErrorMessage = "Пароль обязателен")]
     [DataType(DataType.Password)]
     [MinLength(6, ErrorMessage = "Минимальная длина пароля - 6 символов")]
-    public string Password { get; set; }
-    
+    public string? Password { get; set; }
+
     [Required(ErrorMessage = "Подтвердите пароль")]
     [DataType(DataType.Password)]
     [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
-    public string ConfirmPassword { get; set; }
+    public string? ConfirmPassword { get; set; } 
 }
