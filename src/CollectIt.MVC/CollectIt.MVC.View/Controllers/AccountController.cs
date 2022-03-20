@@ -1,12 +1,14 @@
 ﻿using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
 using CollectIt.MVC.View.DTO.Account;
+using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CollectIt.MVC.View.Controllers;
 
+[Route("account")]
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
@@ -23,34 +25,44 @@ public class AccountController : Controller
     }
     
     [HttpGet]
+    [Route("login")]
     public IActionResult Login()
     {
         return View();
     }
     
     [HttpGet]
+    [Route("register")]
     public IActionResult Register()
     {
         return View();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterDTO dto)
+    [Route("register")]
+    public async Task<IActionResult> Register(RegisterViewModel model)
     {
-         _logger.LogInformation("User with email: {Email} try register", dto.Email);
-         var user = new User {Email = dto.Email, UserName = dto.Email};
-         var result = await _userManager.CreateAsync(user, dto.Password);
-         if (result.Succeeded)
-         {
-             _logger.LogInformation("User with email: {Email} successfully registered", dto.Email);
-             await _signInManager.SignInAsync(user, false);
-             return RedirectToAction("Resource", "Home");
-         }
-         ModelState.AddModelError("", result.Errors.Select(x => x.Description).Aggregate((s, n) => $"{s} {n}"));
-         return View();
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+        _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
+        var user = new User {Email = model.Email, UserName = model.Email};
+        var result = await _userManager.CreateAsync(user, model.Password);
+        if (result.Succeeded)
+        {
+            _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
+            await _signInManager.SignInAsync(user, false);
+            return RedirectToAction("Resource", "Home");
+        }
+        _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
+        ModelState.AddModelError("", "Пользователь с такой почтой уже зарегистрирован");
+        return View(model);
+        
     }
 
     [HttpPost]
+    [Route("login")]
     public async Task<IActionResult> Login(LoginDTO dto)
     {
         _logger.LogInformation("User with email: {Email} wants to login", dto.Email);

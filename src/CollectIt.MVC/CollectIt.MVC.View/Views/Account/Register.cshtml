@@ -1,29 +1,40 @@
-﻿@{
+﻿@model RegisterViewModel
+@{
+    Layout = null;
+}
+
+@{
+    <title>Регистрация</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
-    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
-    Layout = null;
 }
+
 <div class="registration">  
     <form asp-action="Register" method="post" asp-controller="Account">
         <h3 class="text-center">Регистрация</h3>
         <div class="form-group">
-            <input class="form-control item" type="email" name="Email" id="email" placeholder="Почта" required>
+            @Html.EditorFor(x => x.Email, new {htmlAttributes = new {@class = "form-control item", placeholder = "Почта"}})
+            @Html.ValidationMessageFor(x => x.Email, null, new {@class = "text-danger text-center"})
         </div>
         <div class="form-group">
-            <input class="form-control item" type="password" name="Password" id="password" placeholder="Пароль" required>
+            @Html.EditorFor(x => x.Password, new {htmlAttributes = new {@class = "form-control item", placeholder = "Пароль"}})
+            @Html.ValidationMessageFor(x => x.Password, null, new {@class = "text-danger text-center"})
         </div>
-       @* <div class="form-group"> *@
-       @*      <input class="form-control item" type="password" name="Пароль" minlength="6" id="password" placeholder="Подтверждение пароля" required> *@
-       @*  </div> *@
+        <div class="form-group">
+            @Html.EditorFor(x => x.ConfirmPassword, new {htmlAttributes = new {@class = "form-control item", placeholder = "Подтвердите пароль"}})
+            @Html.ValidationMessageFor(x => x.ConfirmPassword, null, new {@class = "text-danger text-center"})
+        </div>
+        @Html.ValidationSummary(true, null, new{@class = "text-danger text-center text-decoration-none"})
         <div class="form-group">
             <button class="create-account" type="submit">Зарегистрироваться</button>
         </div>
         <div class="text-center">
-            <a asp-area="" asp-controller="Account" asp-action="Login">Есть аккаунт?</a>
+            <p>
+                Уже есть аккаунт?
+                <a asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+            </p>
         </div>
     </form>
 </div>
