@@ -2,6 +2,7 @@
 using CollectIt.MVC.Account.Infrastructure.Data;
 using CollectIt.MVC.View.DTO.Account;
 using CollectIt.MVC.View.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -52,8 +53,7 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
-            await _signInManager.SignInAsync(user, false);
-            return RedirectToAction("Resource", "Home");
+            return RedirectToAction("Login");
         }
         _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
         ModelState.AddModelError("", "Пользователь с такой почтой уже зарегистрирован");
@@ -79,10 +79,10 @@ public class AccountController : Controller
             return View();
         }
 
-        if (!await _userManager.CheckPasswordAsync(user, model.Password))
+        if (!( await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false) ).Succeeded)
         {
-            ModelState.AddModelError("Password", "Неправильный пароль");
-            return View();
+            ModelState.AddModelError("", "Неправильный пароль");
+            return View(model);
         }
 
         await _signInManager.SignInAsync(user, model.RememberMe);

@@ -1,5 +1,6 @@
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = "/account/login";
+    options.DefaultSignOutScheme = "/account/logout";
+}).AddCookie(options =>
+{
+    options.Cookie.Name = "Cookie";
+});
+builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
 builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["ConnectionStrings:Accounts:PostgresqlDevelopment"],
@@ -56,6 +68,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
