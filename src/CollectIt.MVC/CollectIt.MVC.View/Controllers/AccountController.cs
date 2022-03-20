@@ -88,7 +88,13 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
-    
+    [HttpPost]
+    public async Task<IActionResult> LogOut()
+    {
+        await _signInManager.SignOutAsync();
+        _logger.LogInformation("User logged out.");
+        return RedirectToAction("Login");
+    }
     public IActionResult Profile()
     {
         return View();
