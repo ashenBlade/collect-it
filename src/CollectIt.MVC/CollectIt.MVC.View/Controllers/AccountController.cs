@@ -2,6 +2,7 @@
 using CollectIt.MVC.Account.Infrastructure.Data;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -22,6 +23,15 @@ public class AccountController : Controller
         _logger = logger;
         _userManager = userManager;
         _signInManager = signInManager;
+    }
+    
+    [Authorize]
+    [HttpGet]
+    [Route("")]
+    [Route("profile")]
+    public IActionResult Profile()
+    {
+        return View();
     }
     
     [HttpGet]
@@ -87,15 +97,14 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
-    [HttpPost]
+    
+    [HttpGet]
+    [Route("logout")]
     public async Task<IActionResult> LogOut()
     {
         await _signInManager.SignOutAsync();
-        _logger.LogInformation("User logged out.");
+        _logger.LogInformation("User logged out");
         return RedirectToAction("Login");
     }
-    public IActionResult Profile()
-    {
-        return View();
-    }
+    
 }

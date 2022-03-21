@@ -3,24 +3,26 @@
     Layout = "_ProfileLayout";
 }
 
-<div class="container blur rounded shadow p-4 d-flex align-items-start">
+<div class="container rounded shadow p-4 d-flex align-items-start">
     <ul class="nav nav-pills flex-column border-right me-3" role="tablist">
-        <li class="nav-item" title="Аккаунт" role="presentation">
-            <a class="nav-link text-blur active" data-bs-toggle="pill" data-bs-target="#account">
-                <i class="far fa-user-circle t-s-1 text-light"></i>
+        <li class="nav-item mb-1 rounded" title="Аккаунт" role="presentation">
+            <a class="nav-link active text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#account">
+                <i class="fas fa-xl fa-user-circle t-s-1 text-dark me-1"></i> Аккаунт
             </a>
         </li>
-        <li class="nav-item" title="Подписки" role="presentation">
-            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#subscribes">
-                <i class="fas fa-users t-s-1"></i>
+        <li class="nav-item mb-1 rounded" title="Подписки" role="presentation">
+            <a class="nav-link text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#subscribes">
+                <i class="fas fa-xl fa-users t-s-1 text-dark me-1"></i> Мои подписки
             </a>
         </li>
-        <li class="nav-item" title="Настройки" role="presentation">
-            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#options">
-                <i class="fas fa-cogs t-s-1"></i>
+        <li class="nav-item mb-1 rounded" title="Настройки" role="presentation">
+            <a class="nav-link text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#options">
+                <i class="fas fa-xl fa-cogs t-s-1 text-dark me-1"></i> Настройки
             </a>
         </li>
-        @* <form method="post"><button class="btn btn-secondary" type="submit" formmethod="post" id="exit" asp-page-handler="Exit">Выход</button></form> *@
+        <a class="nav-item" title="Выход" role="logout">
+            <a asp-controller="Account" asp-action="LogOut" class="text-dark btn btn-danger">Выйти</a>
+        </a>
     </ul>
 
     <div class="tab-content">
