@@ -33,9 +33,6 @@
       <Content Update="Views\Account\Subscribtions.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
-      <Content Update="Views\Payment\_SubscriptionsLayout.cshtml">
-        <DependentUpon>Subscriptions.cshtml</DependentUpon>
-      </Content>
     </ItemGroup>
 
 </Project>
