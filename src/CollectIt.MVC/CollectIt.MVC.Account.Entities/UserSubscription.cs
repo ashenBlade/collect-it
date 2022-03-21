@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NodaTime;
 using NpgsqlTypes;
 
 namespace CollectIt.MVC.Account.IdentityEntities;
@@ -21,7 +22,7 @@ public class UserSubscription
     public Subscription Subscription { get; set; }
 
     [Required]
-    public NpgsqlRange<DateTime> During { get; set; }
+    public DateInterval During { get; set; }
     
     [Range(0, int.MaxValue)]
     public int LeftResourcesCount { get; set; }

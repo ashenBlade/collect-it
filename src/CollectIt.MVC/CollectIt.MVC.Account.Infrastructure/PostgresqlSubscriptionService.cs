@@ -3,6 +3,7 @@ using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -30,7 +31,8 @@ public class PostgresqlSubscriptionService : ISubscriptionService
                                    UserId = userId,
                                    SubscriptionId = subscriptionId,
                                    During =
-                                       new NpgsqlRange<DateTime>(startDate, startDate.AddMonths(subscription.MonthDuration)),
+                                       new DateInterval(LocalDate.FromDateTime(startDate),
+                                                        LocalDate.FromDateTime( startDate.AddMonths(subscription.MonthDuration) )),
                                    LeftResourcesCount = subscription.MaxResourcesCount
                                };
         try

@@ -28,6 +28,7 @@ builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
+                          config.UseNodaTime();
                       });
 });
 builder.Services.AddIdentity<User, Role>(config =>
