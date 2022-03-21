@@ -33,6 +33,38 @@
     transition: all 2s ease-in-out;
 }
 
+.block-subs{
+	height: 500px;
+	width: 20%;
+	float:left;
+	background:#e28964;
+	background: rgb(216, 210, 210);
+    border-color: #444;
+    border-radius: 1%;
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 40px;
+}
+
+.block-bestsub{
+    height: 580px;
+	width: 20%;
+	float:left;
+	background: rgb(216, 210, 210);
+    border-color: #444;
+    border-radius: 2%;
+    border-style: solid;
+    border-width: 1px;
+}
+h1{
+   margin-bottom: 20px;
+}
+
+.block-subs-text{
+    text-align: center;
+    overflow:hidden;
+}
+
 .ms-6{
     margin-left: 10%;
 }
@@ -123,6 +155,12 @@ section{
 #ind {
     margin-top: -14em;
     padding: 4em 0;
+}
+
+.test-sub{
+    max-width: 80%;
+    width: 80em;
+    margin: 0 auto;
 }
 
 .test-3{
