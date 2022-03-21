@@ -1,4 +1,5 @@
-﻿using CollectIt.MVC.Account.IdentityEntities;
+﻿using System.Security.Claims;
+using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Subscription = CollectIt.MVC.View.Models.Subscription;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -29,9 +31,29 @@ public class AccountController : Controller
     [HttpGet]
     [Route("")]
     [Route("profile")]
-    public IActionResult Profile()
+    public async Task<IActionResult> Profile()
     {
-        return View();
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var subscriptions = new List<Subscription>();
+        await foreach (var subscription in _userManager.GetSubscriptionsForUserByIdAsync(userId))
+        {
+            subscriptions.Add(new Subscription()
+                              {
+                                  From = subscription.During.LowerBound,
+                                  To = subscription.During.UpperBound,
+                                  LeftResourcesCount = subscription.LeftResourcesCount,
+                                  Name = subscription.Subscription.Name,
+                                  ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
+                              });
+        }
+
+        var model = new AccountViewModel()
+                    {
+                        UserName = User.FindFirstValue(ClaimTypes.Name),
+                        Email = User.FindFirstValue(ClaimTypes.Email),
+                        Subscriptions = subscriptions
+                    };
+        return View(model);
     }
     
     [HttpGet]

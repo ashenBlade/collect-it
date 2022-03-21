@@ -1,4 +1,6 @@
-﻿@{
+﻿@model AccountViewModel
+
+@{
     ViewData["Title"] = "Profile";
     Layout = "_ProfileLayout";
 }
@@ -28,12 +30,19 @@
     <div class="tab-content">
         <div class="tab-pane fade active show" id="account" role="tabpanel">
             <div class="p-4">
-                @await Html.PartialAsync("Account")
+                @await Html.PartialAsync("Account", new ProfileAccountViewModel()
+                                                    {
+                                                        Email = Model.Email,
+                                                        Username = Model.UserName
+                                                    })
             </div>
         </div>
         <div class="tab-pane fade" id="subscribes" role="tabpanel">
             <div class="p-4">
-                 @await Html.PartialAsync("Subscribtions")
+                @await Html.PartialAsync("Subscribtions", new SubscriptionsViewModel()
+                                                          {
+                                                              Subscriptions = Model.Subscriptions
+                                                          })
             </div>
         </div>
         <div class="tab-pane fade" id="options" role="tabpanel">

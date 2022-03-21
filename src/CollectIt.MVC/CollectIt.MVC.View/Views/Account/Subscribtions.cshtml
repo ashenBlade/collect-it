@@ -1,1 +1,38 @@
-﻿Hello
+﻿@model SubscriptionsViewModel
+
+<div class="d-flex justify-content-center">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="">№</th>
+            <th>Подписка</th>
+            <th>Дата подключения</th>
+            <th>Дата окончания</th>
+            <th>Оставшееся кол-во скачиваний</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var (subscription, i) in Model.Subscriptions
+                                                .OrderByDescending(s => s.To)
+                                                .Select((s, i) => ( s, i )))
+        {
+            <tr>
+                <td>
+                    @(i + 1)
+                </td>
+                <td>
+                    @subscription.Name
+                </td>
+                <td>
+                    @subscription.From.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @subscription.To.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @subscription.LeftResourcesCount
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table></div>
