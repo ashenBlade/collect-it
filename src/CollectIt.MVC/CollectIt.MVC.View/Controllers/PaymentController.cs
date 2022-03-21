@@ -4,6 +4,7 @@ using CollectIt.MVC.Account.Infrastructure;
 using Microsoft.AspNetCore.DataProtection.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.WebEncoders.Testing;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -25,13 +26,11 @@ public class PaymentController : Controller
             var us = await _subscriptionService.SubscribeUserAsync(userId, subscriptionId);
             var builder = new TagBuilder("div");
             builder.InnerHtml.Append($"<p>Successfully: Id is {us.Id}</p>");
-            return Content(builder.ToString() ?? string.Empty, "text/html");
+            return Ok();
         }
         catch (UserSubscriptionException e)
         {
-            var builder = new TagBuilder("div");
-            builder.InnerHtml.Append("<p>Error " + e.UserId + " " + e.SubscriptionId + "</p>");
-            return Content(builder.ToString() ?? string.Empty, "text/html");
+            return Content($"Error: {e.GetType()} userId: {e.UserId}, subscriptionId: {e.SubscriptionId}", "text/plain");
         }
     }
 }

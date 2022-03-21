@@ -41,9 +41,14 @@ public class PostgresqlSubscriptionService : ISubscriptionService
             await _context.SaveChangesAsync();
             return result.Entity;
         }
-        catch (PostgresException e)
+        catch (DbUpdateException updateException)
         {
-            switch (e.ConstraintName)
+            if (updateException.InnerException is not PostgresException postgresException)
+            {
+                throw;
+            }
+            
+            switch (postgresException.ConstraintName)
             {
                 case "MAX_1_SUBSCRIPTION_OF_SAME_TYPE_PER_USER_AT_TIME":
                     throw new UserAlreadySubscribedException(userId, subscriptionId);
