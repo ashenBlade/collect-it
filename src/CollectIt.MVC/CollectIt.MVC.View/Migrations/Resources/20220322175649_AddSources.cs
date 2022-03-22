@@ -165,9 +165,6 @@ namespace CollectIt.MVC.View.Migrations.Resources
                 name: "Videos");
 
             migrationBuilder.DropTable(
-                name: "Subscription");
-
-            migrationBuilder.DropTable(
                 name: "Resources");
         }
     }
