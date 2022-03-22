@@ -1,36 +1,88 @@
+using System.Security.Claims;
 using CollectIt.MVC.Account.Abstractions.Exceptions;
 using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Account.Infrastructure;
-using Microsoft.AspNetCore.DataProtection.Internal;
+using CollectIt.MVC.View.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.WebEncoders.Testing;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace CollectIt.MVC.View.Controllers;
 
 public class PaymentController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
+    private readonly IUserRepository _userRepository;
+    private readonly ISubscriptionRepository _subscriptionRepository;
 
-    public PaymentController(ISubscriptionService subscriptionService)
+    public PaymentController(ISubscriptionService subscriptionService,
+                             IUserRepository userRepository,
+                             ISubscriptionRepository subscriptionRepository)
     {
         _subscriptionService = subscriptionService;
+        _userRepository = userRepository;
+        _subscriptionRepository = subscriptionRepository;
     }
 
     [HttpGet]
+    [Authorize]
     [Route("subscribe")]
-    public async Task<IActionResult> Subscribe(int userId, int subscriptionId)
+    public async Task<IActionResult> SubscribePage(int subscriptionId)
     {
         try
         {
-            var us = await _subscriptionService.SubscribeUserAsync(userId, subscriptionId);
-            var builder = new TagBuilder("div");
-            builder.InnerHtml.Append($"<p>Successfully: Id is {us.Id}</p>");
-            return Ok();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _userRepository.FindByIdAsync(userId);
+            var subscription = await _subscriptionRepository.FindByIdAsync(subscriptionId);
+            if (user is null || subscription is null)
+            {
+                return BadRequest();
+            }
+            return View("Payment", new PaymentPageViewModel() {User = user, Subscription = subscription});
         }
-        catch (UserSubscriptionException e)
+        catch (UserSubscriptionException us)
         {
-            return Content($"Error: {e.GetType()} userId: {e.UserId}, subscriptionId: {e.SubscriptionId}", "text/plain");
+            return Content($"Error: {us.GetType()} userId: {us.UserId}, subscriptionId: {us.SubscriptionId}",
+                           "text/plain");
+        }
+    }
+
+    [HttpPost]
+    [Route("subscribe")]
+    [Authorize]
+    public async Task<IActionResult> SubscribeLogic(int subscriptionId, bool declined)
+    {
+        if (declined)
+        {
+            return View("PaymentResult",
+                        new PaymentResultViewModel() {ErrorMessage = "Пользователь отменил оформление подписки"});
+        }
+
+        try
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userSubscription = await _subscriptionService.SubscribeUserAsync(userId, subscriptionId);
+            return View("PaymentResult", new PaymentResultViewModel() {UserSubscription = userSubscription});
+        }
+        catch (UserAlreadySubscribedException already)
+        {
+            return View("PaymentResult",
+                        new PaymentResultViewModel()
+                        {
+                            ErrorMessage = "Пользователь уже имеет активную подписку такого типа"
+                        });
+        }
+        catch (UserSubscriptionException us)
+        {
+            return View("PaymentResult",
+                        new PaymentResultViewModel()
+                        {
+                            ErrorMessage = "Ошибка во время оформления подписки. Попробуйте позже."
+                        });
+        }
+        catch (SubscriptionNotFoundException notFoundException)
+        {
+            return BadRequest();
         }
     }
 }

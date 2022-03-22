@@ -1,4 +1,4 @@
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.Entities.Account;
 
 public class Subscription
 {
