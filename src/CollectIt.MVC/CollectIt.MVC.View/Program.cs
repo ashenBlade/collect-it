@@ -1,5 +1,6 @@
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.MVC.Resources.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,16 @@ builder.Services.AddIdentity<User, Role>(config =>
        .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
+
+
+builder.Services.AddDbContext<PostgresqlResourcesDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Resources:PostgresqlDevelopment"],
+        config =>
+        {
+            config.MigrationsAssembly("CollectIt.MVC.View");
+        });
+});
 
 var app = builder.Build();
 
