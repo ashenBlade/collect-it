@@ -18,34 +18,10 @@ namespace CollectIt.MVC.View.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.2")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.ActiveUserSubscription", b =>
-                {
-                    b.Property<NpgsqlRange<DateTime>>("During")
-                        .HasColumnType("daterange");
-
-                    b.Property<int>("LeftResourcesCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MaxResourcesCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SubscriptionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("SubscriptionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToView("ActiveUsersSubscriptions");
-                });
 
             modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.Role", b =>
                 {
@@ -91,9 +67,6 @@ namespace CollectIt.MVC.View.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("MaxResourcesCount")
-                        .HasColumnType("integer");
 
                     b.Property<int>("MonthDuration")
                         .HasColumnType("integer");
@@ -312,25 +285,6 @@ namespace CollectIt.MVC.View.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.ActiveUserSubscription", b =>
-                {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Subscription", "Subscription")
-                        .WithMany()
-                        .HasForeignKey("SubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Subscription");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.User", b =>

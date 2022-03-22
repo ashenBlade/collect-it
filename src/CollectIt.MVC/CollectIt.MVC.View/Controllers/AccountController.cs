@@ -1,13 +1,11 @@
-﻿using System.Security.Claims;
-using CollectIt.MVC.Account.IdentityEntities;
+﻿using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.MVC.View.DTO.Account;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Subscription = CollectIt.MVC.View.Models.Subscription;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -25,35 +23,6 @@ public class AccountController : Controller
         _logger = logger;
         _userManager = userManager;
         _signInManager = signInManager;
-    }
-    
-    [Authorize]
-    [HttpGet]
-    [Route("")]
-    [Route("profile")]
-    public async Task<IActionResult> Profile()
-    {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var subscriptions = new List<Subscription>();
-        await foreach (var subscription in _userManager.GetSubscriptionsForUserByIdAsync(userId))
-        {
-            subscriptions.Add(new Subscription()
-                              {
-                                  From = subscription.During.LowerBound,
-                                  To = subscription.During.UpperBound,
-                                  LeftResourcesCount = subscription.LeftResourcesCount,
-                                  Name = subscription.Subscription.Name,
-                                  ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
-                              });
-        }
-
-        var model = new AccountViewModel()
-                    {
-                        UserName = User.FindFirstValue(ClaimTypes.Name),
-                        Email = User.FindFirstValue(ClaimTypes.Email),
-                        Subscriptions = subscriptions
-                    };
-        return View(model);
     }
     
     [HttpGet]
@@ -119,14 +88,15 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
-    
-    [HttpGet]
-    [Route("logout")]
+    [HttpPost]
     public async Task<IActionResult> LogOut()
     {
         await _signInManager.SignOutAsync();
-        _logger.LogInformation("User logged out");
+        _logger.LogInformation("User logged out.");
         return RedirectToAction("Login");
     }
-    
+    public IActionResult Profile()
+    {
+        return View();
+    }
 }

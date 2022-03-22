@@ -45,15 +45,6 @@ public class UserManager: UserManager<User>
                        .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserByIdAsync(int userId)
-    {
-        return _context.UsersSubscriptions
-                       .Where(us => us.UserId == userId)
-                       .Include(us => us.Subscription)
-                       .Include(us => us.User)
-                       .AsAsyncEnumerable();
-    }
-
     public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserAsync(User user)
     {
         return _context.ActiveUsersSubscriptions

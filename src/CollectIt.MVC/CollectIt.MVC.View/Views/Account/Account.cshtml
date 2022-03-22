@@ -1,19 +1,16 @@
-﻿@model ProfileAccountViewModel
-
-<form method="post" enctype="multipart/form-data" class="text-blur">
+﻿<form method="post" asp-page-handler="OnPost" enctype="multipart/form-data" class="text-blur">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
     <div class="row m-0">
         <div>
             <img src="~/img/joke.jpg" asp-append-version="true" class="photo" alt=""/>
         </div>
         <div class="ml-3">
-            <div class="text-s-1 mt-3 mb-3">@Html.DisplayFor(x => x.Username)</div>
+            <div class="text-s-1 mt-3 mb-3">JJJJ</div>
         </div>
     </div>
     <div>
-        <label class="col-form-label" for="email">Почта:</label>
-        @* <input type="email" name="User.Email" class="form-control blur-light" value="llll@ll.ru"> *@
-        <input asp-for="Email" id="email" readonly="readonly"/>
+        <label class="col-form-label">Почта:</label>
+        <input type="email" name="User.Email" class="form-control blur-light" value="llll@ll.ru">
     </div>
     <div>
         <label  class="col-form-label">Аватарка:</label>
@@ -23,7 +20,7 @@
             </div>
         </div>
     </div>
-    @* <button class="btn-light rounded border-0 mt-2 pl-2 pr-2 pt-1 pb-1 wi-1 m-a">Сохранить</button> *@
+    <button class="btn-light rounded border-0 mt-2 pl-2 pr-2 pt-1 pb-1 wi-1 m-a">Сохранить</button>
 
     <script>
         $(document).ready(function (){

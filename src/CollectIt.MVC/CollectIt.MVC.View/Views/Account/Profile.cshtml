@@ -1,54 +1,30 @@
-﻿@model AccountViewModel
-
-@{
-    ViewData["Title"] = "Profile";
+﻿@{
     Layout = "_ProfileLayout";
 }
 
-<div class="container bg-light rounded shadow p-4 d-flex align-items-start">
-    <ul class="nav nav-pills flex-column border-right me-3" role="tablist">
-        <li class="nav-item mb-1 rounded" title="Аккаунт" role="presentation">
-            <a class="nav-link active text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#account">
-                <i class="fas fa-xl fa-user-circle t-s-1 text-dark me-1"></i> Аккаунт
-            </a>
+<div class="container blur shadow row mi-h">
+    <ul class="nav nav-pills flex-column border-right pt-3 col-0-5" role="tablist">
+        <li class="nav-item" title="Аккаунт" role="presentation">
+            <a class="nav-link text-blur active" data-bs-toggle="pill" data-bs-target="#account"><i class="far fa-user-circle t-s-1"></i></a>
         </li>
-        <li class="nav-item mb-1 rounded" title="Подписки" role="presentation">
-            <a class="nav-link text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#subscribes">
-                <i class="fas fa-xl fa-users t-s-1 text-dark me-1"></i> Мои подписки
-            </a>
+        <li class="nav-item" title="Подписки" role="presentation">
+            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#subscribes"><i class="fas fa-users t-s-1"></i></a>
         </li>
-        <li class="nav-item mb-1 rounded" title="Настройки" role="presentation">
-            <a class="nav-link text-dark d-flex align-items-center" data-bs-toggle="pill" data-bs-target="#options">
-                <i class="fas fa-xl fa-cogs t-s-1 text-dark me-1"></i> Настройки
-            </a>
+        <li class="nav-item" title="Настройки" role="presentation">
+            <a class="nav-link text-blur" data-bs-toggle="pill" data-bs-target="#options"><i class="fas fa-cogs t-s-1"></i></a>
         </li>
-        <a class="nav-item" title="Выход" role="logout">
-            <a asp-controller="Account" asp-action="LogOut" class="text-dark btn btn-danger">Выйти</a>
-        </a>
+        <form method="post"><button class="btn btn-secondary" type="submit" formmethod="post" id="exit" asp-page-handler="Exit">Выход</button></form>
     </ul>
 
-    <div class="tab-content">
+    <div class="tab-content pt-3 pl-3 pb-3 pr-0 col-11-5">
         <div class="tab-pane fade active show" id="account" role="tabpanel">
-            <div class="p-4">
-                @await Html.PartialAsync("Account", new ProfileAccountViewModel()
-                                                    {
-                                                        Email = Model.Email,
-                                                        Username = Model.UserName
-                                                    })
-            </div>
+            @await Html.PartialAsync("Account")
         </div>
         <div class="tab-pane fade" id="subscribes" role="tabpanel">
-            <div class="p-4">
-                @await Html.PartialAsync("Subscribtions", new SubscriptionsViewModel()
-                                                          {
-                                                              Subscriptions = Model.Subscriptions
-                                                          })
-            </div>
+            @await Html.PartialAsync("Subscribes")   
         </div>
         <div class="tab-pane fade" id="options" role="tabpanel">
-            <div class="p-4">
-                 @await Html.PartialAsync("Options")
-            </div>
+            @await Html.PartialAsync("Options")   
         </div>
     </div>
 </div>

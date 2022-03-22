@@ -30,7 +30,7 @@
       <Content Update="Views\Account\Options.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
-      <Content Update="Views\Account\Subscribtions.cshtml">
+      <Content Update="Views\Account\Subscribes.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
     </ItemGroup>
