@@ -24,6 +24,11 @@ public class PaymentController : Controller
         _subscriptionRepository = subscriptionRepository;
     }
 
+    public IActionResult Subscriptions()
+    {
+        return View();
+    }
+    
     [HttpGet]
     [Authorize]
     [Route("subscribe")]
