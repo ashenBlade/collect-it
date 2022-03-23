@@ -114,9 +114,11 @@
 .button-sub:hover{
     background-color: rgb(196, 195, 195);
 }
+
 .button-sub.support{ 
     margin-top: 291px; 
 }
+
 .ms-6{
     margin-left: 10%;
 }
