@@ -38,7 +38,11 @@
 	width: 20%;
 	float:left;
 	background:#e28964;
+<<<<<<< HEAD
 	background: rgb(248, 246, 246);
+=======
+	background: rgb(216, 210, 210);
+>>>>>>> 86c7b9f04cdd4bda0ae70c9430883054fb7b3b9b
     border-color: #444;
     border-radius: 1%;
     border-style: solid;
@@ -50,12 +54,17 @@
     height: 580px;
 	width: 20%;
 	float:left;
+<<<<<<< HEAD
 	background: rgb(248, 246, 246);
+=======
+	background: rgb(216, 210, 210);
+>>>>>>> 86c7b9f04cdd4bda0ae70c9430883054fb7b3b9b
     border-color: #444;
     border-radius: 2%;
     border-style: solid;
     border-width: 1px;
 }
+<<<<<<< HEAD
 
 .cost{
     font-size: 25pt;
@@ -78,10 +87,18 @@ h4{
 
 .block-subs-text{
     font-size:11pt;
+=======
+h1{
+   margin-bottom: 20px;
+}
+
+.block-subs-text{
+>>>>>>> 86c7b9f04cdd4bda0ae70c9430883054fb7b3b9b
     text-align: center;
     overflow:hidden;
 }
 
+<<<<<<< HEAD
 .downloads-count{
     font-size: 15pt;  
     height: 35px;
@@ -117,6 +134,8 @@ h4{
 .button-sub.support{ 
     margin-top: 291px; 
 }
+=======
+>>>>>>> 86c7b9f04cdd4bda0ae70c9430883054fb7b3b9b
 .ms-6{
     margin-left: 10%;
 }
@@ -211,7 +230,11 @@ section{
 
 .test-sub{
     max-width: 80%;
+<<<<<<< HEAD
     width: 85em;
+=======
+    width: 80em;
+>>>>>>> 86c7b9f04cdd4bda0ae70c9430883054fb7b3b9b
     margin: 0 auto;
 }
 
