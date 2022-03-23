@@ -19,7 +19,6 @@
             </ul>
             @if(User.Identity.IsAuthenticated)
             {
-                @await Html.PartialAsync("_AdminDropdown")
                 <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-area="" asp-controller="Account" asp-action="Profile">Профиль</a>
             }
             else
