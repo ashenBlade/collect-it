@@ -10,4 +10,8 @@
       <ProjectReference Include="..\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Account" />
+    </ItemGroup>
+
 </Project>
