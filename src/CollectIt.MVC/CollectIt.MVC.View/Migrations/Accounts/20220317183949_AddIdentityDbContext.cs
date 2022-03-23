@@ -221,7 +221,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                 builder.Sql(@"
         ALTER TABLE ""UsersSubscriptions"" 
         ADD CONSTRAINT ""MAX_1_SUBSCRIPTION_OF_SAME_TYPE_PER_USER_AT_TIME"" 
-        EXCLUDE USING gist(""Id"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&)
+        EXCLUDE USING gist(""UserId"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&)
         WHERE (""LeftResourcesCount"" > 0);
                 ");
             }

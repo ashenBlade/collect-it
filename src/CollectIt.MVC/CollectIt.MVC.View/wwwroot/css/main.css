@@ -33,12 +33,21 @@
     transition: all 2s ease-in-out;
 }
 
+.title h3{
+    margin-bottom: -60px;
+}
+
+.title h1{
+    margin-bottom: 20px;
+    margin-top: -20px;
+}
+
 .block-subs{
 	height: 500px;
 	width: 20%;
 	float:left;
 	background:#e28964;
-	background: rgb(216, 210, 210);
+	background: rgb(248, 246, 246);
     border-color: #444;
     border-radius: 1%;
     border-style: solid;
@@ -46,23 +55,68 @@
     margin-top: 40px;
 }
 
+.block-subs-text h4{
+    margin-top: 10px 
+}
+
 .block-bestsub{
     height: 580px;
 	width: 20%;
 	float:left;
-	background: rgb(216, 210, 210);
+	background: rgb(248, 246, 246);
     border-color: #444;
     border-radius: 2%;
     border-style: solid;
     border-width: 1px;
 }
-h1{
-   margin-bottom: 20px;
+
+.cost{
+    font-size: 25pt;
+    margin-top: 30px;
+    font-weight: bold;
 }
 
 .block-subs-text{
+    font-size:11pt;
     text-align: center;
     overflow:hidden;
+}
+
+.downloads-count{
+    font-size: 15pt;  
+    height: 35px;
+    width: 80px;
+    background-color: #444;
+    color: #fff;
+    border-radius: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+    margin-top: 10px;
+}
+
+.button-sub{
+    font-size: 12pt;
+    height: 50px;
+    width: 90%;
+    margin-top: 100px; 
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(242, 245, 234);
+    text-align: center;
+    border: 4px solid #444;
+    border-radius: 40px;
+    line-height: 40px;
+}
+
+.button-sub:hover{
+    background-color: rgb(196, 195, 195);
+}
+
+.button-sub.support{ 
+    margin-top: 291px; 
 }
 
 .ms-6{
@@ -159,7 +213,7 @@ section{
 
 .test-sub{
     max-width: 80%;
-    width: 80em;
+    width: 85em;
     margin: 0 auto;
 }
 

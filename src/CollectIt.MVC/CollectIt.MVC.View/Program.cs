@@ -1,4 +1,6 @@
+using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.Account.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -17,6 +19,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.Cookie.Name = "Cookie";
 });
+builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
 builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
@@ -25,6 +28,7 @@ builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
+                          config.UseNodaTime();
                       });
 });
 builder.Services.AddIdentity<User, Role>(config =>

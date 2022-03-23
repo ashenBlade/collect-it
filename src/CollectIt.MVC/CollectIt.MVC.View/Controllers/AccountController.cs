@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NodaTime;
 using Subscription = CollectIt.MVC.View.Models.Subscription;
 
 namespace CollectIt.MVC.View.Controllers;
@@ -39,8 +40,8 @@ public class AccountController : Controller
         {
             subscriptions.Add(new Subscription()
                               {
-                                  From = subscription.During.LowerBound,
-                                  To = subscription.During.UpperBound,
+                                  From = subscription.During.Start.ToDateTimeUnspecified(),
+                                  To = subscription.During.End.ToDateTimeUnspecified(),
                                   LeftResourcesCount = subscription.LeftResourcesCount,
                                   Name = subscription.Subscription.Name,
                                   ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
