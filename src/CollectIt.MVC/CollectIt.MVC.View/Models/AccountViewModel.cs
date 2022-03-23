@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CollectIt.MVC.Entities.Account;
 
 namespace CollectIt.MVC.View.Models;
 

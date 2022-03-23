@@ -1,6 +1,7 @@
 using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CollectIt.MVC.Account.Infrastructure.Repositories;
@@ -16,33 +17,27 @@ public class UserRepository : IUserRepository
         _logger = logger;
     }
     
-    public Task<int> AddAsync(User user)
+    public async Task<int> AddAsync(User user)
     {
-        throw new NotImplementedException();
+        user = ( await _context.Users.AddAsync(user) ).Entity;
+        await _context.SaveChangesAsync();
+        return user.Id;
     }
 
     public Task RemoveAsync(User item)
     {
-        throw new NotImplementedException();
+        _context.Users.Remove(item);
+        return _context.SaveChangesAsync();
     }
 
-    public Task<User> FindByIdAsync(int id)
+    public Task<User?> FindByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return _context.Users.SingleOrDefaultAsync(u => u.Id == id);
     }
 
-    public Task UpdateAsync(User item)
+    public Task UpdateAsync(User user)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<Role[]> GetRolesForUserByIdAsync(int userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<UserSubscription[]> GetUserSubscriptionsForUserByIdAsync(int userId)
-    {
-        throw new NotImplementedException();
+        _context.Users.Update(user);
+        return _context.SaveChangesAsync();
     }
 }

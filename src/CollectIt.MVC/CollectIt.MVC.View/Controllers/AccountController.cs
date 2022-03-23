@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NodaTime;
-using Subscription = CollectIt.MVC.View.Models.Subscription;
+using Subscription = CollectIt.MVC.Entities.Account.Subscription;
 
 namespace CollectIt.MVC.View.Controllers;
 
