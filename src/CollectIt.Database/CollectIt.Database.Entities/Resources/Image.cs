@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CollectIt.MVC.Resources.Entities;
+namespace CollectIt.Database.Entities.Resources;
 
 public class Image
 {

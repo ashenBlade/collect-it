@@ -1,6 +1,6 @@
+using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

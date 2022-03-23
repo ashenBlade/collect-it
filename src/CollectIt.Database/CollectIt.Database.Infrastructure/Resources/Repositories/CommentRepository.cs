@@ -1,9 +1,8 @@
-﻿using CollectIt.Database.Infrastructure;
-using CollectIt.MVC.Resources.Abstractions;
-using CollectIt.MVC.Resources.Entities;
+﻿using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Entities.Resources;
 using Microsoft.EntityFrameworkCore;
 
-namespace CollectIt.MVC.Resources.Infrastructure.Repositories;
+namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
 public class CommentRepository : ICommentRepository
 {

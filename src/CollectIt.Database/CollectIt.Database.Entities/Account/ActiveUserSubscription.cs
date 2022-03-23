@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using NpgsqlTypes;
 
-namespace CollectIt.MVC.Account.IdentityEntities;
+namespace CollectIt.Database.Entities.Account;
 
 public class ActiveUserSubscription
 {

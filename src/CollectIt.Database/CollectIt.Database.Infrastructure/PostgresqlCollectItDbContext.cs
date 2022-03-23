@@ -1,5 +1,5 @@
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Resources.Entities;
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Resources;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

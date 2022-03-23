@@ -1,4 +1,4 @@
-namespace CollectIt.MVC.Account.IdentityEntities;
+namespace CollectIt.Database.Entities.Account;
 
 public enum ResourceType
 {

@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace CollectIt.MVC.Account.IdentityEntities;
+namespace CollectIt.Database.Entities.Account;
 
 public class User : IdentityUser<int>
 { 

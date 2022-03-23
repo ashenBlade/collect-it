@@ -1,10 +1,8 @@
-using CollectIt.Database.Infrastructure;
-using CollectIt.MVC.Account.Abstractions.Interfaces;
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Entities.Account;
 using Microsoft.Extensions.Logging;
 
-namespace CollectIt.MVC.Account.Infrastructure.Repositories;
+namespace CollectIt.Database.Infrastructure.Account.Repositories;
 
 public class UserRepository : IUserRepository
 {

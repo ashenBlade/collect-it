@@ -1,11 +1,10 @@
-using CollectIt.Database.Infrastructure;
-using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace CollectIt.MVC.Account.Infrastructure.Data;
+namespace CollectIt.Database.Infrastructure.Account.Data;
 
 public class UserManager: UserManager<User>
 {

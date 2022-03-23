@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.Database.Entities.Account;
 
-namespace CollectIt.MVC.Resources.Entities;
+namespace CollectIt.Database.Entities.Resources;
 
 public class Resource
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CollectIt.MVC.Resources.Entities;
+namespace CollectIt.Database.Entities.Resources;
 
 public class Video 
 {

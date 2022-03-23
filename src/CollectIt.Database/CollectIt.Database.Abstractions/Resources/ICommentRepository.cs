@@ -1,7 +1,7 @@
-﻿using CollectIt.MVC.Account.Abstractions.Interfaces;
-using CollectIt.MVC.Resources.Entities;
+﻿using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Entities.Resources;
 
-namespace CollectIt.MVC.Resources.Abstractions;
+namespace CollectIt.Database.Abstractions.Resources;
 
 public interface ICommentRepository : IRepository<Comment, int>
 {

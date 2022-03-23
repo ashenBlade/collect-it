@@ -1,6 +1,6 @@
-using CollectIt.MVC.Account.IdentityEntities;
+using CollectIt.Database.Entities.Account;
 
-namespace CollectIt.MVC.Account.Abstractions.Interfaces;
+namespace CollectIt.Database.Abstractions.Account.Interfaces;
 
 public interface IRoleRepository : IRepository<Role, int>
 { }

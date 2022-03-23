@@ -1,4 +1,4 @@
-namespace CollectIt.MVC.Account.Abstractions.Interfaces;
+namespace CollectIt.Database.Abstractions.Account.Interfaces;
 
 public interface IRepository<TItem, TId>
 {
