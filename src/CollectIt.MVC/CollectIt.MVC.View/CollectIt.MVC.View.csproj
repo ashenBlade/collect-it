@@ -33,6 +33,9 @@
       <Content Update="Views\Account\Subscribes.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
+      <Content Update="Views\Shared\_AdminDropdown.cshtml">
+        <DependentUpon>_Navbar.cshtml</DependentUpon>
+      </Content>
     </ItemGroup>
 
 </Project>

@@ -93,4 +93,14 @@ public class AccountController : Controller
     {
         return View();
     }
+
+    public IActionResult ResourceEdit()
+    {
+        return View();
+    }
+
+    public IActionResult ProfileEdit()
+    {
+        return View();
+    }
 }

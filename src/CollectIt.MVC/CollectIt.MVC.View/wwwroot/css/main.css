@@ -45,9 +45,18 @@
     width: 100%;
 }
 
+.s-2{
+    width: 45.68px;
+}
+
 .h-1{
     height: 40px;
     line-height: 2.5rem;
+}
+
+.h-2{
+    height: 40px;
+    line-height: 1.5rem;
 }
 
 .w-0{
@@ -68,6 +77,10 @@
 
 .m-w-2{
     max-width: 100px;
+}
+
+.mi-w-0{
+    min-width: 45.68px;
 }
 
 .rounded-start-0{
