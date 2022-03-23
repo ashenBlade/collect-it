@@ -1,26 +1,26 @@
-﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm box-shadow blur-dark p-0">
-    <div class="container m-w-0 m-0 ms-4 me-4">
+﻿<nav class="navbar navbar-expand-sm navbar-toggleable-sm box-shadow blur-dark p-0 ps-3 pe-3">
+
         <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Collect It</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+        <div class="navbar-collapse collapse ">
             <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item me-4">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Изображения</a>
+                <li class="nav-item me-4 ">
+                    <a class="nav-link btn-light transparent text-blur rounded" asp-area="" asp-controller="Home" asp-action="Index">Изображения</a>
                 </li>
                 <li class="nav-item me-4">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Музыка</a>
+                    <a class="nav-link btn-light transparent text-blur rounded" asp-area="" asp-controller="Home" asp-action="Index">Музыка</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Видео</a>
+                    <a class="nav-link btn-light transparent text-blur rounded" asp-area="" asp-controller="Home" asp-action="Index">Видео</a>
                 </li>
             </ul>
             @await Html.PartialAsync("_AdminDropdown")
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-area="" asp-controller="Account" asp-action="Register">Регистрация</a>
+            <a class="nav-link text-center rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2 blur-light" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
+            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2 " asp-area="" asp-controller="Account" asp-action="Register">Регистрация</a>
             <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-area="" asp-controller="Account" asp-action="Profile">Профиль</a>
         </div>
-    </div>
+
 </nav>
