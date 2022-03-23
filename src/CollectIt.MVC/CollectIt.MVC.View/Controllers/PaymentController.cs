@@ -17,6 +17,11 @@ public class PaymentController : Controller
         _subscriptionService = subscriptionService;
     }
 
+    public IActionResult Subscriptions()
+    {
+        return View();
+    }
+    
     [HttpGet]
     [Route("subscribe")]
     public async Task<IActionResult> Subscribe(int userId, int subscriptionId)
