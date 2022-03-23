@@ -1,4 +1,5 @@
-﻿using CollectIt.MVC.Resources.Abstractions;
+﻿using CollectIt.Database.Infrastructure;
+using CollectIt.MVC.Resources.Abstractions;
 using CollectIt.MVC.Resources.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,10 +7,10 @@ namespace CollectIt.MVC.Resources.Infrastructure.Repositories;
 
 public class ImageRepository : IImageRepository
 {    
-    private readonly PostgresqlResourcesDbContext context;
+    private readonly PostgresqlCollectItDbContext context;
     private readonly ResourceRepository resourceRepository;
 
-    public ImageRepository(PostgresqlResourcesDbContext context)
+    public ImageRepository(PostgresqlCollectItDbContext context)
     {
         this.context = context;
         resourceRepository = new ResourceRepository(context);
@@ -26,6 +27,7 @@ public class ImageRepository : IImageRepository
 
     public async Task<Image> FindByIdAsync(int id)
     {
+        // Better SingleOrDefaultAsync
         return await context.Images.Where(img => img.ImageId == id).FirstOrDefaultAsync();
     }
 

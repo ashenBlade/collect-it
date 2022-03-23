@@ -14,12 +14,12 @@ public class Subscription
 
     public string Description { get; set; }
 
-    [Range(1, int.MaxValue)]
     [Required]
+    [Range(1, int.MaxValue)]
     public int MonthDuration { get; set; }
     
-    [Range(0, int.MaxValue)]
     [Required]
+    [Range(0, int.MaxValue)]
     public int Price { get; set; }
 
     [Required]

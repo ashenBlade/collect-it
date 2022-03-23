@@ -1,4 +1,5 @@
-﻿using CollectIt.MVC.Resources.Abstractions;
+﻿using CollectIt.Database.Infrastructure;
+using CollectIt.MVC.Resources.Abstractions;
 using CollectIt.MVC.Resources.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,9 +7,9 @@ namespace CollectIt.MVC.Resources.Infrastructure.Repositories;
 
 public class CommentRepository : ICommentRepository
 {
-    private readonly PostgresqlResourcesDbContext context;
+    private readonly PostgresqlCollectItDbContext context;
 
-    public CommentRepository(PostgresqlResourcesDbContext context)
+    public CommentRepository(PostgresqlCollectItDbContext context)
     {
         this.context = context;
     }
@@ -22,6 +23,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task<Comment> FindByIdAsync(int id)
     {
+        // Better SingleOrDefaultAsync
         return await context.Comments.Where(com => com.CommentId == id).FirstOrDefaultAsync();
     }
 

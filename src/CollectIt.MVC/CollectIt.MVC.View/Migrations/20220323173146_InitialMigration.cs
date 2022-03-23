@@ -1,14 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using NpgsqlTypes;
 
 #nullable disable
 
-namespace CollectIt.MVC.View.Migrations.Accounts
+namespace CollectIt.MVC.View.Migrations
 {
-    public partial class AddIdentityDbContext : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder builder)
         {
@@ -194,7 +193,7 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     SubscriptionId = table.Column<int>(type: "integer", nullable: false),
-                    During = table.Column<NpgsqlRange<DateTime>>(type: "daterange", nullable: false),
+                    During = table.Column<DateInterval>(type: "daterange", nullable: false),
                     LeftResourcesCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -213,23 +212,156 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            if (builder.IsNpgsql())
-            {
-                builder.Sql("CREATE EXTENSION btree_gist;");
-
-                builder.Sql(@"
+            builder.Sql(@"
+        CREATE EXTENSION btree_gist;
+");
+            builder.Sql(@"
         ALTER TABLE ""UsersSubscriptions"" 
         ADD CONSTRAINT ""MAX_1_SUBSCRIPTION_OF_SAME_TYPE_PER_USER_AT_TIME"" 
-        EXCLUDE USING gist(""Id"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&)
+        EXCLUDE USING gist(""UserId"" WITH =, ""SubscriptionId"" WITH =, ""During"" WITH &&)
         WHERE (""LeftResourcesCount"" > 0);
-                ");
-            }
-            else
-            {
-                throw new DbUpdateException("Database must be PostgreSQL");
-            }
+");
+
+            builder.Sql(@"
+    CREATE VIEW ""ActiveUsersSubscriptions"" AS (
+        SELECT us.""UserId"", us.""SubscriptionId"", us.""During"", us.""LeftResourcesCount"", s.""MaxResourcesCount"" 
+        FROM ""UsersSubscriptions"" AS us 
+            JOIN ""Subscriptions"" AS s ON us.""SubscriptionId"" = s.""Id""
+        WHERE 
+              us.""LeftResourcesCount"" > 0 AND
+              us.""During"" @> current_date 
+        );
+");
             
+            builder.CreateTable(
+                name: "Resources",
+                columns: table => new
+                {
+                    ResourceId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ResourceOwnerId = table.Column<int>(type: "integer", nullable: false),
+                    ResourcePath = table.Column<string>(type: "text", nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resources", x => x.ResourceId);
+                    table.ForeignKey(
+                        name: "FK_Resources_AspNetUsers_ResourceOwnerId",
+                        column: x => x.ResourceOwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+
+            builder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    CommentId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OwnerId = table.Column<int>(type: "integer", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    UploadDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TargetResourceId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                    table.ForeignKey(
+                        name: "FK_Comments_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Resources_TargetResourceId",
+                        column: x => x.TargetResourceId,
+                        principalTable: "Resources",
+                        principalColumn: "ResourceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            builder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    ImageId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ResourceId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.ImageId);
+                    table.ForeignKey(
+                        name: "FK_Images_Resources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalTable: "Resources",
+                        principalColumn: "ResourceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            builder.CreateTable(
+                name: "Musics",
+                columns: table => new
+                {
+                    MusicId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ResourceId = table.Column<int>(type: "integer", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "interval", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Musics", x => x.MusicId);
+                    table.ForeignKey(
+                        name: "FK_Musics_Resources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalTable: "Resources",
+                        principalColumn: "ResourceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            builder.CreateTable(
+                name: "Videos",
+                columns: table => new
+                {
+                    VideoId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ResourceId = table.Column<int>(type: "integer", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "interval", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Videos", x => x.VideoId);
+                    table.ForeignKey(
+                        name: "FK_Videos_Resources_ResourceId",
+                        column: x => x.ResourceId,
+                        principalTable: "Resources",
+                        principalColumn: "ResourceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            builder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { 1, "DEFAULT_STAMP", "Admin", "ADMIN" },
+                    { 2, "DEFAULT_STAMP", "User", "USER" },
+                    { 3, "DEFAULT_STAMP", "Technical Support", "TECHNICAL SUPPORT" }
+                });
+
+            builder.InsertData(
+                table: "Subscriptions",
+                columns: new[] { "Id", "AppliedResourceType", "Description", "MaxResourcesCount", "MonthDuration", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1, "Image", "Обычная подписка", 50, 1, "Бронзовая", 200 },
+                    { 2, "Image", "Подписка для любителей качать", 100, 1, "Серебрянная", 350 },
+                    { 3, "Image", "Не для пиратов", 200, 1, "Золотая", 500 }
+                });
+
             builder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -273,6 +405,31 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                 unique: true);
 
             builder.CreateIndex(
+                name: "IX_Comments_OwnerId",
+                table: "Comments",
+                column: "OwnerId");
+
+            builder.CreateIndex(
+                name: "IX_Comments_TargetResourceId",
+                table: "Comments",
+                column: "TargetResourceId");
+
+            builder.CreateIndex(
+                name: "IX_Images_ResourceId",
+                table: "Images",
+                column: "ResourceId");
+
+            builder.CreateIndex(
+                name: "IX_Musics_ResourceId",
+                table: "Musics",
+                column: "ResourceId");
+
+            builder.CreateIndex(
+                name: "IX_Resources_ResourceOwnerId",
+                table: "Resources",
+                column: "ResourceOwnerId");
+
+            builder.CreateIndex(
                 name: "IX_UsersSubscriptions_SubscriptionId",
                 table: "UsersSubscriptions",
                 column: "SubscriptionId");
@@ -281,35 +438,62 @@ namespace CollectIt.MVC.View.Migrations.Accounts
                 name: "IX_UsersSubscriptions_UserId",
                 table: "UsersSubscriptions",
                 column: "UserId");
+
+            builder.CreateIndex(
+                name: "IX_Videos_ResourceId",
+                table: "Videos",
+                column: "ResourceId");
         }
 
-        protected override void Down(MigrationBuilder migrationBuilder)
+        protected override void Down(MigrationBuilder builder)
         {
-            migrationBuilder.DropTable(
+            builder.Sql(@"
+    DROP VIEW ""ActiveUsersSubscriptions"";
+");
+            builder.DropTable(
                 name: "AspNetRoleClaims");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
                 name: "AspNetUserClaims");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
                 name: "AspNetUserLogins");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
                 name: "AspNetUserRoles");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
                 name: "AspNetUserTokens");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
+                name: "Comments");
+
+            builder.DropTable(
+                name: "Images");
+
+            builder.DropTable(
+                name: "Musics");
+
+            builder.DropTable(
                 name: "UsersSubscriptions");
 
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+            builder.Sql(@"
+    DROP EXTENSION btree_gist;
+");
+            
+            builder.DropTable(
+                name: "Videos");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
                 name: "Subscriptions");
 
-            migrationBuilder.DropTable(
+            builder.DropTable(
+                name: "Resources");
+
+            builder.DropTable(
+                name: "AspNetUsers");
+
+            builder.DropTable(
                 name: "AspNetRoles");
         }
     }

@@ -1,4 +1,5 @@
-﻿using CollectIt.MVC.Account.Abstractions.Interfaces;
+﻿using CollectIt.Database.Infrastructure;
+using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Resources.Abstractions;
 using CollectIt.MVC.Resources.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,9 @@ namespace CollectIt.MVC.Resources.Infrastructure.Repositories;
 
 public class ResourceRepository : IResourceRepository
 {
-    private readonly PostgresqlResourcesDbContext context;
+    private readonly PostgresqlCollectItDbContext context;
 
-    public ResourceRepository(PostgresqlResourcesDbContext context)
+    public ResourceRepository(PostgresqlCollectItDbContext context)
     {
         this.context = context;
     }

@@ -1,6 +1,6 @@
+using CollectIt.Database.Infrastructure;
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
-using CollectIt.MVC.Resources.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +20,13 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
-builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
+builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Accounts:PostgresqlDevelopment"],
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
+                          config.UseNodaTime();
                       });
 });
 builder.Services.AddIdentity<User, Role>(config =>
@@ -50,19 +51,9 @@ builder.Services.AddIdentity<User, Role>(config =>
                                 RequireConfirmedPhoneNumber = false,
                             };
         })
-       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
+       .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
-
-
-builder.Services.AddDbContext<PostgresqlResourcesDbContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Resources:PostgresqlDevelopment"],
-        config =>
-        {
-            config.MigrationsAssembly("CollectIt.MVC.View");
-        });
-});
 
 var app = builder.Build();
 

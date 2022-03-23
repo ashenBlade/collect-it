@@ -8,8 +8,8 @@ namespace CollectIt.Database.Infrastructure;
 public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 {
     public DbSet<Subscription> Subscriptions { get; set; }
-    public DbSet<UserSubscription> UserSubscriptions { get; set; }
-    public DbSet<ActiveUserSubscription> ActiveUserSubscriptions { get; set; }
+    public DbSet<UserSubscription> UsersSubscriptions { get; set; }
+    public DbSet<ActiveUserSubscription> ActiveUsersSubscriptions { get; set; }
     
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Image> Images { get; set; }

@@ -1,3 +1,4 @@
+using CollectIt.Database.Infrastructure;
 using CollectIt.MVC.Account.Abstractions.Interfaces;
 using CollectIt.MVC.Account.IdentityEntities;
 using CollectIt.MVC.Account.Infrastructure.Data;
@@ -7,10 +8,10 @@ namespace CollectIt.MVC.Account.Infrastructure.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly PostgresqlIdentityDbContext _context;
+    private readonly PostgresqlCollectItDbContext _context;
     private readonly ILogger<UserRepository> _logger;
 
-    public UserRepository(PostgresqlIdentityDbContext context, ILogger<UserRepository> logger)
+    public UserRepository(PostgresqlCollectItDbContext context, ILogger<UserRepository> logger)
     {
         _context = context;
         _logger = logger;

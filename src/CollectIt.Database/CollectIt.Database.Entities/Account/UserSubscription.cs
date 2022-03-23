@@ -22,7 +22,7 @@ public class UserSubscription
     public Subscription Subscription { get; set; }
 
     [Required]
-    public NpgsqlRange<DateTime> During { get; set; }
+    public DateInterval During { get; set; }
     
     [Range(0, int.MaxValue)]
     public int LeftResourcesCount { get; set; }

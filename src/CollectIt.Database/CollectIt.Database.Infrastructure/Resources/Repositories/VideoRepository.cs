@@ -1,4 +1,5 @@
-﻿using CollectIt.MVC.Resources.Abstractions;
+﻿using CollectIt.Database.Infrastructure;
+using CollectIt.MVC.Resources.Abstractions;
 using CollectIt.MVC.Resources.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,10 +7,10 @@ namespace CollectIt.MVC.Resources.Infrastructure.Repositories;
 
 public class VideoRepository : IVideoRepository
 {
-    private readonly PostgresqlResourcesDbContext context;
+    private readonly PostgresqlCollectItDbContext context;
     private readonly ResourceRepository resourceRepository;
 
-    public VideoRepository(PostgresqlResourcesDbContext context)
+    public VideoRepository(PostgresqlCollectItDbContext context)
     {
         this.context = context;
         resourceRepository = new ResourceRepository(context);

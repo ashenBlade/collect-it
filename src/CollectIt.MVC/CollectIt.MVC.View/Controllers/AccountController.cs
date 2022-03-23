@@ -39,8 +39,8 @@ public class AccountController : Controller
         {
             subscriptions.Add(new Subscription()
                               {
-                                  From = subscription.During.LowerBound,
-                                  To = subscription.During.UpperBound,
+                                  From = subscription.During.Start.ToDateTimeUnspecified(),
+                                  To = subscription.During.End.ToDateTimeUnspecified(),
                                   LeftResourcesCount = subscription.LeftResourcesCount,
                                   Name = subscription.Subscription.Name,
                                   ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"

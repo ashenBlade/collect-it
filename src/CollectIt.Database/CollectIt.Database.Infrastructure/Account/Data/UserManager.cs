@@ -1,3 +1,4 @@
+using CollectIt.Database.Infrastructure;
 using CollectIt.MVC.Account.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace CollectIt.MVC.Account.Infrastructure.Data;
 
 public class UserManager: UserManager<User>
 {
-    private readonly PostgresqlIdentityDbContext _context;
+    private readonly PostgresqlCollectItDbContext _context;
 
     public UserManager(IUserStore<User> store,
                        IOptions<IdentityOptions> optionsAccessor,
@@ -19,7 +20,7 @@ public class UserManager: UserManager<User>
                        IdentityErrorDescriber errors,
                        IServiceProvider services,
                        ILogger<UserManager> logger,
-                       PostgresqlIdentityDbContext context)
+                       PostgresqlCollectItDbContext context)
         : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors,
                services, logger)
     {
