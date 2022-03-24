@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -39,8 +39,8 @@ public class AccountController : Controller
         {
             subscriptions.Add(new Subscription()
                               {
-                                  From = subscription.During.LowerBound,
-                                  To = subscription.During.UpperBound,
+                                  From = subscription.During.Start.ToDateTimeUnspecified(),
+                                  To = subscription.During.End.ToDateTimeUnspecified(),
                                   LeftResourcesCount = subscription.LeftResourcesCount,
                                   Name = subscription.Subscription.Name,
                                   ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
