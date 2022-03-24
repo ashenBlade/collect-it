@@ -7,11 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\CollectIt.MVC\CollectIt.MVC.Abstractions\CollectIt.MVC.Abstractions.csproj" />
       <ProjectReference Include="..\CollectIt.Database.Abstractions\CollectIt.Database.Abstractions.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Account" />
     </ItemGroup>
 
 </Project>

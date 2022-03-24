@@ -1,47 +1,45 @@
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace CollectIt.Database.Infrastructure.Account.Repositories;
 
 public class UserRepository : IUserRepository
 {
-    private readonly PostgresqlCollectItDbContext _context;
-    private readonly ILogger<UserRepository> _logger;
+    private readonly UserManager _userManager;
 
-    public UserRepository(PostgresqlCollectItDbContext context, ILogger<UserRepository> logger)
+    public UserRepository(UserManager userManager)
     {
-        _context = context;
-        _logger = logger;
+        _userManager = userManager;
     }
     
-    public Task<int> AddAsync(User user)
+    public async Task<int> AddAsync(User user)
     {
-        throw new NotImplementedException();
+        var result = await _userManager.CreateAsync(user);
+        if (result.Succeeded)
+        {
+            return user.Id;
+        }
+
+        throw new UserException(user.Id, result.Errors.Select(i => i.Description)
+                                               .Aggregate((s, n) => $"{s} {n}"));
     }
 
-    public Task RemoveAsync(User item)
+    public Task RemoveAsync(User user)
     {
-        throw new NotImplementedException();
+        return _userManager.DeleteAsync(user);
     }
 
-    public Task<User> FindByIdAsync(int id)
+    public Task<User?> FindByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return _userManager.FindByIdAsync(id.ToString())!;
     }
 
-    public Task UpdateAsync(User item)
+    public Task UpdateAsync(User user)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<Role[]> GetRolesForUserByIdAsync(int userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<UserSubscription[]> GetUserSubscriptionsForUserByIdAsync(int userId)
-    {
-        throw new NotImplementedException();
+        return _userManager.UpdateAsync(user);
     }
 }

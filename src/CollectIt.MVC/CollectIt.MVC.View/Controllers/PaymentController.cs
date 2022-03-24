@@ -1,12 +1,11 @@
 using System.Security.Claims;
-using CollectIt.MVC.Account.Abstractions.Exceptions;
-using CollectIt.MVC.Account.Abstractions.Interfaces;
+using CollectIt.Database.Abstractions.Account.Exceptions;
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic.CompilerServices;
-
+ 
 namespace CollectIt.MVC.View.Controllers;
 
 public class PaymentController : Controller
