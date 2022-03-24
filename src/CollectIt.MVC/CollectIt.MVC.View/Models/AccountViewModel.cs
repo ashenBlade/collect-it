@@ -11,5 +11,5 @@ public class AccountViewModel
     [DataType(DataType.EmailAddress)]
     public string Email { get; set; }
     [Required]
-    public IEnumerable<Subscription> Subscriptions { get; set; }
+    public IEnumerable<AccountUserSubscription> Subscriptions { get; set; }
 }

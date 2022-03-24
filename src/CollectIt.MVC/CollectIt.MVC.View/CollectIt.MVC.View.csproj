@@ -38,6 +38,8 @@
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Payment.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCard\Default.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
-<body>
+<body class="h-100">
 
 <header id="header" class="reveal alt">
     @await Html.PartialAsync("_Navbar")
@@ -26,13 +26,13 @@
 
 <section id="ind" class="test-sub">
     <main role="main" class="pb-3 main">
-        <div class="test-4 rounded shadow">
+        <div class="test-4 bg-light rounded shadow">
             @RenderBody()
         </div>
     </main>
 </section>
 
-<footer class="border-top footer text-muted">
+<footer class="border-top footer text-muted mt-auto">
     <div class="container">
         &copy; 2022 - CollectIt.MVC.View - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>

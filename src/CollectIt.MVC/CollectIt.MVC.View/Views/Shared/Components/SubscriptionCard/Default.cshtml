@@ -1,0 +1,46 @@
+@model CollectIt.Database.Entities.Account.Subscription
+
+<div class="d-flex mx-1">
+    <div class="bg-white rounded-4 shadow p-4 h-100" style="width: 300px;">
+        <p class="h2 text-center text-capitalize mb-1">@Model.Name</p>
+        <p class="text-center mb-2">@Model.Description</p>
+        <p class="text-center text-dark fw-bold">@Model.MonthDuration @(Model.MonthDuration % 10 == 1
+                                                                   ? "месяц" 
+                                                                   : Model.MonthDuration % 10 == 3 
+                                                                         ? "месяца" 
+                                                                         : "месяцев")</p>
+        <p class="text-center text-dark fw-bold">Лимит: @Model.MaxResourcesCount</p>
+        <p class="text-center text-dark fw-bold text-capitalize">@Model.Price ₽</p>
+        <div class="d-flex justify-content-center align-items-end">
+            <a class="btn btn-success align-self-end" asp-controller="Payment" asp-action="SubscribePage" asp-route-subscriptionId="@Model.Id">Оформить</a>
+        </div>
+    </div>
+</div>
+@* <div class="block-subs"> *@
+@*     <div class="block-subs-text"> *@
+@*         <h4>@Model.Name</h4> *@
+@*         <p>@Model.Description</p> *@
+@*         <div> *@
+@*             Длительность: *@
+@*             <div class="text-dark"> *@
+@*                 @Model.MonthDuration месяцев *@
+@*             </div> *@
+@*         </div> *@
+@*         <div> *@
+@*             Количество загрузок: *@
+@*             <div class="downloads-count"> *@
+@*                 @Model.MaxResourcesCount *@
+@*             </div> *@
+@*         </div> *@
+@*         <div> *@
+@*             Стоимость: *@
+@*             <div class="cost"> *@
+@*                 @Model.Price ₽ *@
+@*             </div> *@
+@*         </div> *@
+@*         <a class="button-sub" asp-controller="Payment" asp-action="SubscribePage" asp-route-subscriptionId="@Model.Id"> *@
+@*             Оформить *@
+@*         </a> *@
+@*          *@
+@*     </div> *@
+@* </div> *@
