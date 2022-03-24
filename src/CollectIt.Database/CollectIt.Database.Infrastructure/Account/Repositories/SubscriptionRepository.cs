@@ -37,4 +37,14 @@ public class SubscriptionRepository : ISubscriptionRepository
         _context.Subscriptions.Remove(item);
         return _context.SaveChangesAsync();
     }
+
+    public Task<List<Subscription>> GetAllWithResourceType(ResourceType type)
+    {
+        return _context.Subscriptions.Where(s => s.AppliedResourceType == type).ToListAsync();
+    }
+
+    public Task<List<Subscription>> GetAll()
+    {
+        return _context.Subscriptions.ToListAsync();
+    }
 }

@@ -24,7 +24,8 @@ public class UserRepository : IUserRepository
             return user.Id;
         }
 
-        throw new UserException(user.Id, result.Errors.Select(i => i.Description)
+        throw new UserException(user.Id, result.Errors
+                                               .Select(i => i.Description)
                                                .Aggregate((s, n) => $"{s} {n}"));
     }
 

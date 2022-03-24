@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Entities.Account;
 using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +24,15 @@ public class PaymentController : Controller
         _subscriptionRepository = subscriptionRepository;
     }
 
-    public IActionResult Subscriptions()
+    [HttpGet]
+    [Route("subscriptions")]
+    public async Task<IActionResult> Subscriptions()
     {
-        return View();
+        var subscriptions = await _subscriptionRepository.GetAllWithResourceType(ResourceType.Image); 
+        return View("Subscriptions", new SubscriptionsViewModel()
+                                     {
+                                         Subscriptions = subscriptions
+                                     });
     }
     
     [HttpGet]

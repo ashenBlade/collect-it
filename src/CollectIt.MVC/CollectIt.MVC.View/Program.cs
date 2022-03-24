@@ -1,13 +1,15 @@
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
+using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.Database.Infrastructure.Account.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(options =>
 {
@@ -29,6 +31,11 @@ builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
                           config.UseNodaTime();
                       });
 });
+builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+
 builder.Services.AddIdentity<User, Role>(config =>
         {
             config.User = new UserOptions
