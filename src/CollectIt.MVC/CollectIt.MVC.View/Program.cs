@@ -1,9 +1,6 @@
-using CollectIt.MVC.Account.Abstractions.Exceptions;
-using CollectIt.MVC.Account.Abstractions.Interfaces;
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure;
-using CollectIt.MVC.Account.Infrastructure.Data;
-using CollectIt.MVC.Account.Infrastructure.Repositories;
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure;
+using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,17 +18,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.Cookie.Name = "Cookie";
 });
-builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
-
-builder.Services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-
 builder.Services.AddAuthorization();
 builder.Services.AddAuthorization();
-builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
+builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Accounts:PostgresqlDevelopment"],
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
@@ -60,17 +51,15 @@ builder.Services.AddIdentity<User, Role>(config =>
                                 RequireConfirmedPhoneNumber = false,
                             };
         })
-       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
+       .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

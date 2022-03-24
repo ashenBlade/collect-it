@@ -1,4 +1,5 @@
-using CollectIt.MVC.Account.IdentityEntities;
+
+using CollectIt.Database.Entities.Account;
 
 namespace CollectIt.MVC.View.Models;
 

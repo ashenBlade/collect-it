@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CollectIt.MVC.Resources.Abstractions\CollectIt.MVC.Resources.Abstractions.csproj" />
+      <ProjectReference Include="..\..\CollectIt.MVC\CollectIt.MVC.Entities\CollectIt.MVC.Entities.csproj" />
+      <ProjectReference Include="..\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
+      <Folder Include="Account" />
     </ItemGroup>
 
 </Project>
