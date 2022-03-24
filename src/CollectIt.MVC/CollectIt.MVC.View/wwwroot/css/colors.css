@@ -40,6 +40,10 @@ body{
     color: white;
 }
 
+.wh-0:hover{
+    color: rgba(0, 0, 0, 0.54);
+}
+
 .tool:hover{
     background: rgba(0, 0, 0, 0.75);
     color: rgba(255, 255, 255, 0.75);
@@ -55,4 +59,84 @@ body{
 
 .red{
     background: red;
+}
+
+/*PathOfVerse additions*/
+.w-0{
+    background: #ced4da;
+}
+
+.white{
+    background: white;
+}
+
+.w-2{
+    background: #f5f5f5;
+}
+
+.transparent {
+    background-color: transparent;
+}
+
+body{
+    background-image: url("../img/povback.jpg");
+    background-size: 100%;
+}
+
+.blur{
+    background: rgba(0, 0, 0, 0.38);
+}
+
+.nav-blur{
+    background: rgba(0, 0, 0, 0.51);
+}
+
+.text-blur{
+    color: #f5f5f5 !important;
+}
+
+.btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .show>.btn-light.dropdown-toggle {
+    background-color: rgba(0, 0, 0, 0.67);
+}
+
+.nav-link:hover{
+    background: rgba(0, 0, 0, 0.67);
+    color: #f5f5f5 !important;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom: 1px;
+    border-bottom-right-radius: 0;
+    background-color: rgba(0, 0, 0, 0.67);
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.80);
+}
+
+.nav-pills .nav-link.active {
+    border-bottom: 1px;
+    border-right: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: rgba(0, 0, 0, 0.67);
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.80);
+}
+
+.blur-light{
+    background: rgba(255, 255, 255, 0.7);
+    color: #1f1f1f;
+}
+
+.table-blur,
+.table-blur > th,
+.table-blur > td {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.e-d-btn{
+    background: rgba(255, 255, 255, 0.6);
 }
