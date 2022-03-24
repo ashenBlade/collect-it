@@ -26,8 +26,10 @@ public class ImageRepository : IImageRepository
 
     public async Task<Image> FindByIdAsync(int id)
     {
-        // Better SingleOrDefaultAsync
-        return await context.Images.Where(img => img.ImageId == id).FirstOrDefaultAsync();
+        return await context.Images
+            .Include(img => img.Resource)
+            .ThenInclude(res => res.ResourceOwner)
+            .Where(img => img.ImageId == id).SingleOrDefaultAsync() ?? throw new InvalidOperationException();
     }
 
     public Task UpdateAsync(Image item)

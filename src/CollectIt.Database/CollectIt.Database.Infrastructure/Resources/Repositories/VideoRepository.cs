@@ -25,7 +25,7 @@ public class VideoRepository : IVideoRepository
 
     public async Task<Video> FindByIdAsync(int id)
     {
-        return await context.Videos.Where(video => video.VideoId == id).FirstOrDefaultAsync();
+        return await context.Videos.Where(video => video.VideoId == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Video item)
