@@ -1,10 +1,13 @@
-﻿using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
-using CollectIt.MVC.View.DTO.Account;
+﻿using System.Security.Claims;
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Subscription = CollectIt.MVC.View.Models.Subscription;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -22,6 +25,35 @@ public class AccountController : Controller
         _logger = logger;
         _userManager = userManager;
         _signInManager = signInManager;
+    }
+    
+    [Authorize]
+    [HttpGet]
+    [Route("")]
+    [Route("profile")]
+    public async Task<IActionResult> Profile()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var subscriptions = new List<Subscription>();
+        await foreach (var subscription in _userManager.GetSubscriptionsForUserByIdAsync(userId))
+        {
+            subscriptions.Add(new Subscription()
+                              {
+                                  From = subscription.During.Start.ToDateTimeUnspecified(),
+                                  To = subscription.During.End.ToDateTimeUnspecified(),
+                                  LeftResourcesCount = subscription.LeftResourcesCount,
+                                  Name = subscription.Subscription.Name,
+                                  ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
+                              });
+        }
+
+        var model = new AccountViewModel()
+                    {
+                        UserName = User.FindFirstValue(ClaimTypes.Name),
+                        Email = User.FindFirstValue(ClaimTypes.Email),
+                        Subscriptions = subscriptions
+                    };
+        return View(model);
     }
     
     [HttpGet]
@@ -52,8 +84,7 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
-            await _signInManager.SignInAsync(user, false);
-            return RedirectToAction("Resource", "Home");
+            return RedirectToAction("Login");
         }
         _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
         ModelState.AddModelError("", "Пользователь с такой почтой уже зарегистрирован");
@@ -79,18 +110,23 @@ public class AccountController : Controller
             return View();
         }
 
-        if (!await _userManager.CheckPasswordAsync(user, model.Password))
+        if (!( await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false) ).Succeeded)
         {
-            ModelState.AddModelError("Password", "Неправильный пароль");
-            return View();
+            ModelState.AddModelError("", "Неправильный пароль");
+            return View(model);
         }
 
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
     
-    public IActionResult Profile()
+    [HttpGet]
+    [Route("logout")]
+    public async Task<IActionResult> LogOut()
     {
-        return View();
+        await _signInManager.SignOutAsync();
+        _logger.LogInformation("User logged out");
+        return RedirectToAction("Login");
     }
+    
 }

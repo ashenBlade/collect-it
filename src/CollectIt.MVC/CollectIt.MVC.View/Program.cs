@@ -1,5 +1,7 @@
-using CollectIt.MVC.Account.IdentityEntities;
-using CollectIt.MVC.Account.Infrastructure.Data;
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure;
+using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,12 +9,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<PostgresqlIdentityDbContext>(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Accounts:PostgresqlDevelopment"],
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = "/account/login";
+    options.DefaultSignOutScheme = "/account/logout";
+}).AddCookie(options =>
+{
+    options.Cookie.Name = "Cookie";
+});
+builder.Services.AddAuthorization();
+builder.Services.AddAuthorization();
+builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
+                          config.UseNodaTime();
                       });
 });
 builder.Services.AddIdentity<User, Role>(config =>
@@ -37,7 +51,7 @@ builder.Services.AddIdentity<User, Role>(config =>
                                 RequireConfirmedPhoneNumber = false,
                             };
         })
-       .AddEntityFrameworkStores<PostgresqlIdentityDbContext>()
+       .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
 
@@ -56,6 +70,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
