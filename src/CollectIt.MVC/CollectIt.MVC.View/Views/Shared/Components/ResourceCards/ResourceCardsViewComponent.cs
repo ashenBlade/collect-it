@@ -8,10 +8,10 @@ public class ResourceCardsViewComponent : ViewComponent
     public ResourceCardsViewComponent()
     { }
     
-    public IViewComponentResult Invoke(ResourceCardsViewModel resource)
-    {
-         return View(resource);
-    }
+    // public IViewComponentResult Invoke(ResourceCardsViewModel resource)
+    // {
+    //      return View(resource);
+    // }
     
     public IViewComponentResult Invoke()
     {
