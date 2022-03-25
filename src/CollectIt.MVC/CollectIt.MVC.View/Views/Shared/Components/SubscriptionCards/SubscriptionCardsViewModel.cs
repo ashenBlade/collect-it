@@ -1,8 +1,8 @@
 using CollectIt.Database.Entities.Account;
 
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.View.Views.Shared.Components.SubscriptionCards;
 
-public class SubscriptionsViewModel
+public class SubscriptionCardsViewModel
 {
     public IReadOnlyList<Subscription> Subscriptions { get; set; }
 }

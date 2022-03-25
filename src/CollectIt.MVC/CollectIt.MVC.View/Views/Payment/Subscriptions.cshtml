@@ -1,81 +1,9 @@
-﻿@{
+﻿@using CollectIt.MVC.View.Views.Shared.Components.SubscriptionCards
+@addTagHelper *, CollectIt.MVC.View
+@model SubscriptionsViewModel
+@{
     Layout = "_SubscriptionsLayout";
+    ViewData["Title"] = "Подписки";
 }
 
-<body>
-<div class="row">
-    <div class="block-subs">
-        <div class="block-subs-text">
-            <h4>По запросу</h4>
-            Получайте изображения тогда, когда они вам нужны.<br><br><br><br>
-            <b>Количество загрузок (в год)</b>
-            <div class="downloads-count">
-                5
-            </div>
-            <div class="cost">
-                49 $
-            </div><br>
-            <button class="button-sub">
-                Приступить
-            </button>
-        </div>
-    </div>
-    <div class="block-subs">
-        <div class="block-subs-text">
-            <h4>FLEX</h4>
-            Изображения, видео и музыка в рамках одной универсальной подписки.<br><br><br>
-            <b>Количество кредитов в месяц</b>
-            <div class="downloads-count">
-                25
-            </div>
-            <div class="cost">
-                49 $
-            </div> в месяц
-            <button class="button-sub">
-                Приступить
-            </button>
-        </div>
-    </div>
-    <div class="block-bestsub">
-        <div class="block-subs-text">
-            <h4>Специалисты</h4>
-            Выгодный доступ к изображениям, а также инструментам для планирования и организации контента.<br><br><br><br>
-            <b>Количество загрузок в месяц</b>
-            <div class="downloads-count">
-                10
-            </div>
-            <div class="cost">
-                29 $
-            </div> в месяц
-            <button class="button-sub">
-                Приступить
-            </button>
-        </div>
-    </div>
-    <div class="block-subs">
-        <div class="block-subs-text">
-            <h4>Бизнес</h4>
-            Больше изображений, инструменты для планирования, совместная работа в группе.<br><br><br>
-            <b>Количество загрузок в месяц</b>
-            <div class="downloads-count">
-                750
-            </div>
-            <div class="cost">
-                479 $
-            </div> в месяц
-            <button class="button-sub">
-                Приступить
-            </button>
-        </div>
-    </div>
-    <div class="block-subs">
-        <div class="block-subs-text">
-            <h4>Enterprise</h4>
-            Персонализированные пакеты с индивидуальной поддержкой для решения ваших конкретных задач.
-            <button class="button-sub support">
-                Связаться с нами
-            </button>
-        </div>
-    </div>
-</div>
-</body>
+<vc:subscription-cards model="@(new SubscriptionCardsViewModel() {Subscriptions = Model.Subscriptions})"/>
