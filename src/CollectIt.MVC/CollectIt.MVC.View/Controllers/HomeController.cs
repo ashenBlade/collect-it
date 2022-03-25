@@ -36,7 +36,7 @@ public class HomeController : Controller
             return View("ResourcesPage", GetImageCardsViewModel(4));
         }
         
-        return View();
+        return View(model);
     }
     
     [HttpGet]
@@ -48,16 +48,19 @@ public class HomeController : Controller
 
     [HttpGet]
     [Route("images")]
-    public async Task<IActionResult> Images(ImageCardsViewModel model)
+    public IActionResult Images(ImageCardsViewModel model)
     {
         return View("ResourcesPage", model);
     }
     
     [HttpGet]
     [Route("images/{imageId:int}")]
-    public async Task<IActionResult> Image(int imageId)
+    public IActionResult Image(int imageId)
     {
-        return View();
+        return View("Image", new Image()
+                             {
+                                 ImageId = imageId
+                             });
     }
     
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
