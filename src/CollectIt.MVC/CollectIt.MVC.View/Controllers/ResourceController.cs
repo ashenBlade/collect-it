@@ -22,6 +22,8 @@ public class ResourceController : Controller
     public async Task<IActionResult> Image(int id)
     {
         var source = imageRepository.FindByIdAsync(id).Result;
+        if (source == null)
+            return View("Error");
         var imgModel = new ImageViewModel()
         {
             Owner = source.Resource.ResourceOwner,
