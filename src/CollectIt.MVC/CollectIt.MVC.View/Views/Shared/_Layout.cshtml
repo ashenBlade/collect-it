@@ -11,39 +11,26 @@
     <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
-<body>
+<body id="banner">
 
-    <header id="header" class="reveal alt">
+    <header id="header" class="reveal alt mb-6">
         @await Html.PartialAsync("_Navbar")
     </header>
 
-    <section id="banner">
-        <form class="input-group rounded-pill m-w-1 ms-6 me-6">
-            <select class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
-                <option>Все</option>
-                <option>Изображения</option>
-                <option>Музыка</option>
-                <option>Видео</option>
-            </select>
-            <input type="text" class="form-control rounded-start-0 rounded-end-0"/>
-            <button class="btn btn-light w-0 border rounded-end-1 rounded-start-0">Найти</button>
-        </form>
-    </section>
+    <form class="input-group rounded-pill m-w-1 ms-6 me-6 mt-6">
+        <select class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
+            <option>Изображения</option>
+            <option>Музыка</option>
+            <option>Видео</option>
+        </select>
+        <input type="text" class="form-control rounded-start-0 rounded-end-0"/>
+        <button class="btn btn-light w-0 border rounded-end-1 rounded-start-0">Найти</button>
+    </form>
 
+@{
+    IgnoreBody();
+}
 
-    <section id="ind" class="test-3">
-        <main role="main" class="pb-3 main">
-            <div class="test-4 rounded shadow">
-                @RenderBody()
-            </div>
-        </main>
-    </section>
-
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2022 - CollectIt.MVC.View - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
