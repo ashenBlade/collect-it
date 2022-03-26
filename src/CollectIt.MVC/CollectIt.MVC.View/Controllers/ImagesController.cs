@@ -13,15 +13,10 @@ public class ImagesController : Controller
 {
     private readonly IImageRepository _imageRepository;
 
-    private readonly IResourceRepository _resourceRepository;
 
-    public ImagesController(IImageRepository imageRepository, 
-                            IResourceRepository resourceRepository)
+    public ImagesController(IImageRepository imageRepository)
     {
         _imageRepository = imageRepository;
-        _resourceRepository = resourceRepository;
-        // _imageRepository = new ImageRepository(context);
-        // _resourceRepository = new ResourceRepository(context);
     }
 
     [HttpGet]
@@ -41,15 +36,17 @@ public class ImagesController : Controller
     [Route("{id:int}")]
     public async Task<IActionResult> Image(int id)
     {
-        var source = _imageRepository.FindByIdAsync(id).Result;
+        var source = await _imageRepository.FindByIdAsync(id);
         if (source == null)
-            return View("Error");
-        var imgModel = new ImageViewModel()
         {
-            Owner = source.ResourceOwner,
-            UploadDate = source.UploadDate,
-            Path = source.ResourcePath
-        };
-        return View(imgModel);
+            return View("Error");
+        }
+        var model = new ImageViewModel()
+                       {
+                           Owner = source.Owner,
+                           UploadDate = source.UploadDate,
+                           Path = source.Path
+                       };
+        return View(model);
     }
 }

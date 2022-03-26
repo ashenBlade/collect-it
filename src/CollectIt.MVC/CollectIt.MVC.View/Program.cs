@@ -5,6 +5,7 @@ using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Account.Repositories;
+using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.View.Mocks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -12,8 +13,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(options =>
+var services = builder.Services;
+
+services.AddControllersWithViews();
+services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = "/account/login";
@@ -22,9 +25,9 @@ builder.Services.AddAuthentication(options =>
 {
     options.Cookie.Name = "Cookie";
 });
-builder.Services.AddAuthorization();
-builder.Services.AddAuthorization();
-builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
+services.AddAuthorization();
+services.AddAuthorization();
+services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
@@ -34,42 +37,38 @@ builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
                       });
 });
 
-builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
-builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
+services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
-builder.Services.AddIdentity<User, Role>(config =>
-        {
-            config.User = new UserOptions
-                          {
-                              RequireUniqueEmail = true,
-                          };
-            config.Password = new PasswordOptions
-                              {
-                                  RequireDigit = true,
-                                  RequiredLength = 6,
-                                  RequireLowercase = false,
-                                  RequireUppercase = false,
-                                  RequiredUniqueChars = 1,
-                                  RequireNonAlphanumeric = false,
-                              };
-            config.SignIn = new SignInOptions
-                            {
-                                RequireConfirmedEmail = false,
-                                RequireConfirmedAccount = false,
-                                RequireConfirmedPhoneNumber = false,
-                            };
-        })
-       .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
-       .AddUserManager<UserManager>()
-       .AddDefaultTokenProviders();
+services.AddIdentity<User, Role>(config =>
+                  {
+                      config.User = new UserOptions
+                                    {
+                                        RequireUniqueEmail = true,
+                                    };
+                      config.Password = new PasswordOptions
+                                        {
+                                            RequireDigit = true,
+                                            RequiredLength = 6,
+                                            RequireLowercase = false,
+                                            RequireUppercase = false,
+                                            RequiredUniqueChars = 1,
+                                            RequireNonAlphanumeric = false,
+                                        };
+                      config.SignIn = new SignInOptions
+                                      {
+                                          RequireConfirmedEmail = false,
+                                          RequireConfirmedAccount = false,
+                                          RequireConfirmedPhoneNumber = false,
+                                      };
+                  })
+                 .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
+                 .AddUserManager<UserManager>()
+                 .AddDefaultTokenProviders();
 
-if (builder.Environment.IsDevelopment())
-{
-   // builder.Services.AddSingleton<IImageRepository, InMemoryImageRepository>();
-    builder.Services.AddSingleton<IResourceRepository, InMemoryResourceRepository>();
-}
+services.AddScoped<IImageRepository, PostgresqlImageRepository>();
 
 var app = builder.Build();
 

@@ -17,12 +17,12 @@ public class ResourceRepository : IResourceRepository
     {
         await context.Resources.AddAsync(item);
         await context.SaveChangesAsync();
-        return item.ResourceId;
+        return item.Id;
     }
 
     public async Task<Resource> FindByIdAsync(int id)
     {
-        return await context.Resources.Where(resource => resource.ResourceId == id).SingleOrDefaultAsync();
+        return await context.Resources.Where(resource => resource.Id == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Resource item)

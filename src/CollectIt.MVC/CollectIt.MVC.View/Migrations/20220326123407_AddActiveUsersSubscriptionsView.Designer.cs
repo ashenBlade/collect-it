@@ -14,8 +14,8 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    [Migration("20220323173146_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20220326123407_AddActiveUsersSubscriptionsView")]
+    partial class AddActiveUsersSubscriptionsView
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -26,7 +26,7 @@ namespace CollectIt.MVC.View.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.ActiveUserSubscription", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.ActiveUserSubscription", b =>
                 {
                     b.Property<NpgsqlRange<DateTime>>("During")
                         .HasColumnType("tstzrange");
@@ -50,7 +50,7 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToView("ActiveUsersSubscriptions");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.Role", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,7 +102,7 @@ namespace CollectIt.MVC.View.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.Subscription", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +168,7 @@ namespace CollectIt.MVC.View.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.User", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -238,9 +238,26 @@ namespace CollectIt.MVC.View.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "3e0213e9-8d80-48df-b9df-18fc7debd84e",
+                            Email = "asdf@mail.ru",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ASDF@MAIL.RU",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "MSCN3JBQERUJBPLR4XIXZH3TQGICF6O3",
+                            TwoFactorEnabled = false,
+                            UserName = "asdf@mail.ru"
+                        });
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.UserSubscription", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.UserSubscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -270,7 +287,7 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("UsersSubscriptions");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Comment", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Comment", b =>
                 {
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
@@ -285,7 +302,7 @@ namespace CollectIt.MVC.View.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TargetResourceId")
+                    b.Property<int>("TargetId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UploadDate")
@@ -295,94 +312,38 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("TargetResourceId");
+                    b.HasIndex("TargetId");
 
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Image", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Resource", b =>
                 {
-                    b.Property<int>("ImageId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ImageId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ResourceId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.HasKey("ImageId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Music", b =>
-                {
-                    b.Property<int>("MusicId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MusicId"));
-
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
-
-                    b.Property<int>("ResourceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MusicId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.ToTable("Musics");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Resource", b =>
-                {
-                    b.Property<int>("ResourceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ResourceId"));
-
-                    b.Property<int>("ResourceOwnerId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ResourcePath")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ResourceId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ResourceOwnerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Resources");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Video", b =>
-                {
-                    b.Property<int>("VideoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("VideoId"));
-
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
-
-                    b.Property<int>("ResourceId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("VideoId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.ToTable("Videos");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -488,15 +449,52 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.ActiveUserSubscription", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Image", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Subscription", "Subscription")
+                    b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
+
+                    b.ToTable("Images");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Первое изображение",
+                            OwnerId = 1,
+                            Path = "/imagesFromDb/avaSig.jpg",
+                            UploadDate = new DateTime(2022, 3, 26, 12, 34, 6, 430, DateTimeKind.Utc).AddTicks(9100)
+                        });
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Music", b =>
+                {
+                    b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
+
+                    b.ToTable("Musics");
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Video", b =>
+                {
+                    b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
+
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("interval");
+
+                    b.ToTable("Videos");
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.ActiveUserSubscription", b =>
+                {
+                    b.HasOne("CollectIt.Database.Entities.Account.Subscription", "Subscription")
                         .WithMany()
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", "User")
+                    b.HasOne("CollectIt.Database.Entities.Account.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,22 +505,22 @@ namespace CollectIt.MVC.View.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.User", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.User", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Role", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.Role", null)
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.UserSubscription", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.UserSubscription", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Subscription", "Subscription")
+                    b.HasOne("CollectIt.Database.Entities.Account.Subscription", "Subscription")
                         .WithMany()
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", "User")
+                    b.HasOne("CollectIt.Database.Entities.Account.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -533,17 +531,17 @@ namespace CollectIt.MVC.View.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Comment", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Comment", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", "Owner")
+                    b.HasOne("CollectIt.Database.Entities.Account.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CollectIt.MVC.Resources.Entities.Resource", "Target")
+                    b.HasOne("CollectIt.Database.Entities.Resources.Resource", "Target")
                         .WithMany()
-                        .HasForeignKey("TargetResourceId")
+                        .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -552,53 +550,20 @@ namespace CollectIt.MVC.View.Migrations
                     b.Navigation("Target");
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Image", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Resource", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Resources.Entities.Resource", "Resource")
+                    b.HasOne("CollectIt.Database.Entities.Account.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("ResourceId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Resource");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Music", b =>
-                {
-                    b.HasOne("CollectIt.MVC.Resources.Entities.Resource", "Resource")
-                        .WithMany()
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resource");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Resource", b =>
-                {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", "ResourceOwner")
-                        .WithMany()
-                        .HasForeignKey("ResourceOwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ResourceOwner");
-                });
-
-            modelBuilder.Entity("CollectIt.MVC.Resources.Entities.Video", b =>
-                {
-                    b.HasOne("CollectIt.MVC.Resources.Entities.Resource", "Resource")
-                        .WithMany()
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resource");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Role", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -607,7 +572,7 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -616,7 +581,7 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -625,13 +590,13 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.Role", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -640,14 +605,41 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("CollectIt.MVC.Account.IdentityEntities.User", null)
+                    b.HasOne("CollectIt.Database.Entities.Account.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("CollectIt.MVC.Account.IdentityEntities.Role", b =>
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Image", b =>
+                {
+                    b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
+                        .WithOne()
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Image", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Music", b =>
+                {
+                    b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
+                        .WithOne()
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Music", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Resources.Video", b =>
+                {
+                    b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
+                        .WithOne()
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Video", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("CollectIt.Database.Entities.Account.Role", b =>
                 {
                     b.Navigation("Users");
                 });

@@ -7,16 +7,21 @@ namespace CollectIt.Database.Entities.Resources;
 public class Resource
 {
     [Key]
-    public int ResourceId { get; set; }
+    public int Id { get; set; }
         
-    [Required]
-    public User ResourceOwner { get; set; }
+    // [Required]
+    public User Owner { get; set; }
 
-    [ForeignKey(nameof(ResourceOwner))]
-    public int ResourceOwnerId { get; set; }
     [Required]
-    public string ResourcePath { get; set; }
-        
+    [ForeignKey(nameof(Owner))]
+    public int OwnerId { get; set; }
+    
+    [Required]
+    public string Path { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+    
     [Required]
     public DateTime UploadDate { get; set; }
 }

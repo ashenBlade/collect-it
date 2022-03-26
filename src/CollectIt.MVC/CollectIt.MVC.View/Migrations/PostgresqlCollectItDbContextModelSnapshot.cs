@@ -300,7 +300,7 @@ namespace CollectIt.MVC.View.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TargetResourceId")
+                    b.Property<int>("TargetId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UploadDate")
@@ -310,32 +310,36 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasIndex("TargetResourceId");
+                    b.HasIndex("TargetId");
 
                     b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Resources.Resource", b =>
                 {
-                    b.Property<int>("ResourceId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ResourceId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ResourceOwnerId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ResourcePath")
+                    b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("ResourceId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ResourceOwnerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Resources");
                 });
@@ -447,19 +451,16 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
                     b.ToTable("Images");
 
                     b.HasData(
                         new
                         {
-                            ResourceId = 1,
-                            ResourceOwnerId = 1,
-                            ResourcePath = "/imagesFromDb/avaSig.jpg",
-                            UploadDate = new DateTime(2022, 3, 26, 10, 6, 13, 834, DateTimeKind.Utc).AddTicks(1996),
-                            Id = 1
+                            Id = 1,
+                            Name = "Первое изображение",
+                            OwnerId = 1,
+                            Path = "/imagesFromDb/avaSig.jpg",
+                            UploadDate = new DateTime(2022, 3, 26, 12, 34, 6, 430, DateTimeKind.Utc).AddTicks(9100)
                         });
                 });
 
@@ -470,9 +471,6 @@ namespace CollectIt.MVC.View.Migrations
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
                     b.ToTable("Musics");
                 });
 
@@ -482,9 +480,6 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.Property<TimeSpan>("Duration")
                         .HasColumnType("interval");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
 
                     b.ToTable("Videos");
                 });
@@ -544,7 +539,7 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.HasOne("CollectIt.Database.Entities.Resources.Resource", "Target")
                         .WithMany()
-                        .HasForeignKey("TargetResourceId")
+                        .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -555,13 +550,13 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("CollectIt.Database.Entities.Resources.Resource", b =>
                 {
-                    b.HasOne("CollectIt.Database.Entities.Account.User", "ResourceOwner")
+                    b.HasOne("CollectIt.Database.Entities.Account.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("ResourceOwnerId")
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ResourceOwner");
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -619,7 +614,7 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
                         .WithOne()
-                        .HasForeignKey("CollectIt.Database.Entities.Resources.Image", "ResourceId")
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Image", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -628,7 +623,7 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
                         .WithOne()
-                        .HasForeignKey("CollectIt.Database.Entities.Resources.Music", "ResourceId")
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Music", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -637,7 +632,7 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasOne("CollectIt.Database.Entities.Resources.Resource", null)
                         .WithOne()
-                        .HasForeignKey("CollectIt.Database.Entities.Resources.Video", "ResourceId")
+                        .HasForeignKey("CollectIt.Database.Entities.Resources.Video", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

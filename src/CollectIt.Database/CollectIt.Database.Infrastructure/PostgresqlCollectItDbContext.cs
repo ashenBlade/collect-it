@@ -104,10 +104,10 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             .HasData(new Image
             {
                 Id = 1,
-                ResourceId = 1,
-                ResourcePath = "/imagesFromDb/avaSig.jpg",
-                ResourceOwnerId = GetDefaultUser().Id,
-                UploadDate = DateTime.UtcNow
+                Path = "/imagesFromDb/avaSig.jpg",
+                OwnerId = GetDefaultUser().Id,
+                UploadDate = DateTime.UtcNow,
+                Name = "Первое изображение"
             });
     }
 }
