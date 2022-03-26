@@ -1,4 +1,5 @@
-﻿using CollectIt.Database.Abstractions.Resources;
+﻿using System.ComponentModel.DataAnnotations;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
@@ -21,9 +22,10 @@ public class ImagesController : Controller
 
     [HttpGet]
     [Route("")]
-    public async Task<IActionResult> GetImagesByName(string query)
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")][Required]string query)
     {
         var images = new List<Image>();
+        Console.WriteLine($"Query: {query}");
         await foreach (var image in _imageRepository.GetAllByName(query))
         {
             images.Add(image);

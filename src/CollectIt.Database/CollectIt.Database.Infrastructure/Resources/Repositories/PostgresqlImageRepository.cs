@@ -43,8 +43,10 @@ public class PostgresqlImageRepository : IImageRepository
 
     public IAsyncEnumerable<Image> GetAllByName(string name)
     {
-        return _context.Images
-                       .Where(img => EF.Functions.Like(img.Name, name))
+        var query = _context.Images
+                            .Where(img => img.Name.Contains(name));
+        Console.WriteLine( query.Expression.ToString() );
+        return query
                        .AsAsyncEnumerable();
     }
 
