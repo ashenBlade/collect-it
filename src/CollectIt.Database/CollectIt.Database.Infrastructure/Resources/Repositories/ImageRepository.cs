@@ -43,4 +43,9 @@ public class ImageRepository : IImageRepository
         await resourceRepository.RemoveAsync(resource);
         await context.SaveChangesAsync();
     }
+
+    public IAsyncEnumerable<Image> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }

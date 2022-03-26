@@ -39,4 +39,9 @@ public class MusicRepository : IMusicRepository
         await resourceRepository.RemoveAsync(resource);
         await context.SaveChangesAsync();
     }
+
+    public IAsyncEnumerable<Music> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }
