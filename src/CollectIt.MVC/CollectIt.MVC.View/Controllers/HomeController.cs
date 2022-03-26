@@ -39,12 +39,10 @@ public class HomeController : Controller
         return View(model);
     }
     
-    [HttpGet]
-    [Route("privacy")]
-    public IActionResult Privacy()
+  /*  public IActionResult Resource()
     {
         return View();
-    }
+    }*/
 
     [HttpGet]
     [Route("images")]

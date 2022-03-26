@@ -24,10 +24,12 @@ public class ImageRepository : IImageRepository
         return item.ImageId;
     }
 
-    public async Task<Image> FindByIdAsync(int id)
+    public async Task<Image?> FindByIdAsync(int id)
     {
-        // Better SingleOrDefaultAsync
-        return await context.Images.Where(img => img.ImageId == id).FirstOrDefaultAsync();
+        return await context.Images
+            .Include(img => img.Resource)
+            .ThenInclude(res => res.ResourceOwner)
+            .Where(img => img.ImageId == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Image item)

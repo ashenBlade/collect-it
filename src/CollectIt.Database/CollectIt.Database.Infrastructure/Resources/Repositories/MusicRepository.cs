@@ -25,7 +25,7 @@ public class MusicRepository : IMusicRepository
 
     public async Task<Music> FindByIdAsync(int id)
     {
-        return await context.Musics.Where(music => music.MusicId == id).FirstOrDefaultAsync();
+        return await context.Musics.Where(music => music.MusicId == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Music item)

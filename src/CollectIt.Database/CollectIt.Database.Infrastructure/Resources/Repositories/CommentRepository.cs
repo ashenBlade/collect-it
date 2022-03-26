@@ -23,7 +23,7 @@ public class CommentRepository : ICommentRepository
     public async Task<Comment> FindByIdAsync(int id)
     {
         // Better SingleOrDefaultAsync
-        return await context.Comments.Where(com => com.CommentId == id).FirstOrDefaultAsync();
+        return await context.Comments.Where(com => com.CommentId == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Comment item)
