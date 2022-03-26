@@ -1,6 +1,6 @@
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.Entities.Account;
 
-public class Subscription
+public class AccountUserSubscription
 {
     public DateTime From { get; set; }
     public DateTime To { get; set; }

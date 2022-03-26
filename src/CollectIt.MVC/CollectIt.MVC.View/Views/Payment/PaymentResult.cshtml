@@ -1,0 +1,26 @@
+@model PaymentResultViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Результат операции</title>
+</head>
+<body>
+<div>
+    @if (Model.Success)
+    {
+        <div>Поздравляем с оформлением подписки</div>
+    }
+    else
+    {
+        <div>Подписка не оформлена</div>
+        <div>Причина: @Model.ErrorMessage</div>
+    }
+</div>
+</body>
+</html>

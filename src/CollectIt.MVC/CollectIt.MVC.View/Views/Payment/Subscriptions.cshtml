@@ -1,0 +1,9 @@
+﻿@using CollectIt.MVC.View.Views.Shared.Components.SubscriptionCards
+@addTagHelper *, CollectIt.MVC.View
+@model SubscriptionsViewModel
+@{
+    Layout = "_SubscriptionsLayout";
+    ViewData["Title"] = "Подписки";
+}
+
+<vc:subscription-cards model="@(new SubscriptionCardsViewModel() {Subscriptions = Model.Subscriptions})"/>

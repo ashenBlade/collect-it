@@ -39,9 +39,9 @@
         </div>
         <div class="tab-pane fade" id="subscribes" role="tabpanel">
             <div class="p-4">
-                @await Html.PartialAsync("Subscribtions", new SubscriptionsViewModel()
+                @await Html.PartialAsync("Subscribtions", new AccountSubscriptionsViewModel()
                                                           {
-                                                              Subscriptions = Model.Subscriptions
+                                                              Subscriptions = Model.Subscriptions.ToArray()
                                                           })
             </div>
         </div>
