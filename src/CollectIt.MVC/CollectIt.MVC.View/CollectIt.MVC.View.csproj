@@ -34,15 +34,16 @@
       <Content Update="Views\Account\Subscribtions.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
-      <Content Update="Views\Home\_ResourcesLayout.cshtml">
-        <DependentUpon>ResourcesPage.cshtml</DependentUpon>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Pages\Payment.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCard\Default.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\Images\_ResourcesLayout.cshtml" />
     </ItemGroup>
 
 </Project>

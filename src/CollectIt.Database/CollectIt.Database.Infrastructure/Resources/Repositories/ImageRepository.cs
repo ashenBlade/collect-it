@@ -1,8 +1,6 @@
 ﻿using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
@@ -18,10 +16,11 @@ public class ImageRepository : IImageRepository
     }
     
 
-    public async Task<int> AddAsync(Image item)
+    public async Task<int> AddAsync(Image item, Resource resource)
     {
         await context.Images.AddAsync(item);
         await context.SaveChangesAsync();
+        await resourceRepository.AddAsync(resource);
         return item.ImageId;
     }
 
@@ -38,17 +37,15 @@ public class ImageRepository : IImageRepository
         throw new NotImplementedException();
     }
 
-    public async Task RemoveAsync(Image item)
+    public async Task RemoveAsync(Image item, Resource resource)
     {
         context.Images.Remove(item);
+        await resourceRepository.RemoveAsync(resource);
         await context.SaveChangesAsync();
     }
-    
-    public async void DownloadImage(IFormFile uploadedFile, string path)
+
+    public IAsyncEnumerable<Image> GetAllByName(string name)
     {
-        await using (var fileStream = new FileStream(path, FileMode.Create))
-        {
-            await uploadedFile.CopyToAsync(fileStream);
-        }
+        throw new NotImplementedException();
     }
 }

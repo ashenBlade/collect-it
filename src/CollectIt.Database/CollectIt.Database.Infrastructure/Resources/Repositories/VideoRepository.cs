@@ -39,4 +39,9 @@ public class VideoRepository /*: IVideoRepository*/
         await context.SaveChangesAsync();
         await resourceRepository.RemoveAsync(resource);
     }
+
+    public IAsyncEnumerable<Video> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
+    }
 }

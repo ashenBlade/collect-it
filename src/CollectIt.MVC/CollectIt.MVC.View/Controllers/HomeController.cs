@@ -9,6 +9,7 @@ using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
 namespace CollectIt.MVC.View.Controllers;
 
 [Route("")]
+[Controller]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -25,45 +26,43 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
-
     [HttpPost]
     [Route("")]
     [IgnoreAntiforgeryToken]
     public IActionResult Index(IndexViewModel model)
     {
-        if (ModelState.IsValid && 
-            model.ResourceType == ResourceType.Image)
+        if (model.ResourceType == ResourceType.Image)
         {
-            return View("ResourcesPage", GetImageCardsViewModel(4));
+            return RedirectToAction("GetImagesByName", "Images", new {q = model.Query});
         }
-        
+
+        model.Query = "Данный тип пока не поддерживается";
         return View(model);
     }
     
-  /*  public IActionResult Resource()
-    {
-        return View();
-    }*/
+
+    // [HttpGet]
+    // [Route("images")]
+    // public IActionResult Images(ImageCardsViewModel model)
+    // {
+    //     return View("ResourcesPage", model);
+    // }
+    
+    // [HttpGet]
+    // [Route("images/{imageId:int}")]
+    // public IActionResult Image(int imageId)
+    // {
+    //     return View("Image", new Image()
+    //                          {
+    //                              ImageId = imageId
+    //                          });
+    // }
 
     [HttpGet]
-    [Route("images")]
-    public IActionResult Images(ImageCardsViewModel model)
+    [Route("privacy")]
+    public IActionResult Privacy()
     {
-        return View("ResourcesPage", model);
-    }
-    
-    [HttpGet]
-    [Route("images/{imageId:int}")]
-    public IActionResult Image(int imageId)
-    {
-        return View("Image", new Image()
-                             {
-                                 ImageId = imageId
-                             });
+        return View();
     }
     
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -72,13 +71,13 @@ public class HomeController : Controller
         return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
     }
 
-    [HttpGet]
-    [Route("images")]
-    public IActionResult FindImagesByName([FromQuery(Name = "q")]string pattern)
-    {
-        var viewModel = GetImageCardsViewModel();
-        return View("ResourcesPage", viewModel);
-    }
+    // [HttpGet]
+    // [Route("images")]
+    // public IActionResult FindImagesByName([FromQuery(Name = "q")]string pattern)
+    // {
+    //     var viewModel = GetImageCardsViewModel();
+    //     return View("ResourcesPage", viewModel);
+    // }
 
     private static ImageCardsViewModel GetImageCardsViewModel(int amount = 10)
     {

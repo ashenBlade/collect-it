@@ -1,8 +1,8 @@
 ﻿@model CollectIt.Database.Entities.Resources.Image
 
 <div class="size-1 preview rounded-4 p-0 me-2 mb-2">
-    <a asp-area="" asp-controller="Home" asp-action="Image" asp-route-imageId="@Model.ImageId">
-        <img src="/img/4a5b6801-9341-48cf-9b1d-f7c377933422_aaaa.jpg" class="img-fluid rounded-4" alt=""/>
+    <a asp-area="" asp-controller="Images" asp-action="Image" asp-route-id="@Model.ImageId">
+        <img src="@Model.Resource.ResourcePath" class="img-fluid rounded-4" alt=""/>
     </a>
     <div class="toolbar blur-dark row m-0 p-1 flex-row-reverse">
         <div class="s-a p-0 mb-1">
