@@ -8,4 +8,5 @@ public interface IDerivedResourceRepository<TItem, TId>
     Task<TItem> FindByIdAsync(TId id);
     Task UpdateAsync(TItem item);
     Task RemoveAsync(TItem item, Resource resource);
+    IAsyncEnumerable<TItem> GetAllByName(string name);
 }

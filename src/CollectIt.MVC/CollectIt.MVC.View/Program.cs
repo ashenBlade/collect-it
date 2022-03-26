@@ -1,9 +1,11 @@
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Account.Repositories;
+using CollectIt.MVC.View.Mocks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,7 @@ builder.Services.AddDbContext<PostgresqlCollectItDbContext>(options =>
                           config.UseNodaTime();
                       });
 });
+
 builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
@@ -61,6 +64,12 @@ builder.Services.AddIdentity<User, Role>(config =>
        .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
        .AddUserManager<UserManager>()
        .AddDefaultTokenProviders();
+
+if (builder.Environment.IsDevelopment())
+{
+   // builder.Services.AddSingleton<IImageRepository, InMemoryImageRepository>();
+    builder.Services.AddSingleton<IResourceRepository, InMemoryResourceRepository>();
+}
 
 var app = builder.Build();
 

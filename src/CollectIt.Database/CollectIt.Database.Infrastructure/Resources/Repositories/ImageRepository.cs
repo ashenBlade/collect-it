@@ -21,13 +21,14 @@ public class ImageRepository : IImageRepository
         await context.Images.AddAsync(item);
         await context.SaveChangesAsync();
         await resourceRepository.AddAsync(resource);
-        return item.ImageId;
+        return item.Id;
     }
 
-    public async Task<Image> FindByIdAsync(int id)
+    public async Task<Image?> FindByIdAsync(int id)
     {
-        // Better SingleOrDefaultAsync
-        return await context.Images.Where(img => img.ImageId == id).FirstOrDefaultAsync();
+        return await context.Images
+            .Where(img => img.Id == id)
+            .SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Image item)
@@ -40,5 +41,10 @@ public class ImageRepository : IImageRepository
         context.Images.Remove(item);
         await resourceRepository.RemoveAsync(resource);
         await context.SaveChangesAsync();
+    }
+
+    public IAsyncEnumerable<Image> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
     }
 }
