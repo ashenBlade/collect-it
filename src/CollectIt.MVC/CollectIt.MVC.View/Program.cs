@@ -6,7 +6,6 @@ using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Account.Repositories;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
-using CollectIt.MVC.View.Mocks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

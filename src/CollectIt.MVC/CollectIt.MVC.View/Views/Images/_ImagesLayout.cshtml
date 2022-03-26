@@ -1,6 +1,7 @@
 ﻿@using CollectIt.Database.Entities.Account
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,30 +12,28 @@
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
-<body>
+<body class="h-100">
 
-    <header id="header" class="reveal alt">
-        @await Html.PartialAsync("_Navbar")
-    </header>
+<header id="header">
+    @await Html.PartialAsync("_Navbar")
+</header>
 
-    <section id="banner">
-        <form asp-action="GetImagesByName" method="get" class="input-group rounded-pill m-w-1 ms-6 me-6">
-            <select class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
-                <option selected="selected" value="@((int) ResourceType.Image)">Изображения</option>
-            </select>
-            <input name="q" type="text" class="form-control rounded-start-0 rounded-end-0"/>
-            <button class="btn btn-light w-0 border rounded-end-1 rounded-start-0">Найти</button>
-        </form>
-    </section>
+<section id="banner">
+    <form asp-action="GetImagesByName" method="get" class="input-group rounded-pill m-w-1 ms-6 me-6">
+        <select class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
+            <option selected="selected" value="@((int) ResourceType.Image)">Изображения</option>
+        </select>
+        <input name="q" type="text" class="form-control rounded-start-0 rounded-end-0"/>
+        <button class="btn btn-light w-0 border rounded-end-1 rounded-start-0">Найти</button>
+    </form>
+</section>
 
-
-    <section id="ind" class="test-3">
-        <main role="main" class="pb-3 main">
-            <div class="test-4 rounded shadow">
-                @RenderBody()
-            </div>
-        </main>
-    </section>
+<main role="main" class="h-100 pb-3 main d-flex justify-content-center">
+    <div class="rounded shadow mx-6">
+        @RenderBody()
+    </div>
+</main>
+    
 
 <footer class="border-top footer text-muted">
     <div class="container">

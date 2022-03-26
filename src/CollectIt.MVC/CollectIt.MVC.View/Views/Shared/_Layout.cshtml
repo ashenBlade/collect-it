@@ -11,15 +11,20 @@
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
 <body id="banner">
-
-<header id="header" class="reveal alt mb-6">
+<header id="header" class="bg-light px-1">
     @await Html.PartialAsync("_Navbar")
 </header>
 
 
-@RenderBody()
+<main role="main" class="container">
+    @RenderBody()
+</main>
 
-
+<footer class="footer fixed-bottom bg-light text-muted border-top">
+    <div class="container py-3 text-start">
+        &copy; 2022 - CollectIt - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+    </div>
+</footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

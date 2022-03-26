@@ -43,7 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Views\Images\_ResourcesLayout.cshtml" />
+      <AdditionalFiles Include="Views\Images\_ImagesLayout.cshtml" />
     </ItemGroup>
 
 </Project>

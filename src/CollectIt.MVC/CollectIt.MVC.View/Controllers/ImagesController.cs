@@ -25,13 +25,12 @@ public class ImagesController : Controller
     public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")][Required]string query)
     {
         var images = new List<Image>();
-        Console.WriteLine($"Query: {query}");
         await foreach (var image in _imageRepository.GetAllByName(query))
         {
             images.Add(image);
         }
 
-        return View("ImagesPage", new ImageCardsViewModel() {Images = images});
+        return View("Images", new ImageCardsViewModel() {Images = images});
     }
 
     [HttpGet]

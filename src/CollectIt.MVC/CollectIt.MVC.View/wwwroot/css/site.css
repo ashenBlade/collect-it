@@ -1,8 +1,8 @@
-html {
-  font-size: 14px;
-  position: relative;
-  min-height: 100%;
-}
+/*html {*/
+/*  font-size: 14px;*/
+/*  position: relative;*/
+/*  min-height: 100%;*/
+/*}*/
 
 @media (min-width: 768px) {
   html {
@@ -13,9 +13,9 @@ html {
   }
 }
 
-body {
-  margin-bottom: 60px;
-}
+/*body {*/
+/*  margin-bottom: 60px;*/
+/*}*/
 
 .registration{
   margin-top: 140px;
@@ -131,9 +131,9 @@ body {
   font-size: 25px;
 }
 
-ul{
-  list-style: none;
-}
+/*ul{*/
+/*  list-style: none;*/
+/*}*/
 
 .mw{
   max-width: 100px;

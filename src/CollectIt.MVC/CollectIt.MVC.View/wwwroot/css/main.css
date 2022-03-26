@@ -46,7 +46,7 @@
 	height: 500px;
 	width: 20%;
 	float:left;
-	background:#e28964;
+	/*background:#e28964;*/
 	background: rgb(248, 246, 246);
     border-color: #444;
     border-radius: 1%;
@@ -202,14 +202,14 @@
     height: 200px;
 }
 
-section{
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
+/*section{*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    border: 0;*/
+/*    font-size: 100%;*/
+/*    font: inherit;*/
+/*    vertical-align: baseline;*/
+/*}*/
 
 #banner {
     background-attachment: scroll, fixed;
@@ -221,6 +221,7 @@ section{
     color: #fff;
     padding: 12em 0 20em 0;
     text-align: center;
+    height: 100%;
 }
 
 #ind {
