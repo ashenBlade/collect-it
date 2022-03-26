@@ -20,12 +20,12 @@ public class VideoRepository /*: IVideoRepository*/
         await context.Videos.AddAsync(item);
         await context.SaveChangesAsync();
         await resourceRepository.AddAsync(resource);
-        return item.VideoId;
+        return item.Id;
     }
 
     public async Task<Video> FindByIdAsync(int id)
     {
-        return await context.Videos.Where(video => video.VideoId == id).SingleOrDefaultAsync();
+        return await context.Videos.Where(video => video.Id == id).SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Video item)

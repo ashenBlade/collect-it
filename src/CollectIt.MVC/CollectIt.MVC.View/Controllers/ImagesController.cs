@@ -46,9 +46,9 @@ public class ImagesController : Controller
             return View("Error");
         var imgModel = new ImageViewModel()
         {
-            Owner = source.Resource.ResourceOwner,
-            UploadDate = source.Resource.UploadDate,
-            Path = source.Resource.ResourcePath
+            Owner = source.ResourceOwner,
+            UploadDate = source.UploadDate,
+            Path = source.ResourcePath
         };
         return View(imgModel);
     }

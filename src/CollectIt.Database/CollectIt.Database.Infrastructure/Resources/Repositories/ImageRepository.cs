@@ -21,15 +21,14 @@ public class ImageRepository : IImageRepository
         await context.Images.AddAsync(item);
         await context.SaveChangesAsync();
         await resourceRepository.AddAsync(resource);
-        return item.ImageId;
+        return item.Id;
     }
 
     public async Task<Image?> FindByIdAsync(int id)
     {
         return await context.Images
-            .Include(img => img.Resource)
-            .ThenInclude(res => res.ResourceOwner)
-            .Where(img => img.ImageId == id).SingleOrDefaultAsync();
+            .Where(img => img.Id == id)
+            .SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Image item)

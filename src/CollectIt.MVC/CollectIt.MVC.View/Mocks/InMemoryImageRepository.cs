@@ -1,4 +1,4 @@
-using CollectIt.Database.Abstractions.Resources;
+/*using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
 
@@ -25,21 +25,21 @@ public class InMemoryImageRepository : IImageRepository
                                                              Id = 1
                                                          }
                                      },
-                          ImageId = 1
+                          Id = 1
                       }
                   };
     }
     public Task<int> AddAsync(Image item, Resource resource)
     {
         item.Resource = resource;
-        item.ImageId = _images.Count;
+        item.Id = _images.Count;
         _images.Add(item);
-        return Task.FromResult(item.ImageId);
+        return Task.FromResult(item.Id);
     }
 
     public Task<Image?> FindByIdAsync(int id)
     {
-        return Task.FromResult( _images.FirstOrDefault(i => i.ImageId == id) );
+        return Task.FromResult( _images.FirstOrDefault(i => i.Id == id) );
     }
 
     public Task UpdateAsync(Image item)
@@ -60,4 +60,4 @@ public class InMemoryImageRepository : IImageRepository
             yield return image;
         }
     }
-}
+}*/
