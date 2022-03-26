@@ -1,7 +1,7 @@
 @model PaymentPageViewModel
 
 @{
-    Layout = null;
+    Layout = "_PaymentLayout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -23,6 +23,7 @@
                 <input name="declined" value="false" type="hidden"/>
                 <button type="submit" class="btn btn-success">Да</button>
             </form>
+            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
             <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
                 <input name="declined" value="true" type="hidden" readonly="readonly"/>
                 <button type="submit" class="btn btn-danger">Нет</button>
