@@ -1,17 +1,25 @@
 ﻿@model CollectIt.MVC.View.Views.Shared.Components.ImageCards.ImageCardsViewModel
 @{
     Layout = "_Layout";
+    ViewData["Title"] = "Изображения";
 }
 
-<vc:image-cards images="@Model.Images"/>
+<div class="container">
+    <div class="w-100">
+        <vc:search-bar/>
+    </div>
+    <div class="w-100 bg-light rounded">
 
-<!-- Будущая пагинация -->
-<div class="d-flex justify-content-center">
-    <ul class="pagination">
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item"><a class="page-link" href="#">2</a></li>
-        <li class="page-item"><a class="page-link" href="#">3</a></li>
-        <li class="page-item"><a class="page-link" href="#">4</a></li>
-        <li class="page-item"><a class="page-link" href="#">></a></li>
-    </ul>
-</div>
+        <vc:image-cards images="@Model.Images"/>
+
+        <!-- Будущая пагинация -->
+        <div class="d-flex justify-content-center">
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">></a></li>
+            </ul>
+        </div>
+    </div></div>
