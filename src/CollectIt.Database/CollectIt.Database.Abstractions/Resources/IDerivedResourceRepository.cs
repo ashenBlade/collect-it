@@ -4,8 +4,8 @@ namespace CollectIt.Database.Abstractions.Resources;
 
 public interface IDerivedResourceRepository<TItem, TId>
 {
-    Task<TId> AddAsync(TItem item, Resource resource);
+    Task<TId> AddAsync(TItem item);
     Task<TItem> FindByIdAsync(TId id);
     Task UpdateAsync(TItem item);
-    Task RemoveAsync(TItem item, Resource resource);
+    Task RemoveAsync(TItem item);
 }

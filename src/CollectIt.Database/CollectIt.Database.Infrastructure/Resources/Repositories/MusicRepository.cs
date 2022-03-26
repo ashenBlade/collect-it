@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class MusicRepository : IMusicRepository
+public class MusicRepository /*: IMusicRepository*/
 {
     private readonly PostgresqlCollectItDbContext context;
     private readonly ResourceRepository resourceRepository;

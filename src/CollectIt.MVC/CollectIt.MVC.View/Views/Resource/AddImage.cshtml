@@ -1,0 +1,26 @@
+﻿@model ImageViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+</head>
+<body>
+<form asp-antiforgery="true" enctype="multipart/form-data" class="text-center bg-light" action="" method="POST">
+    
+    <div class="mb-4">
+        <label class="h5">Загрузите аватар события</label><br/>
+        <input type="file" name="uploadedFile" accept="image/*">
+    </div>
+    <div class="mb-3 mt-5">
+        <input type="submit" value="Добавить" class="btn btn-success">
+    </div>
+</form>
+
+</body>
+</html>

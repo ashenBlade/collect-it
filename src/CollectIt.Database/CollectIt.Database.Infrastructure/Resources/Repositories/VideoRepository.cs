@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class VideoRepository : IVideoRepository
+public class VideoRepository /*: IVideoRepository*/
 {
     private readonly PostgresqlCollectItDbContext context;
     private readonly ResourceRepository resourceRepository;
