@@ -78,9 +78,4 @@ public class HomeController : Controller
     //     var viewModel = GetImageCardsViewModel();
     //     return View("ResourcesPage", viewModel);
     // }
-
-    private static ImageCardsViewModel GetImageCardsViewModel(int amount = 10)
-    {
-        return new ImageCardsViewModel() { Images = Enumerable.Repeat(new Image { ImageId = 1, Resource = new Resource() { ResourceId = 1, ResourcePath = "img/4a5b6801-9341-48cf-9b1d-f7c377933422_aaaa.jpg", UploadDate = DateTime.Today } }, amount).ToArray() };
-    }
 }

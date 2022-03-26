@@ -67,7 +67,7 @@ builder.Services.AddIdentity<User, Role>(config =>
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddSingleton<IImageRepository, InMemoryImageRepository>();
+   // builder.Services.AddSingleton<IImageRepository, InMemoryImageRepository>();
     builder.Services.AddSingleton<IResourceRepository, InMemoryResourceRepository>();
 }
 

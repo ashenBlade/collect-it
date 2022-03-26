@@ -14,8 +14,6 @@ public class ImagesController : Controller
     private readonly IImageRepository _imageRepository;
 
     private readonly IResourceRepository _resourceRepository;
-    // private readonly ImageRepository _imageRepository;
-    // private readonly ResourceRepository _resourceRepository;
 
     public ImagesController(IImageRepository imageRepository, 
                             IResourceRepository resourceRepository)
@@ -48,9 +46,9 @@ public class ImagesController : Controller
             return View("Error");
         var imgModel = new ImageViewModel()
         {
-            Owner = source.Resource.ResourceOwner,
-            UploadDate = source.Resource.UploadDate,
-            Path = source.Resource.ResourcePath
+            Owner = source.ResourceOwner,
+            UploadDate = source.UploadDate,
+            Path = source.ResourcePath
         };
         return View(imgModel);
     }
