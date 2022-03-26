@@ -1,7 +1,11 @@
-﻿@{
+﻿@using CollectIt.Database.Entities.Account
+@model IndexViewModel
+@{
     ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
 
+@*
 <div class="size-1 preview rounded-4">
     <a asp-area="" asp-controller="Resource" asp-action="Image"><img src="img/4a5b6801-9341-48cf-9b1d-f7c377933422_aaaa.jpg" class="img-fluid rounded-4" alt=""/></a>
     <div class="toolbar blur-dark row m-0 p-1 flex-row-reverse">
@@ -16,3 +20,14 @@
         </div>
     </div>
 </div>
+*@
+<form asp-controller="Home" method="post" asp-antiforgery="false" asp-action="Index" class="input-group rounded-pill m-w-1 ms-6 me-6 mt-6">
+    <select asp-for="ResourceType" class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2">
+        <option value="@((int)ResourceType.Image)" selected="selected">Изображения</option>
+        <option value="@((int)ResourceType.Video)">Видео</option>
+        <option value="@((int)ResourceType.Music)">Музыка</option>
+    </select>
+    <input asp-for="Query" type="text" placeholder="Введите название изображения" class="form-control rounded-start-0 rounded-end-0"/>
+    <button type="submit" class="btn btn-light w-1 border rounded-end-1 rounded-start-0">Найти</button>
+</form>
+

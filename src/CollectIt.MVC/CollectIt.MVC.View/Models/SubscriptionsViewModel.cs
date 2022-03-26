@@ -1,6 +1,8 @@
+using CollectIt.Database.Entities.Account;
+
 namespace CollectIt.MVC.View.Models;
 
 public class SubscriptionsViewModel
 {
-    public IEnumerable<Subscription> Subscriptions { get; set; }
+    public IReadOnlyList<Subscription> Subscriptions { get; set; }
 }

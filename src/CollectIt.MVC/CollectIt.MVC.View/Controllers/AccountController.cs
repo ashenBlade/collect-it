@@ -1,13 +1,14 @@
 ﻿using System.Security.Claims;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.MVC.Entities.Account;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Subscription = CollectIt.MVC.View.Models.Subscription;
+using NodaTime;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -34,10 +35,10 @@ public class AccountController : Controller
     public async Task<IActionResult> Profile()
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var subscriptions = new List<Subscription>();
+        var subscriptions = new List<AccountUserSubscription>();
         await foreach (var subscription in _userManager.GetSubscriptionsForUserByIdAsync(userId))
         {
-            subscriptions.Add(new Subscription()
+            subscriptions.Add(new AccountUserSubscription()
                               {
                                   From = subscription.During.Start.ToDateTimeUnspecified(),
                                   To = subscription.During.End.ToDateTimeUnspecified(),

@@ -1,0 +1,8 @@
+﻿@model CollectIt.MVC.View.Views.Shared.Components.ImageCards.ImageCardsViewModel
+
+<div class="row m-0 p-0 mb-2">
+    @foreach (var image in Model.Images)
+    {
+        <vc:image-card image="@image"/>  
+    }
+</div>

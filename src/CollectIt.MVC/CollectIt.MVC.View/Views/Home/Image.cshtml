@@ -1,0 +1,84 @@
+﻿@model CollectIt.Database.Entities.Resources.Image
+
+@{
+    ViewData["Title"] = "Image";
+    Layout = "_Layout";
+}
+
+<div class="w-75 justify-content-center">
+    <div class="bg-white shadow p-3 rounded">
+        <div class="res-prev rounded-top pb-2 mb-2">
+            <div class="row mb-3">
+                <div class="s-1">
+                    <div class="d-flex m-0 mb-2">
+                        <div class="me-2">
+                            <button class="border-0 rounded-pill"><i class="fa-regular fa-heart"></i> Сохранить</button>
+                        </div>
+                        <div class="me-2">
+                            <button class="border-0 rounded-pill"><i class="fa-regular fa-share-from-square"></i> Поделиться</button>
+                        </div>
+                        <div>
+                            <button class="border-0 rounded-pill red">Загрузить бесплатно</button>
+                        </div>
+                    </div>
+                    <div>
+                        <img src="img/4a5b6801-9341-48cf-9b1d-f7c377933422_aaaa.jpg" class="img-fluid m-a d-block" style="max-height: 350px" alt=""/>
+                    </div>
+                </div>
+                <div class="row m-0 p-0" style="max-width: 40%">
+                    <div class="me-2 p-0" style="max-width: 48.79%">
+                        <div class="mb-2">
+                            <img src="img/joke.jpg" class="img-fluid rounded" alt=""/>
+                        </div>
+                        <div>
+                            <img src="img/joke.jpg" class="img-fluid rounded" alt=""/>
+                        </div>
+                    </div>
+                    <div class="p-0" style="max-width: 48.79%">
+                        <div class="mb-2">
+                            <img src="img/joke.jpg" class="img-fluid rounded" alt=""/>
+                        </div>
+                        <div class="s-a">
+                            <button class="more border-0 blur-dark rounded" style="width: 100%; height: 168.2px;">Больше</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rounded border blur-light p-2 row">
+            <div class="border-end" style="width: 30%">
+                <h6>Код элемента: id</h6>
+                Discription
+            </div>
+            <div class="border-end" style="width: 30%">
+                <h6>Форматы</h6>
+                <div class="d-flex mb-2">
+                    <div class="blur-dark p-1 ps-2 pe-2 rounded me-2">SVG</div>
+                    <div class="blur-dark p-1 ps-2 pe-2 rounded">JPG</div>
+                </div>
+                <div class="d-flex">
+                    <div class="blur-dark p-1 ps-2 pe-2 rounded me-2">x*y</div>
+                    <div class="blur-dark p-1 ps-2 pe-2 rounded">x*y</div>
+                </div>
+            </div>
+            <div class="" style="width: 30%">
+                <h6>Автор</h6>
+                <img src="img/joke.jpg" class="img-fluid photo photo-s-3" alt=""/> Логин
+            </div>
+        </div>
+
+        <div class="p-2 row">
+            <div class="rounded-pill blur-dark wh-0 m-w-2 me-2" style="width: 30%">
+                tag
+            </div>
+            <div class="rounded-pill blur-dark wh-0 m-w-2 me-2" style="width: 30%">
+                tag
+            </div>
+            <div class="rounded-pill blur-dark wh-0 m-w-2 me-2" style="width: 30%">
+                tag
+            </div>
+            <div class="rounded-pill blur-dark wh-0 m-w-2" style="width: 30%">
+                tag
+            </div>
+        </div></div></div>
