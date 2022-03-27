@@ -25,7 +25,7 @@ public class ImagesController : Controller
     public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")][Required]string query)
     {
         var images = new List<Image>();
-        await foreach (var image in _imageRepository.GetAllByName(query))
+        await foreach (var image in _imageRepository.GetAllByQuery(query))
         {
             images.Add(image);
         }
