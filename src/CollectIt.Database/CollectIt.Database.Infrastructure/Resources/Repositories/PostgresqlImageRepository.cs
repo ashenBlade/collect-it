@@ -44,10 +44,8 @@ public class PostgresqlImageRepository : IImageRepository
 
     public IAsyncEnumerable<Image> GetAllByName(string name)
     {
-        // TODO: update comparison logic using full-text search
         return _context.Images
-                       .Where(img => EF.Functions.ToTsVector(img.Name)
-                                       .Matches(EF.Functions.ToTsQuery(name)))
+                       .Where(img => img.NameSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", name)))
                        .Include(img => img.Owner)
                        .AsAsyncEnumerable();
     }
@@ -55,5 +53,13 @@ public class PostgresqlImageRepository : IImageRepository
     public IAsyncEnumerable<Image> GetAllByTag(string tag)
     {
         throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<Image> GetAllByQuery(string query)
+    {
+        return _context.Images
+                       .Where(img => img.NameSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                       .Include(img => img.Owner)
+                       .AsAsyncEnumerable();
     }
 }

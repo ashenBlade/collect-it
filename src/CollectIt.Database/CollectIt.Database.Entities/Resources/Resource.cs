@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CollectIt.Database.Entities.Account;
+using NpgsqlTypes;
 
 namespace CollectIt.Database.Entities.Resources;
 
@@ -21,6 +22,9 @@ public class Resource
 
     [Required]
     public string Name { get; set; }
+
+    
+    public NpgsqlTsVector NameSearchVector { get; set; }
     
     [Required]
     public DateTime UploadDate { get; set; }

@@ -100,13 +100,20 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
     private void OnModelCreatingResources(ModelBuilder builder)
     {
+        builder.Entity<Resource>()
+               .HasGeneratedTsVectorColumn(r => r.NameSearchVector,
+                                           "russian",
+                                           r => new { r.Name })
+               .HasIndex(r => r.NameSearchVector)
+               .HasMethod("GIN");
+        
         builder.Entity<Image>()
             .HasData(new Image
             {
                 Id = 1,
                 Path = "/imagesFromDb/avaSig.jpg",
                 OwnerId = GetDefaultUser().Id,
-                UploadDate = DateTime.UtcNow,
+                UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                 Name = "Первое изображение"
             });
     }
