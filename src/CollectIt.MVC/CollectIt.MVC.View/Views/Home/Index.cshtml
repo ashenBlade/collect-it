@@ -5,14 +5,8 @@
     Layout = "_Layout";
 }
 
-<vc:search-bar />
-@* <form asp-controller="Home" method="post" asp-antiforgery="false" asp-action="Index" class="input-group rounded-pill m-w-1 ms-6 me-6 mt-6"> *@
-@*     <select asp-for="ResourceType" class="btn btn-light w-1 rounded-start-1 rounded-end-0 p-2"> *@
-@*         <option value="@((int)ResourceType.Image)" selected="selected">Изображения</option> *@
-@*         <option value="@((int)ResourceType.Video)">Видео</option> *@
-@*         <option value="@((int)ResourceType.Music)">Музыка</option> *@
-@*     </select> *@
-@*     <input asp-for="Query" type="text" placeholder="Введите название изображения" class="form-control rounded-start-0 rounded-end-0"/> *@
-@*     <button type="submit" class="btn btn-light w-1 border rounded-end-1 rounded-start-0">Найти</button> *@
-@* </form> *@
-
+<div class="h-100 d-flex justify-content-center align-items-center">
+    <div class="w-100">
+        <vc:search-bar/>
+    </div>
+</div>

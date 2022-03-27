@@ -187,6 +187,11 @@
     border-top-right-radius: 0;
 }
 
+.body {
+    display: grid;
+    grid-template-rows: min-content auto min-content;
+}
+
 .rounded-end-1{
     border-bottom-right-radius: 20px;
     border-top-right-radius: 20px;

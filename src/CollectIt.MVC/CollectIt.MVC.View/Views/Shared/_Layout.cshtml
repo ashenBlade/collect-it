@@ -1,6 +1,6 @@
 ﻿@using CollectIt.Database.Entities.Account
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,19 +11,20 @@
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 </head>
-<body id="banner">
+<body id="banner" class="h-100 body">
+
 <header class="bg-light px-1 py-2">
     @await Html.PartialAsync("_Navbar")
 </header>
 
 
 <main role="main" class="container">
-    <div class="mt-6">
+    <div class="p-3 h-100">
         @RenderBody()
     </div>
 </main>
 
-<footer class="footer fixed-bottom bg-light text-muted border-top">
+<footer class="footer bg-light text-muted border-top">
     <div class="container py-3 text-start">
         &copy; 2022 - CollectIt - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
