@@ -6,6 +6,7 @@ using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Account.Repositories;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
+using CollectIt.MVC.Infrastructure.Account;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,30 +43,31 @@ services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
 services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 services.AddIdentity<User, Role>(config =>
-                  {
-                      config.User = new UserOptions
-                                    {
-                                        RequireUniqueEmail = true,
-                                    };
-                      config.Password = new PasswordOptions
-                                        {
-                                            RequireDigit = true,
-                                            RequiredLength = 6,
-                                            RequireLowercase = false,
-                                            RequireUppercase = false,
-                                            RequiredUniqueChars = 1,
-                                            RequireNonAlphanumeric = false,
-                                        };
-                      config.SignIn = new SignInOptions
-                                      {
-                                          RequireConfirmedEmail = false,
-                                          RequireConfirmedAccount = false,
-                                          RequireConfirmedPhoneNumber = false,
-                                      };
-                  })
-                 .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
-                 .AddUserManager<UserManager>()
-                 .AddDefaultTokenProviders();
+         {
+             config.User = new UserOptions
+                           {
+                               RequireUniqueEmail = true,
+                           };
+             config.Password = new PasswordOptions
+                               {
+                                   RequireDigit = true,
+                                   RequiredLength = 6,
+                                   RequireLowercase = false,
+                                   RequireUppercase = false,
+                                   RequiredUniqueChars = 1,
+                                   RequireNonAlphanumeric = false,
+                               };
+             config.SignIn = new SignInOptions
+                             {
+                                 RequireConfirmedEmail = false,
+                                 RequireConfirmedAccount = false,
+                                 RequireConfirmedPhoneNumber = false,
+                             };
+         })
+        .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
+        .AddUserManager<UserManager>()
+        .AddDefaultTokenProviders()
+        .AddErrorDescriber<RussianIdentityErrorDescriber>();
 
 services.AddScoped<IImageRepository, PostgresqlImageRepository>();
 
@@ -86,7 +88,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+                       name: "default",
+                       pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

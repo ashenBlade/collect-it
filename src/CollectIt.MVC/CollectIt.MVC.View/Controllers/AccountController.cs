@@ -88,9 +88,12 @@ public class AccountController : Controller
             return RedirectToAction("Login");
         }
         _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
-        ModelState.AddModelError("", "Пользователь с такой почтой уже зарегистрирован");
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
         return View(model);
-        
+
     }
 
     [HttpPost]
