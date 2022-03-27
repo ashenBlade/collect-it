@@ -26,6 +26,7 @@ public class PostgresqlImageRepository : IImageRepository
     {
         return await _context.Images
             .Where(img => img.Id == id)
+                             .Include(img => img.Owner)
             .SingleOrDefaultAsync();
     }
 
@@ -47,6 +48,7 @@ public class PostgresqlImageRepository : IImageRepository
         return _context.Images
                        .Where(img => EF.Functions.ToTsVector(img.Name)
                                        .Matches(EF.Functions.ToTsQuery(name)))
+                       .Include(img => img.Owner)
                        .AsAsyncEnumerable();
     }
 

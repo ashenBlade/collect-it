@@ -46,7 +46,7 @@ public class ImagesController : Controller
                        {
                            Owner = source.Owner,
                            UploadDate = source.UploadDate,
-                           Path = source.Path
+                           Path = source.Path,
                        };
         return View(model);
     }
