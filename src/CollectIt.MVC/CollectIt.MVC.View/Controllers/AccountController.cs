@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using NodaTime;
 
 namespace CollectIt.MVC.View.Controllers;
@@ -132,5 +133,54 @@ public class AccountController : Controller
         _logger.LogInformation("User logged out");
         return RedirectToAction("Login");
     }
-    
+
+    [HttpPost]
+    [Authorize]
+    [Route("edit")]
+    public async Task<IActionResult> EditAccount(ProfileAccountViewModel model)
+    {
+        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(id);
+        if (user is null)
+        {
+            return BadRequest();
+        }
+
+        user.UserName = model.Username;
+        user.NormalizedUserName = model.Username.ToUpper();
+        user.Email = model.Email;
+        user.NormalizedEmail = model.Email.ToUpper();
+        var result = await _userManager.UpdateAsync(user);
+        var subs = new List<ActiveUserSubscription>();
+        await foreach (var us in _userManager.GetActiveSubscriptionsForUserAsync(user))
+        {
+            subs.Add(us);
+        }
+
+        var accountModel = new AccountViewModel()
+                           {
+                               Email = user.UserName, 
+                               UserName = user.UserName, 
+                               Subscriptions = subs.Select(s => new AccountUserSubscription()
+                                                                {
+                                                                    From = s.During.Start.ToDateTimeUnspecified(),
+                                                                    To = s.During.End.ToDateTimeUnspecified(),
+                                                                    Name = s.Subscription.Name,
+                                                                    ResourceType = s.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое",
+                                                                    LeftResourcesCount = s.LeftResourcesCount
+                                                                })
+                                                   .ToList()
+                           };
+        if (result.Succeeded)
+        {
+            await _signInManager.RefreshSignInAsync(user);
+            return View("Profile", accountModel);
+        }
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+
+        return View("Profile", accountModel);
+    }
 }

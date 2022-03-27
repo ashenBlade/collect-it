@@ -58,6 +58,8 @@ public class UserManager: UserManager<User>
     {
         return _context.ActiveUsersSubscriptions
                        .Where(us => us.UserId == user.Id)
+                       .Include(us => us.Subscription)
+                       .Include(us => us.User)
                        .AsAsyncEnumerable();
     }
 }
