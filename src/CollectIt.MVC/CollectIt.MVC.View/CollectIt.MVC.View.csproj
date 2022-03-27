@@ -42,8 +42,4 @@
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
     </ItemGroup>
 
-<!--    <ItemGroup>-->
-<!--      <AdditionalFiles Include="Views\Images\_ImagesLayout.cshtml" />-->
-<!--    </ItemGroup>-->
-
 </Project>
