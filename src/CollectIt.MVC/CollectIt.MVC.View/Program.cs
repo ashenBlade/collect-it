@@ -67,7 +67,7 @@ services.AddIdentity<User, Role>(config =>
         .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
         .AddUserManager<UserManager>()
         .AddDefaultTokenProviders()
-        .AddErrorDescriber<RussianIdentityErrorDescriber>();
+        .AddErrorDescriber<RussianLanguageIdentityErrorDescriber>();
 
 services.AddScoped<IImageRepository, PostgresqlImageRepository>();
 

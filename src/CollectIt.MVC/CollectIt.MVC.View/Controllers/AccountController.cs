@@ -80,7 +80,7 @@ public class AccountController : Controller
             return View(model);
         }
         _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
-        var user = new User {Email = model.Email, UserName = model.Email};
+        var user = new User {Email = model.Email, UserName = model.UserName};
         var result = await _userManager.CreateAsync(user, model.Password);
         if (result.Succeeded)
         {

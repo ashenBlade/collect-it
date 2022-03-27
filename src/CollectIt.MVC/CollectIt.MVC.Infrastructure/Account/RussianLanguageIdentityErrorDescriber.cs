@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CollectIt.MVC.Infrastructure.Account;
 
-public class RussianIdentityErrorDescriber : IdentityErrorDescriber
+public class RussianLanguageIdentityErrorDescriber : IdentityErrorDescriber
 {
     public override IdentityError PasswordRequiresDigit()
     {
@@ -31,6 +31,22 @@ public class RussianIdentityErrorDescriber : IdentityErrorDescriber
         return new IdentityError()
                {
                    Description = "Пользователь с таким именем уже существует"
+               };
+    }
+
+    public override IdentityError InvalidEmail(string email)
+    {
+        return new IdentityError()
+               {
+                   Description = "Почта в неправильном формате"
+               };
+    }
+
+    public override IdentityError InvalidUserName(string userName)
+    {
+        return new IdentityError()
+               {
+                   Description = "Неправильное имя пользователя"
                };
     }
 
