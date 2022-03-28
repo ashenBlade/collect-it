@@ -1,8 +1,8 @@
-html {
-  font-size: 14px;
-  position: relative;
-  min-height: 100%;
-}
+/*html {*/
+/*  font-size: 14px;*/
+/*  position: relative;*/
+/*  min-height: 100%;*/
+/*}*/
 
 @media (min-width: 768px) {
   html {
@@ -13,9 +13,9 @@ html {
   }
 }
 
-body {
-  margin-bottom: 60px;
-}
+/*body {*/
+/*  margin-bottom: 60px;*/
+/*}*/
 
 .registration{
   margin-top: 140px;
@@ -61,9 +61,7 @@ body {
 }
 /* PathOfVerse Additions
 -------------------------------------------------- */
-.container2{
-  margin-left: 0;
-}
+
 
 .indent{
   text-indent: 20px;
@@ -131,9 +129,9 @@ body {
   font-size: 25px;
 }
 
-ul{
-  list-style: none;
-}
+/*ul{*/
+/*  list-style: none;*/
+/*}*/
 
 .mw{
   max-width: 100px;
@@ -253,7 +251,7 @@ ul{
   border-radius: 4px;
 }
 
-.text-s-1{
+.fs-20{
   font-size: 20px;
 }
 

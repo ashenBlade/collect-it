@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.VisualBasic;
 using NpgsqlTypes;
+using DateInterval = NodaTime.DateInterval;
 
 namespace CollectIt.Database.Entities.Account;
 
@@ -15,7 +17,7 @@ public class ActiveUserSubscription
     
     public int LeftResourcesCount { get; set; }
     
-    public NpgsqlRange<DateTime> During { get; set; }
+    public DateInterval During { get; set; }
     
     public int MaxResourcesCount { get; set; }
 }

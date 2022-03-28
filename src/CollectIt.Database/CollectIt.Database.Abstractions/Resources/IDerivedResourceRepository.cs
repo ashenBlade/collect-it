@@ -4,9 +4,11 @@ namespace CollectIt.Database.Abstractions.Resources;
 
 public interface IDerivedResourceRepository<TItem, TId>
 {
-    Task<TId> AddAsync(TItem item, Resource resource);
-    Task<TItem> FindByIdAsync(TId id);
+    Task<TId> AddAsync(TItem item);
+    Task<TItem?> FindByIdAsync(TId id);
     Task UpdateAsync(TItem item);
-    Task RemoveAsync(TItem item, Resource resource);
+    Task RemoveAsync(TItem item);
+    IAsyncEnumerable<TItem> GetAllByQuery(string query);
     IAsyncEnumerable<TItem> GetAllByName(string name);
+    IAsyncEnumerable<TItem> GetAllByTag(string tag);
 }

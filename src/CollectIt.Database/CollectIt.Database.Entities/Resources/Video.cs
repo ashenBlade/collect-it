@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CollectIt.Database.Entities.Resources;
 
-public class Video 
+[Table("Videos")]
+public class Video : Resource
 {
-    [Key]
-    public int VideoId { get; set; }
-        
-    [Required]
-    public Resource Resource { get; set; }
-        
+    public int Id { get; set; }
+    
     [Required]
     public TimeSpan Duration { get; set; }
 }

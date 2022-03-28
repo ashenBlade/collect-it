@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CollectIt.Database.Entities.Resources;
 
-public class Music
+
+[Table("Musics")]
+public class Music : Resource
 {
-    [Key]
-    public int MusicId { get; set; }
-        
-    [Required]
-    public Resource Resource { get; set; }
-        
+    public int Id { get; set; }
+    
     [Required]
     public TimeSpan Duration { get; set; }
 }

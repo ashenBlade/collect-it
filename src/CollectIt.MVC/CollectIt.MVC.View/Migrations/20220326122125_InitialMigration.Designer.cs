@@ -3,6 +3,7 @@ using System;
 using CollectIt.Database.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,10 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    partial class PostgresqlCollectItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220326122125_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,8 @@ namespace CollectIt.MVC.View.Migrations
 
             modelBuilder.Entity("CollectIt.Database.Entities.Account.ActiveUserSubscription", b =>
                 {
-                    b.Property<DateInterval>("During")
-                        .IsRequired()
-                        .HasColumnType("daterange");
+                    b.Property<NpgsqlRange<DateTime>>("During")
+                        .HasColumnType("tstzrange");
 
                     b.Property<int>("LeftResourcesCount")
                         .HasColumnType("integer");
@@ -328,13 +329,6 @@ namespace CollectIt.MVC.View.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<NpgsqlTsVector>("NameSearchVector")
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("tsvector")
-                        .HasAnnotation("Npgsql:TsVectorConfig", "russian")
-                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Name" });
-
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
 
@@ -346,10 +340,6 @@ namespace CollectIt.MVC.View.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NameSearchVector");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("NameSearchVector"), "GIN");
 
                     b.HasIndex("OwnerId");
 
@@ -472,7 +462,7 @@ namespace CollectIt.MVC.View.Migrations
                             Name = "Первое изображение",
                             OwnerId = 1,
                             Path = "/imagesFromDb/avaSig.jpg",
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
+                            UploadDate = new DateTime(2022, 3, 26, 12, 21, 25, 543, DateTimeKind.Utc).AddTicks(7488)
                         });
                 });
 

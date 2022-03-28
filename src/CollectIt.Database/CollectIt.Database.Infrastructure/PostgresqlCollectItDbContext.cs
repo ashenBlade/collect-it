@@ -27,6 +27,25 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         OnModelCreatingAccounts(builder);
         OnModelCreatingResources(builder);
     }
+
+    private static User GetDefaultUser()
+    {
+        return new User()
+        {
+            Id = 1,
+            Email = "asdf@mail.ru",
+            NormalizedEmail = "ASDF@MAIL.RU",
+            UserName = "asdf@mail.ru",
+            EmailConfirmed = false,
+            PhoneNumberConfirmed = false,
+            PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",
+            SecurityStamp = "MSCN3JBQERUJBPLR4XIXZH3TQGICF6O3",
+            ConcurrencyStamp = "3e0213e9-8d80-48df-b9df-18fc7debd84e",
+            TwoFactorEnabled = false,
+            LockoutEnabled = false,
+            AccessFailedCount = 0
+        };
+    }
     
     private static void OnModelCreatingAccounts(ModelBuilder builder)
     {
@@ -75,8 +94,27 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             MonthDuration = 1,
                             Price = 500
                         });
+        builder.Entity<User>()
+            .HasData(GetDefaultUser());
     }
 
     private void OnModelCreatingResources(ModelBuilder builder)
-    { }
+    {
+        builder.Entity<Resource>()
+               .HasGeneratedTsVectorColumn(r => r.NameSearchVector,
+                                           "russian",
+                                           r => new { r.Name })
+               .HasIndex(r => r.NameSearchVector)
+               .HasMethod("GIN");
+        
+        builder.Entity<Image>()
+            .HasData(new Image
+            {
+                Id = 1,
+                Path = "/imagesFromDb/avaSig.jpg",
+                OwnerId = GetDefaultUser().Id,
+                UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                Name = "Первое изображение"
+            });
+    }
 }
