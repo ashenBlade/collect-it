@@ -1,32 +1,21 @@
 @model PaymentPageViewModel
 
 @{
-    Layout = "_PaymentLayout.cshtml";
+    Layout = "_PaymentLayout";
+    ViewData["Title"] = "Оплата подписки";
 }
 
-<!DOCTYPE html>
-
-<html lang="ru" class="h-100 bg-light">
-<head>
-    <title>Оплата подписки</title>
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css"/>
-</head>
-<body class="h-100">
-<main class="d-flex justify-content-center align-items-center">
-    <div class="w-75 p-3 bg-white shadow rounded">
-        <h3 class="mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
-        <div class="mb-3 mt-lg-5 w-100 d-inline-flex justify-content-around">
-            <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
-                <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/>
-                <input name="declined" value="false" type="hidden"/>
-                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-success btn-lg" style="width: 300px; height: 70px">Да</button></div>
-            </form>
-            <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
-                <input name="declined" value="true" type="hidden" readonly="readonly"/>
-                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-danger btn-lg" style="width: 300px; height: 70px">Нет</button></div>
-            </form>
-        </div>
+<div class="w-75 p-3 bg-white shadow rounded">
+    <h3 class="mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
+    <div class="mb-3 mt-lg-5 w-100 d-inline-flex justify-content-around">
+        <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
+            <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/>
+            <input name="declined" value="false" type="hidden"/>
+            <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-success btn-lg" style="width: 300px; height: 70px">Да</button></div>
+        </form>
+        <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
+            <input name="declined" value="true" type="hidden" readonly="readonly"/>
+            <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-danger btn-lg" style="width: 300px; height: 70px">Нет</button></div>
+        </form>
     </div>
-</main>
-</body>
-</html>
+</div>
