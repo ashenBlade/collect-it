@@ -1,4 +1,5 @@
-﻿using CollectIt.Database.Abstractions.Resources;
+﻿using System.ComponentModel.DataAnnotations;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
@@ -13,45 +14,40 @@ public class ImagesController : Controller
 {
     private readonly IImageRepository _imageRepository;
 
-    private readonly IResourceRepository _resourceRepository;
-    // private readonly ImageRepository _imageRepository;
-    // private readonly ResourceRepository _resourceRepository;
 
-    public ImagesController(IImageRepository imageRepository, 
-                            IResourceRepository resourceRepository)
+    public ImagesController(IImageRepository imageRepository)
     {
         _imageRepository = imageRepository;
-        _resourceRepository = resourceRepository;
-        // _imageRepository = new ImageRepository(context);
-        // _resourceRepository = new ResourceRepository(context);
     }
 
     [HttpGet]
     [Route("")]
-    public async Task<IActionResult> GetImagesByName(string query)
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")][Required]string query)
     {
         var images = new List<Image>();
-        await foreach (var image in _imageRepository.GetAllByName(query))
+        await foreach (var image in _imageRepository.GetAllByQuery(query))
         {
             images.Add(image);
         }
 
-        return View("ImagesPage", new ImageCardsViewModel() {Images = images});
+        return View("Images", new ImageCardsViewModel() {Images = images});
     }
 
     [HttpGet]
     [Route("{id:int}")]
     public async Task<IActionResult> Image(int id)
     {
-        var source = _imageRepository.FindByIdAsync(id).Result;
+        var source = await _imageRepository.FindByIdAsync(id);
         if (source == null)
-            return View("Error");
-        var imgModel = new ImageViewModel()
         {
-            Owner = source.Resource.ResourceOwner,
-            UploadDate = source.Resource.UploadDate,
-            Path = source.Resource.ResourcePath
-        };
-        return View(imgModel);
+            return View("Error");
+        }
+        var model = new ImageViewModel()
+                       {
+                           Owner = source.Owner,
+                           UploadDate = source.UploadDate,
+                           Path = source.Path,
+                       };
+        return View(model);
     }
 }

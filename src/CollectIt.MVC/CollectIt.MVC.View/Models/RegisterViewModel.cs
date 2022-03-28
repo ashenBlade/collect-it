@@ -13,6 +13,11 @@ public class RegisterViewModel
     [MinLength(6, ErrorMessage = "Минимальная длина пароля - 6 символов")]
     public string? Password { get; set; }
 
+    [Required]
+    [DataType(DataType.Text)]
+    [MinLength(6, ErrorMessage = "Минимальная длина имени пользователя - 6 символов")]
+    public string? UserName { get; set; }
+
     [Required(ErrorMessage = "Подтвердите пароль")]
     [DataType(DataType.Password)]
     [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]

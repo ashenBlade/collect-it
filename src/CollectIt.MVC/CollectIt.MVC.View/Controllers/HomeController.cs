@@ -37,27 +37,10 @@ public class HomeController : Controller
         }
 
         model.Query = "Данный тип пока не поддерживается";
+        _logger.LogTrace("Queried unsupported resource type: {ResourceType}", model.ResourceType);
         return View(model);
     }
     
-
-    // [HttpGet]
-    // [Route("images")]
-    // public IActionResult Images(ImageCardsViewModel model)
-    // {
-    //     return View("ResourcesPage", model);
-    // }
-    
-    // [HttpGet]
-    // [Route("images/{imageId:int}")]
-    // public IActionResult Image(int imageId)
-    // {
-    //     return View("Image", new Image()
-    //                          {
-    //                              ImageId = imageId
-    //                          });
-    // }
-
     [HttpGet]
     [Route("privacy")]
     public IActionResult Privacy()
@@ -65,22 +48,11 @@ public class HomeController : Controller
         return View();
     }
     
+    [HttpGet]
+    [Route("error")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
-    }
-
-    // [HttpGet]
-    // [Route("images")]
-    // public IActionResult FindImagesByName([FromQuery(Name = "q")]string pattern)
-    // {
-    //     var viewModel = GetImageCardsViewModel();
-    //     return View("ResourcesPage", viewModel);
-    // }
-
-    private static ImageCardsViewModel GetImageCardsViewModel(int amount = 10)
-    {
-        return new ImageCardsViewModel() { Images = Enumerable.Repeat(new Image { ImageId = 1, Resource = new Resource() { ResourceId = 1, ResourcePath = "img/4a5b6801-9341-48cf-9b1d-f7c377933422_aaaa.jpg", UploadDate = DateTime.Today } }, amount).ToArray() };
     }
 }

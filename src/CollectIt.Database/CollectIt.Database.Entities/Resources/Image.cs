@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace CollectIt.Database.Entities.Resources;
 
-public class Image
+[Table("Images")]
+public class Image : Resource
 {
-    [Key]
-    public int ImageId { get; set; }
-        
-    [Required]
-    public Resource Resource { get; set; }
 }

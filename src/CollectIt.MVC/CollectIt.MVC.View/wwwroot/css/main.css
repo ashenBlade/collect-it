@@ -46,7 +46,6 @@
 	height: 500px;
 	width: 20%;
 	float:left;
-	background:#e28964;
 	background: rgb(248, 246, 246);
     border-color: #444;
     border-radius: 1%;
@@ -188,6 +187,11 @@
     border-top-right-radius: 0;
 }
 
+.body {
+    display: grid;
+    grid-template-rows: min-content auto min-content;
+}
+
 .rounded-end-1{
     border-bottom-right-radius: 20px;
     border-top-right-radius: 20px;
@@ -202,14 +206,14 @@
     height: 200px;
 }
 
-section{
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
+/*section{*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    border: 0;*/
+/*    font-size: 100%;*/
+/*    font: inherit;*/
+/*    vertical-align: baseline;*/
+/*}*/
 
 #banner {
     background-attachment: scroll, fixed;
@@ -219,7 +223,6 @@ section{
     background-repeat: repeat, no-repeat;
     background-size: auto, cover;
     color: #fff;
-    padding: 12em 0 20em 0;
     text-align: center;
 }
 

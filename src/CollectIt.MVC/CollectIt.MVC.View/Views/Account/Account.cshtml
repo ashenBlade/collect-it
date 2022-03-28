@@ -1,31 +1,35 @@
 ﻿@model ProfileAccountViewModel
 
-<form method="post" enctype="multipart/form-data" class="text-blur">
-    <div class="validation" asp-validation-summary="ModelOnly"></div>
-    <div class="row m-0">
-        <div>
-            <img src="~/img/joke.jpg" asp-append-version="true" class="photo" alt=""/>
+<div class="text-start">
+    <h2 class="h2 pb-2">Профиль</h2>
+    <h4 class="h5 pb-2">Сведения об аккаунте</h4>
+    <form method="post" asp-action="EditAccount" enctype="multipart/form-data" class="w-100">
+        <div class="border rounded p-3">
+            <table class="table table-borderless w-100">
+                <tbody>
+                <tr class="border-bottom my-2">
+                    <td>
+                        <label for="username">Имя пользователя</label>
+                    </td>
+                    <td>
+                        <input asp-for="Username" id="username" class="form-control"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="email">Почта</label>
+                    </td>
+                    <td>
+                        <input asp-for="Email" id="email" class="form-control"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            @Html.ValidationSummary(false)
+            <input class="btn btn-primary" value="Сохранить" type="submit"/>
         </div>
-        <div class="ml-3">
-            <div class="text-s-1 mt-3 mb-3">@Html.DisplayFor(x => x.Username)</div>
-        </div>
-    </div>
-    <div>
-        <label class="col-form-label" for="email">Почта:</label>
-        @* <input type="email" name="User.Email" class="form-control blur-light" value="llll@ll.ru"> *@
-        <input asp-for="Email" id="email" readonly="readonly"/>
-    </div>
-    <div>
-        <label  class="col-form-label">Аватарка:</label>
-        <div class="col-12">
-            <div class="custom-file rounded">
-                <input type="file" accept="image/jpeg" class="custom-file-input form-control blur-light">
-            </div>
-        </div>
-    </div>
-    @* <button class="btn-light rounded border-0 mt-2 pl-2 pr-2 pt-1 pb-1 wi-1 m-a">Сохранить</button> *@
-
-    <script>
+        @Html.ValidationSummary(false)
+        <script>
         $(document).ready(function (){
             $('.custom-file-input').on("change", function (){
                 var fileName = $(this).val().split("\\").pop();
@@ -33,5 +37,6 @@
             });
         });
     </script>
-    
-</form>
+
+    </form>
+</div>

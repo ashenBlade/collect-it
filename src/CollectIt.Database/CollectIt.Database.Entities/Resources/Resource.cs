@@ -1,19 +1,31 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CollectIt.Database.Entities.Account;
+using NpgsqlTypes;
 
 namespace CollectIt.Database.Entities.Resources;
 
 public class Resource
 {
     [Key]
-    public int ResourceId { get; set; }
+    public int Id { get; set; }
         
+    // [Required]
+    public User Owner { get; set; }
+
     [Required]
-    public User ResourceOwner { get; set; }
-        
+    [ForeignKey(nameof(Owner))]
+    public int OwnerId { get; set; }
+    
     [Required]
-    public string ResourcePath { get; set; }
-        
+    public string Path { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    
+    public NpgsqlTsVector NameSearchVector { get; set; }
+    
     [Required]
     public DateTime UploadDate { get; set; }
 }
