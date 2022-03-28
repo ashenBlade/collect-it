@@ -13,20 +13,17 @@
 </head>
 <body class="h-100">
 <main class="d-flex justify-content-center align-items-center">
-    <div class="p-3 bg-white shadow rounded">
-        <div>
-            <p>Хотите оформить подписку "@Model.Subscription.Name"?</p>
-            </div>
-        <div class="d-inline-flex justify-content-around">
+    <div class="w-75 p-3 bg-white shadow rounded">
+        <h3 class="mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
+        <div class="mb-3 mt-lg-5 w-100 d-inline-flex justify-content-around">
             <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
                 <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/>
                 <input name="declined" value="false" type="hidden"/>
-                <button type="submit" class="btn btn-success">Да</button>
+                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-success btn-lg" style="width: 300px; height: 70px">Да</button></div>
             </form>
-            &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
             <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
                 <input name="declined" value="true" type="hidden" readonly="readonly"/>
-                <button type="submit" class="btn btn-danger">Нет</button>
+                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-danger btn-lg" style="width: 300px; height: 70px">Нет</button></div>
             </form>
         </div>
     </div>

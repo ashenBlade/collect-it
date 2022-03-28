@@ -11,17 +11,24 @@
     <meta http-equiv="refresh" content="5;/">
     <title>Результат операции</title>
 </head>
-<body>
+<body class="h-100">
 <div>
-    @if (Model.Success)
-    {
-        <div>Поздравляем с оформлением подписки</div>
-    }
-    else
-    {
-        <div>Подписка не оформлена</div>
-        <div>Причина: @Model.ErrorMessage</div>
-    }
+    <main class="d-flex justify-content-center align-items-center">
+        <div class="w-75 p-3 bg-white shadow rounded">
+            @if (Model.Success)
+            {
+                <h2 class ="text-center">Поздравляем с оформлением подписки</h2>
+                <img width="150" height="150" class="mb-lg-4 mx-auto d-block" src = "img/accept.jpg"></img>
+            }
+            else
+            {
+                <h2 class="text-center">Подписка не оформлена</h2>
+                <h3 class="text-center">Причина: @Model.ErrorMessage</h3>
+                <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src = "img/decline.jpg"></img>
+            }
+            <div class ="text-center"> Через 5 секунд вы будете перенаправлены на главную страницу</div>
+        </div>
+    </main>
 </div>
 </body>
 </html>
