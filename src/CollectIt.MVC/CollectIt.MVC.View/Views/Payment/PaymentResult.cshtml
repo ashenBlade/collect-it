@@ -1,13 +1,20 @@
 @model PaymentResultViewModel
 
 @{
-    Layout = "_PaymentLayout";
+    Layout = null;
     ViewData["Title"] = "Результат операции";
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
 }
-
-
+<script>
+  setTimeout( 'location="/"', 5000 );
+</script>
 <div>
-    <main class="d-flex justify-content-center align-items-center">
+    <main class="d-flex justify-content-center align-items-center" style ="margin-top: 200px">
         <div class="w-75 p-3 bg-white shadow rounded">
             @if (Model.Success)
             {
