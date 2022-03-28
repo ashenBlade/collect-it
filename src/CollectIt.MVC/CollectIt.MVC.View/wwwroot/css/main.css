@@ -189,7 +189,7 @@
 
 .body {
     display: grid;
-    grid-template-rows: min-content auto min-content;
+    grid-template-rows: min-content max-content min-content;
 }
 
 .rounded-end-1{

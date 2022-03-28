@@ -31,20 +31,21 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     private static User GetDefaultUser()
     {
         return new User()
-        {
-            Id = 1,
-            Email = "asdf@mail.ru",
-            NormalizedEmail = "ASDF@MAIL.RU",
-            UserName = "asdf@mail.ru",
-            EmailConfirmed = false,
-            PhoneNumberConfirmed = false,
-            PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",
-            SecurityStamp = "MSCN3JBQERUJBPLR4XIXZH3TQGICF6O3",
-            ConcurrencyStamp = "3e0213e9-8d80-48df-b9df-18fc7debd84e",
-            TwoFactorEnabled = false,
-            LockoutEnabled = false,
-            AccessFailedCount = 0
-        };
+               {
+                   Id = 1,
+                   Email = "asdf@mail.ru",
+                   NormalizedEmail = "ASDF@MAIL.RU",
+                   UserName = "BestPhotoshoper",
+                   NormalizedUserName = "BestPhotoshoper",
+                   EmailConfirmed = false,
+                   PhoneNumberConfirmed = false,
+                   PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",
+                   SecurityStamp = "MSCN3JBQERUJBPLR4XIXZH3TQGICF6O3",
+                   ConcurrencyStamp = "3e0213e9-8d80-48df-b9df-18fc7debd84e",
+                   TwoFactorEnabled = false,
+                   LockoutEnabled = false,
+                   AccessFailedCount = 0
+               };
     }
     
     private static void OnModelCreatingAccounts(ModelBuilder builder)
@@ -95,7 +96,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Price = 500
                         });
         builder.Entity<User>()
-            .HasData(GetDefaultUser());
+               .HasData(GetDefaultUser());
     }
 
     private void OnModelCreatingResources(ModelBuilder builder)
@@ -106,15 +107,128 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                            r => new { r.Name })
                .HasIndex(r => r.NameSearchVector)
                .HasMethod("GIN");
-        
+
+        var ownerId = GetDefaultUser().Id;
         builder.Entity<Image>()
-            .HasData(new Image
-            {
-                Id = 1,
-                Path = "/imagesFromDb/avaSig.jpg",
-                OwnerId = GetDefaultUser().Id,
-                UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                Name = "Первое изображение"
-            });
+               .HasData(new Image
+                        {
+                            Id = 1,
+                            Path = "/imagesFromDb/abstract-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Мониторы с аниме"
+                        },
+                        new Image
+                        {
+                            Id = 2,
+                            Path = "/imagesFromDb/bird-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Птица зимородок"
+                        },
+                        new Image
+                        {
+                            Id = 3,
+                            Path = "/imagesFromDb/car-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Машина на дороге"
+                        },
+                        new Image
+                        {
+                            Id = 4,
+                            Path = "/imagesFromDb/cat-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Котенок на одеяле"
+                        },
+                        new Image
+                        {
+                            Id = 5,
+                            Path = "/imagesFromDb/house-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Стандартный американский дом"
+                        },
+                        new Image
+                        {
+                            Id = 6,
+                            Path = "/imagesFromDb/nature-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Осенний лес в природе"
+                        },
+                        new Image
+                        {
+                            Id = 7,
+                            Path = "/imagesFromDb/school-img.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Дети за партами в школе перед учителем"
+                        },
+                        new Image
+                        {
+                            Id = 8,
+                            Path = "/imagesFromDb/cat-img-2.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Кот смотрит в камеру на зеленом фоне"
+                        },
+                        new Image
+                        {
+                            Id = 9,
+                            Path = "/imagesFromDb/cat-img-3.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Крутой кот в очках"
+                        },
+                        new Image
+                        {
+                            Id = 10,
+                            Path = "/imagesFromDb/cat-img-4.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Белоснежный кот застыл в мяукающей позе"
+                        },
+                        new Image
+                        {
+                            Id = 11,
+                            Path = "/imagesFromDb/cat-img-5.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Рыжий кот заснул на полу"
+                        },
+                        new Image
+                        {
+                            Id = 12,
+                            Path = "/imagesFromDb/cat-img-6.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Спящий кот прикрывается лапой от солнца"
+                        },
+                        new Image
+                        {
+                            Id = 13,
+                            Path = "/imagesFromDb/cat-img-7.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "На стуле лежит кот"
+                        },
+                        new Image
+                        {
+                            Id = 14,
+                            Path = "/imagesFromDb/cat-img-8.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Идущий по забору кот у причала"
+                        }, 
+                        new Image
+                        {
+                            Id = 15,
+                            Path = "/imagesFromDb/cat-img-9.jpg",
+                            OwnerId = ownerId,
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Name = "Кот у елки сморит на лес"
+                        });
     }
 }
