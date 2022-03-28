@@ -1,16 +1,21 @@
 @model PaymentPageViewModel
-
 @{
     Layout = null;
-    ViewData["Title"] = "Оплата подписки";
+}
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - Оплата подписки</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
-    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
-}
-
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">;
+</head>
+<body>
 <main class="d-flex justify-content-center align-items-center">
     <div class="p-3 w-75 bg-white shadow rounded" style="margin-top: 200px">
         <h3 class="mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
@@ -27,3 +32,4 @@
         </div>
     </div>
 </main>
+</body>
