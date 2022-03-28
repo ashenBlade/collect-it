@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "Project for NodeJS backend for Admin page",
-  "main": "app.ts",
+  "main": "src/app.ts",
   "scripts": {
-    "build": "echo \"Project not setup yet\"",
-    "start": "echo \"Project not setup yet\""
+    "build": "tsc",
+    "start": "nodemon ./build/app.js"
   },
   "author": "CollectIt team",
   "license": "ISC",
@@ -20,6 +20,7 @@
     "@types/express": "^4.17.13",
     "@types/helmet": "^4.0.0",
     "@types/node": "^17.0.23",
+    "nodemon": "^2.0.15",
     "typescript": "^4.6.3"
   }
 }

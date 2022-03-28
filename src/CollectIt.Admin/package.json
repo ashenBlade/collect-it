@@ -4,8 +4,8 @@
   "description": "Project for Admin page for .NET semester project",
   "main": "index.ts",
   "scripts": {
-    "build": "echo \"Project not setup yet\"",
-    "run": "echo \"Project not setup yet\""
+    "build": "concurrently \"npm run --prefix client build\" \"npm run --prefix server build\"",
+    "run": "concurrently \"npm run --prefix client start\" \"npm run --prefix server start\""
   },
   "author": "",
   "license": "ISC",
