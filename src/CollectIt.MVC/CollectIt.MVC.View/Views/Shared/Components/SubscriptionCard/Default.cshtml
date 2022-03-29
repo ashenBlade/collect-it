@@ -1,18 +1,18 @@
 @model CollectIt.Database.Entities.Account.Subscription
 
 <div class="d-flex mx-1 my-2 justify-content-center">
-    <div class="bg-white rounded-4 shadow p-4 h-100" style="width: 300px;">
-        <p class="h2 text-center text-capitalize mb-1">@Model.Name</p>
+    <div class="bg-white rounded-4 shadow p-4 h-100" style="width: 300px; margin-top: 175px">
+        <p class="h2 text-center mb-2" style="margin-top: -10px">@Model.Name</p>
         <p class="text-center mb-2">@Model.Description</p>
-        <p class="text-center text-dark fw-bold">@Model.MonthDuration @(Model.MonthDuration % 10 == 1
+        <p class="text-center text-dark fw-bold">Длительность: @Model.MonthDuration @(Model.MonthDuration % 10 == 1
                                                                    ? "месяц" 
                                                                    : Model.MonthDuration % 10 == 3 
                                                                          ? "месяца" 
                                                                          : "месяцев")</p>
-        <p class="text-center text-dark fw-bold">Лимит: @Model.MaxResourcesCount</p>
-        <p class="text-center text-dark fw-bold text-capitalize">@Model.Price ₽</p>
+        <p class="text-center text-dark fw-bold">Лимит: @Model.MaxResourcesCount скачиваний</p>
+        <p class="text-center text-dark fw-bold text-capitalize">Cтоимость: @Model.Price ₽</p>
         <div class="d-flex justify-content-center align-items-end">
-            <a class="btn btn-success align-self-end" asp-controller="Payment" asp-action="SubscribePage" asp-route-subscriptionId="@Model.Id">Оформить</a>
+            <a class="btn btn-success btn-lg align-self-end" asp-controller="Payment" asp-action="SubscribePage" asp-route-subscriptionId="@Model.Id">Подписаться</a>
         </div>
     </div>
 </div>

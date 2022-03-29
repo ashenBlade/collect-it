@@ -17,8 +17,8 @@
 </head>
 <body>
 <main class="d-flex justify-content-center align-items-center">
-    <div class="p-3 w-75 bg-white shadow rounded" style="margin-top: 200px">
-        <h3 class="mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
+    <div class="p-3 w-50 bg-white shadow rounded" style="margin-top: 200px">
+        <h3 class="mb-5 mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
         <div class="mb-3 mt-lg-5 w-100 d-inline-flex justify-content-around">
             <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
                 <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/>
