@@ -4,7 +4,7 @@
       asp-action="Index" 
       method="post" 
       asp-antiforgery="false" 
-      class="input-group rounded-pill px-6 row">
+      class="input-group rounded-pill px-6 row" style="margin-top: 250px">
     <select name="ResourceType" class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
         <option value="@(( int ) ResourceType.Image)" selected="selected">Изображения</option>
         <option value="@(( int ) ResourceType.Video)">Видео</option>
@@ -13,3 +13,4 @@
     <input name="Query" type="text" placeholder="Название, тэг, гэг..." class="form-control col-6 rounded-start-0 rounded-end-0"/>
     <button type="submit" class="btn bg-light border rounded-end-1 rounded-start-0 col-2">Найти</button>
 </form>
+<h1 class = "text-center" style ="color: white;margin-top: 40px">Найди все, что пожелаешь</h1>
