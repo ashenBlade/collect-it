@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using CollectIt.Database.Entities.Account.Restrictions;
 
 namespace CollectIt.Database.Entities.Account;
 
@@ -23,6 +25,10 @@ public class Subscription
     [Required]
     public ResourceType AppliedResourceType { get; set; }
 
+    public int? RestrictionId { get; set; }
+    [ForeignKey(nameof(RestrictionId))]
+    public Restriction Restriction { get; set; }
+    
     [Required]
     [Range(1, int.MaxValue)]
     public int MaxResourcesCount { get; set; }
