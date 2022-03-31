@@ -208,6 +208,11 @@ csx/
 ecf/
 rcf/
 
+# TypeScript compiled files folders
+**/dist/
+**/build/
+
+
 # Windows Store app package directories and files
 AppPackages/
 BundleArtifacts/
