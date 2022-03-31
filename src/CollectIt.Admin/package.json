@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/common": "^8.4.3",
     "concurrently": "^7.0.0"
   },
   "devDependencies": {
