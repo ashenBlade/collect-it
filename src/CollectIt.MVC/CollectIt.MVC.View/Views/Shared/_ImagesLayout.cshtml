@@ -5,12 +5,16 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - CollectIt.MVC.View</title>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/ResourceStyles.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
     @* ReSharper disable once Html.PathError *@
     @* This is not error *@
@@ -18,7 +22,7 @@
 </head>
 <body class="h-100 body">
 
-<header id="header" class="reveal alt">
+<header class="header reveal alt">
     @await Html.PartialAsync("_Navbar")
 </header>
 
@@ -28,7 +32,7 @@
     </div>
 </section>
 
-<section id="main" class="container-custom">
+<section class="main container-custom">
     <main role="main">
         @RenderBody()
     </main>
@@ -41,9 +45,7 @@
     </div>
 </footer>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
