@@ -1,26 +1,41 @@
 @model PaymentResultViewModel
-
 @{
-    Layout = "_PaymentLayout";
-    ViewData["Title"] = "Результат операции";
+    Layout = null;
 }
-
-
-<div>
-    <main class="d-flex justify-content-center align-items-center">
-        <div class="w-75 p-3 bg-white shadow rounded">
-            @if (Model.Success)
-            {
-                <h2 class ="text-center">Поздравляем с оформлением подписки</h2>
-                <img width="150" height="150" class="mb-lg-4 mx-auto d-block" alt="Успешное оформление" src = "img/accept.jpg"/>
-            }
-            else
-            {
-                <h2 class="text-center">Подписка не оформлена</h2>
-                <h3 class="text-center">Причина: @Model.ErrorMessage</h3>
-                <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src = "img/decline.jpg" alt="Подписка не оформлена"/>
-            }
-            <div class ="text-center"> Через 5 секунд вы будете перенаправлены на главную страницу</div>
-        </div>
-    </main>
-</div>
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Результат операции</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">;
+</head>
+<body>
+<main class="d-flex justify-content-center align-items-center" style="margin-top: 200px">
+    <div class="w-50 p-3 bg-white shadow rounded">
+        @if (Model.Success)
+        {
+            <h2 class="text-center">Поздравляем с оформлением подписки</h2>
+            <img width="150" height="150" class="mb-lg-4 mx-auto d-block" alt="Успешное оформление" src="img/accept.jpg"/>
+        }
+        else
+        {
+            <h2 class="text-center">Подписка не оформлена</h2>
+            <h3 class="text-center">Причина: @Model.ErrorMessage</h3>
+            <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src="img/decline.jpg" alt="Подписка не оформлена"/>
+        }
+        <div class="text-center"> Через 5 секунд вы будете перенаправлены на главную страницу</div>
+    </div>
+</main>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    window.location = '/';    
+  });
+</script>
+</html>
