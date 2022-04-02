@@ -23,6 +23,7 @@ public class Resource
     [Required]
     public string Name { get; set; }
 
+    public ICollection<User> AcquiredBy { get; set; }
     public NpgsqlTsVector NameSearchVector { get; set; }
     
     [Required]

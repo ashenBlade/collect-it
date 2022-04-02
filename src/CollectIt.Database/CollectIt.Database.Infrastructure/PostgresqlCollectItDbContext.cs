@@ -18,6 +18,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     public DbSet<DaysAfterRestriction> DateFromRestrictions { get; set; }
     public DbSet<TagRestriction> TagRestrictions { get; set; }
     public DbSet<SizeRestriction> SizeRestrictions { get; set; }
+
+    public DbSet<AcquiredUserResource> AcquiredUserResources { get; set; }
     
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Image> Images { get; set; }
@@ -126,6 +128,17 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
     private void OnModelCreatingResources(ModelBuilder builder)
     {
+        builder.Entity<Resource>()
+               .HasMany(x => x.AcquiredBy)
+               .WithMany(u => u.AcquiredResources)
+               .UsingEntity<AcquiredUserResource>();
+        builder.Entity<Resource>()
+               .HasOne(r => r.Owner)
+               .WithMany(u => u.ResourcesAuthorOf);
+        builder.Entity<AcquiredUserResource>()
+               .HasAlternateKey(aur => new {aur.UserId, aur.ResourceId});
+        builder.Entity<AcquiredUserResource>()
+               .HasIndex(aur => new {aur.UserId});
         builder.Entity<Resource>()
                .HasGeneratedTsVectorColumn(r => r.NameSearchVector,
                                            "russian",
