@@ -18,13 +18,20 @@ public class Resource
     public int OwnerId { get; set; }
     
     [Required]
-    public string Path { get; set; }
+    public string Address { get; set; }
 
     [Required]
     public string Name { get; set; }
 
-    
     public NpgsqlTsVector NameSearchVector { get; set; }
+    
+    [Required]
+    public string FileName { get; set; }
+    
+    [Required]
+    public string Extension { get; set; }
+    
+    public string[] Tags { get; set; }
     
     [Required]
     public DateTime UploadDate { get; set; }
