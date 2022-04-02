@@ -13,6 +13,9 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Build files 
+[Bb]uild
+
 # Mono auto generated files
 mono_crash.*
 
@@ -204,6 +207,11 @@ csx/
 # Microsoft Azure Emulator
 ecf/
 rcf/
+
+# TypeScript compiled files folders
+**/dist/
+**/build/
+
 
 # Windows Store app package directories and files
 AppPackages/

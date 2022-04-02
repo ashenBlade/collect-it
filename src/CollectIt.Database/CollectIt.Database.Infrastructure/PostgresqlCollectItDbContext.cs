@@ -1,7 +1,9 @@
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Account.Restrictions;
 using CollectIt.Database.Entities.Resources;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Npgsql.NameTranslation;
 
 namespace CollectIt.Database.Infrastructure;
 
@@ -10,6 +12,12 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserSubscription> UsersSubscriptions { get; set; }
     public DbSet<ActiveUserSubscription> ActiveUsersSubscriptions { get; set; }
+    
+    public DbSet<AuthorRestriction> AuthorRestrictions { get; set; }
+    public DbSet<DaysToRestriction> DateToRestrictions { get; set; }
+    public DbSet<DaysAfterRestriction> DateFromRestrictions { get; set; }
+    public DbSet<TagRestriction> TagRestrictions { get; set; }
+    public DbSet<SizeRestriction> SizeRestrictions { get; set; }
     
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Image> Images { get; set; }
@@ -64,6 +72,19 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .HasData(new Role() { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP" },
                         new Role() { Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP" },
                         new Role() { Id = 3, Name = "Technical Support", NormalizedName = "TECHNICAL SUPPORT", ConcurrencyStamp = "DEFAULT_STAMP" });
+        builder.Entity<Restriction>()
+               .HasDiscriminator<RestrictionType>("RestrictionType")
+               .HasValue<AuthorRestriction>(RestrictionType.Author)
+               .HasValue<DaysToRestriction>(RestrictionType.DaysTo)
+               .HasValue<DaysAfterRestriction>(RestrictionType.DaysAfter)
+               .HasValue<TagRestriction>(RestrictionType.Tags)
+               .HasValue<SizeRestriction>(RestrictionType.Size);
+        
+        builder.Entity<Subscription>()
+               .HasOne(s => s.Restriction)
+               .WithOne(r => r.Subscription)
+               .IsRequired(false);
+        
         builder.Entity<Subscription>()
                .HasData(new Subscription()
                         {
@@ -73,7 +94,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Description = "Обычная подписка",
                             MaxResourcesCount = 50,
                             MonthDuration = 1,
-                            Price = 200
+                            Price = 200,
+                            RestrictionId = null
                         },
                         new Subscription()
                         {
@@ -83,7 +105,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Description = "Подписка для любителей качать",
                             MaxResourcesCount = 100,
                             MonthDuration = 1,
-                            Price = 350
+                            Price = 350,
+                            RestrictionId = null
                         },
                         new Subscription()
                         {
@@ -93,8 +116,10 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Description = "Не для пиратов",
                             MaxResourcesCount = 200,
                             MonthDuration = 1,
-                            Price = 500
+                            Price = 500,
+                            RestrictionId = null
                         });
+        
         builder.Entity<User>()
                .HasData(GetDefaultUser());
     }
