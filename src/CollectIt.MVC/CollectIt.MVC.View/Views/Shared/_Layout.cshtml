@@ -14,22 +14,20 @@
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
     @* ReSharper disable once Html.PathError *@
     @* This is not error *@
-    <link rel="stylesheet" href="CollectIt.MVC.View.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/CollectIt.MVC.View.styles.css"/>
 </head>
-<body class="h-100 body">
+<body id="banner" class="h-100 body">
 
-<header class="header reveal alt">
+<header class="bg-light px-1 py-2">
     @await Html.PartialAsync("_Navbar")
 </header>
 
-<section id="banner" class="section">
-    <main role="main" class="container">
-        <div class="p-3 h-100">
-            @RenderBody()
-        </div>
-    </main>
-</section>
 
+<main role="main" class="container">
+    <div class="p-3 h-100">
+        @RenderBody()
+    </div>
+</main>
 
 <footer class="footer bg-light text-muted border-top">
     <div class="container py-3 text-start">
