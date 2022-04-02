@@ -1,4 +1,4 @@
-#header {
+.header {
     background: #444;
     color: #bbb;
     cursor: default;
@@ -11,17 +11,17 @@
     z-index: 10000;
 }
 
-#header.alt {
+.header.alt {
     -moz-animation: none;
     -webkit-animation: none;
     -ms-animation: none;
     animation: none;
-    background: none;
+    background: rgba(0, 0, 0, 0.15);
     position: absolute;
     color: rgba(255, 255, 255, 0.75);
 }
 
-#header.reveal {
+.header.reveal {
     -moz-animation: reveal-header 0.5s;
     -webkit-animation: reveal-header 0.5s;
     -ms-animation: reveal-header 0.5s;
