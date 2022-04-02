@@ -16,13 +16,13 @@
     @* This is not error *@
     <link rel="stylesheet" href="CollectIt.MVC.View.styles.css" asp-append-version="true"/>
 </head>
-<body class="h-100 body">
+<body id="banner" class="h-100 body">
 
 <header class="header reveal alt">
     @await Html.PartialAsync("_Navbar")
 </header>
 
-<section id="banner" class="section">
+<section class="section">
     <main role="main" class="container">
         <div class="p-3 h-100">
             @RenderBody()
@@ -31,7 +31,7 @@
 </section>
 
 
-<footer class="footer bg-light text-muted border-top">
+<footer class="footer blur-dark text-muted wh-0">
     <div class="container py-3 text-start">
         &copy; 2022 - CollectIt - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
