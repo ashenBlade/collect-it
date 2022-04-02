@@ -18,6 +18,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     public DbSet<DaysAfterRestriction> DateFromRestrictions { get; set; }
     public DbSet<TagRestriction> TagRestrictions { get; set; }
     public DbSet<SizeRestriction> SizeRestrictions { get; set; }
+
+    public DbSet<AcquiredUserResource> AcquiredUserResources { get; set; }
     
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Image> Images { get; set; }
@@ -127,9 +129,20 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     private void OnModelCreatingResources(ModelBuilder builder)
     {
         builder.Entity<Resource>()
+               .HasMany(x => x.AcquiredBy)
+               .WithMany(u => u.AcquiredResources)
+               .UsingEntity<AcquiredUserResource>();
+        builder.Entity<Resource>()
+               .HasOne(r => r.Owner)
+               .WithMany(u => u.ResourcesAuthorOf);
+        builder.Entity<AcquiredUserResource>()
+               .HasAlternateKey(aur => new {aur.UserId, aur.ResourceId});
+        builder.Entity<AcquiredUserResource>()
+               .HasIndex(aur => new {aur.UserId});
+        builder.Entity<Resource>()
                .HasGeneratedTsVectorColumn(r => r.NameSearchVector,
                                            "russian",
-                                           r => new { r.Name })
+                                           r => new { Name = r.Name })
                .HasIndex(r => r.NameSearchVector)
                .HasMethod("GIN");
 
@@ -138,122 +151,167 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .HasData(new Image
                         {
                             Id = 1,
-                            Path = "/imagesFromDb/abstract-img.jpg",
+                            Address = "/imagesFromDb/abstract-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Мониторы с аниме"
+                            Name = "Мониторы с аниме",
+                            Extension = "jpg",
+                            FileName = "abstract-img.jpg",
+                            Tags = new []{"anime","fallout"}
                         },
                         new Image
                         {
                             Id = 2,
-                            Path = "/imagesFromDb/bird-img.jpg",
+                            Address = "/imagesFromDb/bird-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Птица зимородок"
+                            Name = "Птица зимородок",
+                            Extension = "jpg",
+                            FileName = "bird-img.jpg",
+                            Tags = new []{"bird","nature"}
                         },
                         new Image
                         {
                             Id = 3,
-                            Path = "/imagesFromDb/car-img.jpg",
+                            Address = "/imagesFromDb/car-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Машина на дороге"
+                            Name = "Машина на дороге",
+                            Extension = "jpg",
+                            FileName = "car-img.jpg",
+                            Tags = new []{"car"}
                         },
                         new Image
                         {
                             Id = 4,
-                            Path = "/imagesFromDb/cat-img.jpg",
+                            Address = "/imagesFromDb/cat-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Котенок на одеяле"
+                            Name = "Котенок на одеяле",
+                            Extension = "jpg",
+                            FileName = "cat-img.jpg",
+                            Tags = new []{"cat","animal","pet"}
                         },
                         new Image
                         {
                             Id = 5,
-                            Path = "/imagesFromDb/house-img.jpg",
+                            Address = "/imagesFromDb/house-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Стандартный американский дом"
+                            Name = "Стандартный американский дом",
+                            Extension = "jpg",
+                            FileName = "house-img.jpg",
+                            Tags = new []{"house"}
                         },
                         new Image
                         {
                             Id = 6,
-                            Path = "/imagesFromDb/nature-img.jpg",
+                            Address = "/imagesFromDb/nature-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Осенний лес в природе"
+                            Name = "Осенний лес в природе",
+                            Extension = "jpg",
+                            FileName = "nature-img.jpg",
+                            Tags = new []{"nature"}
                         },
                         new Image
                         {
                             Id = 7,
-                            Path = "/imagesFromDb/school-img.jpg",
+                            Address = "/imagesFromDb/school-img.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Дети за партами в школе перед учителем"
+                            Name = "Дети за партами в школе перед учителем",
+                            Extension = "jpg",
+                            FileName = "school-img.jpg",
+                            Tags = new []{"school","kids"}
                         },
                         new Image
                         {
                             Id = 8,
-                            Path = "/imagesFromDb/cat-img-2.jpg",
+                            Address = "/imagesFromDb/cat-img-2.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Кот смотрит в камеру на зеленом фоне"
+                            Name = "Кот смотрит в камеру на зеленом фоне",
+                            Extension = "jpg",
+                            FileName = "cat-img-2.jpg",
+                            Tags = new []{"cat","pet","animal"}
                         },
                         new Image
                         {
                             Id = 9,
-                            Path = "/imagesFromDb/cat-img-3.jpg",
+                            Address = "/imagesFromDb/cat-img-3.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Крутой кот в очках"
+                            Name = "Крутой кот в очках",
+                            Extension = "jpg",
+                            FileName = "cat-img-3.jpg",
+                            Tags = new []{"cat","pet","animal","sunglasses"}
                         },
                         new Image
                         {
                             Id = 10,
-                            Path = "/imagesFromDb/cat-img-4.jpg",
+                            Address = "/imagesFromDb/cat-img-4.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Белоснежный кот застыл в мяукающей позе"
+                            Name = "Белоснежный кот застыл в мяукающей позе",
+                            Extension = "jpg",
+                            FileName = "cat-img-4.jpg",
+                            Tags = new []{"cat","pet","animal"}
                         },
                         new Image
                         {
                             Id = 11,
-                            Path = "/imagesFromDb/cat-img-5.jpg",
+                            Address = "/imagesFromDb/cat-img-5.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Рыжий кот заснул на полу"
+                            Name = "Рыжий кот заснул на полу",
+                            Extension = "jpg",
+                            FileName = "cat-img-5.jpg",
+                            Tags = new []{"cat","pet","animal"}
                         },
                         new Image
                         {
                             Id = 12,
-                            Path = "/imagesFromDb/cat-img-6.jpg",
+                            Address = "/imagesFromDb/cat-img-6.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Спящий кот прикрывается лапой от солнца"
+                            Name = "Спящий кот прикрывается лапой от солнца",
+                            Extension = "jpg",
+                            FileName = "cat-img-6.jpg",
+                            Tags = new []{"cat","pet","animal"}
                         },
                         new Image
                         {
                             Id = 13,
-                            Path = "/imagesFromDb/cat-img-7.jpg",
+                            Address = "/imagesFromDb/cat-img-7.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "На стуле лежит кот"
+                            Name = "На стуле лежит кот",
+                            Extension = "jpg",
+                            FileName = "cat-img-7.jpg",
+                            Tags = new []{"cat","pet","animal","chair","furniture"}
                         },
                         new Image
                         {
                             Id = 14,
-                            Path = "/imagesFromDb/cat-img-8.jpg",
+                            Address = "/imagesFromDb/cat-img-8.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Идущий по забору кот у причала"
+                            Name = "Идущий по забору кот у причала",
+                            Extension = "jpg",
+                            FileName = "cat-img-8.jpg",
+                            Tags = new []{"cat","pet","animal","yacht","see"}
                         }, 
                         new Image
                         {
                             Id = 15,
-                            Path = "/imagesFromDb/cat-img-9.jpg",
+                            Address = "/imagesFromDb/cat-img-9.jpg",
                             OwnerId = ownerId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Кот у елки сморит на лес"
+                            Name = "Кот у елки сморит на лес",
+                            Extension = "jpg",
+                            FileName = "cat-img-9.jpg",
+                            Tags = new []{"cat","pet","animal","nature"}
                         });
     }
 }
