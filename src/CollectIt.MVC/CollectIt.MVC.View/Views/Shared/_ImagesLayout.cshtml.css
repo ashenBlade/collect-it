@@ -1,0 +1,14 @@
+section{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.container-custom{
+    margin: 0 auto;
+    max-width: calc(100% - 5em);
+    width: 60em;
+}

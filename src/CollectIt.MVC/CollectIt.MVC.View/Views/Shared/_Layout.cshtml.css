@@ -46,3 +46,42 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+section{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+.header {
+  background: #444;
+  color: #bbb;
+  cursor: default;
+  left: 0;
+  height: 68px;
+  line-height: 3.25em;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10000;
+}
+
+.header.alt {
+  -moz-animation: none;
+  -webkit-animation: none;
+  -ms-animation: none;
+  animation: none;
+  background: none;
+  position: absolute;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.header.reveal {
+  -moz-animation: reveal-header 0.5s;
+  -webkit-animation: reveal-header 0.5s;
+  -ms-animation: reveal-header 0.5s;
+  animation: reveal-header 0.5s;
+}
