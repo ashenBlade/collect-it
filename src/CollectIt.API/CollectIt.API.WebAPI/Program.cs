@@ -1,3 +1,4 @@
+using CollectIt.API.DTO.Account;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;

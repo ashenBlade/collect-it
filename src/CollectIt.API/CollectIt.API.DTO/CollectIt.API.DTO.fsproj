@@ -5,4 +5,12 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Include="AccountDTO.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
+    </ItemGroup>
+
 </Project>
