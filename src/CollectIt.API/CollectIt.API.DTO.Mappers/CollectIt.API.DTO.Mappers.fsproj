@@ -10,4 +10,8 @@
       <ProjectReference Include="..\CollectIt.API.DTO\CollectIt.API.DTO.fsproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Include="AccountMappers.fs" />
+    </ItemGroup>
+
 </Project>
