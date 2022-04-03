@@ -1,10 +1,49 @@
+using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure;
+using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
 
+// Set up jwt
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
+
+builder.Services.AddIdentity<User, Role>(config => 
+        {
+            config.User = new UserOptions {RequireUniqueEmail = true,};
+            config.Password = new PasswordOptions
+                              {
+                                  RequireDigit = true,
+                                  RequiredLength = 6,
+                                  RequireLowercase = false,
+                                  RequireUppercase = false,
+                                  RequiredUniqueChars = 1,
+                                  RequireNonAlphanumeric = false,
+                              };
+            config.SignIn = new SignInOptions
+                            {
+                                RequireConfirmedEmail = false,
+                                RequireConfirmedAccount = false,
+                                RequireConfirmedPhoneNumber = false,
+                            };
+        })
+       .AddUserManager<UserManager>()
+       .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
+       .AddDefaultTokenProviders();
+
+builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
+{
+    config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], options =>
+    {
+        options.UseNodaTime();
+    });
+});
 
 if (builder.Environment.IsDevelopment())
 {
