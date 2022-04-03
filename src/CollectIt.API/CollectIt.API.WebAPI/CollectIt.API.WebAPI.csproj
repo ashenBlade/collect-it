@@ -17,6 +17,11 @@
     <ItemGroup>
       <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
       <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Infrastructure\CollectIt.Database.Infrastructure.csproj" />
+      <ProjectReference Include="..\CollectIt.API.DTO.Mappers\CollectIt.API.DTO.Mappers.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Controllers" />
     </ItemGroup>
 
 </Project>
