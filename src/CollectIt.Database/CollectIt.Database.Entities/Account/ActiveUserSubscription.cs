@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.VisualBasic;
 using NpgsqlTypes;
@@ -7,6 +8,9 @@ namespace CollectIt.Database.Entities.Account;
 
 public class ActiveUserSubscription
 {
+    [Key]
+    public int Id { get; set; }
+    
     public int UserId { get; set; }
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
@@ -18,6 +22,4 @@ public class ActiveUserSubscription
     public int LeftResourcesCount { get; set; }
     
     public DateInterval During { get; set; }
-    
-    public int MaxResourcesCount { get; set; }
 }

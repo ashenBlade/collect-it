@@ -68,8 +68,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .Property(s => s.AppliedResourceType)
                .HasConversion<string>();
         builder.Entity<ActiveUserSubscription>()
-               .ToView("ActiveUsersSubscriptions")
-               .HasNoKey();
+               .ToView("ActiveUsersSubscriptions");
         builder.Entity<Role>()
                .HasData(new Role() { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP" },
                         new Role() { Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP" },
