@@ -46,4 +46,18 @@ public class SubscriptionManager : ISubscriptionManager
         await _context.SaveChangesAsync();
         _logger.LogInformation("Subscription with Id = {SubscriptionId} was deleted", id);
     }
+
+    public Task<List<Subscription>> GetAllWithResourceTypeAsync(ResourceType resourceType)
+    {
+        return _context.Subscriptions
+                        .Where(s => s.AppliedResourceType == resourceType)
+                        .ToListAsync();
+    }
+
+    public Task<Subscription?> FindSubscriptionByIdAsync(int id)
+    {
+        return _context.Subscriptions
+                       .Where(s => s.Id == id)
+                       .SingleOrDefaultAsync();
+    }
 }

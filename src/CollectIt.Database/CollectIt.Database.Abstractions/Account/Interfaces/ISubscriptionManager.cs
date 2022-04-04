@@ -11,6 +11,8 @@ public interface ISubscriptionManager
                                                       int maxResourcesCount,
                                                       int? restrictionId);
 
-    
+    public Task<Subscription?> FindSubscriptionByIdAsync(int id);
+
     public Task DeleteSubscriptionAsync(int id);
+    public Task<List<Subscription>> GetAllWithResourceTypeAsync(ResourceType resourceType);
 }

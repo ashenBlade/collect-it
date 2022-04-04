@@ -28,6 +28,12 @@ public class UserManager: UserManager<User>
         _context = context;
     }
 
+    public Task<User?> FindUserByIdAsync(int id)
+    {
+        return _context.Users
+                       .SingleOrDefaultAsync(u => u.Id == id);
+    }
+
     public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserAsync(User user)
     {
         return _context.UsersSubscriptions
