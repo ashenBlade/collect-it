@@ -67,7 +67,15 @@
 .inline-center{
     position: absolute;
     top: 35%;
-     margin-top: -0.625em;
+    margin-top: -0.625em;
+}
+
+.subs-center{
+    position: absolute;
+    top: 25%;
+    left: 0;
+    right: 0;
+    list-style-type: none;
 }
 
 .block-bestsub{
