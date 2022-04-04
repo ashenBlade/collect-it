@@ -40,9 +40,10 @@ public class SubscriptionManager : ISubscriptionManager
 
     public async Task DeleteSubscriptionAsync(int id)
     {
-        await _context.Database.OpenConnectionAsync();
-        var affected = await _context.Database.ExecuteSqlRawAsync(@$"DELETE FROM ""Subscriptions"" WHERE ""Id"" = {id}");
-        _logger.LogInformation(@"Removed subscription: Id = {Id}", id);
+        var subscription = new Subscription() {Id = id};
+        _context.Subscriptions.Attach(subscription);
+        _context.Subscriptions.Remove(subscription);
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Subscription with Id = {SubscriptionId} was deleted", id);
     }
 }
