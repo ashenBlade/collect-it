@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\CollectIt.MVC\CollectIt.MVC.Entities\CollectIt.MVC.Entities.csproj" />
       <ProjectReference Include="..\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
     </ItemGroup>
 

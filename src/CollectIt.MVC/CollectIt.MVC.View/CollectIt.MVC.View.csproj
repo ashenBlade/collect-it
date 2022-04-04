@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\CollectIt.API\CollectIt.API.DTO.Mappers\CollectIt.API.DTO.Mappers.fsproj" />
       <ProjectReference Include="..\CollectIt.MVC.Infrastructure\CollectIt.MVC.Infrastructure.csproj" />
     </ItemGroup>
 

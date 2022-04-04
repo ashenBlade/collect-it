@@ -1,8 +1,10 @@
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NodaTime;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
 
@@ -26,22 +28,18 @@ public class UserManager: UserManager<User>
         _context = context;
     }
 
-    public async Task AddSubscriptionAsync(UserSubscription userSubscription)
+    public Task<User?> FindUserByIdAsync(int id)
     {
-        await _context.UsersSubscriptions.AddAsync(userSubscription);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveSubscriptionAsync(UserSubscription userSubscription)
-    {
-        _context.UsersSubscriptions.Remove(userSubscription);
-        await _context.SaveChangesAsync();
+        return _context.Users
+                       .SingleOrDefaultAsync(u => u.Id == id);
     }
 
     public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserAsync(User user)
     {
         return _context.UsersSubscriptions
                        .Where(us => us.UserId == user.Id)
+                       .Include(us => us.Subscription)
+                       .Include(us => us.User)
                        .AsAsyncEnumerable();
     }
 
@@ -60,6 +58,15 @@ public class UserManager: UserManager<User>
                        .Where(us => us.UserId == user.Id)
                        .Include(us => us.Subscription)
                        .Include(us => us.User)
+                       .AsAsyncEnumerable();
+    }
+
+    public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserByIdAsync(int userId)
+    {
+        return _context.ActiveUsersSubscriptions
+                       .Where(aus => aus.UserId == userId)
+                       .Include(aus => aus.Subscription)
+                       .Include(aus => aus.User)
                        .AsAsyncEnumerable();
     }
 }
