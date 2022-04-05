@@ -41,6 +41,14 @@ public class SubscriptionsController : ControllerBase
     }
 
 
+    [HttpGet("active")]
+    public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")][Required] ResourceType type)
+    {
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type);
+        return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
+                               .ToArray());
+    }
+
     [HttpGet("{subscriptionId:int}")]
     public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
     {
@@ -50,9 +58,4 @@ public class SubscriptionsController : ControllerBase
                    ? NotFound()
                    : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
     }
-
-    // public async Task<IActionResult> GetAvailableSubscriptions()
-    // {
-    //     var subscriptions = await _subscriptionManager.Get
-    // }
 }

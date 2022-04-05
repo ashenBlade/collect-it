@@ -41,7 +41,7 @@ public class SubscriptionManager : ISubscriptionManager
         return result.Entity;
     }
 
-    public Task<List<Subscription>> GetSubscriptionsPaged(int pageNumber, int pageSize)
+    public Task<List<Subscription>> GetSubscriptionsAsync(int pageNumber, int pageSize)
     {
         return _context.Subscriptions
                        .OrderBy(s => s.Id)
@@ -50,7 +50,7 @@ public class SubscriptionManager : ISubscriptionManager
                        .ToListAsync();
     }
 
-    public Task<List<Subscription>> GetActiveSubscriptionsPaged(int pageNumber, int pageSize)
+    public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize)
     {
         return ActiveSubscriptions
                        .OrderBy(s => s.Id)

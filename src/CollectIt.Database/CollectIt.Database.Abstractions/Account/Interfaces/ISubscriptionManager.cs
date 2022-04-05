@@ -12,10 +12,9 @@ public interface ISubscriptionManager
                                                       int? restrictionId,
                                                       bool active = false);
 
-    public Task<List<Subscription>> GetSubscriptionsPaged(int pageNumber, int pageSize);
-    public Task<List<Subscription>> GetActiveSubscriptionsPaged(int pageNumber, int pageSize);
+    public Task<List<Subscription>> GetSubscriptionsAsync(int pageNumber, int pageSize);
+    public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize);
     public Task<Subscription?> FindSubscriptionByIdAsync(int id);
-    public Task<List<Subscription>> GetActiveSubscriptionsAsync();
     public Task DeleteSubscriptionAsync(int id);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize);
