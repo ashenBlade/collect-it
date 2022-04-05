@@ -110,10 +110,13 @@ type ReadSubscriptionDTO = {
     [<Range(1, Int32.MaxValue)>]
     MaxResourcesCount : int
     
+    [<Required>]
+    Active : bool
+    
     RestrictionId : Nullable<int>
 }
 
-let ReadSubscriptionDTO id name description price monthDuration appliedResourceType maxResourcesCount restrictionId = {
+let ReadSubscriptionDTO id name description price monthDuration appliedResourceType maxResourcesCount active restrictionId = {
     Id = id
     Name = name
     Description = description
@@ -122,6 +125,7 @@ let ReadSubscriptionDTO id name description price monthDuration appliedResourceT
     AppliedResourceType = appliedResourceType
     MaxResourcesCount = maxResourcesCount
     RestrictionId = restrictionId
+    Active = active
 }
 
 [<CLIMutable>]

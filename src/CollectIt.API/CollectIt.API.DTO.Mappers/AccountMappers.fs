@@ -17,6 +17,7 @@ let ToReadSubscriptionDTO (subscription: Subscription): ReadSubscriptionDTO =
                   subscription.MonthDuration
                   subscription.AppliedResourceType
                   subscription.MaxResourcesCount
+                  subscription.Active
                   subscription.RestrictionId
     dto
     
