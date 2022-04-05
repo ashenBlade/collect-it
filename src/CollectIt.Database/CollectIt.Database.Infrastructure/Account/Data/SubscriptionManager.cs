@@ -38,6 +38,16 @@ public class SubscriptionManager : ISubscriptionManager
         return result.Entity;
     }
 
+
+    public Task<List<Subscription>> GetSubscriptionsPaged(int pageNumber, int pageSize)
+    {
+        return _context.Subscriptions
+                       .OrderBy(s => s.Id)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    }
+
     public async Task DeleteSubscriptionAsync(int id)
     {
         var subscription = new Subscription() {Id = id};
@@ -52,6 +62,16 @@ public class SubscriptionManager : ISubscriptionManager
         return _context.Subscriptions
                         .Where(s => s.AppliedResourceType == resourceType)
                         .ToListAsync();
+    }
+
+    public Task<List<Subscription>> GetAllWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
+    {
+        return _context.Subscriptions
+                       .Where(s => s.AppliedResourceType == resourceType)
+                       .OrderBy(s => s.Id)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
     }
 
     public Task<Subscription?> FindSubscriptionByIdAsync(int id)
