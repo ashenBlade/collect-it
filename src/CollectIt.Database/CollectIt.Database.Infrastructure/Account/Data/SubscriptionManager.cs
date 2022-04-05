@@ -1,3 +1,4 @@
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,12 @@ public class SubscriptionManager : ISubscriptionManager
     }
     
     public async Task<Subscription> CreateSubscriptionAsync(string name,
-                                                      string description,
-                                                      int monthDuration,
-                                                      ResourceType appliedResourceType,
-                                                      int maxResourcesCount,
-                                                      int? restrictionId)
+                                                            string description,
+                                                            int monthDuration,
+                                                            ResourceType appliedResourceType,
+                                                            int maxResourcesCount,
+                                                            int? restrictionId,
+                                                            bool active = false)
     {
         var subscription = new Subscription()
                            {
@@ -30,7 +32,8 @@ public class SubscriptionManager : ISubscriptionManager
                                Description = description,
                                MonthDuration = monthDuration,
                                MaxResourcesCount = maxResourcesCount,
-                               RestrictionId = restrictionId
+                               RestrictionId = restrictionId,
+                               Active = true
                            };
         var result = await _context.Subscriptions.AddAsync(subscription);
         await _context.SaveChangesAsync();
@@ -38,13 +41,37 @@ public class SubscriptionManager : ISubscriptionManager
         return result.Entity;
     }
 
-
     public Task<List<Subscription>> GetSubscriptionsPaged(int pageNumber, int pageSize)
     {
         return _context.Subscriptions
                        .OrderBy(s => s.Id)
                        .Skip(( pageNumber - 1 ) * pageSize)
                        .Take(pageSize)
+                       .ToListAsync();
+    }
+
+    public Task<List<Subscription>> GetActiveSubscriptionsPaged(int pageNumber, int pageSize)
+    {
+        return ActiveSubscriptions
+                       .OrderBy(s => s.Id)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    }
+
+    private IQueryable<Subscription> ActiveSubscriptions
+    {
+        get
+        {
+            return _context.Subscriptions
+                           .Where(s => s.Active);
+        }
+    }
+
+    public Task<List<Subscription>> GetActiveSubscriptionsAsync()
+    {
+        return _context.Subscriptions
+                       .Where(s => s.Active)
                        .ToListAsync();
     }
 
@@ -56,22 +83,49 @@ public class SubscriptionManager : ISubscriptionManager
         await _context.SaveChangesAsync();
         _logger.LogInformation("Subscription with Id = {SubscriptionId} was deleted", id);
     }
-
-    public Task<List<Subscription>> GetAllWithResourceTypeAsync(ResourceType resourceType)
+    
+    public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType)
     {
         return _context.Subscriptions
-                        .Where(s => s.AppliedResourceType == resourceType)
-                        .ToListAsync();
+                       .Where(s => s.AppliedResourceType == resourceType)
+                       .ToListAsync();
     }
 
-    public Task<List<Subscription>> GetAllWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
+    public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
     {
-        return _context.Subscriptions
+        return ActiveSubscriptions
                        .Where(s => s.AppliedResourceType == resourceType)
                        .OrderBy(s => s.Id)
                        .Skip(( pageNumber - 1 ) * pageSize)
                        .Take(pageSize)
                        .ToListAsync();
+    }
+
+    public Task ActivateSubscriptionAsync(int subscriptionId)
+    {
+        return SetActiveSubscriptionState(subscriptionId, true);
+    }
+
+    public Task DeactivateSubscriptionAsync(int subscriptionId)
+    {
+        return SetActiveSubscriptionState(subscriptionId, false);
+    }
+
+    private async Task SetActiveSubscriptionState(int subscriptionId, bool activeState)
+    {
+        var subscription = await _context.Subscriptions
+                                         .SingleOrDefaultAsync(s => s.Id == subscriptionId);
+        if (subscription is null)
+        {
+            throw new SubscriptionNotFoundException(subscriptionId);
+        }
+
+        if (subscription.Active == activeState)
+            return;
+
+        subscription.Active = activeState;
+        _context.Subscriptions.Update(subscription);
+        await _context.SaveChangesAsync();
     }
 
     public Task<Subscription?> FindSubscriptionByIdAsync(int id)

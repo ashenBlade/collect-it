@@ -85,6 +85,9 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .HasOne(s => s.Restriction)
                .WithOne(r => r.Subscription)
                .IsRequired(false);
+
+        builder.Entity<Subscription>()
+               .HasIndex(s => s.Active);
         
         builder.Entity<Subscription>()
                .HasData(new Subscription()
@@ -96,7 +99,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             MaxResourcesCount = 50,
                             MonthDuration = 1,
                             Price = 200,
-                            RestrictionId = null
+                            RestrictionId = null,
+                            Active = true
                         },
                         new Subscription()
                         {
@@ -107,7 +111,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             MaxResourcesCount = 100,
                             MonthDuration = 1,
                             Price = 350,
-                            RestrictionId = null
+                            RestrictionId = null,
+                            Active = true
                         },
                         new Subscription()
                         {
@@ -118,7 +123,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             MaxResourcesCount = 200,
                             MonthDuration = 1,
                             Price = 500,
-                            RestrictionId = null
+                            RestrictionId = null,
+                            Active = true
                         });
         
         builder.Entity<User>()

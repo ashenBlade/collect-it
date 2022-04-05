@@ -35,7 +35,7 @@ public class SubscriptionsController : ControllerBase
                                                            [Required(ErrorMessage = "Please, specify resource type")]
                                                            ResourceType resourceType)
     {
-        var subscriptions = await _subscriptionManager.GetAllWithResourceTypeAsync(resourceType, pageNumber, pageSize);
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(resourceType, pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
                                .ToArray());
     }
@@ -50,4 +50,9 @@ public class SubscriptionsController : ControllerBase
                    ? NotFound()
                    : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
     }
+
+    // public async Task<IActionResult> GetAvailableSubscriptions()
+    // {
+    //     var subscriptions = await _subscriptionManager.Get
+    // }
 }

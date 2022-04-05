@@ -29,7 +29,7 @@ public class PaymentController : Controller
     [Route("subscriptions")]
     public async Task<IActionResult> GetPageWithSubscriptionCards()
     {
-        var subscriptions = await _subscriptionManager.GetAllWithResourceTypeAsync(ResourceType.Image); 
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(ResourceType.Image); 
         return View("Subscriptions", new SubscriptionsViewModel()
                                          {
                                              Subscriptions = subscriptions
