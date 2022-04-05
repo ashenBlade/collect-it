@@ -24,8 +24,4 @@
       <ProjectReference Include="..\CollectIt.API.DTO.Mappers\CollectIt.API.DTO.Mappers.fsproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Controllers" />
-    </ItemGroup>
-
 </Project>

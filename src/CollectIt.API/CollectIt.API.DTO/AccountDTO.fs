@@ -37,8 +37,7 @@ type ReadUserDTO = {
     Email : string
     
     [<Required>]
-    Roles : string[]
-    
+    Roles : string[] 
 }
 
 let ReadUserDTO id username email roles = {
@@ -131,20 +130,24 @@ type ReadUserSubscriptionDTO = {
     Id : int
     
     [<Required>]
+    UserId : int
+    
+    [<Required>]
     SubscriptionId : int
     
     [<Required>]
     LeftResourcesCount : int
     
     [<Required>]
-    DateFrom : string
+    DateFrom : DateTime
     
     [<Required>]
-    DateTo : string
+    DateTo : DateTime
 }
 
-let ReadUserSubscriptionDTO id subscriptionId leftResourcesCount dateFrom dateTo = {
+let ReadUserSubscriptionDTO id userId subscriptionId leftResourcesCount dateFrom dateTo = {
     Id = id
+    UserId = userId
     SubscriptionId = subscriptionId
     LeftResourcesCount = leftResourcesCount
     DateFrom = dateFrom
@@ -177,4 +180,37 @@ type ReadRoleDTO = {
 let ReadRoleDTO id name = {
     Id = id
     Name = name
+}
+
+[<CLIMutable>]
+type ReadActiveUserSubscription = {
+    [<Required>]
+    Id : int
+    
+    [<Required>]
+    UserId : int
+    
+    [<Required>]
+    SubscriptionId : int
+    
+    [<Required>]
+    [<Range(0, Int32.MaxValue)>]
+    LeftResourcesCount : int
+    
+    [<Required>]
+    [<DataType(DataType.Date)>]
+    DateFrom : DateTime
+    
+    [<Required>]
+    [<DataType(DataType.Date)>]
+    DateTo : DateTime
+}
+
+let ReadActiveUserSubscription id userId subscriptionId leftResourcesCount dateFrom dateTo: ReadActiveUserSubscription = {
+    Id = id
+    UserId = userId
+    SubscriptionId = subscriptionId
+    LeftResourcesCount = leftResourcesCount
+    DateFrom = dateFrom
+    DateTo = dateTo
 }

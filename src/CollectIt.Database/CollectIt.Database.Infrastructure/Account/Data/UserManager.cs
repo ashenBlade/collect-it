@@ -43,13 +43,13 @@ public class UserManager: UserManager<User>
                        .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserByIdAsync(int userId)
+    public Task<List<UserSubscription>> GetSubscriptionsForUserByIdAsync(int userId)
     {
         return _context.UsersSubscriptions
                        .Where(us => us.UserId == userId)
                        .Include(us => us.Subscription)
                        .Include(us => us.User)
-                       .AsAsyncEnumerable();
+                       .ToListAsync();
     }
 
     public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserAsync(User user)
@@ -61,12 +61,32 @@ public class UserManager: UserManager<User>
                        .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserByIdAsync(int userId)
+    public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserByIdAsync(int userId)
     {
         return _context.ActiveUsersSubscriptions
                        .Where(aus => aus.UserId == userId)
                        .Include(aus => aus.Subscription)
                        .Include(aus => aus.User)
-                       .AsAsyncEnumerable();
+                       .ToListAsync();
+    }
+
+    public Task<List<User>> GetUsersPaged(int pageNumber, int pageSize)
+    {
+        return _context.Users
+                       .OrderBy(u => u.Id)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    }
+
+    public Task<List<Role>> GetRolesAsync(int userId)
+    {
+        return _context.UserRoles
+                       .Where(ur => ur.UserId == userId)
+                       .Join(_context.Roles, 
+                             userRole => userRole.RoleId, 
+                             role => role.Id, 
+                             (userRole, role) => role)
+                       .ToListAsync();
     }
 }

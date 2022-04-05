@@ -1,5 +1,6 @@
 module CollectIt.API.DTO.Mappers.AccountMappers
 
+open System.Collections.Generic
 open CollectIt.Database.Entities.Account
 open CollectIt.API.DTO.AccountDTO
 
@@ -26,3 +27,23 @@ let ToReadRoleDTO (role: Role): ReadRoleDTO =
                  
     dto
     
+    
+let ToReadUserSubscriptionDTO (userSubscription: UserSubscription): ReadUserSubscriptionDTO =
+    let dto = ReadUserSubscriptionDTO
+                userSubscription.Id
+                userSubscription.UserId
+                userSubscription.SubscriptionId
+                userSubscription.LeftResourcesCount
+                (userSubscription.During.Start.ToDateTimeUnspecified())
+                (userSubscription.During.End.ToDateTimeUnspecified())
+    dto
+                
+let ToReadUserSubscriptionDTOFromActiveUserSubscription (aus: ActiveUserSubscription): ReadUserSubscriptionDTO =
+    let dto = ReadUserSubscriptionDTO
+                    aus.Id
+                    aus.UserId
+                    aus.SubscriptionId
+                    aus.LeftResourcesCount
+                    (aus.During.Start.ToDateTimeUnspecified())
+                    (aus.During.End.ToDateTimeUnspecified())
+    dto
