@@ -28,7 +28,8 @@ services.AddAuthorization();
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
+    // options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
+    options.UseNpgsql("Server=localhost;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678",
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");

@@ -73,6 +73,7 @@ public class UserManager: UserManager<User>
     public Task<List<User>> GetUsersPaged(int pageNumber, int pageSize)
     {
         return _context.Users
+                       .Include(u => u.Roles)
                        .OrderBy(u => u.Id)
                        .Skip(( pageNumber - 1 ) * pageSize)
                        .Take(pageSize)
@@ -81,12 +82,10 @@ public class UserManager: UserManager<User>
 
     public Task<List<Role>> GetRolesAsync(int userId)
     {
-        return _context.UserRoles
-                       .Where(ur => ur.UserId == userId)
-                       .Join(_context.Roles, 
-                             userRole => userRole.RoleId, 
-                             role => role.Id, 
-                             (userRole, role) => role)
+        return _context.Users
+                       .Where(u => u.Id == userId)
+                       .Include(u => u.Roles)
+                       .SelectMany(u => u.Roles)
                        .ToListAsync();
     }
 }

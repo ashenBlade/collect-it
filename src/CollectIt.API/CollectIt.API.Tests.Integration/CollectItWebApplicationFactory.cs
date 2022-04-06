@@ -54,8 +54,9 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             using var scope = sp.CreateScope();
             
             var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<PostgresqlCollectItDbContext>();
-            db.Database.EnsureCreated();
+            var context = scopedServices.GetRequiredService<PostgresqlCollectItDbContext>();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
         });
     }
 }

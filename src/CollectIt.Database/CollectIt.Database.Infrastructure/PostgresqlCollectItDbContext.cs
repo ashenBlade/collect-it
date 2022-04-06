@@ -84,6 +84,10 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         SilverSubscription,
                         GoldenSubscription,
                         AllowAllSubscription);
+        builder.Entity<User>()
+               .HasMany(u => u.Roles)
+               .WithMany(r => r.Users)
+               .UsingEntity<IdentityUserRole<int>>();
         
         builder.Entity<User>()
                .HasData(DefaultUsers);
