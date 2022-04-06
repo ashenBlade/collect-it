@@ -1,3 +1,4 @@
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
@@ -40,7 +41,7 @@ public class Program
                .AddUserManager<UserManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
                .AddDefaultTokenProviders();
-
+        builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
             config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], options =>
