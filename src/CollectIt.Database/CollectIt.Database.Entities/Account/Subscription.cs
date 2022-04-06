@@ -32,5 +32,8 @@ public class Subscription
     [Required]
     [Range(1, int.MaxValue)]
     public int MaxResourcesCount { get; set; }
+
+    [Required]
+    public bool Active { get; set; }
     public ICollection<User> Subscribers { get; set; }
 }

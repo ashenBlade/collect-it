@@ -3,6 +3,7 @@ using System;
 using CollectIt.Database.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,10 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    partial class PostgresqlCollectItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220404102547_ChangeActiveUsersSubscriptionsView")]
+    partial class ChangeActiveUsersSubscriptionsView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,9 +161,6 @@ namespace CollectIt.MVC.View.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("AppliedResourceType")
                         .IsRequired()
                         .HasColumnType("text");
@@ -188,8 +187,6 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Active");
-
                     b.HasIndex("RestrictionId")
                         .IsUnique();
 
@@ -199,7 +196,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 1,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Обычная подписка",
                             MaxResourcesCount = 50,
@@ -210,7 +206,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 2,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Подписка для любителей качать",
                             MaxResourcesCount = 100,
@@ -221,7 +216,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 3,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Не для пиратов",
                             MaxResourcesCount = 200,

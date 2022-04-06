@@ -4,7 +4,6 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.Database.Infrastructure.Account.Repositories;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Infrastructure.Account;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -38,9 +37,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 });
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
-services.AddScoped<IUserRepository, UserRepository>();
-services.AddScoped<IUserSubscriptionsRepository, UserSubscriptionsRepository>();
-services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 
 services.AddIdentity<User, Role>(config =>
          {

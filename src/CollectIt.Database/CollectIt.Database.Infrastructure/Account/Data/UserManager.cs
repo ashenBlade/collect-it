@@ -1,8 +1,10 @@
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NodaTime;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
 
@@ -26,32 +28,28 @@ public class UserManager: UserManager<User>
         _context = context;
     }
 
-    public async Task AddSubscriptionAsync(UserSubscription userSubscription)
+    public Task<User?> FindUserByIdAsync(int id)
     {
-        await _context.UsersSubscriptions.AddAsync(userSubscription);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveSubscriptionAsync(UserSubscription userSubscription)
-    {
-        _context.UsersSubscriptions.Remove(userSubscription);
-        await _context.SaveChangesAsync();
+        return _context.Users
+                       .SingleOrDefaultAsync(u => u.Id == id);
     }
 
     public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserAsync(User user)
     {
         return _context.UsersSubscriptions
                        .Where(us => us.UserId == user.Id)
+                       .Include(us => us.Subscription)
+                       .Include(us => us.User)
                        .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<UserSubscription> GetSubscriptionsForUserByIdAsync(int userId)
+    public Task<List<UserSubscription>> GetSubscriptionsForUserByIdAsync(int userId)
     {
         return _context.UsersSubscriptions
                        .Where(us => us.UserId == userId)
                        .Include(us => us.Subscription)
                        .Include(us => us.User)
-                       .AsAsyncEnumerable();
+                       .ToListAsync();
     }
 
     public IAsyncEnumerable<ActiveUserSubscription> GetActiveSubscriptionsForUserAsync(User user)
@@ -61,5 +59,34 @@ public class UserManager: UserManager<User>
                        .Include(us => us.Subscription)
                        .Include(us => us.User)
                        .AsAsyncEnumerable();
+    }
+
+    public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserByIdAsync(int userId)
+    {
+        return _context.ActiveUsersSubscriptions
+                       .Where(aus => aus.UserId == userId)
+                       .Include(aus => aus.Subscription)
+                       .Include(aus => aus.User)
+                       .ToListAsync();
+    }
+
+    public Task<List<User>> GetUsersPaged(int pageNumber, int pageSize)
+    {
+        return _context.Users
+                       .OrderBy(u => u.Id)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    }
+
+    public Task<List<Role>> GetRolesAsync(int userId)
+    {
+        return _context.UserRoles
+                       .Where(ur => ur.UserId == userId)
+                       .Join(_context.Roles, 
+                             userRole => userRole.RoleId, 
+                             role => role.Id, 
+                             (userRole, role) => role)
+                       .ToListAsync();
     }
 }

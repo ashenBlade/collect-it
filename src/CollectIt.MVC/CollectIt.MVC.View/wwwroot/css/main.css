@@ -58,6 +58,26 @@
     margin-top: 10px 
 }
 
+.outline-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inline-center{
+    position: absolute;
+    top: 35%;
+    margin-top: -0.625em;
+}
+
+.subs-center{
+    position: absolute;
+    top: 25%;
+    left: 0;
+    right: 0;
+    list-style-type: none;
+}
+
 .block-bestsub{
     height: 580px;
 	width: 20%;

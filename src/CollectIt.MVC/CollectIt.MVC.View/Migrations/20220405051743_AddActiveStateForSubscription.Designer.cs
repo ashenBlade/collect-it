@@ -3,6 +3,7 @@ using System;
 using CollectIt.Database.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,10 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    partial class PostgresqlCollectItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220405051743_AddActiveStateForSubscription")]
+    partial class AddActiveStateForSubscription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,7 +201,7 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 1,
-                            Active = true,
+                            Active = false,
                             AppliedResourceType = "Image",
                             Description = "Обычная подписка",
                             MaxResourcesCount = 50,
@@ -210,7 +212,7 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 2,
-                            Active = true,
+                            Active = false,
                             AppliedResourceType = "Image",
                             Description = "Подписка для любителей качать",
                             MaxResourcesCount = 100,
@@ -221,7 +223,7 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 3,
-                            Active = true,
+                            Active = false,
                             AppliedResourceType = "Image",
                             Description = "Не для пиратов",
                             MaxResourcesCount = 200,

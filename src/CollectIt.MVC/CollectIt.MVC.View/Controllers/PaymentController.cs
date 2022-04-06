@@ -2,6 +2,7 @@ using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -12,27 +13,27 @@ namespace CollectIt.MVC.View.Controllers;
 public class PaymentController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
-    private readonly IUserRepository _userRepository;
-    private readonly ISubscriptionRepository _subscriptionRepository;
+    private readonly UserManager _userManager;
+    private readonly ISubscriptionManager _subscriptionManager;
 
     public PaymentController(ISubscriptionService subscriptionService,
-                             IUserRepository userRepository,
-                             ISubscriptionRepository subscriptionRepository)
+                             UserManager userManager,
+                             ISubscriptionManager subscriptionManager)
     {
         _subscriptionService = subscriptionService;
-        _userRepository = userRepository;
-        _subscriptionRepository = subscriptionRepository;
+        _userManager = userManager;
+        _subscriptionManager = subscriptionManager;
     }
 
     [HttpGet]
     [Route("subscriptions")]
-    public async Task<IActionResult> Subscriptions()
+    public async Task<IActionResult> GetPageWithSubscriptionCards()
     {
-        var subscriptions = await _subscriptionRepository.GetAllWithResourceType(ResourceType.Image); 
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(ResourceType.Image); 
         return View("Subscriptions", new SubscriptionsViewModel()
-                                     {
-                                         Subscriptions = subscriptions
-                                     });
+                                         {
+                                             Subscriptions = subscriptions
+                                         });
     }
     
     [HttpGet]
@@ -42,9 +43,9 @@ public class PaymentController : Controller
     {
         try
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await _userRepository.FindByIdAsync(userId);
-            var subscription = await _subscriptionRepository.FindByIdAsync(subscriptionId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            var subscription = await _subscriptionManager.FindSubscriptionByIdAsync(subscriptionId);
             if (user is null || subscription is null)
             {
                 return BadRequest();

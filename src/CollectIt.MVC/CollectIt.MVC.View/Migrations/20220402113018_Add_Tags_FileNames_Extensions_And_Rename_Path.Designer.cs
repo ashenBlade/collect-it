@@ -3,6 +3,7 @@ using System;
 using CollectIt.Database.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,10 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    partial class PostgresqlCollectItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220402113018_Add_Tags_FileNames_Extensions_And_Rename_Path")]
+    partial class Add_Tags_FileNames_Extensions_And_Rename_Path
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,41 +26,8 @@ namespace CollectIt.MVC.View.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CollectIt.Database.Entities.Account.AcquiredUserResource", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AcquiredDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("ResourceId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasAlternateKey("UserId", "ResourceId");
-
-                    b.HasIndex("ResourceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AcquiredUserResources");
-                });
-
             modelBuilder.Entity("CollectIt.Database.Entities.Account.ActiveUserSubscription", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
                     b.Property<DateInterval>("During")
                         .IsRequired()
                         .HasColumnType("daterange");
@@ -66,13 +35,14 @@ namespace CollectIt.MVC.View.Migrations
                     b.Property<int>("LeftResourcesCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("MaxResourcesCount")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
-
-                    b.HasKey("Id");
 
                     b.HasIndex("SubscriptionId");
 
@@ -159,9 +129,6 @@ namespace CollectIt.MVC.View.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Active")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("AppliedResourceType")
                         .IsRequired()
                         .HasColumnType("text");
@@ -188,8 +155,6 @@ namespace CollectIt.MVC.View.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Active");
-
                     b.HasIndex("RestrictionId")
                         .IsUnique();
 
@@ -199,7 +164,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 1,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Обычная подписка",
                             MaxResourcesCount = 50,
@@ -210,7 +174,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 2,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Подписка для любителей качать",
                             MaxResourcesCount = 100,
@@ -221,7 +184,6 @@ namespace CollectIt.MVC.View.Migrations
                         new
                         {
                             Id = 3,
-                            Active = true,
                             AppliedResourceType = "Image",
                             Description = "Не для пиратов",
                             MaxResourcesCount = 200,
@@ -783,25 +745,6 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("Videos");
                 });
 
-            modelBuilder.Entity("CollectIt.Database.Entities.Account.AcquiredUserResource", b =>
-                {
-                    b.HasOne("CollectIt.Database.Entities.Resources.Resource", "Resource")
-                        .WithMany()
-                        .HasForeignKey("ResourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CollectIt.Database.Entities.Account.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Resource");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CollectIt.Database.Entities.Account.ActiveUserSubscription", b =>
                 {
                     b.HasOne("CollectIt.Database.Entities.Account.Subscription", "Subscription")
@@ -878,7 +821,7 @@ namespace CollectIt.MVC.View.Migrations
             modelBuilder.Entity("CollectIt.Database.Entities.Resources.Resource", b =>
                 {
                     b.HasOne("CollectIt.Database.Entities.Account.User", "Owner")
-                        .WithMany("ResourcesAuthorOf")
+                        .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -984,11 +927,6 @@ namespace CollectIt.MVC.View.Migrations
             modelBuilder.Entity("CollectIt.Database.Entities.Account.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("CollectIt.Database.Entities.Account.User", b =>
-                {
-                    b.Navigation("ResourcesAuthorOf");
                 });
 #pragma warning restore 612, 618
         }

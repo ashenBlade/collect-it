@@ -4,14 +4,24 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>9621c8c7-1a20-4b30-a092-eb8fd0ecf6fa</UserSecretsId>
     </PropertyGroup>
-
+    
     <ItemGroup>
+        <InternalsVisibleTo Include="CollectIt.API.Tests.Integration" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.3" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime" Version="6.0.3" />
+        <PackageReference Include="Npgsql.NodaTime" Version="6.0.3" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Entities\CollectIt.Database.Entities.csproj" />
+      <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Infrastructure\CollectIt.Database.Infrastructure.csproj" />
+      <ProjectReference Include="..\CollectIt.API.DTO.Mappers\CollectIt.API.DTO.Mappers.fsproj" />
     </ItemGroup>
 
 </Project>

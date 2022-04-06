@@ -36,19 +36,16 @@ public class AccountController : Controller
     public async Task<IActionResult> Profile()
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var subscriptions = new List<AccountUserSubscription>();
-        await foreach (var subscription in _userManager.GetSubscriptionsForUserByIdAsync(userId))
-        {
-            subscriptions.Add(new AccountUserSubscription()
-                              {
-                                  From = subscription.During.Start.ToDateTimeUnspecified(),
-                                  To = subscription.During.End.ToDateTimeUnspecified(),
-                                  LeftResourcesCount = subscription.LeftResourcesCount,
-                                  Name = subscription.Subscription.Name,
-                                  ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
-                              });
-        }
-
+        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(userId) )
+           .Select(subscription =>
+                       new AccountUserSubscription()
+                       {
+                           From = subscription.During.Start.ToDateTimeUnspecified(),
+                           To = subscription.During.End.ToDateTimeUnspecified(),
+                           LeftResourcesCount = subscription.LeftResourcesCount,
+                           Name = subscription.Subscription.Name,
+                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
+                       });
         var model = new AccountViewModel()
                     {
                         UserName = User.FindFirstValue(ClaimTypes.Name),
