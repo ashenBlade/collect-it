@@ -28,7 +28,7 @@ services.AddAuthorization();
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:development"],
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
