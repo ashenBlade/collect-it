@@ -2,7 +2,7 @@
 
 namespace CollectIt.Database.Abstractions.Resources;
 
-public interface IVideoRepository : IDerivedResourceRepository<Video, int>
+public interface IMusicManager : IResourceManager<Music>
 {
     
 }

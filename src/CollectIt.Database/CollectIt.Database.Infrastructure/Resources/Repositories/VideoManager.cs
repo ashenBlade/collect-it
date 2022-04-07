@@ -1,25 +1,23 @@
 ﻿using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class VideoRepository /*: IVideoRepository*/
+public class VideoManager : IVideoManager
 {
     private readonly PostgresqlCollectItDbContext context;
-    private readonly ResourceRepository resourceRepository;
 
-    public VideoRepository(PostgresqlCollectItDbContext context)
+    public VideoManager(PostgresqlCollectItDbContext context)
     {
         this.context = context;
-        resourceRepository = new ResourceRepository(context);
     }
 
-    public async Task<int> AddAsync(Video item, Resource resource)
+    public async Task<int> AddAsync(Video item)
     {
         await context.Videos.AddAsync(item);
         await context.SaveChangesAsync();
-        await resourceRepository.AddAsync(resource);
         return item.Id;
     }
 
@@ -28,19 +26,33 @@ public class VideoRepository /*: IVideoRepository*/
         return await context.Videos.Where(video => video.Id == id).SingleOrDefaultAsync();
     }
 
-    public Task UpdateAsync(Video item)
+    public Task Create(string address, string fileName, string name, string tags, IFormFile uploadedFile)
     {
         throw new NotImplementedException();
     }
 
-    public async Task RemoveAsync(Video item, Resource resource)
+    public Task Create()
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task RemoveAsync(Video item)
     {
         context.Videos.Remove(item);
         await context.SaveChangesAsync();
-        await resourceRepository.RemoveAsync(resource);
+    }
+
+    public IAsyncEnumerable<Video> GetAllByQuery(string query)
+    {
+        throw new NotImplementedException();
     }
 
     public IAsyncEnumerable<Video> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<Video> GetAllByTag(string tag)
     {
         throw new NotImplementedException();
     }
