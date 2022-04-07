@@ -28,13 +28,13 @@ services.AddAuthorization();
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    // options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
-    options.UseNpgsql("Server=localhost;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678",
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
                           config.UseNodaTime();
                       });
+    options.UseOpenIddict();
 });
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
