@@ -321,7 +321,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Мониторы с аниме",
                             Extension = "jpg",
                             FileName = "abstract-img.jpg",
-                            Tags = new []{"anime","fallout"}
+                            Tags = new []{"аниме","фоллаут"}
                         },
                         new Image
                         {
@@ -332,7 +332,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Птица зимородок",
                             Extension = "jpg",
                             FileName = "bird-img.jpg",
-                            Tags = new []{"bird","nature"}
+                            Tags = new []{"птица","природа"}
                         },
                         new Image
                         {
@@ -343,7 +343,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Машина на дороге",
                             Extension = "jpg",
                             FileName = "car-img.jpg",
-                            Tags = new []{"car"}
+                            Tags = new []{"машина"}
                         },
                         new Image
                         {
@@ -354,7 +354,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Котенок на одеяле",
                             Extension = "jpg",
                             FileName = "cat-img.jpg",
-                            Tags = new []{"cat","animal","pet"}
+                            Tags = new []{"кот","животное","питомец"}
                         },
                         new Image
                         {
@@ -365,7 +365,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Стандартный американский дом",
                             Extension = "jpg",
                             FileName = "house-img.jpg",
-                            Tags = new []{"house"}
+                            Tags = new []{"дом"}
                         },
                         new Image
                         {
@@ -376,7 +376,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Осенний лес в природе",
                             Extension = "jpg",
                             FileName = "nature-img.jpg",
-                            Tags = new []{"nature"}
+                            Tags = new []{"природа"}
                         },
                         new Image
                         {
@@ -387,7 +387,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Дети за партами в школе перед учителем",
                             Extension = "jpg",
                             FileName = "school-img.jpg",
-                            Tags = new []{"school","kids"}
+                            Tags = new []{"школа","дети"}
                         },
                         new Image
                         {
@@ -398,7 +398,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Кот смотрит в камеру на зеленом фоне",
                             Extension = "jpg",
                             FileName = "cat-img-2.jpg",
-                            Tags = new []{"cat","pet","animal"}
+                            Tags = new []{"кот","питомец","животное"}
                         },
                         new Image
                         {
@@ -409,7 +409,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Крутой кот в очках",
                             Extension = "jpg",
                             FileName = "cat-img-3.jpg",
-                            Tags = new []{"cat","pet","animal","sunglasses"}
+                            Tags = new []{"кот","питомец","животное","очки"}
                         },
                         new Image
                         {
@@ -420,7 +420,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Белоснежный кот застыл в мяукающей позе",
                             Extension = "jpg",
                             FileName = "cat-img-4.jpg",
-                            Tags = new []{"cat","pet","animal"}
+                            Tags = new []{"кот","питомец","животное"}
                         },
                         new Image
                         {
@@ -431,7 +431,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Рыжий кот заснул на полу",
                             Extension = "jpg",
                             FileName = "cat-img-5.jpg",
-                            Tags = new []{"cat","pet","animal"}
+                            Tags = new []{"кот","питомец","животное"}
                         },
                         new Image
                         {
@@ -442,7 +442,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Спящий кот прикрывается лапой от солнца",
                             Extension = "jpg",
                             FileName = "cat-img-6.jpg",
-                            Tags = new []{"cat","pet","animal"}
+                            Tags = new []{"кот","питомец","животное"}
                         },
                         new Image
                         {
@@ -453,7 +453,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "На стуле лежит кот",
                             Extension = "jpg",
                             FileName = "cat-img-7.jpg",
-                            Tags = new []{"cat","pet","animal","chair","furniture"}
+                            Tags = new []{"кот","питомец","животное","стул","мебель"}
                         },
                         new Image
                         {
@@ -464,7 +464,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Идущий по забору кот у причала",
                             Extension = "jpg",
                             FileName = "cat-img-8.jpg",
-                            Tags = new []{"cat","pet","animal","yacht","see"}
+                            Tags = new []{"кот","питомец","животное","яхта","море"}
                         }, 
                         new Image
                         {
@@ -475,7 +475,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Name = "Кот у елки сморит на лес",
                             Extension = "jpg",
                             FileName = "cat-img-9.jpg",
-                            Tags = new []{"cat","pet","animal","nature"}
+                            Tags = new []{"кот","питомец","животное","природа"}
                         });
     }
 }
