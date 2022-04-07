@@ -1,4 +1,6 @@
 using CollectIt.Database.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using OpenIddict.Abstractions;
 
 namespace CollectIt.API.WebAPI;
 
@@ -15,11 +17,18 @@ public static class ProgramExtensions
                .AddServer(options =>
                 {
                     options.AcceptAnonymousClients()
+                           .AllowAuthorizationCodeFlow()
                            .AllowPasswordFlow()
                            .AllowRefreshTokenFlow();
-                    options.SetTokenEndpointUris("/connect/token");
                     options.AddDevelopmentSigningCertificate()
                            .AddDevelopmentEncryptionCertificate();
+                    options.SetAuthorizationEndpointUris("/connect/authorize")
+                           .SetLogoutEndpointUris("/connect/logout")
+                           .SetTokenEndpointUris("/connect/token")
+                           .SetUserinfoEndpointUris("/connect/userinfo");
+                    options.RegisterScopes(OpenIddictConstants.Scopes.Email,
+                                           OpenIddictConstants.Scopes.Profile,
+                                           OpenIddictConstants.Scopes.Roles);
                     
                     var config = options.UseAspNetCore();
                     if (environment.IsDevelopment() || environment.IsStaging())
@@ -27,7 +36,11 @@ public static class ProgramExtensions
                         config.DisableTransportSecurityRequirement();
                     }
 
-                    config.EnableTokenEndpointPassthrough();
+                    config.EnableTokenEndpointPassthrough()
+                          .EnableAuthorizationEndpointPassthrough()
+                          .EnableUserinfoEndpointPassthrough()
+                          .EnableStatusCodePagesIntegration()
+                          .EnableLogoutEndpointPassthrough();
 
                 });
        return services;

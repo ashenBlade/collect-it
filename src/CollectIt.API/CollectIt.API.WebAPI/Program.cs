@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
 
 namespace CollectIt.API.WebAPI;
 
@@ -67,6 +68,10 @@ public class Program
                                         RequireConfirmedAccount = false,
                                         RequireConfirmedPhoneNumber = false,
                                     };
+                    config.ClaimsIdentity.UserNameClaimType = OpenIddictConstants.Claims.Name;
+                    config.ClaimsIdentity.UserIdClaimType = OpenIddictConstants.Claims.Subject;
+                    config.ClaimsIdentity.RoleClaimType = OpenIddictConstants.Claims.Role;
+                    config.ClaimsIdentity.EmailClaimType = OpenIddictConstants.Claims.Email;
                 })
                .AddUserManager<UserManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
