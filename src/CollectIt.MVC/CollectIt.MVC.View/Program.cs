@@ -28,8 +28,7 @@ services.AddAuthorization();
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
-    // options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
-    options.UseNpgsql("Server=localhost;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678",
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
                           config.MigrationsAssembly("CollectIt.MVC.View");
@@ -67,7 +66,7 @@ services.AddIdentity<User, Role>(config =>
         .AddDefaultTokenProviders()
         .AddErrorDescriber<RussianLanguageIdentityErrorDescriber>();
 
-services.AddScoped<IImageRepository, PostgresqlImageRepository>();
+services.AddScoped<IImageManager, PostgresqlImageManager>();
 
 var app = builder.Build();
 

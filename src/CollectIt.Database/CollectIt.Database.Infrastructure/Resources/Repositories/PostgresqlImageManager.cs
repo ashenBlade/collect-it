@@ -1,20 +1,48 @@
 ﻿using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class PostgresqlImageRepository : IImageRepository
+public class PostgresqlImageManager : IImageManager
 {    
     private readonly PostgresqlCollectItDbContext _context;
 
-    public PostgresqlImageRepository(PostgresqlCollectItDbContext context)
+    public PostgresqlImageManager(PostgresqlCollectItDbContext context)
     {
         _context = context;
     }
-    
 
+    public async Task Create(string address,string fileName, string name, string tags, IFormFile uploadedFile)
+    {
+        var tagsArray = tags.Split(" ");
+        await using (var fileStream = new FileStream(address + fileName, FileMode.Create))
+        {
+            await uploadedFile.CopyToAsync(fileStream);
+        }
+
+        var image = new Image()
+        {
+            Address = address,
+            Tags = tagsArray,
+            Name = name,
+            FileName = fileName,
+            UploadDate = DateTime.UtcNow,
+            Extension = GetExtension(fileName),
+            //Заглушка дальше
+            Owner = await _context.Users.FirstOrDefaultAsync()
+        };
+        await AddAsync(image);
+    }
+
+    private string GetExtension(string fileName)
+    {
+        return fileName.Split(".").Last();
+    }
+    
     public async Task<int> AddAsync(Image item)
     {
         await _context.Images.AddAsync(item);
