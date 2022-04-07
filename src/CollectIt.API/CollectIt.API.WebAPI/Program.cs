@@ -17,7 +17,20 @@ public class Program
 
         builder.Services.AddControllers();
 
-        // Set up jwt
+        builder.Services.AddCors(options =>
+        {
+            if (builder.Environment.IsProduction())
+            {
+                throw new NotImplementedException("Cors for production is not set");
+            }
+
+            options.AddDefaultPolicy(policyBuilder =>
+            {
+                // Only for tests
+                policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            });
+        });
+
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                .AddJwtBearer(options =>
                 {
