@@ -2,8 +2,10 @@ using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CollectIt.API.WebAPI;
 
@@ -16,7 +18,22 @@ public class Program
         builder.Services.AddControllers();
 
         // Set up jwt
-        builder.Services.AddAuthentication();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+                {
+                    var jwtOptions = builder.Configuration.GetValue<JwtOptions>("JwtOptions");
+                    options.RequireHttpsMetadata = builder.Environment.IsProduction();
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                                                        {
+                                                            ValidateIssuer = true,
+                                                            ValidIssuer = jwtOptions.Issuer,
+                                                            ValidateAudience = true,
+                                                            ValidAudience = jwtOptions.Audience,
+                                                            ValidateLifetime = true,
+                                                            IssuerSigningKey = jwtOptions.SymmetricSecurityKey,
+                                                            ValidateIssuerSigningKey = true
+                                                        };
+                });
         builder.Services.AddAuthorization();
 
         builder.Services.AddIdentity<User, Role>(config => 
