@@ -22,9 +22,7 @@ public static class ProgramExtensions
                            .AllowRefreshTokenFlow();
                     options.AddDevelopmentSigningCertificate()
                            .AddDevelopmentEncryptionCertificate();
-                    options.SetAuthorizationEndpointUris("/connect/authorize")
-                           .SetLogoutEndpointUris("/connect/logout")
-                           .SetTokenEndpointUris("/connect/token")
+                    options.SetTokenEndpointUris("/connect/token")
                            .SetUserinfoEndpointUris("/connect/userinfo");
                     options.RegisterScopes(OpenIddictConstants.Scopes.Email,
                                            OpenIddictConstants.Scopes.Profile,
@@ -37,10 +35,8 @@ public static class ProgramExtensions
                     }
 
                     config.EnableTokenEndpointPassthrough()
-                          .EnableAuthorizationEndpointPassthrough()
                           .EnableUserinfoEndpointPassthrough()
-                          .EnableStatusCodePagesIntegration()
-                          .EnableLogoutEndpointPassthrough();
+                          .EnableStatusCodePagesIntegration();
 
                 });
        return services;
