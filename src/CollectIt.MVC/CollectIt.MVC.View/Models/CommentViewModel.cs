@@ -4,16 +4,14 @@ using CollectIt.Database.Entities.Resources;
 
 namespace CollectIt.MVC.View.Models;
 
-public class ImageViewModel
+public class CommentViewModel
 {
     [Required]
     public User Owner { get; set; }
-
+    
+    [Required]
+    public string Content { get; set; }
+    
+    [Required]
     public DateTime UploadDate { get; set; }
-
-    public string Path { get; set; }
-    
-    public string[] Tags { get; set; }
-    
-    public IEnumerable<CommentViewModel> Comments { get; set; }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure;
@@ -13,11 +14,13 @@ namespace CollectIt.MVC.View.Controllers;
 public class ImagesController : Controller
 {
     private readonly IImageManager _imageManager;
+    private readonly ICommentManager _commentManager;
     private IWebHostEnvironment appEnvironment;
 
-    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment)
+    public ImagesController(IImageManager imageManager,ICommentManager commentManager, IWebHostEnvironment appEnvironment)
     {
         _imageManager = imageManager;
+        _commentManager = commentManager;
         this.appEnvironment = appEnvironment;
     }
 
@@ -43,21 +46,35 @@ public class ImagesController : Controller
         {
             return View("Error");
         }
+        var comments = await _commentManager.GetResourcesComments(source.Id);
 
+        var commentViewModels = new List<CommentViewModel>();
+
+        foreach (var comment in comments)
+        {
+            commentViewModels.Add(new CommentViewModel()
+            {
+                Content = comment.Content,
+                Owner = comment.Owner,
+                UploadDate = comment.UploadDate
+            });
+        }
+        
         var model = new ImageViewModel()
         {
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
-            Tags = source.Tags
+            Tags = source.Tags,
+            Comments = commentViewModels
         };
         return View(model);
     }
 
     [Route("postView")]
-    public async Task<IActionResult> GetPostView()
+    public IActionResult GetPostView()
     {
-        return View("ImagePostTest");
+        return View("ImagePostPage");
     }
 
     [HttpPost]
@@ -66,6 +83,6 @@ public class ImagesController : Controller
     {
         var address = appEnvironment.WebRootPath + "/imagesFromDb/";
         await _imageManager.Create(address, uploadedFile.FileName, name, tags, uploadedFile);
-        return View("ImagePostTest");
+        return View("ImagePostPage");
     }
 }

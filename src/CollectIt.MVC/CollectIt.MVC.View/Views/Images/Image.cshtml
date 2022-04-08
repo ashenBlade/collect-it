@@ -49,3 +49,7 @@
         @Model.Tags[0]
     </div>
 </div>
+
+<div>@Model.Comments.First().Content</div>
+<div>@Model.Comments.First().Owner.UserName</div>
+<div>@Model.Comments.First().UploadDate</div>
