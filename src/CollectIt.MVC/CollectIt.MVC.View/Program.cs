@@ -68,6 +68,7 @@ services.AddIdentity<User, Role>(config =>
         .AddErrorDescriber<RussianLanguageIdentityErrorDescriber>();
 
 services.AddScoped<IImageManager, PostgresqlImageManager>();
+services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 
 var app = builder.Build();
 

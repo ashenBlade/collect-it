@@ -27,7 +27,7 @@ public class Subscription
 
     public int? RestrictionId { get; set; }
     [ForeignKey(nameof(RestrictionId))]
-    public Restriction Restriction { get; set; }
+    public Restriction? Restriction { get; set; }
     
     [Required]
     [Range(1, int.MaxValue)]
