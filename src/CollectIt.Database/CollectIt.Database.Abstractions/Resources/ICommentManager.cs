@@ -3,7 +3,7 @@ using CollectIt.Database.Entities.Resources;
 
 namespace CollectIt.Database.Abstractions.Resources;
 
-public interface ICommentRepository : IRepository<Comment, int>
+public interface ICommentManager : IRepository<Comment, int>
 {
-    
+    Task<IEnumerable<Comment>> GetResourcesComments(int resourceId);
 }

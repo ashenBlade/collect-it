@@ -69,6 +69,7 @@ services.AddIdentity<User, Role>(config =>
 
 services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
+services.AddScoped<ICommentManager, CommentManager>();
 
 var app = builder.Build();
 

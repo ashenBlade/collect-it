@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class CommentRepository : ICommentRepository
+public class CommentManager : ICommentManager
 {
     private readonly PostgresqlCollectItDbContext context;
 
-    public CommentRepository(PostgresqlCollectItDbContext context)
+    public CommentManager(PostgresqlCollectItDbContext context)
     {
         this.context = context;
     }
@@ -35,5 +35,13 @@ public class CommentRepository : ICommentRepository
     {
         context.Comments.Remove(item);
         await context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Comment>> GetResourcesComments(int resourceId)
+    {
+        return await context.Comments
+            .Include(com => com.Target)
+            .Include(com => com.Owner)
+            .Where(com => com.Target.Id == resourceId).ToListAsync();
     }
 }
