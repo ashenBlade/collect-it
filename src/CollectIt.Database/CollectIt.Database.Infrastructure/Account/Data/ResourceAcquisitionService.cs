@@ -34,17 +34,37 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
     public async Task<AcquiredUserResource> AcquireImageAsync(int userId, int imageId)
     {
         var image = await _imageManager.FindByIdAsync(imageId);
+        if (image is null)
+        {
+            throw new ResourceNotFoundException(image.Id, $"Image with Id = {imageId} not found");
+        }
+
+        return await AcquireResourceAsync(userId, image);
+    }
+
+    public Task<AcquiredUserResource> AcquireMusicAsync(int userId, int musicId)
+    {
+        throw new NotImplementedException("No music manager implemented yet");
+    }
+
+    public Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId)
+    {
+        throw new NotImplementedException("No video manager implemented yet");
+    }
+
+    private async Task<AcquiredUserResource> AcquireResourceAsync(int userId, Resource resource)
+    {
         var subscriptions = await _userManager.GetActiveSubscriptionsForUserByIdAsync(userId);
         var affordable =
             subscriptions.FirstOrDefault(s => s.Subscription.Restriction is null
-                                           || s.Subscription.Restriction.IsSatisfiedBy(image));
+                                           || s.Subscription.Restriction.IsSatisfiedBy(resource));
         if (affordable is null)
         {
-            throw new NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire image (Id = {imageId}) for user (Id = {userId})");
+            throw new NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire image (Id = {resource.Id}) for user (Id = {userId})");
         }
         var acquiredUserResource = new AcquiredUserResource()
                                    {
-                                       UserId = userId, ResourceId = image.Id, AcquiredDate = DateTime.Today,
+                                       UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.Today,
                                    };
         try
         {
@@ -57,23 +77,13 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
             throw exception.InnerException switch
                   {
                       PostgresException postgresException => postgresException.ConstraintName switch
-                                                          {
-                                                              "AK_AcquiredUserResources_UserId_ResourceId" =>
-                                                                  new UserAlreadyAcquiredResourceException(image.Id, userId),
-                                                              _ => postgresException
-                                                          },
-                      _                 => exception
+                                                             {
+                                                                 "AK_AcquiredUserResources_UserId_ResourceId" =>
+                                                                     new UserAlreadyAcquiredResourceException(resource.Id, userId),
+                                                                 _ => postgresException
+                                                             },
+                      _ => exception
                   };
         }
-    }
-
-    public Task<AcquiredUserResource> AcquireMusicAsync(int userId, int musicId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId)
-    {
-        throw new NotImplementedException();
     }
 }
