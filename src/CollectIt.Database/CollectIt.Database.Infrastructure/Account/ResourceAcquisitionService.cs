@@ -64,7 +64,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         }
         var acquiredUserResource = new AcquiredUserResource()
                                    {
-                                       UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.Today,
+                                       UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.UtcNow,
                                    };
         try
         {

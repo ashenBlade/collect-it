@@ -2,6 +2,7 @@ using System.Resources;
 using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
@@ -18,17 +19,21 @@ public class PaymentController : Controller
     private readonly ISubscriptionService _subscriptionService;
     private readonly UserManager _userManager;
     private readonly ISubscriptionManager _subscriptionManager;
-    private readonly IRestrictionVerifier _restrictionVerifier;
+    private readonly ILogger<PaymentController> _logger;
+    private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
     public PaymentController(ISubscriptionService subscriptionService,
                              UserManager userManager,
                              ISubscriptionManager subscriptionManager,
-                             IRestrictionVerifier restrictionVerifier)
+                             ILogger<PaymentController> logger,
+                             IResourceAcquisitionService resourceAcquisitionService,
+                             IImageManager imageManager)
     {
         _subscriptionService = subscriptionService;
         _userManager = userManager;
         _subscriptionManager = subscriptionManager;
-        _restrictionVerifier = restrictionVerifier;
+        _logger = logger;
+        _resourceAcquisitionService = resourceAcquisitionService;
     }
 
     [HttpGet]
@@ -100,6 +105,27 @@ public class PaymentController : Controller
         catch (SubscriptionNotFoundException notFoundException)
         {
             return BadRequest();
+        }
+    }
+    
+    [HttpPost("/buy-image")]
+    public async Task<IActionResult> BuyImage([FromQuery(Name = "image_id")]int imageId)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        try
+        {
+            var acquired = await _resourceAcquisitionService.AcquireImageAsync(user.Id, imageId);
+            _logger.LogInformation("User (Id = {UserId}) acquired image (Id = {ImageId})", user.Id, imageId);
+            return NoContent();
+        }
+        catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
+        {
+            _logger.LogError(alreadyAcquiredResourceException, "User attempted to acquire already aquired resource");
+            return BadRequest();
+        }
+        catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
+        {
+            return BadRequest("No suitable subscriptions found to acquire image");
         }
     }
 }
