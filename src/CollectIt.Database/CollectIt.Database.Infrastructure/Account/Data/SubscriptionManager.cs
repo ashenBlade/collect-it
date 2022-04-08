@@ -87,6 +87,7 @@ public class SubscriptionManager : ISubscriptionManager
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType)
     {
         return _context.Subscriptions
+                       .Include(s => s.Restriction)
                        .Where(s => s.AppliedResourceType == resourceType)
                        .ToListAsync();
     }
@@ -94,6 +95,7 @@ public class SubscriptionManager : ISubscriptionManager
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
     {
         return ActiveSubscriptions
+                        .Include(s => s.Restriction)
                        .Where(s => s.AppliedResourceType == resourceType)
                        .OrderBy(s => s.Id)
                        .Skip(( pageNumber - 1 ) * pageSize)
@@ -131,6 +133,7 @@ public class SubscriptionManager : ISubscriptionManager
     public Task<Subscription?> FindSubscriptionByIdAsync(int id)
     {
         return _context.Subscriptions
+                       .Include(s => s.Restriction)
                        .Where(s => s.Id == id)
                        .SingleOrDefaultAsync();
     }

@@ -11,4 +11,5 @@ public abstract class Restriction
     public abstract bool IsSatisfiedBy(Resource resource);
     
     public Subscription Subscription { get; set; }
+    public abstract string ErrorMessage { get; }
 }

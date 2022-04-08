@@ -11,4 +11,6 @@ public class SizeRestriction : Restriction
     {
         throw new NotImplementedException("Size of resource is not specified yet");
     }
+
+    public override string ErrorMessage => "Размер изображения не соответствует требованию";
 }

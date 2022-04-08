@@ -16,4 +16,6 @@ public class AuthorRestriction : Restriction
     {
         return resource.OwnerId == AuthorId;
     }
+
+    public override string ErrorMessage => "Автор изображения не является требуемым для данного типа подписки";
 }
