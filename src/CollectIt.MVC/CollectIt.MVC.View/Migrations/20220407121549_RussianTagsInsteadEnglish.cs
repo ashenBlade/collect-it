@@ -9,17 +9,6 @@ namespace CollectIt.MVC.View.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "RoleId",
-                table: "AspNetUsers");
 
             migrationBuilder.UpdateData(
                 table: "Resources",
@@ -129,18 +118,12 @@ namespace CollectIt.MVC.View.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "RoleId",
-                table: "AspNetUsers",
-                type: "integer",
-                nullable: true);
-
             migrationBuilder.UpdateData(
-                table: "Resources",
-                keyColumn: "Id",
-                keyValue: 1,
-                column: "Tags",
-                value: new[] { "anime", "fallout" });
+                                        table: "Resources",
+                                        keyColumn: "Id",
+                                        keyValue: 1,
+                                        column: "Tags",
+                                        value: new[] { "anime", "fallout" });
 
             migrationBuilder.UpdateData(
                 table: "Resources",
@@ -240,17 +223,6 @@ namespace CollectIt.MVC.View.Migrations
                 column: "Tags",
                 value: new[] { "cat", "pet", "animal", "nature" });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId",
-                principalTable: "AspNetRoles",
-                principalColumn: "Id");
         }
     }
 }
