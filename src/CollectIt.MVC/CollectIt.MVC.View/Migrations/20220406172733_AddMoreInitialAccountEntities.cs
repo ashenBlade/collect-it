@@ -88,7 +88,7 @@ namespace CollectIt.MVC.View.Migrations
                 columns: new[] { "Id", "During", "LeftResourcesCount", "SubscriptionId", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new NodaTime.DateInterval(new NodaTime.LocalDate(2000, 1, 1), new NodaTime.LocalDate(9999, 12, 31)), 2147483647, 5, 1 },
+                    { 1, new NodaTime.DateInterval(new NodaTime.LocalDate(2000, 1, 1), new NodaTime.LocalDate(3000, 1, 1)), 2147483647, 5, 1 },
                     { 2, new NodaTime.DateInterval(new NodaTime.LocalDate(2021, 3, 1), new NodaTime.LocalDate(2021, 5, 9)), 0, 2, 3 },
                     { 3, new NodaTime.DateInterval(new NodaTime.LocalDate(2021, 5, 10), new NodaTime.LocalDate(2022, 1, 10)), 2, 3, 3 },
                     { 4, new NodaTime.DateInterval(new NodaTime.LocalDate(2022, 2, 20), new NodaTime.LocalDate(2022, 5, 20)), 50, 1, 3 }
