@@ -45,28 +45,17 @@ public class ImagesController : Controller
         if (source == null)
         {
             return View("Error");
-        }
-        var comments = await _commentManager.GetResourcesComments(source.Id);
+        } 
+        //var comments = await _commentManager.GetResourcesComments(source.Id);
 
-        var commentViewModels = new List<CommentViewModel>();
+       // var commentViewModels = new List<CommentViewModel>();
 
-        foreach (var comment in comments)
-        {
-            commentViewModels.Add(new CommentViewModel()
-            {
-                Content = comment.Content,
-                Owner = comment.Owner,
-                UploadDate = comment.UploadDate
-            });
-        }
-        
         var model = new ImageViewModel()
         {
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
-            Tags = source.Tags,
-            Comments = commentViewModels
+            Tags = source.Tags
         };
         return View(model);
     }
