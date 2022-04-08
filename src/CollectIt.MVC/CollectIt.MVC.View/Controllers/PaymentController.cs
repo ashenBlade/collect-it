@@ -54,8 +54,7 @@ public class PaymentController : Controller
     {
         try
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.GetUserAsync(User);
             var subscription = await _subscriptionManager.FindSubscriptionByIdAsync(subscriptionId);
             if (user is null || subscription is null)
             {
@@ -102,30 +101,9 @@ public class PaymentController : Controller
                             ErrorMessage = "Ошибка во время оформления подписки. Попробуйте позже."
                         });
         }
-        catch (SubscriptionNotFoundException notFoundException)
+        catch (SubscriptionNotFoundException subscriptionNotFoundException)
         {
-            return BadRequest();
-        }
-    }
-    
-    [HttpPost("/buy-image")]
-    public async Task<IActionResult> BuyImage([FromQuery(Name = "image_id")]int imageId)
-    {
-        var user = await _userManager.GetUserAsync(User);
-        try
-        {
-            var acquired = await _resourceAcquisitionService.AcquireImageAsync(user.Id, imageId);
-            _logger.LogInformation("User (Id = {UserId}) acquired image (Id = {ImageId})", user.Id, imageId);
-            return NoContent();
-        }
-        catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
-        {
-            _logger.LogError(alreadyAcquiredResourceException, "User attempted to acquire already aquired resource");
-            return BadRequest();
-        }
-        catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
-        {
-            return BadRequest("No suitable subscriptions found to acquire image");
+            return BadRequest("No subscription with such id found");
         }
     }
 }
