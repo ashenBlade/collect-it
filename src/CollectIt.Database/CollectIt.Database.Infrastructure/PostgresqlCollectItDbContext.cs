@@ -309,6 +309,12 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                            r => new { Name = r.Name })
                .HasIndex(r => r.NameSearchVector)
                .HasMethod("GIN");
+        builder.Entity<Resource>()
+               .HasGeneratedTsVectorColumn(r => r.TagsSearchVector,
+                                           "russian",
+                                           r => new {r.Tags})
+               .HasIndex(r => r.TagsSearchVector, "IX_Resources_TagsSearchVector")
+               .HasMethod("GIN");
 
         var ownerId = DefaultUsers[0].Id;
         builder.Entity<Image>()

@@ -86,8 +86,9 @@ public class PostgresqlImageManager : IImageManager
     public IAsyncEnumerable<Image> GetAllByQuery(string query)
     {
         return _context.Images
-                       .Where(img => img.NameSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                       .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
                        .Include(img => img.Owner)
+                       .OrderByDescending(img => img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian", query)))
                        .AsAsyncEnumerable();
     }
 }
