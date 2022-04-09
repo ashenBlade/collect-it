@@ -23,7 +23,7 @@ namespace CollectIt.MVC.View.Migrations
     ADD COLUMN ""TagsSearchVector""
         tsvector
         GENERATED ALWAYS AS (
-            to_tsvector('russian', my_array_to_string(""Tags"", ' '))) STORED;");
+            to_tsvector('russian', my_array_to_string(""Tags"", ' ') || ' ' || ""Name"")) STORED;");
 
             builder.Sql(@"CREATE INDEX ""IX_Resources_TagsSearchVector"" 
     ON ""Resources"" 
