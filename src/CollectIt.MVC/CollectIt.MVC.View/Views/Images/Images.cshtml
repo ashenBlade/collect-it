@@ -1,16 +1,16 @@
 ﻿@model CollectIt.MVC.View.Views.Shared.Components.ImageCards.ImageCardsViewModel
 @{
-    Layout = "_Layout";
+    Layout = "_ImagesLayout";
     ViewData["Title"] = "Изображения";
 }
 
 <div class="h-100">
-    <div class="w-100 my-6 h-25 justify-content-center align-items-center d-flex">
+    <div class="w-100 my-6 h-25 justify-content-center align-items-center d-flex mb-3 mt-4">
         <vc:search-bar/>
     </div>
     <div class="d-flex flex-column mb-0 d-block">
         <div class="w-100 h-100 bg-light rounded">
-            <div class="p-3 ">
+            <div class="p-3 mih-1">
                 <vc:image-cards images="@Model.Images"/>
             </div>
             <div class="d-flex justify-content-center mh-100">
@@ -23,4 +23,5 @@
                 </ul>
             </div>
         </div>
-    </div></div>
+    </div>
+</div>

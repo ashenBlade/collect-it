@@ -1,13 +1,9 @@
-﻿@using CollectIt.Database.Entities.Account
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="h-100">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - CollectIt.MVC.View</title>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-grid.css"/>
@@ -15,37 +11,36 @@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/ResourceStyles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/Sizes.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @* ReSharper disable once Html.PathError *@
     @* This is not error *@
-    <link rel="stylesheet" href="~/CollectIt.MVC.View.styles.css"/>
+    <link rel="stylesheet" href="CollectIt.MVC.View.styles.css" asp-append-version="true"/>
 </head>
-<body class="h-100 body">
+<body id="banner" class="h-100 body">
 
 <header class="header reveal alt">
     @await Html.PartialAsync("_Navbar")
 </header>
 
-<section id="banner">
-    <div class="w-80 my-6 h-25 justify-content-center align-items-center d-flex ms-6">
-        <vc:search-bar/>
-    </div>
-</section>
-
-<section class="main container-custom">
-    <main role="main">
-        @RenderBody()
+<section class="section">
+    <main role="main" class="container">
+        <div class="p-3 h-100">
+            @RenderBody()
+        </div>
     </main>
 </section>
 
 
-<footer class="footer blur-dark text-muted wh-0">
+<footer class="d-block bottom-0 blur-dark text-muted wh-0 ">
     <div class="container py-3 text-start">
-        &copy; 2022 - CollectIt 
+        &copy; 2022 - CollectIt
     </div>
 </footer>
 
-
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
