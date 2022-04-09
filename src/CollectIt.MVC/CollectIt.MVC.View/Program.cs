@@ -34,6 +34,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
                           config.MigrationsAssembly("CollectIt.MVC.View");
                           config.UseNodaTime();
                       });
+    options.UseOpenIddict();
 });
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
@@ -66,7 +67,9 @@ services.AddIdentity<User, Role>(config =>
         .AddDefaultTokenProviders()
         .AddErrorDescriber<RussianLanguageIdentityErrorDescriber>();
 
-services.AddScoped<IImageRepository, PostgresqlImageRepository>();
+services.AddScoped<IImageManager, PostgresqlImageManager>();
+services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
+services.AddScoped<ICommentManager, CommentManager>();
 
 var app = builder.Build();
 

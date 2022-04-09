@@ -148,11 +148,7 @@ public class AccountController : Controller
         user.Email = model.Email;
         user.NormalizedEmail = model.Email.ToUpper();
         var result = await _userManager.UpdateAsync(user);
-        var subs = new List<ActiveUserSubscription>();
-        await foreach (var us in _userManager.GetActiveSubscriptionsForUserAsync(user))
-        {
-            subs.Add(us);
-        }
+        var subs = await _userManager.GetSubscriptionsForUserByIdAsync(user.Id);
 
         var accountModel = new AccountViewModel()
                            {

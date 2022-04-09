@@ -11,4 +11,6 @@ public class ImageViewModel
     public DateTime UploadDate { get; set; }
 
     public string Path { get; set; }
+    
+    public string[] Tags { get; set; }
 }

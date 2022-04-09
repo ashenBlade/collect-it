@@ -1,8 +1,12 @@
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
 
 namespace CollectIt.API.WebAPI;
 
@@ -14,11 +18,39 @@ public class Program
 
         builder.Services.AddControllers();
 
-        // Set up jwt
-        builder.Services.AddAuthentication();
+        builder.Services.AddCors(options =>
+        {
+            if (builder.Environment.IsProduction())
+            {
+                throw new NotImplementedException("Cors for production is not setup");
+            }
+
+            options.AddDefaultPolicy(policyBuilder =>
+            {
+                policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            });
+        });
+
+        builder.Services
+               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(options =>
+                {
+                    var jwtOptions = builder.Configuration.GetValue<JwtOptions>("JwtOptions");
+                    options.RequireHttpsMetadata = builder.Environment.IsProduction();
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                                                        {
+                                                            ValidateIssuer = true,
+                                                            ValidIssuer = jwtOptions.Issuer,
+                                                            ValidateAudience = true,
+                                                            ValidAudience = jwtOptions.Audience,
+                                                            ValidateLifetime = true,
+                                                            IssuerSigningKey = jwtOptions.SymmetricSecurityKey,
+                                                            ValidateIssuerSigningKey = true
+                                                        };
+                });
         builder.Services.AddAuthorization();
 
-        builder.Services.AddIdentity<User, Role>(config => 
+        builder.Services.AddIdentity<User, Role>(config =>
                 {
                     config.User = new UserOptions {RequireUniqueEmail = true,};
                     config.Password = new PasswordOptions
@@ -36,17 +68,25 @@ public class Program
                                         RequireConfirmedAccount = false,
                                         RequireConfirmedPhoneNumber = false,
                                     };
+                    config.ClaimsIdentity.UserNameClaimType = OpenIddictConstants.Claims.Name;
+                    config.ClaimsIdentity.UserIdClaimType = OpenIddictConstants.Claims.Subject;
+                    config.ClaimsIdentity.RoleClaimType = OpenIddictConstants.Claims.Role;
+                    config.ClaimsIdentity.EmailClaimType = OpenIddictConstants.Claims.Email;
                 })
                .AddUserManager<UserManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
                .AddDefaultTokenProviders();
-
+        builder.Services.AddCollectItOpenIddict(builder.Environment);
+        
+        builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
-            config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], options =>
+            config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], 
+                             options =>
             {
                 options.UseNodaTime();
             });
+            config.UseOpenIddict();
         });
 
         if (builder.Environment.IsDevelopment())

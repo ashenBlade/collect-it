@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewData["Title"] = "Image Post Page";
+    Layout = "_Layout";
+}
+
+
+<form method="post" enctype="multipart/form-data" asp-controller="Images" asp-action="PostImage">
+    
+    <label>Тэги через пробел:</label><br/>
+    <input type="text" name="tags"/><br/>
+    
+    <label>Название:</label><br/>
+    <input type="text" name="name"/><br/>
+    
+    
+    <div class="mb-4">
+        <label class="h5">Загрузите фото</label><br/>
+        <input type="file" name="uploadedFile" accept="image/*">
+    </div>
+    
+    <input type="submit" value="Отправить"/>
+</form>

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Infrastructure.Account.Data;
@@ -39,9 +40,11 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetUsersPaged([FromQuery(Name = "page_number")][Range(1, int.MaxValue)]int pageNumber = 1,
                                                    [FromQuery(Name = "page_size")][Range(1, int.MaxValue)] int pageSize = 10)
     {
-        var users = await _userManager.GetUsersPaged(pageNumber, pageSize);
-        
-        return Ok(users.Select(u => AccountMappers.ToReadUserDTO(u, Array.Empty<string>())));
+        var users = ( await _userManager.GetUsersPaged(pageNumber, pageSize) )
+           .Select(u => AccountMappers.ToReadUserDTO(u, u.Roles
+                                                         .Select(r => r.Name)
+                                                         .ToArray()));
+        return Ok(users);
     }
 
     [HttpGet("{userId:int}/subscriptions")]

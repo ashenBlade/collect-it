@@ -1,48 +1,55 @@
 ﻿using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
-public class MusicRepository /*: IMusicRepository*/
+public class MusicManager : IMusicManager
 {
     private readonly PostgresqlCollectItDbContext context;
-    private readonly ResourceRepository resourceRepository;
 
-    public MusicRepository(PostgresqlCollectItDbContext context)
+    public MusicManager(PostgresqlCollectItDbContext context)
     {
         this.context = context;
-        resourceRepository = new ResourceRepository(context);
     }
 
-    public async Task<int> AddAsync(Music item, Resource resource)
+    public async Task<int> AddAsync(Music item)
     {
         await context.Musics.AddAsync(item);
         await context.SaveChangesAsync();
-        await resourceRepository.AddAsync(resource);
         return item.Id;
     }
 
     public async Task<Music?> FindByIdAsync(int id)
     {
         return await context.Musics
-                            .Where(music => music.Id == id)
-                            .SingleOrDefaultAsync();
+            .Where(music => music.Id == id)
+            .SingleOrDefaultAsync();
     }
 
-    public Task UpdateAsync(Music item)
+    public Task Create(string address, string fileName, string name, string tags, IFormFile uploadedFile)
     {
         throw new NotImplementedException();
     }
 
-    public async Task RemoveAsync(Music item, Resource resource)
+    public async Task RemoveAsync(Music item)
     {
         context.Musics.Remove(item);
-        await resourceRepository.RemoveAsync(resource);
         await context.SaveChangesAsync();
     }
 
+    public IAsyncEnumerable<Music> GetAllByQuery(string query)
+    {
+        throw new NotImplementedException();
+    }
+
     public IAsyncEnumerable<Music> GetAllByName(string name)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<Music> GetAllByTag(string tag)
     {
         throw new NotImplementedException();
     }

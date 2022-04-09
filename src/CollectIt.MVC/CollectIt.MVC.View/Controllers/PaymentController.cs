@@ -1,7 +1,10 @@
+using System.Resources;
 using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.View.Models;
@@ -10,23 +13,32 @@ using Microsoft.AspNetCore.Mvc;
  
 namespace CollectIt.MVC.View.Controllers;
 
+[Authorize]
 public class PaymentController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
     private readonly UserManager _userManager;
     private readonly ISubscriptionManager _subscriptionManager;
+    private readonly ILogger<PaymentController> _logger;
+    private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
     public PaymentController(ISubscriptionService subscriptionService,
                              UserManager userManager,
-                             ISubscriptionManager subscriptionManager)
+                             ISubscriptionManager subscriptionManager,
+                             ILogger<PaymentController> logger,
+                             IResourceAcquisitionService resourceAcquisitionService,
+                             IImageManager imageManager)
     {
         _subscriptionService = subscriptionService;
         _userManager = userManager;
         _subscriptionManager = subscriptionManager;
+        _logger = logger;
+        _resourceAcquisitionService = resourceAcquisitionService;
     }
 
     [HttpGet]
-    [Route("subscriptions")]
+    [Route("/subscriptions")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetPageWithSubscriptionCards()
     {
         var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(ResourceType.Image); 
@@ -37,14 +49,12 @@ public class PaymentController : Controller
     }
     
     [HttpGet]
-    [Authorize]
-    [Route("subscribe")]
+    [Route("/subscribe")]
     public async Task<IActionResult> SubscribePage(int subscriptionId)
     {
         try
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.GetUserAsync(User);
             var subscription = await _subscriptionManager.FindSubscriptionByIdAsync(subscriptionId);
             if (user is null || subscription is null)
             {
@@ -60,8 +70,7 @@ public class PaymentController : Controller
     }
 
     [HttpPost]
-    [Route("subscribe")]
-    [Authorize]
+    [Route("/subscribe")]
     public async Task<IActionResult> SubscribeLogic(int subscriptionId, bool declined)
     {
         if (declined)
@@ -92,9 +101,9 @@ public class PaymentController : Controller
                             ErrorMessage = "Ошибка во время оформления подписки. Попробуйте позже."
                         });
         }
-        catch (SubscriptionNotFoundException notFoundException)
+        catch (SubscriptionNotFoundException subscriptionNotFoundException)
         {
-            return BadRequest();
+            return BadRequest("No subscription with such id found");
         }
     }
 }

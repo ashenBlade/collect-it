@@ -25,7 +25,8 @@ public class Resource
 
     public ICollection<User> AcquiredBy { get; set; }
     public NpgsqlTsVector NameSearchVector { get; set; }
-    
+    public NpgsqlTsVector TagsSearchVector { get; set; }
+
     [Required]
     public string FileName { get; set; }
     
