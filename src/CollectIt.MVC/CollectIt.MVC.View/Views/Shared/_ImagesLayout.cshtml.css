@@ -1,0 +1,27 @@
+﻿.footer {
+    display: block;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+}
+
+section{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.container-custom{
+    margin: 0 auto;
+    max-width: calc(100% - 5em);
+    width: 60em;
+}
+
+.main{
+    margin-top: -14em;
+    padding: 4em 0;
+} 

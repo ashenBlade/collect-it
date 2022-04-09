@@ -11,7 +11,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/ResourceStyles.css" asp-append-version="true"/>
     <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @* ReSharper disable once Html.PathError *@
     @* This is not error *@
     <link rel="stylesheet" href="CollectIt.MVC.View.styles.css" asp-append-version="true"/>
@@ -33,11 +35,10 @@
 
 <footer class="footer blur-dark text-muted wh-0">
     <div class="container py-3 text-start">
-        &copy; 2022 - CollectIt - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2022 - CollectIt
     </div>
 </footer>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
