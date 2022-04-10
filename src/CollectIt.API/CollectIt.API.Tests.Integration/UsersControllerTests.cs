@@ -58,7 +58,17 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var result = await GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>("api/v1/users/1/subscriptions");
         Assert.NotNull(result);
     }
-    
+
+
+    [Fact]
+    public async Task GetActiveUserSubscription_WithIdForUserWithActiveSubscriptions_ShouldReturnNotEmptyArrayOfUserSubscription()
+    {
+        var result =
+            await
+                GetResultParsedFromJson<AccountDTO.ReadActiveUserSubscription[]>("api/v1/users/1/active-subscriptions");
+        Assert.NotNull(result);
+        Assert.True(result.Length > 0);
+    }
 
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
     {
