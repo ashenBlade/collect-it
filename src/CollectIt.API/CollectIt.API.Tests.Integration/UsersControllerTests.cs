@@ -33,6 +33,13 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(4, users.Length);
     }
 
+    [Fact]
+    public async Task Get_UserById_ReturnRequiredUser()
+    {
+        var user = await GetResultParsedFromJson<AccountDTO.ReadUserDTO>("api/v1/users/1");
+        _testOutputHelper.WriteLine(user.UserName);
+    }
+
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
     {
         using var client = _factory.CreateClient();
@@ -41,7 +48,6 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var json = await result.Content.ReadAsStringAsync();
         _testOutputHelper.WriteLine(json);
         var serializer = JsonSerializer.Create();
-        return serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content
-                                                                                         .ReadAsStreamAsync())));
+        return serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
     }
 }
