@@ -96,4 +96,24 @@ public class SubscriptionsController : ControllerBase
                    ? NoContent()
                    : BadRequest();
     }
+
+    [HttpPost("{subscriptionId:int}/activate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ActivateSubscription(int subscriptionId)
+    {
+        var result = await _subscriptionManager.ActivateSubscriptionAsync(subscriptionId);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
+    
+    [HttpPost("{subscriptionId:int}/deactivate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeactivateSubscription(int subscriptionId)
+    {
+        var result = await _subscriptionManager.DeactivateSubscriptionAsync(subscriptionId);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
 }

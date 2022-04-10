@@ -19,8 +19,8 @@ public interface ISubscriptionManager
     public Task DeleteSubscriptionAsync(int id);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize);
-    public Task ActivateSubscriptionAsync(int subscriptionId);
-    public Task DeactivateSubscriptionAsync(int subscriptionId);
+    public Task<IdentityResult> ActivateSubscriptionAsync(int subscriptionId);
+    public Task<IdentityResult> DeactivateSubscriptionAsync(int subscriptionId);
     public Task<IdentityResult> ChangeSubscriptionNameAsync(int subscriptionId, string newName);
     public Task<IdentityResult> ChangeSubscriptionDescriptionAsync(int subscriptionId, string newDescription);
 }

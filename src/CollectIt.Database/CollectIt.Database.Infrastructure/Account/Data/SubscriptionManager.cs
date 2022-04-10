@@ -106,12 +106,12 @@ public class SubscriptionManager : ISubscriptionManager
               .ToListAsync();
     }
 
-    public Task ActivateSubscriptionAsync(int subscriptionId)
+    public Task<IdentityResult> ActivateSubscriptionAsync(int subscriptionId)
     {
         return SetActiveSubscriptionState(subscriptionId, true);
     }
 
-    public Task DeactivateSubscriptionAsync(int subscriptionId)
+    public Task<IdentityResult> DeactivateSubscriptionAsync(int subscriptionId)
     {
         return SetActiveSubscriptionState(subscriptionId, false);
     }
@@ -178,21 +178,36 @@ public class SubscriptionManager : ISubscriptionManager
         }
     }
 
-    private async Task SetActiveSubscriptionState(int subscriptionId, bool activeState)
+    private async Task<IdentityResult> SetActiveSubscriptionState(int subscriptionId, bool isActive)
     {
-        var subscription = await _context.Subscriptions
-                                         .SingleOrDefaultAsync(s => s.Id == subscriptionId);
-        if (subscription is null)
+        try
         {
-            throw new SubscriptionNotFoundException(subscriptionId);
+            var subscription = await _context.Subscriptions
+                                             .SingleOrDefaultAsync(s => s.Id == subscriptionId);
+            if (subscription is null)
+            {
+                throw new SubscriptionNotFoundException(subscriptionId);
+            }
+
+            if (subscription.Active == isActive)
+                return IdentityResult.Success;
+
+            subscription.Active = isActive;
+            _context.Subscriptions.Update(subscription);
+            await _context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
-
-        if (subscription.Active == activeState)
-            return;
-
-        subscription.Active = activeState;
-        _context.Subscriptions.Update(subscription);
-        await _context.SaveChangesAsync();
+        catch (DbUpdateException updateException)
+        {
+            _logger.LogError(updateException, "Error while activating/deactivating subscription");
+            return IdentityResult.Failed(new IdentityError()
+                                         {
+                                             Code = "",
+                                             Description = isActive
+                                                               ? "Could not activate subscription"
+                                                               : "Could not deactivate subscription"
+                                         });
+        }
     }
 
     public Task<Subscription?> FindSubscriptionByIdAsync(int id)
