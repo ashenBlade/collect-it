@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CollectIt.API.DTO;
+using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +51,14 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var request = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
     }
+
+    [Fact]
+    public async Task GetUsersSubscriptionsList_WithValidUserId_ReturnListOfSubscriptions()
+    {
+        var result = await GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>("api/v1/users/1/subscriptions");
+        Assert.NotNull(result);
+    }
+    
 
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
     {

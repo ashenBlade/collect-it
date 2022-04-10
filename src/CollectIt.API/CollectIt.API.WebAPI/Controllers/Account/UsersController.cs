@@ -55,7 +55,8 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetUsersSubscriptions(int userId)
     {
         var subscriptions = await _userManager.GetSubscriptionsForUserByIdAsync(userId);
-        return Ok(subscriptions);
+        return Ok(subscriptions.Select(AccountMappers.ToReadUserSubscriptionDTO)
+                               .ToArray());
     }
 
     [HttpGet("{userId:int}/active-subscriptions")]
