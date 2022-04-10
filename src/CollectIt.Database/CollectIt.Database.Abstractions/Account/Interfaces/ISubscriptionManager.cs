@@ -14,9 +14,10 @@ public interface ISubscriptionManager
                                                       bool active = false);
 
     public Task<List<Subscription>> GetSubscriptionsAsync(int pageNumber, int pageSize);
-    public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize);
+    public Task<List<Subscription>> GetSubscriptionsAsync(ResourceType resourceType, int pageNumber, int pageSize);
     public Task<Subscription?> FindSubscriptionByIdAsync(int id);
     public Task DeleteSubscriptionAsync(int id);
+    public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType);
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize);
     public Task<IdentityResult> ActivateSubscriptionAsync(int subscriptionId);

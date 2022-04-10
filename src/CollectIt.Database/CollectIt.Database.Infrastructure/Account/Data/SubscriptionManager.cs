@@ -53,6 +53,15 @@ public class SubscriptionManager : ISubscriptionManager
                        .ToListAsync();
     }
 
+    public Task<List<Subscription>> GetSubscriptionsAsync(ResourceType resourceType, int pageNumber, int pageSize)
+    {
+        return _context.Subscriptions
+                       .Where(s => s.AppliedResourceType == resourceType)
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .ToListAsync();
+    }
+
     public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize)
     {
         return ActiveSubscriptions

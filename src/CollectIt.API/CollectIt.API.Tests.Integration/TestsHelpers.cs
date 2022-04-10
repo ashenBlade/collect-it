@@ -22,11 +22,17 @@ public static class TestsHelpers
         return parsed;
     }
 
-    public static async Task AssertNotFoundAsync(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null)
+    public static Task AssertNotFoundAsync(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null)
+    {
+        return AssertStatusCodeAsync(factory, address, HttpStatusCode.NotFound, method);
+    }
+
+    public static async Task AssertStatusCodeAsync(CollectItWebApplicationFactory factory, string address, HttpStatusCode statusCode, HttpMethod? method = null)
     {
         using var client = factory.CreateClient();
         using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
         var result = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.NotFound, result.StatusCode);
+        
     }
 }

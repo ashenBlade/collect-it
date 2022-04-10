@@ -38,16 +38,18 @@ public class SubscriptionsController : ControllerBase
                                                            [Required(ErrorMessage = "Please, specify resource type")]
                                                            ResourceType resourceType)
     {
-        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(resourceType, pageNumber, pageSize);
+        var subscriptions = await _subscriptionManager.GetSubscriptionsAsync(pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
                                .ToArray());
     }
 
 
     [HttpGet("active")]
-    public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")][Required] ResourceType type)
+    public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")][Required] ResourceType type,
+                                                            [FromQuery(Name = "page_size")][Required]int pageSize,
+                                                            [FromQuery(Name = "page_number")][Required]int pageNumber)
     {
-        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type);
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type, pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
                                .ToArray());
     }
