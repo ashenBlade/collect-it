@@ -70,6 +70,15 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.True(result.Length > 0);
     }
 
+
+    [Fact]
+    public async Task GetUserRoles_WithAdminId_ShouldReturnArrayContainingAdminRoleString()
+    {
+        var result = await GetResultParsedFromJson<AccountDTO.ReadRoleDTO[]>("api/v1/users/1/roles");
+        Assert.True(result.Length > 0);
+        Assert.Contains(result, r => r.Name == "Admin");
+    }
+
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
     {
         using var client = _factory.CreateClient();
@@ -78,6 +87,8 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var json = await result.Content.ReadAsStringAsync();
         _testOutputHelper.WriteLine(json);
         var serializer = JsonSerializer.Create();
-        return serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
+        var parsed = serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
+        Assert.NotNull(parsed);
+        return parsed;
     }
 }
