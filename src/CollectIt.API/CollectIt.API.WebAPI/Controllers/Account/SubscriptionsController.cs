@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
@@ -57,5 +59,20 @@ public class SubscriptionsController : ControllerBase
         return subscription is null
                    ? NotFound()
                    : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
+    }
+
+    [HttpPost("")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateSubscription([FromForm][Required] AccountDTO.CreateSubscriptionDTO dto, [FromForm(Name = "active")]bool? active)
+    {
+        var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
+                                                                              dto.Description, 
+                                                                              dto.MonthDuration,
+                                                                              dto.AppliedResourceType, 
+                                                                              dto.MaxResourcesCount,
+                                                                              dto.RestrictionId, 
+                                                                              active ?? false);
+        return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
+                               AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 }

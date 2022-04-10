@@ -123,6 +123,10 @@ public class UserManager: UserManager<User>
                       _               => updateException
                   };
         }
+        finally
+        {
+            await connection.CloseAsync();
+        }
     }
 
     private static DbParameter CreateParameter(DbCommand command, string name, object? value)
