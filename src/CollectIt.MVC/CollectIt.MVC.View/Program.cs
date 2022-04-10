@@ -31,7 +31,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                       config =>
                       {
-                          config.MigrationsAssembly("CollectIt.MVC.View");
+                          config.MigrationsAssembly("CollectIt.Database.Infrastructure");
                           config.UseNodaTime();
                       });
     options.UseOpenIddict();
