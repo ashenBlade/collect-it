@@ -74,6 +74,7 @@ public class Program
                     config.ClaimsIdentity.EmailClaimType = OpenIddictConstants.Claims.Email;
                 })
                .AddUserManager<UserManager>()
+               .AddRoleManager<RoleManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
                .AddDefaultTokenProviders();
         builder.Services.AddCollectItOpenIddict(builder.Environment);
