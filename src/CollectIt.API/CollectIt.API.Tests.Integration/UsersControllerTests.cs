@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CollectIt.API.DTO;
 using CollectIt.Database.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,17 +29,26 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Get_UsersList_Return4InitialUsers()
+    public async Task GetUsersList_Return4InitialUsers()
     {
         var users = await GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>("api/v1/users");
         Assert.Equal(4, users.Length);
     }
 
     [Fact]
-    public async Task Get_UserById_ReturnRequiredUser()
+    public async Task GetUserById_WithCorrectIdForExistingUser_ReturnRequiredUser()
     {
         var user = await GetResultParsedFromJson<AccountDTO.ReadUserDTO>("api/v1/users/1");
         _testOutputHelper.WriteLine(user.UserName);
+    }
+
+    [Fact]
+    public async Task GetUserById_WithIdForNotExistingUser_ReturnNotFound()
+    {
+        using var client = _factory.CreateClient();
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/v1/users/7");
+        var request = await client.SendAsync(message);
+        Assert.Equal(HttpStatusCode.NotFound, request.StatusCode);
     }
 
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
