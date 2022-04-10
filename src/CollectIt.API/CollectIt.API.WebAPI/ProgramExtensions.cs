@@ -23,6 +23,7 @@ public static class ProgramExtensions
                     options.AddDevelopmentSigningCertificate()
                            .AddDevelopmentEncryptionCertificate();
                     options.SetTokenEndpointUris("/connect/token")
+                           .SetAuthorizationEndpointUris("/connect/authorize")
                            .SetUserinfoEndpointUris("/connect/userinfo");
                     options.RegisterScopes(OpenIddictConstants.Scopes.Email,
                                            OpenIddictConstants.Scopes.Profile,
@@ -35,6 +36,7 @@ public static class ProgramExtensions
                     }
 
                     config.EnableTokenEndpointPassthrough()
+                          .EnableAuthorizationEndpointPassthrough()
                           .EnableUserinfoEndpointPassthrough()
                           .EnableStatusCodePagesIntegration();
 

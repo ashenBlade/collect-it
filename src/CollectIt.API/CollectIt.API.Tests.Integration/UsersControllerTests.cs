@@ -27,10 +27,27 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     }
 
     [Fact]
+    public async Task ASDF()
+    {
+        using var client = _factory.CreateClient();
+        using var message = new HttpRequestMessage(HttpMethod.Get, "api/v1/users");
+        var result = await client.SendAsync(message);
+        _testOutputHelper.WriteLine(await result.Content.ReadAsStringAsync());
+    }
+    
+    [Fact]
     public async Task Get_UsersList_Return4InitialUsers()
     {
-        var users = await GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>("api/v1/users");
-        Assert.Equal(4, users.Length);
+        try
+        {
+            var users = await GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>("api/v1/users");
+            Assert.Equal(4, users.Length);
+        }
+        catch (Exception e)
+        {
+            _testOutputHelper.WriteLine(e.ToString());
+            throw;
+        }
     }
 
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
@@ -39,8 +56,9 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
         var result = await client.SendAsync(message);
         var json = await result.Content.ReadAsStringAsync();
+        _testOutputHelper.WriteLine(json);
         var serializer = JsonSerializer.Create();
-        return serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync()))) 
-            ?? throw new HttpRequestException($"Could not deserialize response to type: {typeof(T)}\nGiven json:\n\"{json}\"");
+        return serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content
+                                                                                         .ReadAsStreamAsync())));
     }
 }

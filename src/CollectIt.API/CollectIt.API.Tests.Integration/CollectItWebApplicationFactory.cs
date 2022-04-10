@@ -15,37 +15,19 @@ namespace CollectIt.API.Tests.Integration;
 
 public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
 {
-    // protected override IHost CreateHost(IHostBuilder builder)
-    // {
-    //     builder.ConfigureServices(services =>
-    //     {
-    //         var dbContextOptionsDescriptor =
-    //             services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<PostgresqlCollectItDbContext>));
-    //         if (dbContextOptionsDescriptor is not null)
-    //         {
-    //             services.Remove(dbContextOptionsDescriptor);
-    //         }
-    //         
-    //         // services.RemoveAll<PostgresqlCollectItDbContext>();
-    //         services.AddDbContext<PostgresqlCollectItDbContext>(config =>
-    //         {
-    //             config.UseInMemoryDatabase("CollectItDB.Tests");
-    //         });
-    //     });
-    //     return base.CreateHost(builder);
-    // }
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
+        base.ConfigureWebHost(builder);
+        builder.ConfigureServices((ctx, services) =>
         {
             services.RemoveAll<DbContextOptions<PostgresqlCollectItDbContext>>();
             services.RemoveAll<PostgresqlCollectItDbContext>();
             services.AddDbContext<PostgresqlCollectItDbContext>(config =>
             {
-                config.UseNpgsql("Server=localhost;Port=5432;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678", options =>
+                config.UseNpgsql("Server=localhost;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678;Port=5432", options =>
                 {
                     options.UseNodaTime();
+                    options.MigrationsAssembly("CollectIt.Database.Infrastructure");
                 });
 
             });
@@ -56,6 +38,7 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             var scopedServices = scope.ServiceProvider;
             var context = scopedServices.GetRequiredService<PostgresqlCollectItDbContext>();
             context.Database.EnsureDeleted();
+            context.Database.Migrate();
             context.Database.EnsureCreated();
         });
     }
