@@ -144,4 +144,24 @@ public class UsersController : ControllerBase
                    ? NoContent()
                    : BadRequest();
     }
+
+    [HttpPost("{userId:int}/activate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ActivateAccount(int userId)
+    {
+        var result = await _userManager.SetLockoutEnabledAsync(new User() {Id = userId}, false);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
+    
+    [HttpPost("{userId:int}/deactivate")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeactivateAccount(int userId)
+    {
+        var result = await _userManager.SetLockoutEnabledAsync(new User() {Id = userId}, true);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
 }
