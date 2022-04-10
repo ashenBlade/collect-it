@@ -37,6 +37,9 @@
       <Content Update="Views\Account\Subscribtions.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
+      <Content Update="wwwroot\css\ResourceStyles.css">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

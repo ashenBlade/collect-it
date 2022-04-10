@@ -1,0 +1,53 @@
+﻿.s-0{
+    width: 100%;
+}
+
+.h-1{
+    height: 40px;
+    line-height: 2.5rem;
+}
+
+.h-2{
+    height: 40px;
+    line-height: 1.5rem;
+}
+
+.h-3{
+    height: 40px;
+}
+
+.w-0{
+    width: 100px;
+}
+
+.w-1{
+    width: 200px !important;
+}
+
+.maw-0{
+    max-width: 98%;
+}
+
+.maw-1{
+    max-width: 80%;
+}
+
+.maw-2{
+    max-width: 100px;
+}
+
+.miw-0{
+    min-width: 45.68px;
+}
+
+.mah-1{
+    max-height: 30px;
+}
+
+.mah-2{
+    max-height: 500px;
+}
+
+.mih-1{
+    min-height: 500px;
+}
