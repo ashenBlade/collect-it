@@ -85,6 +85,12 @@ public class UsersController : ControllerBase
             {
                 return NotFound();
             }
+
+            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "Admin") ) )
+            {
+                return Unauthorized();
+            }
+
             await _userManager.ChangeUsernameAsync(userId, username);
             return NoContent();
         }
