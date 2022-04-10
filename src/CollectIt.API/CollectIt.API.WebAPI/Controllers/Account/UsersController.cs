@@ -103,4 +103,23 @@ public class UsersController : ControllerBase
             return BadRequest("User with provided username already exists");
         }
     }
+
+    [HttpPut("{userId:int}/email")]
+    [Authorize]
+    public async Task<IActionResult> ChangeUserEmail(int userId, string email)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        if (!(userId == user.Id || await _userManager.IsInRoleAsync(user, "Admin")))
+        {
+            return Unauthorized();
+        }
+        var result = await _userManager.SetEmailAsync(new User() {Id = userId}, email);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest(result.Errors.Select(e => e.Description).Aggregate((s, n) => $"{s}\n{n}"));
+    }
 }
