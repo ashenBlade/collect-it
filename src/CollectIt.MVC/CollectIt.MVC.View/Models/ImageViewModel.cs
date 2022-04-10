@@ -13,4 +13,6 @@ public class ImageViewModel
     public string Path { get; set; }
     
     public string[] Tags { get; set; }
+    
+    public CommentViewModel[] Comments { get; set; }
 }
