@@ -17,18 +17,22 @@
     @for (var i = 0; i < 3; i++)
         {
             var temp = new List<Image>();
-            if (g == 1 && i == 1)
+            if (i * k < Model.Images.Count)
             {
-                temp = Model.Images.Skip(i * k).ToList().GetRange(0,k - 1);
+                if (g == 1 && i == 1)
+                {
+                    temp = Model.Images.Skip(i * k).ToList().GetRange(0,k - 1);
+                }
+                else if (g == 2 && i != 1)
+                {
+                    temp = Model.Images.Skip(i * k).ToList().GetRange(0,k - 1);
+                }
+                else
+                {
+                    temp = Model.Images.Skip(i * k).ToList().GetRange(0,k);
+                }
             }
-            else if (g == 2 && i != 1)
-            {
-                temp = Model.Images.Skip(i * k).ToList().GetRange(0,k-1);
-            }
-            else
-            {
-                temp = Model.Images.Skip(i * k).ToList().GetRange(0,k);
-            }
+            
             
             <div class="resources-box">
             @foreach (var image in temp)
