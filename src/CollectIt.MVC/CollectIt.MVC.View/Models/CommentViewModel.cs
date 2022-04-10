@@ -8,5 +8,7 @@ public class CommentViewModel
     [Required]
     public string Author { get; set; }
     
-    public string[] Comments { get; set; }
+    public DateTime PostTime { get; set; }
+    
+    public string Comments { get; set; }
 }
