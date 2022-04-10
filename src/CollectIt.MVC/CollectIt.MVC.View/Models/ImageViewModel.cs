@@ -14,5 +14,5 @@ public class ImageViewModel
     
     public string[] Tags { get; set; }
     
-    public CommentViewModel[] Comments { get; set; }
+    public IEnumerable<CommentViewModel> Comments { get; set; }
 }
