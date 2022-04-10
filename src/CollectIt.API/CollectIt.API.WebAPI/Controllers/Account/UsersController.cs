@@ -1,9 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
@@ -68,5 +72,29 @@ public class UsersController : ControllerBase
         return Ok(roles.Select(AccountMappers.ToReadRoleDTO)
                        .ToArray());
     }
-    
+
+    [HttpPut("{userId:int}/username")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ChangeUsername([FromQuery(Name = "username")]string username, 
+                                                    int userId)
+    {
+        try
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user is null)
+            {
+                return NotFound();
+            }
+            await _userManager.ChangeUsernameAsync(userId, username);
+            return NoContent();
+        }
+        catch (UserNotFoundException notFoundException)
+        {
+            return NotFound();
+        }
+        catch (AccountException accountException)
+        {
+            return BadRequest("User with provided username already exists");
+        }
+    }
 }

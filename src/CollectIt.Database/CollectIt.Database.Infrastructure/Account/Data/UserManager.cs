@@ -1,3 +1,4 @@
+using System.Data.Common;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NodaTime;
+using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
 
@@ -88,5 +90,46 @@ public class UserManager: UserManager<User>
         var resource = new Resource() {Id = resourceId};
         return _context.Users
                        .AnyAsync(u => u.AcquiredResources.Contains(resource));
+    }
+    
+    /// <exception cref="UserNotFoundException">User with provided id does not exist</exception>
+    /// <exception cref="AccountException">User with provided username already exists</exception>
+    public async Task ChangeUsernameAsync(int userId, string username)
+    {
+        await using var connection = _context.Database.GetDbConnection();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE \"AspNetUsers\" SET \"UserName\" = @username WHERE \"Id\" = @id";
+        command.Parameters.Add(CreateParameter(command, "@username", username));
+        command.Parameters.Add(CreateParameter(command, "@id", userId));
+        await connection.OpenAsync();
+        try
+        {
+            var affected = await command.ExecuteNonQueryAsync();
+            if (affected == 0)
+            {
+                throw new UserNotFoundException(userId);
+            }
+        }
+        catch (DbUpdateException updateException)
+        {
+            if (updateException.InnerException is not PostgresException postgresException)
+            {
+                throw;
+            }
+
+            throw postgresException.ConstraintName switch
+                  {
+                      "UserNameIndex" => new AccountException("User with provided username already exists"),
+                      _               => updateException
+                  };
+        }
+    }
+
+    private static DbParameter CreateParameter(DbCommand command, string name, object? value)
+    {
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = name;
+        parameter.Value = value;
+        return parameter;
     }
 }
