@@ -122,4 +122,26 @@ public class UsersController : ControllerBase
                    ? NoContent()
                    : BadRequest(result.Errors.Select(e => e.Description).Aggregate((s, n) => $"{s}\n{n}"));
     }
+
+    [HttpPost("{userId:int}/roles")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AssignRoleToUser(int userId, 
+                                                      [FromQuery(Name = "role_name")]string role)
+    {
+        var result = await _userManager.AddToRoleAsync(new User(){Id = userId}, role);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
+ 
+    [HttpDelete("{userId:int}/roles")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> RemoveRoleFromUser(int userId, 
+                                                        [FromQuery(Name = "role_name")]string role)
+    {
+        var result = await _userManager.RemoveFromRoleAsync(new User(){Id = userId}, role);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
 }
