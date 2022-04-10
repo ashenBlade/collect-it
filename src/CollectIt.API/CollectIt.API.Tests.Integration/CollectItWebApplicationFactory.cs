@@ -29,8 +29,8 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
                     options.UseNodaTime();
                     options.MigrationsAssembly("CollectIt.Database.Infrastructure");
                 });
-
             });
+            
             var sp = services.BuildServiceProvider();
 
             using var scope = sp.CreateScope();

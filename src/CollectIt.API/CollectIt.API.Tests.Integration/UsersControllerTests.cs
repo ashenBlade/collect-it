@@ -27,27 +27,10 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     }
 
     [Fact]
-    public async Task ASDF()
-    {
-        using var client = _factory.CreateClient();
-        using var message = new HttpRequestMessage(HttpMethod.Get, "api/v1/users");
-        var result = await client.SendAsync(message);
-        _testOutputHelper.WriteLine(await result.Content.ReadAsStringAsync());
-    }
-    
-    [Fact]
     public async Task Get_UsersList_Return4InitialUsers()
     {
-        try
-        {
-            var users = await GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>("api/v1/users");
-            Assert.Equal(4, users.Length);
-        }
-        catch (Exception e)
-        {
-            _testOutputHelper.WriteLine(e.ToString());
-            throw;
-        }
+        var users = await GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>("api/v1/users");
+        Assert.Equal(4, users.Length);
     }
 
     private async Task<T> GetResultParsedFromJson<T>(string address, HttpMethod? method = null)
