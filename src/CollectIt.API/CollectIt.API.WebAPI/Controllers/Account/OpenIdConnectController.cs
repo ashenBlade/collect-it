@@ -30,7 +30,7 @@ public class OpenIdConnectController : ControllerBase
     public async Task<IActionResult> Exchange()
     {
         var request = HttpContext.GetOpenIddictServerRequest();
-        if (!request.IsPasswordGrantType())
+        if (request is null || !request.IsPasswordGrantType())
         {
             return BadRequest("Only password grant type supported");
         }
