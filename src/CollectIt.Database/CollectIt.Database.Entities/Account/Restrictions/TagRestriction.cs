@@ -12,4 +12,6 @@ public class TagRestriction : Restriction
     {
         throw new NotImplementedException("No tags for resource type implemented yet");
     }
+
+    public override string ErrorMessage => "Требуемый ресурс не имеет необходимого тега";
 }

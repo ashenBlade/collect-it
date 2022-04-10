@@ -17,4 +17,6 @@ public class DaysAfterRestriction : Restriction
     {
         return DateTime.Today - TimeSpan.FromDays(DaysAfter) < resource.UploadDate;
     }
+
+    public override string ErrorMessage => "Изображение было загружено позже требуемой ограничением даты";
 }
