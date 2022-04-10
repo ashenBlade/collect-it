@@ -218,3 +218,10 @@ let ReadActiveUserSubscription id userId subscriptionId leftResourcesCount dateF
     DateFrom = dateFrom
     DateTo = dateTo
 }
+
+[<CLIMutable>]
+type SearchSubscriptionsDTO = {
+    [<Required>]
+    ResourceType: ResourceType
+    Name : string
+}
