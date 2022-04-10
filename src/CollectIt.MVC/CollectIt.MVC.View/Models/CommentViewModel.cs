@@ -10,5 +10,5 @@ public class CommentViewModel
     
     public DateTime PostTime { get; set; }
     
-    public string Comments { get; set; }
+    public string Comment { get; set; }
 }
