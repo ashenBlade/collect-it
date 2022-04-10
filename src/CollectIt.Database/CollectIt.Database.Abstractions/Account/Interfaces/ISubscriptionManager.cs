@@ -1,4 +1,5 @@
 using CollectIt.Database.Entities.Account;
+using Microsoft.AspNetCore.Identity;
 
 namespace CollectIt.Database.Abstractions.Account.Interfaces;
 
@@ -20,4 +21,6 @@ public interface ISubscriptionManager
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize);
     public Task ActivateSubscriptionAsync(int subscriptionId);
     public Task DeactivateSubscriptionAsync(int subscriptionId);
+    public Task<IdentityResult> ChangeSubscriptionNameAsync(int subscriptionId, string newName);
+    public Task<IdentityResult> ChangeSubscriptionDescriptionAsync(int subscriptionId, string newDescription);
 }

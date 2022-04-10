@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Contracts;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
@@ -74,5 +75,25 @@ public class SubscriptionsController : ControllerBase
                                                                               active ?? false);
         return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
                                AccountMappers.ToReadSubscriptionDTO(subscription));
+    }
+
+    [HttpPut("{subscriptionId:int}/name")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId, string name)
+    {
+        var result = await _subscriptionManager.ChangeSubscriptionNameAsync(subscriptionId, name);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
+    }
+    
+    [HttpPut("{subscriptionId:int}/description")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId, string description)
+    {
+        var result = await _subscriptionManager.ChangeSubscriptionDescriptionAsync(subscriptionId, description);
+        return result.Succeeded
+                   ? NoContent()
+                   : BadRequest();
     }
 }

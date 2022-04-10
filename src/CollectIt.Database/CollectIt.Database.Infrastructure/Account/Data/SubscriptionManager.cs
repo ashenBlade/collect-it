@@ -1,7 +1,10 @@
+using System.Data.Common;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.Logging;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
@@ -53,10 +56,10 @@ public class SubscriptionManager : ISubscriptionManager
     public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize)
     {
         return ActiveSubscriptions
-                       .OrderBy(s => s.Id)
-                       .Skip(( pageNumber - 1 ) * pageSize)
-                       .Take(pageSize)
-                       .ToListAsync();
+              .OrderBy(s => s.Id)
+              .Skip(( pageNumber - 1 ) * pageSize)
+              .Take(pageSize)
+              .ToListAsync();
     }
 
     private IQueryable<Subscription> ActiveSubscriptions
@@ -95,12 +98,12 @@ public class SubscriptionManager : ISubscriptionManager
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
     {
         return ActiveSubscriptions
-                        .Include(s => s.Restriction)
-                       .Where(s => s.AppliedResourceType == resourceType)
-                       .OrderBy(s => s.Id)
-                       .Skip(( pageNumber - 1 ) * pageSize)
-                       .Take(pageSize)
-                       .ToListAsync();
+              .Include(s => s.Restriction)
+              .Where(s => s.AppliedResourceType == resourceType)
+              .OrderBy(s => s.Id)
+              .Skip(( pageNumber - 1 ) * pageSize)
+              .Take(pageSize)
+              .ToListAsync();
     }
 
     public Task ActivateSubscriptionAsync(int subscriptionId)
@@ -111,6 +114,68 @@ public class SubscriptionManager : ISubscriptionManager
     public Task DeactivateSubscriptionAsync(int subscriptionId)
     {
         return SetActiveSubscriptionState(subscriptionId, false);
+    }
+
+    public async Task<IdentityResult> ChangeSubscriptionNameAsync(int subscriptionId, string newName)
+    {
+        try
+        {
+            await using var connection = _context.Database.GetDbConnection();
+            await using var command = connection.CreateCommand();
+            command.CommandText = "UPDATE \"Subscriptions\" SET \"Name\" = @name WHERE \"Id\" = @id;";
+            command.Parameters.Add(CreateParameter(command, "@name", newName));
+            command.Parameters.Add(CreateParameter(command, "@Id", subscriptionId));
+            var affected = await command.ExecuteNonQueryAsync();
+            if (affected == 0)
+            {
+                return IdentityResult.Failed(new IdentityError()
+                                             {
+                                                 Code = "", Description = "No subscription with provided id found"
+                                             });
+            }
+
+            return IdentityResult.Success;
+        }
+        catch (DbUpdateException updateException)
+        {
+            _logger.LogError(updateException, "Error while updating name for subscription");
+            return IdentityResult.Failed(new IdentityError() {Code = "", Description = "Error while updating on database"});
+        }
+    }
+
+    private static DbParameter CreateParameter(DbCommand command, string name, object value)
+    {
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = name;
+        parameter.Value = value;
+        return parameter;
+    }
+
+    public async Task<IdentityResult> ChangeSubscriptionDescriptionAsync(int subscriptionId, string newDescription)
+    {
+        try
+        {
+            await using var connection = _context.Database.GetDbConnection();
+            await using var command = connection.CreateCommand();
+            command.CommandText = "UPDATE \"Subscriptions\" SET \"Description\" = @description WHERE \"Id\" = @id;";
+            command.Parameters.Add(CreateParameter(command, "@description", newDescription));
+            command.Parameters.Add(CreateParameter(command, "@Id", subscriptionId));
+            var affected = await command.ExecuteNonQueryAsync();
+            if (affected == 0)
+            {
+                return IdentityResult.Failed(new IdentityError()
+                                             {
+                                                 Code = "", Description = "No subscription with provided id found"
+                                             });
+            }
+
+            return IdentityResult.Success;
+        }
+        catch (DbUpdateException updateException)
+        {
+            _logger.LogError(updateException, "Error while updating name for subscription");
+            return IdentityResult.Failed(new IdentityError() {Code = "", Description = "Error while updating on database"});
+        }
     }
 
     private async Task SetActiveSubscriptionState(int subscriptionId, bool activeState)
