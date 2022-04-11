@@ -64,8 +64,9 @@
     Какой-то текст коментария
 </div>
 
-<form method="post" class="text-start">
+<form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
     <label class="text-blur">Добавить комментарий:</label>
-    <textarea class="form-control blur-light" placeholder="Текст комментария..."></textarea>
-    <button type="submit" class="btn-light rounded border-0 mt-3">Отправить комментарий</button>
+    <input type="hidden" name="ImageId" value="@Model.ImageId"/>
+    <textarea name="Content" class="form-control blur-light p-3" placeholder="Оставить комментарий"></textarea>
+    <button type="submit" class="btn btn-light rounded border-0 mt-3">Отправить комментарий</button>
 </form>

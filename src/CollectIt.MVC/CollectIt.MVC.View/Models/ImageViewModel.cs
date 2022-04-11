@@ -5,7 +5,7 @@ namespace CollectIt.MVC.View.Models;
 
 public class ImageViewModel
 {
-    [Required]
+    public int ImageId { get; set; }
     public User Owner { get; set; }
 
     public DateTime UploadDate { get; set; }

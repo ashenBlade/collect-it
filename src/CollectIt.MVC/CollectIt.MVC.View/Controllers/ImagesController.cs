@@ -54,6 +54,7 @@ public class ImagesController : Controller
 
         var model = new ImageViewModel()
         {
+            ImageId = id,
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
@@ -78,8 +79,8 @@ public class ImagesController : Controller
     }
 
     [HttpPost("comment")]
-    [Authorize(Roles = CookieAuthenticationDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> LeaveComment(int imageId, string content)
+    [Authorize]
+    public async Task<IActionResult> LeaveComment([FromForm]LeaveCommentVewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
         // var comment = await _imageManager.AddCommentAsync(user.Id, imageId, content);
@@ -89,6 +90,6 @@ public class ImagesController : Controller
         //     var imageViewModel = new ImageViewModel() ......
         //     return View("Image", imageViewModel);
         // }
-        return BadRequest("This feature is not implemented yet");
+        return BadRequest($"This feature is not implemented yet\nImage Id: {model.ImageId}\nComment: {model.Content}");
     }
 }
