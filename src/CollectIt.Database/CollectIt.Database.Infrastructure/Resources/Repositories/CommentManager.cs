@@ -44,4 +44,15 @@ public class CommentManager : ICommentManager
             .Include(com => com.Owner)
             .Where(com => com.Target.Id == resourceId).ToListAsync();
     }
+
+    public async Task<Comment> CreateComment(int resourceId, int userId, string content)
+    {
+        var comment = new Comment()
+                      {
+                          TargetId = resourceId, OwnerId = userId, Content = content, UploadDate = DateTime.UtcNow
+                      };
+        var result = await context.Comments.AddAsync(comment);
+        await context.SaveChangesAsync();
+        return result.Entity;
+    }
 }

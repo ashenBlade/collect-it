@@ -83,13 +83,26 @@ public class ImagesController : Controller
     public async Task<IActionResult> LeaveComment([FromForm]LeaveCommentVewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
-        // var comment = await _imageManager.AddCommentAsync(user.Id, imageId, content);
-        // if (comment is not null)
-        // {
-        //     var image = await _imageManager.FindByIdAsync(imageId);
-        //     var imageViewModel = new ImageViewModel() ......
-        //     return View("Image", imageViewModel);
-        // }
-        return BadRequest($"This feature is not implemented yet\nImage Id: {model.ImageId}\nComment: {model.Content}");
+        var imageId = model.ImageId;
+        var comment = await _commentManager.CreateComment(imageId, user.Id, model.Content);
+        if (comment is null)
+            return BadRequest($"This feature is not implemented yet\nImage Id: {imageId}\nComment: {model.Content}");
+        var image = await _imageManager.FindByIdAsync(imageId);
+        var comments = await _commentManager.GetResourcesComments(imageId);
+        var imageViewModel = new ImageViewModel()
+                             {
+                                 ImageId = imageId,
+                                 UploadDate = image.UploadDate,
+                                 Path = image.Address,
+                                 Tags = image.Tags,
+                                 Owner = image.Owner,
+                                 Comments = comments.Select(c => new CommentViewModel()
+                                                                 {
+                                                                     Author = c.Owner.UserName,
+                                                                     Comment = c.Content,
+                                                                     PostTime = c.UploadDate
+                                                                 })
+                             };
+        return View("Image", imageViewModel);
     }
 }
