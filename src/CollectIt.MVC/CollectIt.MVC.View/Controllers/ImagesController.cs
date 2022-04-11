@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography.Xml;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
@@ -48,13 +49,14 @@ public class ImagesController : Controller
         {
             return View("Error");
         } 
-        //var comments = await _commentManager.GetResourcesComments(source.Id);
+        var comments = await _commentManager.GetResourcesComments(source.Id);
 
        // var commentViewModels = new List<CommentViewModel>();
 
         var model = new ImageViewModel()
         {
             ImageId = id,
+            Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
