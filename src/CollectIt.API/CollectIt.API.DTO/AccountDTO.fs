@@ -2,6 +2,7 @@ module CollectIt.API.DTO.AccountDTO
 
 open System
 open System.ComponentModel.DataAnnotations
+open System.Text.Json.Serialization
 open CollectIt.Database.Entities.Account
 
 [<CLIMutable>]
@@ -224,4 +225,21 @@ type SearchSubscriptionsDTO = {
     [<Required>]
     ResourceType: ResourceType
     Name : string
+}
+
+[<CLIMutable>]
+type OpenIddictResponseSuccess = {
+    [<JsonPropertyName("access_token")>]
+    AccessToken : string
+    
+    [<JsonPropertyName("token_type")>]
+    TokenType : string
+    
+    [<JsonPropertyName("expires_in")>]
+    ExpiresIn : int
+}
+
+[<CLIMutable>]
+type OpenIddictResponseFail = {
+    NONE : int
 }

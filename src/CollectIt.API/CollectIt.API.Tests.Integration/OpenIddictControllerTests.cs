@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using CollectIt.API.DTO;
 using CollectIt.Database.Infrastructure;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,8 +33,11 @@ public class OpenIddictControllerTests : IClassFixture<CollectItWebApplicationFa
                                                         new KeyValuePair<string, string>("username", admin.UserName),
                                                         new KeyValuePair<string, string>("password", "12345678")
                                                     });
+        
         var response = await client.SendAsync(message);
-        var result = await response.Content.ReadAsStringAsync();
-        _testOutputHelper.WriteLine(result);
+        var result = await response.Content.ReadFromJsonAsync<AccountDTO.OpenIddictResponseSuccess>();
+        Assert.NotNull(result);
+        Assert.Equal("Bearer", result.TokenType);
+        Assert.NotEmpty(result.AccessToken);
     }
 }
