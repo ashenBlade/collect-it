@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CollectIt.API.WebAPI\CollectIt.API.WebAPI.csproj" />
+      <ProjectReference Include="..\CollectIt.API.React\CollectIt.API.React.csproj" />
     </ItemGroup>
 
 </Project>
