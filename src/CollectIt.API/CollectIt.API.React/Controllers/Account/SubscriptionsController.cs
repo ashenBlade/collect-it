@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.Contracts;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
@@ -7,7 +6,7 @@ using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CollectIt.API.WebAPI.Controllers.Account;
+namespace CollectIt.API.React.Controllers.Account;
 
 [ApiController]
 [Route("api/v1/subscriptions")]

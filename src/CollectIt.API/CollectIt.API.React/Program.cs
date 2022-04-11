@@ -5,11 +5,10 @@ using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 
-namespace CollectIt.API.WebAPI;
+namespace CollectIt.API.React;
 
 public class Program
 {

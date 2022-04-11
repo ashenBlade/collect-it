@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
@@ -7,9 +6,8 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
-namespace CollectIt.API.WebAPI.Controllers.Account;
+namespace CollectIt.API.React.Controllers.Account;
 
 [ApiController]
 [Route("api/v1/users")]

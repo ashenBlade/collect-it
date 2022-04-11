@@ -1,8 +1,7 @@
 using CollectIt.Database.Infrastructure;
-using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 
-namespace CollectIt.API.WebAPI;
+namespace CollectIt.API.React;
 
 public static class ProgramExtensions
 {

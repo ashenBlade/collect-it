@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using CollectIt.Database.Entities.Account;
-using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
@@ -10,7 +9,7 @@ using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace CollectIt.API.WebAPI.Controllers.Account;
+namespace CollectIt.API.React.Controllers.Account;
 
 [ApiController]
 [Route("connect")]

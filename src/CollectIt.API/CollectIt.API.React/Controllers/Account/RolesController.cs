@@ -1,9 +1,8 @@
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace CollectIt.API.WebAPI.Controllers.Account;
+namespace CollectIt.API.React.Controllers.Account;
 
 [ApiController]
 [Route("api/v1/roles")]
