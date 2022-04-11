@@ -64,9 +64,20 @@
     Какой-то текст коментария
 </div>
 
+
+@if(User.Identity!.IsAuthenticated){
 <form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
     <label class="text-blur">Добавить комментарий:</label>
     <input type="hidden" name="ImageId" value="@Model.ImageId"/>
     <textarea name="Content" class="form-control blur-light p-3" placeholder="Оставить комментарий"></textarea>
     <button type="submit" class="btn btn-light rounded border-0 mt-3">Отправить комментарий</button>
 </form>
+}
+else
+{
+    <div class="text-start p-2 bg-light rounded">
+        <p>Войдите, чтобы оставить комментарии</p>
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Войти</a>
+        <a asp-controller="Account" asp-action="Register" class="btn-primary btn">Зарегистрироваться</a>
+    </div>
+}
