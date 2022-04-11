@@ -14,7 +14,7 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    [Migration("20220407114910_AddOpenIddict")]
+    [Migration("20220411042841_AddOpenIddict")]
     partial class AddOpenIddict
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -509,6 +509,13 @@ namespace CollectIt.MVC.View.Migrations
                         .IsRequired()
                         .HasColumnType("text[]");
 
+                    b.Property<NpgsqlTsVector>("TagsSearchVector")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "russian")
+                        .HasAnnotation("Npgsql:TsVectorProperties", new[] { "Tags" });
+
                     b.Property<DateTime>("UploadDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -519,6 +526,10 @@ namespace CollectIt.MVC.View.Migrations
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("NameSearchVector"), "GIN");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex(new[] { "TagsSearchVector" }, "IX_Resources_TagsSearchVector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "TagsSearchVector" }, "IX_Resources_TagsSearchVector"), "GIN");
 
                     b.ToTable("Resources");
                 });
@@ -638,11 +649,13 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClientId")
                         .HasMaxLength(100)
@@ -693,14 +706,16 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("OpenIddictApplications", (string)null);
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
 
-                    b.Property<string>("ApplicationId")
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -735,11 +750,13 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("OpenIddictAuthorizations", (string)null);
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreScope<int>", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -776,17 +793,19 @@ namespace CollectIt.MVC.View.Migrations
                     b.ToTable("OpenIddictScopes", (string)null);
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken<int>", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
 
-                    b.Property<string>("ApplicationId")
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AuthorizationId")
-                        .HasColumnType("text");
+                    b.Property<int?>("ApplicationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("AuthorizationId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConcurrencyToken")
                         .IsConcurrencyToken()
@@ -904,7 +923,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "abstract-img.jpg",
                             Name = "Мониторы с аниме",
                             OwnerId = 1,
-                            Tags = new[] { "anime", "fallout" },
+                            Tags = new[] { "аниме", "фоллаут" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -915,7 +934,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "bird-img.jpg",
                             Name = "Птица зимородок",
                             OwnerId = 1,
-                            Tags = new[] { "bird", "nature" },
+                            Tags = new[] { "птица", "природа" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -926,7 +945,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "car-img.jpg",
                             Name = "Машина на дороге",
                             OwnerId = 4,
-                            Tags = new[] { "car" },
+                            Tags = new[] { "машина" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -937,7 +956,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img.jpg",
                             Name = "Котенок на одеяле",
                             OwnerId = 1,
-                            Tags = new[] { "cat", "animal", "pet" },
+                            Tags = new[] { "кот", "животное", "питомец" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -948,7 +967,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "house-img.jpg",
                             Name = "Стандартный американский дом",
                             OwnerId = 4,
-                            Tags = new[] { "house" },
+                            Tags = new[] { "дом" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -959,7 +978,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "nature-img.jpg",
                             Name = "Осенний лес в природе",
                             OwnerId = 2,
-                            Tags = new[] { "nature" },
+                            Tags = new[] { "природа" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -970,7 +989,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "school-img.jpg",
                             Name = "Дети за партами в школе перед учителем",
                             OwnerId = 1,
-                            Tags = new[] { "school", "kids" },
+                            Tags = new[] { "школа", "дети" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -980,8 +999,8 @@ namespace CollectIt.MVC.View.Migrations
                             Extension = "jpg",
                             FileName = "cat-img-2.jpg",
                             Name = "Кот смотрит в камеру на зеленом фоне",
-                            OwnerId = 4,
-                            Tags = new[] { "cat", "pet", "animal" },
+                            OwnerId = 1,
+                            Tags = new[] { "кот", "питомец", "животное" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -992,7 +1011,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-3.jpg",
                             Name = "Крутой кот в очках",
                             OwnerId = 1,
-                            Tags = new[] { "cat", "pet", "animal", "sunglasses" },
+                            Tags = new[] { "кот", "питомец", "животное", "очки" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1003,7 +1022,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-4.jpg",
                             Name = "Белоснежный кот застыл в мяукающей позе",
                             OwnerId = 1,
-                            Tags = new[] { "cat", "pet", "animal" },
+                            Tags = new[] { "кот", "питомец", "животное" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1014,7 +1033,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-5.jpg",
                             Name = "Рыжий кот заснул на полу",
                             OwnerId = 2,
-                            Tags = new[] { "cat", "pet", "animal" },
+                            Tags = new[] { "кот", "питомец", "животное" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1025,7 +1044,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-6.jpg",
                             Name = "Спящий кот прикрывается лапой от солнца",
                             OwnerId = 3,
-                            Tags = new[] { "cat", "pet", "animal" },
+                            Tags = new[] { "кот", "питомец", "животное" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1036,7 +1055,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-7.jpg",
                             Name = "На стуле лежит кот",
                             OwnerId = 1,
-                            Tags = new[] { "cat", "pet", "animal", "chair", "furniture" },
+                            Tags = new[] { "кот", "питомец", "животное", "стул", "мебель" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1047,7 +1066,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-8.jpg",
                             Name = "Идущий по забору кот у причала",
                             OwnerId = 1,
-                            Tags = new[] { "cat", "pet", "animal", "yacht", "see" },
+                            Tags = new[] { "кот", "питомец", "животное", "яхта", "море" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         },
                         new
@@ -1058,7 +1077,7 @@ namespace CollectIt.MVC.View.Migrations
                             FileName = "cat-img-9.jpg",
                             Name = "Кот у елки сморит на лес",
                             OwnerId = 3,
-                            Tags = new[] { "cat", "pet", "animal", "nature" },
+                            Tags = new[] { "кот", "питомец", "животное", "природа" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc)
                         });
                 });
@@ -1230,22 +1249,22 @@ namespace CollectIt.MVC.View.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
                 {
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", "Application")
                         .WithMany("Authorizations")
                         .HasForeignKey("ApplicationId");
 
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreToken<int>", b =>
                 {
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", "Application")
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", "Application")
                         .WithMany("Tokens")
                         .HasForeignKey("ApplicationId");
 
-                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", "Authorization")
+                    b.HasOne("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", "Authorization")
                         .WithMany("Tokens")
                         .HasForeignKey("AuthorizationId");
 
@@ -1303,14 +1322,14 @@ namespace CollectIt.MVC.View.Migrations
                     b.Navigation("ResourcesAuthorOf");
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreApplication<int>", b =>
                 {
                     b.Navigation("Authorizations");
 
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization", b =>
+            modelBuilder.Entity("OpenIddict.EntityFrameworkCore.Models.OpenIddictEntityFrameworkCoreAuthorization<int>", b =>
                 {
                     b.Navigation("Tokens");
                 });

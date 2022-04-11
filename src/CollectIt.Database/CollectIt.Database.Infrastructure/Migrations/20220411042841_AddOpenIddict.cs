@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -9,23 +10,22 @@ namespace CollectIt.MVC.View.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers");
-
-            migrationBuilder.DropColumn(
-                name: "RoleId",
-                table: "AspNetUsers");
+            // migrationBuilder.RenameColumn(
+            //     name: "TagSearchVector",
+            //     table: "Resources",
+            //     newName: "TagsSearchVector");
+            //
+            // migrationBuilder.RenameIndex(
+            //     name: "IX_Resources_TagSearchVector",
+            //     table: "Resources",
+            //     newName: "IX_Resources_TagsSearchVector");
 
             migrationBuilder.CreateTable(
                 name: "OpenIddictApplications",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ClientId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     ClientSecret = table.Column<string>(type: "text", nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -48,7 +48,8 @@ namespace CollectIt.MVC.View.Migrations
                 name: "OpenIddictScopes",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ConcurrencyToken = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Descriptions = table.Column<string>(type: "text", nullable: true),
@@ -67,8 +68,9 @@ namespace CollectIt.MVC.View.Migrations
                 name: "OpenIddictAuthorizations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    ApplicationId = table.Column<string>(type: "text", nullable: true),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ApplicationId = table.Column<int>(type: "integer", nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Properties = table.Column<string>(type: "text", nullable: true),
@@ -91,9 +93,10 @@ namespace CollectIt.MVC.View.Migrations
                 name: "OpenIddictTokens",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    ApplicationId = table.Column<string>(type: "text", nullable: true),
-                    AuthorizationId = table.Column<string>(type: "text", nullable: true),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ApplicationId = table.Column<int>(type: "integer", nullable: true),
+                    AuthorizationId = table.Column<int>(type: "integer", nullable: true),
                     ConcurrencyToken = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -119,6 +122,13 @@ namespace CollectIt.MVC.View.Migrations
                         principalTable: "OpenIddictAuthorizations",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.UpdateData(
+                table: "Resources",
+                keyColumn: "Id",
+                keyValue: 8,
+                column: "OwnerId",
+                value: 1);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OpenIddictApplications_ClientId",
@@ -168,23 +178,22 @@ namespace CollectIt.MVC.View.Migrations
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");
 
-            migrationBuilder.AddColumn<int>(
-                name: "RoleId",
-                table: "AspNetUsers",
-                type: "integer",
-                nullable: true);
+            // migrationBuilder.RenameColumn(
+            //     name: "TagsSearchVector",
+            //     table: "Resources",
+            //     newName: "TagSearchVector");
+            //
+            // migrationBuilder.RenameIndex(
+            //     name: "IX_Resources_TagsSearchVector",
+            //     table: "Resources",
+            //     newName: "IX_Resources_TagSearchVector");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_AspNetUsers_AspNetRoles_RoleId",
-                table: "AspNetUsers",
-                column: "RoleId",
-                principalTable: "AspNetRoles",
-                principalColumn: "Id");
+            migrationBuilder.UpdateData(
+                table: "Resources",
+                keyColumn: "Id",
+                keyValue: 8,
+                column: "OwnerId",
+                value: 4);
         }
     }
 }

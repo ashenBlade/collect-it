@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
@@ -25,7 +26,7 @@ public class OpenIdConnectController : ControllerBase
         _signInManager = signInManager;
     }
     
-    [HttpGet("token")] 
+    [HttpPost("token")] 
     [Produces("application/json")]
     public async Task<IActionResult> Exchange()
     {
@@ -87,7 +88,7 @@ public class OpenIdConnectController : ControllerBase
         {
             case Claims.Name:
                 yield return Destinations.AccessToken;
-
+                
                 if (principal.HasScope(Scopes.Profile))
                     yield return Destinations.IdentityToken;
 

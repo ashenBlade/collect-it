@@ -12,7 +12,8 @@ public static class ProgramExtensions
                .AddCore(options =>
                 {
                     options.UseEntityFrameworkCore()
-                           .UseDbContext<PostgresqlCollectItDbContext>();
+                           .UseDbContext<PostgresqlCollectItDbContext>()
+                           .ReplaceDefaultEntities<int>();
                 })
                .AddServer(options =>
                 {
@@ -30,17 +31,14 @@ public static class ProgramExtensions
                                            OpenIddictConstants.Scopes.Roles);
                     
                     var config = options.UseAspNetCore();
-                    if (environment.IsDevelopment() || environment.IsStaging())
-                    {
                         config.DisableTransportSecurityRequirement();
-                    }
 
                     config.EnableTokenEndpointPassthrough()
                           .EnableAuthorizationEndpointPassthrough()
                           .EnableUserinfoEndpointPassthrough()
                           .EnableStatusCodePagesIntegration();
-
-                });
+                })
+               .AddValidation();
        return services;
     }
 }

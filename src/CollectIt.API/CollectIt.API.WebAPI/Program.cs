@@ -5,6 +5,7 @@ using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 
@@ -84,10 +85,11 @@ public class Program
         {
             config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], 
                              options =>
-            {
-                options.UseNodaTime();
-            });
-            config.UseOpenIddict();
+                             {
+                                 options.MigrationsAssembly("CollectIt.Database.Infrastructure");
+                                 options.UseNodaTime();
+                             });
+            config.UseOpenIddict<int>();
         });
 
         var app = builder.Build();

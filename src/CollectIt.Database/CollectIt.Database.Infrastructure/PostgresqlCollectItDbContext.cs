@@ -40,18 +40,19 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         OnModelCreatingResources(builder);
     }
 
-    private static Role Admin =>
+    internal static Role Admin =>
         new Role() {Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP"};
 
-    private static Role User =>
+    internal static Role User =>
         new Role() {Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP"};
     
-    private static Role TechSupport => 
+    internal static Role TechSupport => 
         new Role() { Id = 3, Name = "Technical Support", NormalizedName = "TECHNICAL SUPPORT", ConcurrencyStamp = "DEFAULT_STAMP" };
     
     
     private static void OnModelCreatingAccounts(ModelBuilder builder)
     {
+        // builder.UseOpenIddict<int>();
         builder.Entity<User>()
                .HasMany(u => u.Subscriptions)
                .WithMany(s => s.Subscribers)
@@ -131,7 +132,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         });
     }
 
-    private static Subscription BronzeSubscription =>
+    internal static Subscription BronzeSubscription =>
         new Subscription()
         {
             Id = 1,
@@ -145,7 +146,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = true
         };
 
-    private static Subscription SilverSubscription =>
+    internal static Subscription SilverSubscription =>
         new Subscription()
         {
             Id = 2,
@@ -159,7 +160,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = true
         };
 
-    private static Subscription GoldenSubscription =>
+    internal static Subscription GoldenSubscription =>
         new Subscription()
         {
             Id = 3,
@@ -173,7 +174,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = true
         };
 
-    private static Subscription DisabledSubscription =>
+    internal static Subscription DisabledSubscription =>
         new()
         {
             Id = 4,
@@ -187,7 +188,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = false
         };
 
-    private static Subscription AllowAllSubscription =>
+    internal static Subscription AllowAllSubscription =>
         new()
         {
             Id = 5,
@@ -201,7 +202,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = false
         };
 
-    private static User[] DefaultUsers
+    internal static User[] DefaultUsers
     {
         get
         {
@@ -215,10 +216,11 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         }
     }
 
-    private static User DefaultUserTwo =>
+    internal static int DefaultUserTwoId => 2;
+    internal static User DefaultUserTwo =>
         new()
         {
-            Id = 2,
+            Id = DefaultUserTwoId,
             Email = "mail@mail.ru",
             NormalizedEmail = "MAIL@MAIL.RU",
             UserName = "Discriminator",
@@ -234,10 +236,11 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             AccessFailedCount = 0
         };
 
-    private static User DefaultUserOne =>
+    internal static int DefaultUserOneId => 3;
+    internal static User DefaultUserOne =>
         new()
         {
-            Id = 3,
+            Id = DefaultUserOneId,
             Email = "andrey1999@yandex.ru",
             NormalizedEmail = "ANDREY1999@YANDEX.RU",
             UserName = "AndreyPhoto",
@@ -253,10 +256,11 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             AccessFailedCount = 0
         };
 
-    private static User TechSupportUser =>
+    internal static int TechSupportUserId => 4;
+    internal static User TechSupportUser =>
         new()
         {
-            Id = 4,
+            Id = TechSupportUserId,
             Email = "user@mail.ru",
             NormalizedEmail = "USER@MAIL.RU",
             UserName = "NineOneOne",
@@ -272,10 +276,11 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             AccessFailedCount = 0
         };
 
-    private static User AdminUser =>
+    internal static int AdminUserId => 1;
+    internal static User AdminUser =>
         new()
         {
-            Id = 1,
+            Id = AdminUserId,
             Email = "asdf@mail.ru",
             NormalizedEmail = "ASDF@MAIL.RU",
             UserName = "BestPhotoshoper",
@@ -318,11 +323,16 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
         var ownerId = DefaultUsers[0].Id;
         builder.Entity<Image>()
-               .HasData(new Image
+               .HasData(DefaultImages);
+    }
+    
+    internal static Image[] DefaultImages => new[]
+                                             {
+                                                 new Image
                         {
                             Id = 1,
                             Address = "/imagesFromDb/abstract-img.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Мониторы с аниме",
                             Extension = "jpg",
@@ -333,7 +343,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 2,
                             Address = "/imagesFromDb/bird-img.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Птица зимородок",
                             Extension = "jpg",
@@ -344,7 +354,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 3,
                             Address = "/imagesFromDb/car-img.jpg",
-                            OwnerId = 4,
+                            OwnerId = TechSupportUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Машина на дороге",
                             Extension = "jpg",
@@ -355,7 +365,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 4,
                             Address = "/imagesFromDb/cat-img.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Котенок на одеяле",
                             Extension = "jpg",
@@ -366,7 +376,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 5,
                             Address = "/imagesFromDb/house-img.jpg",
-                            OwnerId = 4,
+                            OwnerId = TechSupportUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Стандартный американский дом",
                             Extension = "jpg",
@@ -377,7 +387,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 6,
                             Address = "/imagesFromDb/nature-img.jpg",
-                            OwnerId = 2,
+                            OwnerId = DefaultUserTwoId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Осенний лес в природе",
                             Extension = "jpg",
@@ -388,7 +398,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 7,
                             Address = "/imagesFromDb/school-img.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Дети за партами в школе перед учителем",
                             Extension = "jpg",
@@ -399,7 +409,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 8,
                             Address = "/imagesFromDb/cat-img-2.jpg",
-                            OwnerId = 4,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Кот смотрит в камеру на зеленом фоне",
                             Extension = "jpg",
@@ -410,7 +420,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 9,
                             Address = "/imagesFromDb/cat-img-3.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Крутой кот в очках",
                             Extension = "jpg",
@@ -421,7 +431,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 10,
                             Address = "/imagesFromDb/cat-img-4.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Белоснежный кот застыл в мяукающей позе",
                             Extension = "jpg",
@@ -432,7 +442,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 11,
                             Address = "/imagesFromDb/cat-img-5.jpg",
-                            OwnerId = 2,
+                            OwnerId = DefaultUserTwoId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Рыжий кот заснул на полу",
                             Extension = "jpg",
@@ -443,7 +453,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 12,
                             Address = "/imagesFromDb/cat-img-6.jpg",
-                            OwnerId = 3,
+                            OwnerId = DefaultUserOneId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Спящий кот прикрывается лапой от солнца",
                             Extension = "jpg",
@@ -454,7 +464,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 13,
                             Address = "/imagesFromDb/cat-img-7.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "На стуле лежит кот",
                             Extension = "jpg",
@@ -465,7 +475,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 14,
                             Address = "/imagesFromDb/cat-img-8.jpg",
-                            OwnerId = ownerId,
+                            OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Идущий по забору кот у причала",
                             Extension = "jpg",
@@ -476,12 +486,12 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 15,
                             Address = "/imagesFromDb/cat-img-9.jpg",
-                            OwnerId = 3,
+                            OwnerId = DefaultUserOneId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Кот у елки сморит на лес",
                             Extension = "jpg",
                             FileName = "cat-img-9.jpg",
                             Tags = new []{"кот","питомец","животное","природа"}
-                        });
-    }
+                        }
+                                             };
 }
