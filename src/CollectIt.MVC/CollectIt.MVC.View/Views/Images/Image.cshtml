@@ -48,7 +48,7 @@
         </div> 
     </div>
 </div>
- <ul class="text-decoration-none px-0">
+<div class="text-decoration-none">
         @foreach (var comment in Model.Comments)
         {
             <div class="container rounded blur text-blur shadow mb-3 py-2 text-start">
@@ -63,7 +63,7 @@
                 @comment.Comment
             </div>
         }
-    </ul>
+</div>
 @if(User.Identity!.IsAuthenticated){
 <form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
     <label class="text-blur">Добавить комментарий:</label>
