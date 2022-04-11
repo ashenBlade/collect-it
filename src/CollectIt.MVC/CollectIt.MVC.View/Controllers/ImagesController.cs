@@ -4,7 +4,6 @@ using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.Models;
 using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,13 +47,14 @@ public class ImagesController : Controller
         {
             return View("Error");
         } 
-        //var comments = await _commentManager.GetResourcesComments(source.Id);
+        var comments = await _commentManager.GetResourcesComments(source.Id);
 
        // var commentViewModels = new List<CommentViewModel>();
 
         var model = new ImageViewModel()
         {
             ImageId = id,
+            Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,

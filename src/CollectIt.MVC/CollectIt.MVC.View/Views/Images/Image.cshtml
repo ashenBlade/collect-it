@@ -48,23 +48,22 @@
         </div> 
     </div>
 </div>
-
-<div class="container rounded blur text-blur shadow mb-3 pt-2 pb-2 text-start">
-    <div class="row pb-1 border-bottom m-0 text-start">
-        <div style="width: auto; height: auto">
-            <img src="/img/joke.jpg" asp-append-version="true" class="photo photo-s-3" alt=""/>
-        </div>
-        <div class="text-blur" style="width: auto; height: auto">
-            Логин
-        </div>
-        <div class="text-blur ms-auto" style="width: auto; height: auto">
-            Время написания комментария
-        </div>
-    </div>
-    Какой-то текст коментария
+<div class="text-decoration-none">
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="container rounded blur text-blur shadow mb-3 py-2 text-start">
+                <div class="row pb-1 border-bottom m-0 text-start">
+                    <div class="text-blur" style="width: auto; height: auto">
+                        @comment.Author
+                    </div>
+                    <div class="text-blur ms-auto" style="width: auto; height: auto">
+                        @comment.PostTime
+                    </div>
+                </div>
+                @comment.Comment
+            </div>
+        }
 </div>
-
-
 @if(User.Identity!.IsAuthenticated){
 <form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
     <label class="text-blur">Добавить комментарий:</label>
