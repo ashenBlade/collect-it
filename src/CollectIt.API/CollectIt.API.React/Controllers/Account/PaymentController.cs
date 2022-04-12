@@ -6,6 +6,7 @@ using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Account.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,7 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace CollectIt.API.React.Controllers.Account;
 
 
-    [Authorize]
+[Authorize]
+[Route("payment")]
 public class PaymentController : Controller
 {
     private readonly ISubscriptionService _subscriptionService;
@@ -37,7 +39,7 @@ public class PaymentController : Controller
     }
     
     [HttpPost]
-    [Route("/subscribe")]
+    [Route("subscribe")]
     public async Task<IActionResult> SubscribeUser(int subscriptionId)
     {
         var user = await _userManager.GetUserAsync(User);
@@ -57,6 +59,37 @@ public class PaymentController : Controller
         catch (SubscriptionNotFoundException subscriptionNotFoundException)
         {
             return NotFound($"Subscription with id = {subscriptionId} not found");
+        }
+    }
+
+    [HttpPost("acquire/image/{imageId:int}")]
+    public async Task<IActionResult> AcquireImage(int imageId)
+    {
+        try
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId}). AcquiredUserResource Id = {AquiredUserResourceId}", userId,
+                                   imageId, acquired.Id);
+            return NoContent();
+        }
+        catch (FormatException formatException)
+        {
+            _logger.LogError(formatException, "Could not parse user id from user");
+            await HttpContext.SignOutAsync();
+            return UnprocessableEntity();
+        }
+        catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
+        {
+            return BadRequest("User already acquired this image");
+        }
+        catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
+        {
+            return BadRequest("No suitable subscriptions found to acquire image");
+        }
+        catch (ResourceNotFoundException resourceNotFoundException)
+        {
+            return NotFound("Image with provided id not found");
         }
     }
 }
