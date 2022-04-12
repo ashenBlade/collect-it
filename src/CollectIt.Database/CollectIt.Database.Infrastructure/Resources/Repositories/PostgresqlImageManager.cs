@@ -83,6 +83,12 @@ public class PostgresqlImageManager : IImageManager
         throw new NotImplementedException();
     }
 
+    public Task<bool> IsAcquiredBy(int userId, int imageId)
+    {
+        return _context.AcquiredUserResources
+                       .AnyAsync(aus => aus.UserId == userId && aus.ResourceId == imageId);
+    }
+
     public IAsyncEnumerable<Image> GetAllByQuery(string query)
     {
         return _context.Images

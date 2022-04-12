@@ -50,7 +50,6 @@ public class ImagesController : Controller
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
        // var commentViewModels = new List<CommentViewModel>();
-
         var model = new ImageViewModel()
         {
             ImageId = id,
@@ -58,7 +57,8 @@ public class ImagesController : Controller
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
-            Tags = source.Tags
+            Tags = source.Tags,
+            IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
         };
         return View(model);
     }
@@ -87,22 +87,22 @@ public class ImagesController : Controller
         var comment = await _commentManager.CreateComment(imageId, user.Id, model.Content);
         if (comment is null)
             return BadRequest($"This feature is not implemented yet\nImage Id: {imageId}\nComment: {model.Content}");
-        var image = await _imageManager.FindByIdAsync(imageId);
-        var comments = await _commentManager.GetResourcesComments(imageId);
-        var imageViewModel = new ImageViewModel()
-                             {
-                                 ImageId = imageId,
-                                 UploadDate = image.UploadDate,
-                                 Path = image.Address,
-                                 Tags = image.Tags,
-                                 Owner = image.Owner,
-                                 Comments = comments.Select(c => new CommentViewModel()
-                                                                 {
-                                                                     Author = c.Owner.UserName,
-                                                                     Comment = c.Content,
-                                                                     PostTime = c.UploadDate
-                                                                 })
-                             };
-        return View("Image", imageViewModel);
+        // var image = await _imageManager.FindByIdAsync(imageId);
+        // var comments = await _commentManager.GetResourcesComments(imageId);
+        // var imageViewModel = new ImageViewModel()
+        //                      {
+        //                          ImageId = imageId,
+        //                          UploadDate = image.UploadDate,
+        //                          Path = image.Address,
+        //                          Tags = image.Tags,
+        //                          Owner = image.Owner,
+        //                          Comments = comments.Select(c => new CommentViewModel()
+        //                                                          {
+        //                                                              Author = c.Owner.UserName,
+        //                                                              Comment = c.Content,
+        //                                                              PostTime = c.UploadDate
+        //                                                          })
+        //                      };
+        return RedirectToAction("Image", new {id = model.ImageId});
     }
 }
