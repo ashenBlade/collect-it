@@ -51,6 +51,14 @@ public class UserManager: UserManager<User>
                        .ToListAsync();
     }
 
+    public Task<List<AcquiredUserResource>> GetResourcesForUserByIdAsync(int userId)
+    {
+        return _context.AcquiredUserResources
+            .Where(us => us.UserId == userId)
+            .Include(us => us.User)
+            .ToListAsync();
+    }
+    
     public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserAsync(User user)
     {
         return GetActiveSubscriptionsForUserByIdAsync(user.Id);

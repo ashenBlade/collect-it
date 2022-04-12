@@ -1,0 +1,38 @@
+﻿@model AccountResourcesViewModel
+
+<div class="d-flex justify-content-center">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="">№</th>
+            <th>Название</th>
+            <th>Дата подключения</th>
+            <th>Тэги</th>
+            <th>Ссылка</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var (subscription, i) in Model.Resources
+                                                .OrderByDescending(s => s.AcquireDate)
+                                                .Select((s, i) => ( s, i )))
+        {
+            <tr>
+                <td>
+                    @(i + 1)
+                </td>
+                <td>
+                    @subscription.FileName
+                </td>
+                <td>
+                    @subscription.AcquireDate.ToString("dd-MM-yyyy")
+                </td>
+                <td>
+                    @subscription.Tags
+                </td>
+                <td>
+                    @subscription.Address
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table></div>

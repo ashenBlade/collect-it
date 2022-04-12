@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 
-namespace CollectIt.API.React;
+namespace CollectIt.API.WebAPI;
 
 public class Program
 {

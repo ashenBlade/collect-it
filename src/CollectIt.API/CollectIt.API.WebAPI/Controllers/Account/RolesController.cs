@@ -2,7 +2,7 @@ using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CollectIt.API.React.Controllers.Account;
+namespace CollectIt.API.WebAPI.Controllers.Account;
 
 [ApiController]
 [Route("api/v1/roles")]

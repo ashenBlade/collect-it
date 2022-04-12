@@ -46,11 +46,22 @@ public class AccountController : Controller
                            Name = subscription.Subscription.Name,
                            ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
                        });
+        var resources =  ( await _userManager.GetResourcesForUserByIdAsync(userId) )
+            .Select(resource =>
+                new AccountUserResource()
+                {
+                    Id = resource.Id,
+                    FileName = resource.Resource.Name,
+                    Address = resource.Resource.Address,
+                    Tags = resource.Resource.Tags,
+                    AcquireDate = resource.AcquiredDate
+                });
         var model = new AccountViewModel()
                     {
                         UserName = User.FindFirstValue(ClaimTypes.Name),
                         Email = User.FindFirstValue(ClaimTypes.Email),
-                        Subscriptions = subscriptions
+                        Subscriptions = subscriptions,
+                        Resources = resources
                     };
         return View(model);
     }

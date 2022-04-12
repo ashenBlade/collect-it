@@ -9,7 +9,7 @@ using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
-namespace CollectIt.API.React.Controllers.Account;
+namespace CollectIt.API.WebAPI.Controllers.Account;
 
 [ApiController]
 [Route("connect")]
