@@ -29,6 +29,7 @@ public class ResourceAcquiringController : Controller
     public async Task<IActionResult> BuyImage([Required]int imageId)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        _logger.LogInformation("User with id = {UserId} wants to acquire image with id = {ImageId}", userId, imageId);
         try
         {
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);

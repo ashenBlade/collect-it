@@ -18,7 +18,16 @@
                 <button class="image-action-btn border-0 rounded-pill"><i class="fa-regular fa-share-from-square"></i> Поделиться</button>
             </div>
             <div class="image-action-btn">
-                <button class="image-action-btn border-0 rounded-pill red">Загрузить</button>        
+        @if (Model.IsAcquired)
+        {
+            <a href="@Model.Path" class="image-action-btn border-0 rounded-pill bg-success">Загрузить</a>
+        }
+        else
+        {
+            <form method="post" asp-controller="ResourceAcquiring" asp-action="BuyImage" asp-route-imageId="@Model.ImageId">
+                <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill" value="Приобрести">
+            </form>
+        }
             </div>
         </div>
     </div>
