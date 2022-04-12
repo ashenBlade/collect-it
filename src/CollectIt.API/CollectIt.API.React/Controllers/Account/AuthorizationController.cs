@@ -13,12 +13,12 @@ namespace CollectIt.API.React.Controllers.Account;
 
 [ApiController]
 [Route("connect")]
-public class OpenIdConnectController : ControllerBase
+public class AuthorizationController : ControllerBase
 {
     private readonly UserManager _userManager;
     private readonly SignInManager<User> _signInManager;
 
-    public OpenIdConnectController(UserManager userManager,
+    public AuthorizationController(UserManager userManager,
                                    SignInManager<User> signInManager)
     {
         _userManager = userManager;
