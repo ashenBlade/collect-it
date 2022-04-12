@@ -1,0 +1,64 @@
+﻿@model ImageViewModel
+@{
+    var str = "";
+}
+
+<form method="post" asp-action="UploadImage" enctype="multipart/form-data" class="w-100 text-start">
+    <div class="preview mb-3"></div>
+    <input type="file" class="form-control mb-3" id="file">
+    
+    <div class="row pl-3 pr-3 m-0 mb-3">
+        <label class="col-form-label">Тэги:</label>
+        <input type="button" id="addTag" class="btn-primary rounded border-0 mr-3 p-1 add text-center" style="max-width: 30px" value="+">
+        <div id="Tags" class="d-flex p-2">
+                                
+        </div>
+    </div>
+    
+    <input class="btn btn-primary" value="Добавить Изображение" type="submit"/>
+</form>
+
+
+    <script>
+        var count = 1;
+        $("#addTag").on("click", function (e) {
+            e.preventDefault();
+            
+            var string = "<div class='tagRow d-flex me-2 mb-2'><input  name='tags[" + (count - 1) + "]' class='rounded border-1'/>"
+            string += "<button class='btn btn-danger' style='padding-top:1px' onclick='deleteRow(this)' value='" + (count - 1)+"'>-</button></div>"
+            $("#Tags").append(string);
+            count++;
+        })
+        
+        $('#file').change(function (e){
+            e.preventDefault();
+            const inp = document.getElementById('file');
+            const prev = document.querySelector('.preview');
+            $('.preview').empty();
+            const file = Array.from(e.target.files)[0];
+            const reader = new FileReader();
+            
+            reader.onload = ev =>{
+                const src = ev.target.result
+                prev.insertAdjacentHTML('afterbegin', `
+                <img src="${src}" alt="${file.name}" class="d-block m-auto"/>
+                `)
+            }
+                    
+            reader.readAsDataURL(file);
+        })
+
+        function deleteRow(element) {
+            var currentRow = parseInt($(element).val());
+            let nextsiblings = document.querySelectorAll('.tagRow:nth-child(' + (currentRow + 1) + ') ~ *');
+            for (var i = 0; i < nextsiblings.length; i++) {
+                var childElements = nextsiblings[i].children;
+                childElements[0].textContent = "Task" + (currentRow + 1);
+                childElements[1].setAttribute("name", "Page.Page.Tags[" + currentRow + "].Completed");
+                childElements[2].setAttribute("value", currentRow)
+                currentRow++;
+            }
+            $(element).parent("div").remove();
+            count--;
+        }
+    </script>

@@ -73,6 +73,11 @@
 }
 
 /* images styles */
+.preview img{
+    max-width: 70%;
+    max-height: 400px;
+}
+
 .image{
     box-sizing: inherit;
     width: 100%;

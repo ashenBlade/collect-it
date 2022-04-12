@@ -29,14 +29,6 @@
             <input class="btn btn-primary" value="Сохранить" type="submit"/>
         </div>
         @Html.ValidationSummary(false)
-        <script>
-        $(document).ready(function (){
-            $('.custom-file-input').on("change", function (){
-                var fileName = $(this).val().split("\\").pop();
-                $(this).next('.custom-file-label').html(fileName);
-            });
-        });
-    </script>
 
     </form>
 </div>
