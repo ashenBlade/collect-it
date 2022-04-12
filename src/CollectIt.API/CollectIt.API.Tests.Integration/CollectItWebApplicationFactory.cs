@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using CollectIt.API.React;
+using CollectIt.API.WebAPI;
 using CollectIt.Database.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
