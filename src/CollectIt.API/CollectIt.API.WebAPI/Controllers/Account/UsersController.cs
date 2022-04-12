@@ -7,7 +7,7 @@ using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CollectIt.API.React.Controllers.Account;
+namespace CollectIt.API.WebAPI.Controllers.Account;
 
 [ApiController]
 [Route("api/v1/users")]

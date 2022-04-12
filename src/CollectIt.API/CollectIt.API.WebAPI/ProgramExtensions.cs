@@ -1,7 +1,7 @@
 using CollectIt.Database.Infrastructure;
 using OpenIddict.Abstractions;
 
-namespace CollectIt.API.React;
+namespace CollectIt.API.WebAPI;
 
 public static class ProgramExtensions
 {

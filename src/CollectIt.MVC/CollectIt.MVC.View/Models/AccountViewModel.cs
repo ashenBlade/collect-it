@@ -12,4 +12,6 @@ public class AccountViewModel
     public string Email { get; set; }
     [Required]
     public IEnumerable<AccountUserSubscription> Subscriptions { get; set; }
+    
+    public IEnumerable<AccountUserResource> Resources { get; set; }
 }

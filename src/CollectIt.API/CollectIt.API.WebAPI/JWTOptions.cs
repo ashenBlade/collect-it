@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace CollectIt.API.React;
+namespace CollectIt.API.WebAPI;
 
 public class JwtOptions
 {

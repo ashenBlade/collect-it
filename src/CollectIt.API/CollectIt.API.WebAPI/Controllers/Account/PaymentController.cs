@@ -3,15 +3,13 @@ using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
-using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Account.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CollectIt.API.React.Controllers.Account;
+namespace CollectIt.API.WebAPI.Controllers.Account;
 
 
 [Authorize]
