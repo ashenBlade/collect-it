@@ -12,11 +12,13 @@ public class AcquiredUserResource
 
     [Required]
     public int UserId { get; set; }
+    
     [ForeignKey(nameof(UserId))]
     public User? User { get; set; }
-    
+
     [Required]
     public int ResourceId { get; set; }
+
     [ForeignKey(nameof(ResourceId))]
     public Resource? Resource { get; set; }
     

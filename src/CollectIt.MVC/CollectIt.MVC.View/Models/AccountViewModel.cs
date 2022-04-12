@@ -13,5 +13,5 @@ public class AccountViewModel
     [Required]
     public IEnumerable<AccountUserSubscription> Subscriptions { get; set; }
     
-    public IEnumerable<AccountUserResources> Resources { get; set; }
+    public IEnumerable<AccountUserResource> Resources { get; set; }
 }

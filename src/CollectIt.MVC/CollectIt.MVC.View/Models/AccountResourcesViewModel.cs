@@ -4,5 +4,5 @@ namespace CollectIt.MVC.View.Models;
 
 public class AccountResourcesViewModel
 {
-    public IReadOnlyList<AccountUserResources> Resources { get; set; }
+    public IReadOnlyList<AccountUserResource> Resources { get; set; }
 }

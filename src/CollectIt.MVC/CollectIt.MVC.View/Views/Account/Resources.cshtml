@@ -7,13 +7,13 @@
             <th class="">№</th>
             <th>Название</th>
             <th>Дата подключения</th>
-            <th>Тип файла</th>
+            <th>Тэги</th>
             <th>Ссылка</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var (subscription, i) in Model.Resources
-                                                .OrderByDescending(s => s.AcquireTime)
+                                                .OrderByDescending(s => s.AcquireDate)
                                                 .Select((s, i) => ( s, i )))
         {
             <tr>
@@ -21,13 +21,13 @@
                     @(i + 1)
                 </td>
                 <td>
-                    @subscription.Name
+                    @subscription.FileName
                 </td>
                 <td>
-                    @subscription.AcquireTime.ToString("dd-MM-yyyy")
+                    @subscription.AcquireDate.ToString("dd-MM-yyyy")
                 </td>
                 <td>
-                    @subscription.FileType
+                    @subscription.Tags
                 </td>
                 <td>
                     @subscription.Address

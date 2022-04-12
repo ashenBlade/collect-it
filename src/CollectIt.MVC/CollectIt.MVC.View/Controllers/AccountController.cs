@@ -47,14 +47,14 @@ public class AccountController : Controller
                            ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
                        });
         var resources =  ( await _userManager.GetResourcesForUserByIdAsync(userId) )
-            .Select(subscription =>
-                new AccountUserSubscription()
+            .Select(resource =>
+                new AccountUserResource()
                 {
-                    From = subscription.During.Start.ToDateTimeUnspecified(),
-                    To = subscription.During.End.ToDateTimeUnspecified(),
-                    LeftResourcesCount = subscription.LeftResourcesCount,
-                    Name = subscription.Subscription.Name,
-                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
+                    Id = resource.Id,
+                    FileName = resource.Resource.Name,
+                    Address = resource.Resource.Address,
+                    Tags = resource.Resource.Tags,
+                    AcquireDate = resource.AcquiredDate
                 });
         var model = new AccountViewModel()
                     {
