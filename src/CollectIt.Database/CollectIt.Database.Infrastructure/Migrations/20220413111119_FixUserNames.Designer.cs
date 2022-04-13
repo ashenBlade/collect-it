@@ -3,6 +3,7 @@ using System;
 using CollectIt.Database.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,10 @@ using NpgsqlTypes;
 namespace CollectIt.MVC.View.Migrations
 {
     [DbContext(typeof(PostgresqlCollectItDbContext))]
-    partial class PostgresqlCollectItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220413111119_FixUserNames")]
+    partial class FixUserNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -851,18 +853,6 @@ namespace CollectIt.MVC.View.Migrations
                     b.HasIndex("ApplicationId", "Status", "Subject", "Type");
 
                     b.ToTable("OpenIddictTokens", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ConcurrencyToken = "05fa1fe4-a237-4abc-a242-fa56c18c08ee",
-                            CreationDate = new DateTime(2022, 4, 13, 14, 13, 30, 0, DateTimeKind.Utc),
-                            ExpirationDate = new DateTime(2025, 4, 12, 14, 13, 30, 0, DateTimeKind.Utc),
-                            Status = "valid",
-                            Subject = "1",
-                            Type = "access_token"
-                        });
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Account.Restrictions.AuthorRestriction", b =>

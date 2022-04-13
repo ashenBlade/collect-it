@@ -65,7 +65,8 @@ public class SubscriptionsController : ControllerBase
 
     [HttpPost("")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateSubscription([FromForm][Required] AccountDTO.CreateSubscriptionDTO dto, [FromForm(Name = "active")]bool? active)
+    public async Task<IActionResult> CreateSubscription([FromForm][Required] AccountDTO.CreateSubscriptionDTO dto, 
+                                                        [FromForm(Name = "active")]bool? active)
     {
         var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
                                                                               dto.Description, 

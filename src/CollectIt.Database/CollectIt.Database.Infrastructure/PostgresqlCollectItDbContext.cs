@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using Npgsql.NameTranslation;
+using OpenIddict.EntityFrameworkCore.Models;
 
 namespace CollectIt.Database.Infrastructure;
 
@@ -48,8 +49,9 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     
     internal static Role TechSupport => 
         new Role() { Id = 3, Name = "Technical Support", NormalizedName = "TECHNICAL SUPPORT", ConcurrencyStamp = "DEFAULT_STAMP" };
-    
-    
+
+    internal static string AdminAccessTokenBearer =
+        "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiJEN0E1NDZFNzFDRDA0MkI3MzkyMzVCOTU0MjBDOUQ1OEFGRDE4QUZCIiwidHlwIjoiYXQrand0In0.kiLie1BHwiT2-VFZd8cwoObiTDfHOUDUVuKJ9SkiyxQLi99Xc18kEo1a3xKf3Syow0ehLw9kBm7YN818bg7xaPm5vQZTOsX9ErNxan77M5chBC6cYJZxjmH8R82U2UNNQkuV6AP-g45xCvZ7bzkVRj2EzdJ9SKktxgY0gzAxlGZZvCukrl-9H-89N2GXfY_7pmwsyegi64eVOdoJj9K-cb7pdp6zCE_c9eYNgCuRySt0YjfE86e09PCF9HE1lPbxkI481Sb1gm6Gtg9WmgQIyKWd0LzZLnlGDHs_7gMZuAt2VAr-tcSl840qhZ8gJZFQ-yVMzzA6Xei2IlM_mqoXKw.sLnJoZ2PvwPIuy9iD4tPmA.0xz8a3c2vb-A5-bEwTHHoiTew_MEEa7LXQV55c8QJmpZxEejQ9PtMiuoBoaFUg9n8uPf6LD2YiKV4NFu7cGcN7LWjiYg0Nf-DyAE7UPEz8dfW000QmGr4thuNXDfrc9Mk9iaEDxJfzaOczS1ftLsfwX-05WDkbo9AW6oDUL7oC9fbWxZUYLL1xMmwunAf3sBjlZLwSHRfRD_CshjGYLC0zUsEhDnfC7MzrzYXinyj8I9GffyBZC4gu6j6-D0LP8CWyhi4Ua_wpWfJchpyN3wgTo5ZlO9AZDIT0HrrmthTjAimcgpbxIX5V036Cq7qn60RThbbcZffMiq_Qqfn11AFut6TvZttthFy1Bju9UNaxC3hZsKQvoSPWUFTlS237xrUIvevl0ft1mrrRgJMgcy51XokKRZBRrbD9FLWRNuYhWJ0OeCQ96F8CBhVeVdP-fG_ZmSHUY3gZf1F64kn_Y_bHvUzn8kS_bvYpdqYS2zTc_4sGzfW1abs373MLob_Cq97f-XhQyNzyIyFIY-aJXG0tUJ8vew37C6-rgph3RRaVVUPSl8w6v8PdVReAyFx6CXrLhubOUhYsc2WEvvFTrOsCK8c59DkQqFzKgDuz5k2BGltiDM-MifByvz6LSB1OZfuvNAC0-DSw1-U-EMmGz3fTdAYQl6boTW5I0yLpMZ4juRLST0ZAKjDkaDFOu8A4hGoLbJJYS1ETPo24RGAwTHN7N3jhKmGOFmTHZW1JgIMTBKa16opVg9DaK6Gbx1XmBZwiuhe2FA1t-bgSamKM5OwgEpblZQrpO3LGiqCsa44N6KTWu2x4W7bX3m_OjaUcVpVDGL7-AXohls_EiHlkIAmWmyllAXJo6Ep69m-rAMMHIBAGU2DusS9GmUyheu8j5snmLKEicyASc3ntN9yRemKr8EYzPq-Yj27XHt6NAClCWDV8ZKn64CdWNilEy2jzvp.wsd0CMpvV7hxnyY4MPrM1MhWLYaXiyqhPE9ZVbMh3pE";
     private static void OnModelCreatingAccounts(ModelBuilder builder)
     {
         // builder.UseOpenIddict<int>();
@@ -96,7 +98,17 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         builder.Entity<IdentityUserRole<int>>()
                .HasData(new IdentityUserRole<int>() {RoleId = Admin.Id, UserId = 1},
                         new IdentityUserRole<int>() {RoleId = TechSupport.Id, UserId = 3});
-
+        builder.Entity<OpenIddictEntityFrameworkCoreToken<int>>()
+               .HasData(new OpenIddictEntityFrameworkCoreToken<int>()
+                        {
+                            Id = 1,
+                            ConcurrencyToken = "05fa1fe4-a237-4abc-a242-fa56c18c08ee",
+                            CreationDate = new DateTime(2022, 4, 13, 14, 13, 30, DateTimeKind.Utc),
+                            ExpirationDate = new DateTime(2025, 4, 12, 14, 13, 30, DateTimeKind.Utc),
+                            Status = "valid",
+                            Subject = "1",
+                            Type = "access_token"
+                        });
         builder.Entity<UserSubscription>()
                .HasData(new UserSubscription()
                         {
@@ -224,7 +236,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Email = "mail@mail.ru",
             NormalizedEmail = "MAIL@MAIL.RU",
             UserName = "Discriminator",
-            NormalizedUserName = "BESTPHOTOSHOPER",
+            NormalizedUserName = "DISCRIMINATOR",
             EmailConfirmed = false,
             PhoneNumberConfirmed = false,
             PasswordHash =
@@ -284,7 +296,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Email = "asdf@mail.ru",
             NormalizedEmail = "ASDF@MAIL.RU",
             UserName = "BestPhotoshoper",
-            NormalizedUserName = "BestPhotoshoper",
+            NormalizedUserName = "BESTPHOTOSHOPER",
             EmailConfirmed = false,
             PhoneNumberConfirmed = false,
             PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",
