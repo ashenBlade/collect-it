@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -25,6 +26,21 @@ public static class TestsHelpers
         var parsed = serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
         Assert.NotNull(parsed);
         return parsed;
+    }
+
+    public static async Task PostAsync(CollectItWebApplicationFactory factory, string address, object? toSend = null, ITestOutputHelper? outputHelper = null)
+    {
+        using var client = factory.CreateClient();
+        var result = await client.PostAsync(address, new MultipartContent());
+        try
+        {
+            result.EnsureSuccessStatusCode();
+        }
+        catch (Exception exception)
+        {
+            outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
+            throw;
+        }
     }
 
     public static Task AssertNotFoundAsync(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null)

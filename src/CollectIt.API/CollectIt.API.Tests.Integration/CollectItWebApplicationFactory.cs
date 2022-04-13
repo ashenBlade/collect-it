@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http.Logging;
+using Microsoft.Extensions.Logging;
 // using Microsoft.Extensions.Hosting;
 // using Microsoft.Extensions.Logging;
 // using OpenIddict.Abstractions;
@@ -21,6 +23,13 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
     {
         base.ConfigureWebHost(builder);
         builder.UseEnvironment("Development");
+        builder.ConfigureLogging(logging =>
+        {
+            logging.AddSimpleConsole(opts =>
+            {
+                opts.SingleLine = false;
+            });
+        });
         builder.ConfigureServices((ctx, services) =>
         {
             services.RemoveAll<DbContextOptions<PostgresqlCollectItDbContext>>();
@@ -48,7 +57,7 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             context.Database.Migrate();
             context.Add(new OpenIddictEntityFrameworkCoreToken<int>()
                         {
-                            Id = 1,
+                            Id = 3,
                             Subject = "2",
                             ConcurrencyToken = "b6f28987-35c6-4645-9289-3644ffde17ac",
                             CreationDate = new DateTime(2022, 4, 13, 7, 28, 26, DateTimeKind.Utc),
@@ -56,7 +65,7 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
                             Status = "valid",
                             Type = "access_token",
                         });
-            // context.Database.EnsureCreated();
+            context.Database.EnsureCreated();
         });
     }
 }

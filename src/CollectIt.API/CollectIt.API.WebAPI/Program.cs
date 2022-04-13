@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using OpenIddict.Abstractions;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace CollectIt.API.WebAPI;
 
@@ -32,7 +34,10 @@ public class Program
         });
 
         builder.Services
-               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddAuthentication(config =>
+                {
+                    config.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+                })
                .AddJwtBearer(options =>
                 {
                     var jwtOptions = builder.Configuration.GetValue<JwtOptions>("JwtOptions");
@@ -68,10 +73,10 @@ public class Program
                                         RequireConfirmedAccount = false,
                                         RequireConfirmedPhoneNumber = false,
                                     };
-                    config.ClaimsIdentity.UserNameClaimType = OpenIddictConstants.Claims.Name;
-                    config.ClaimsIdentity.UserIdClaimType = OpenIddictConstants.Claims.Subject;
-                    config.ClaimsIdentity.RoleClaimType = OpenIddictConstants.Claims.Role;
-                    config.ClaimsIdentity.EmailClaimType = OpenIddictConstants.Claims.Email;
+                    config.ClaimsIdentity.UserNameClaimType = Claims.Name;
+                    config.ClaimsIdentity.UserIdClaimType = Claims.Subject;
+                    config.ClaimsIdentity.RoleClaimType = Claims.Role;
+                    config.ClaimsIdentity.EmailClaimType = Claims.Email;
                 })
                .AddUserManager<UserManager>()
                .AddRoleManager<RoleManager>()

@@ -6,6 +6,8 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
@@ -72,20 +74,24 @@ public class UsersController : ControllerBase
                        .ToArray());
     }
 
-    [HttpPut("{userId:int}/username")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> ChangeUsername([FromQuery(Name = "username")]string username, 
+    [HttpPost("{userId:int}/username")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangeUsername([FromForm(Name = "username")]
+                                                    [Required]
+                                                    string username, 
                                                     int userId)
     {
+        _logger.LogInformation("Hit changeusername");
         try
         {
             var user = await _userManager.GetUserAsync(User);
             if (user is null)
             {
-                return NotFound();
+                _logger.LogInformation("User not found: {User}", User.Identity.Name);
+                return NotFound("User with provided claims not found");
             }
 
-            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "Admin") ) )
+            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "Admin") ))
             {
                 return Unauthorized();
             }
@@ -95,15 +101,19 @@ public class UsersController : ControllerBase
         }
         catch (UserNotFoundException notFoundException)
         {
-            return NotFound();
+            return NotFound("Fuck");
         }
         catch (AccountException accountException)
         {
             return BadRequest("User with provided username already exists");
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
-    [HttpPut("{userId:int}/email")]
+    [HttpPost("{userId:int}/email")]
     [Authorize]
     public async Task<IActionResult> ChangeUserEmail(int userId, string email)
     {
