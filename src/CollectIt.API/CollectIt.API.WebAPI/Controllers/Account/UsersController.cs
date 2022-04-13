@@ -3,11 +3,13 @@ using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
+using static CollectIt.API.DTO.AccountDTO;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
@@ -87,11 +89,11 @@ public class UsersController : ControllerBase
             var user = await _userManager.GetUserAsync(User);
             if (user is null)
             {
-                _logger.LogInformation("User not found: {User}", User.Identity.Name);
+                // _logger.LogInformation("User not found: {User}", User.Identity.Name);
                 return NotFound("User with provided claims not found");
             }
-
-            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "Admin") ))
+            _logger.LogInformation("User id = {UserId}", user.Id);
+            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
             {
                 return Unauthorized();
             }
@@ -101,7 +103,7 @@ public class UsersController : ControllerBase
         }
         catch (UserNotFoundException notFoundException)
         {
-            return NotFound("Fuck");
+            return NotFound();
         }
         catch (AccountException accountException)
         {
