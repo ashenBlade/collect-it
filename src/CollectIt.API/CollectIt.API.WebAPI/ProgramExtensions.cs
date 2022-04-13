@@ -17,6 +17,7 @@ public static class ProgramExtensions
                  })
                 .AddServer(options =>
                  {
+                     options.SetAccessTokenLifetime(TimeSpan.FromDays(365 * 3));
                      options.AcceptAnonymousClients()
                              // .AllowAuthorizationCodeFlow()
                             .AllowPasswordFlow();

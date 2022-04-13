@@ -57,14 +57,15 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             context.Database.Migrate();
             context.Add(new OpenIddictEntityFrameworkCoreToken<int>()
                         {
-                            Id = 3,
-                            Subject = "2",
-                            ConcurrencyToken = "b6f28987-35c6-4645-9289-3644ffde17ac",
-                            CreationDate = new DateTime(2022, 4, 13, 7, 28, 26, DateTimeKind.Utc),
-                            ExpirationDate = new DateTime(2023, 4, 13, 7, 28, 26, DateTimeKind.Utc),
+                            Id = 1,
+                            Subject = "1",
+                            ConcurrencyToken = "fc91a77e-601a-49d5-bdbf-93c0ce4be5d3",
+                            CreationDate = new DateTime(2022, 4, 13, 11, 28, 20, DateTimeKind.Utc),
+                            ExpirationDate = new DateTime(2025, 4, 12, 11, 28, 20, DateTimeKind.Utc),
                             Status = "valid",
                             Type = "access_token",
                         });
+            context.SaveChanges();
             context.Database.EnsureCreated();
         });
     }

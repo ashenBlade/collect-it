@@ -224,7 +224,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Email = "mail@mail.ru",
             NormalizedEmail = "MAIL@MAIL.RU",
             UserName = "Discriminator",
-            NormalizedUserName = "BESTPHOTOSHOPER",
+            NormalizedUserName = "DISCRIMINATOR",
             EmailConfirmed = false,
             PhoneNumberConfirmed = false,
             PasswordHash =
@@ -284,7 +284,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Email = "asdf@mail.ru",
             NormalizedEmail = "ASDF@MAIL.RU",
             UserName = "BestPhotoshoper",
-            NormalizedUserName = "BestPhotoshoper",
+            NormalizedUserName = "BESTPHOTOSHOPER",
             EmailConfirmed = false,
             PhoneNumberConfirmed = false,
             PasswordHash = "AQAAAAEAACcQAAAAEAO/K1C4Jn77AXrULgaNn6rkHlrkXbk9jOqHqe+HK+CvDgmBEEFahFadKE8H7x4Olw==",

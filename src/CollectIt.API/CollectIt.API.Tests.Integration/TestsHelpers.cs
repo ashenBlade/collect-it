@@ -3,7 +3,9 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using CollectIt.Database.Infrastructure;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
@@ -12,8 +14,24 @@ namespace CollectIt.API.Tests.Integration;
 
 public static class TestsHelpers
 {
+    public static async Task<string> GetBearerForUserAsync(HttpClient client, string? username = null, string? password = null)
+    {
+        var message = new HttpRequestMessage(HttpMethod.Post, "connect/token")
+                      {
+                          Content = new MultipartFormDataContent()
+                                    {
+                                        {new StringContent("password"), "grant_type"},
+                                        {new StringContent(username ?? PostgresqlCollectItDbContext.AdminUser.UserName), "username"},
+                                        {new StringContent(password ?? "12345678"), "password"}
+                                    }
+                      };
+        var response = await client.SendAsync(message);
+        response.EnsureSuccessStatusCode();
+        var token = await response.Content.ReadFromJsonAsync<ConnectResult>();
+        return token.Bearer;
+    }
     public static string AdminAccessTokenBearer =>
-        "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiJEN0E1NDZFNzFDRDA0MkI3MzkyMzVCOTU0MjBDOUQ1OEFGRDE4QUZCIiwidHlwIjoiYXQrand0In0.XBa7Gd39A2ekFnbE2pvueDhFmo2nlb82WXE0XWPdbr3ZOzefAqOEOBTO2-sXvRWppXMYCgSSt7GDpgi-tOcrhzk8XkmbJcfWB1kNvGA254lM2IQ4xkfAQAvtA_T_dlA7sVzKJ76koHM2pEUdXIEVWUVolEb39c1UZblRrxTO70aOy0G0RhemlkIpqyxp0IWnkUXBv8WlYgiipka8yGwZK2KhpE-1UQ7tHB97CmnR45a9WB_WIWKrsQZUMTUvHA5hyqSO1kpMpn-wwrEwkNxa6pqqls_i_aZy3sKWdlPzNF9jTJ2BntPKLi6R7kYI9ahtjyI_PwFS2Cwl_VgHKuaddA.UfUnFbq2ozvv__hbQLh6_w.gqURk6I0NZkh2hgn3UvONHp_q9jBUiI6CrQClKDO0wns1EfvfZSfinJJDCI3rWjXauA44d8lCNCH_9Rq1AqOIR-Mt2P2JZAl0JyUHOVk9K_X0rF5eQks2ymXn1XRiSOsFaKN-RL2BDrt7BjX913EHXWGOUrsyyt_M4wZ96JXxZUSJTiPOWzzxgNH1eSJE3WxRlwaaFrIkqJEGca-oycPvxtkRGayIt4nRiJMhfzUfMoeZOjuJBxAgg4XztHe36zq2rtAQdRdnh-hg9nw8wM3Ep8lRbUCBPK5sU7McQpHPo7Rn9SdMC37V92b3jnNJwf7mtbab_XMP0Ue6GgpARiMcdz_hIUgqL2b8TqpSd2Y1CNF4IrRMsYpxjgbkZO8NHHSgXxASMvmcolz0xRPHz-hZk7KtTmy9G64y5-2HZVwIQSSgSc8qXa_LWXPFgORrypc_fMUeYNVNivpG0HeA4gynnD1bGoeP9Vbxx6Wjs3dqkRSS6T6A3E_N7RZJqpLn6-P6Ynpe4Sgv0j6FppdQLna4jnSi31MUABVx7oBQCs-NbnFDQApJyzaTBU7YJ3rCmpNl14Fa32a4T-zbfn5CM2W7AAVwZ8mz7f_ArNq5wcmGwGurTbITDP1fAEh20A_sGvhV7qWKjpB8tstt2IQvHmVLfHf5Sdj1GELFATm_5s54YeIPVV8Wm60ggkDGYbaP2pkcdxMgIGc434jQ3epDSYlwQIBkSB3kGo_kK5rLNVrSUwqSv-oxx0N00PqEeVpXgwQFutsQKqPaLrj0Sm9U0SRfLilgDwVL9JGmV0_rOoiureWhzeE8GKnqoV2DiXyJNqWscoGanRmgRh6aT57ayU7sF8VHQUzdNoqDP3MIZS9_Zbks0uHG8GRShEVBGSPRRTMcEwO08zJwd4FOUv69Wqo8A.zgC7Ft7YpIsRI9EYHEbT5FywxtN2KfF58jiW8qUqxqs";
+        "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiJEN0E1NDZFNzFDRDA0MkI3MzkyMzVCOTU0MjBDOUQ1OEFGRDE4QUZCIiwidHlwIjoiYXQrand0In0.B0tSorozswXkU7aB6kIHiWTSOzba--wlaoa3zo7IUozyveVDMRV8gumGHzxRqwAbOEwDixOc9QJ3AsG2xxEN457oZqm7arvV2AZUA-tpyX5DABwZRBQwwhigZjkWzr5x461sgjxwdj64YVRp-GaBv95ESPTv7qV2eSJFVTAL2EpWZvAYqbkdOK4YEP2ZO_hYTBWQ1I4WqmZq2UFB2i4ByveIpZM2f0lAPhmP3HROkWEtdpyrDajHTJ1bbvrtD1rk-ZG_vIG7uy_zjN_-PtSqbdfFVnyG9xac_xuPEdU-ZBR-MIT17iHZ2lYq1O9uDUNfzdXQUkFMFJdrhjkHrEX_1Q.ZzbHGXhDuPmwRwehWpPegA.ojsJQTIHubmlMOCLGQJ2ZR80pzt-nf4ElgL3_VeU4joNd1WUNiS4beEdkuX16KxZ1wxGK3v_UBni_Cs_Y77niqZQMXFpCc9iTxUzyW4kVUfNZqx2RWhV8BBVBdvWg81D6GS2oi40St-mMR0Pg1NUrbEwBjT312Ci4k9MMPlcKr7l6uWfhrAHKPDTCcwjbhUcgX2owj9IVJRumWmDwkl9NQdXTxAr1tJuxkmg8euspEQ3WCpAKe03Jp6sfZjbiICSe5914ld4KowOrMM8fLlzlLJSLC5a4OHGk20mSAlp9mJTRq1jbl25mHUqoqW0DYAkEFsR3O2fngVE0mMYX7D5USsN9zpD21OXUbRkSzyxKVBsi4RwWb1lEy6yn-2CGilGi8lY53y1AwOThUEbFnxqxZBEPHqYMDce6YHinbOY9Yp1JrFLb_q_tUqKFYknsunvPvzCl0LgkqtO63Y3tXPrJrRh4Ui7KaXrzETc3Wscn0YvtnHgBiLo6tIGBP0WIIb8exeBq3RjDKtCdREglq9a2xJGsu_zRZ-KNs3sl8W4KwB3EkyMN3VhNv7JV54-IbbbYfZm6l8WltPw_WBa63KBLcDPKvLFsIuxjVXoQIwT1QxZT7Qm1fB2yLuLzGZYJgNKmEAGZgNnXzqG-opxvBLbD5I1Zy7jSbO7ssnL1zC1UMFPRRVnxOA8x8veGy7wAqBwaqX6a2QirYPI0yMPq_V1lpzr3m9vAUz3l3JdegVIYezA_apXPMa8DhDjZr1wIuYoaYmLgcS9fwyOqMRGe1z-3A5Whyt4nwYx7zVF8jSU9fspmBSFa2liCCQa7RjSUT8rCFKwBPUIbW8dNfRNQ5nhScLY5zXtYzQ3wtDcCv_P6Hrh4I8kzP4bCfTU2qTdjLG8gEDtf6W3mx4EV3fZGkIu_pDPz77eP5frFH56aU1Zn186T68CaE1qlo0tbJq0G6P6.whTGC8FCm3kbVE_4Lfyn6wnNtfj7_9YLwD8ET0AuXa8";
     public static async Task<T> GetResultParsedFromJson<T>(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null, ITestOutputHelper? outputHelper = null)
     {
         using var client = factory.CreateClient();
@@ -21,17 +39,60 @@ public static class TestsHelpers
         message.Headers.Authorization =
             new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer);
         var result = await client.SendAsync(message);
-        outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
+        // outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
+        var serializer = JsonSerializer.Create();
+        var parsed = serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
+        Assert.NotNull(parsed);
+        return parsed;
+    }
+    
+    public static async Task<T> GetResultParsedFromJson<T>(HttpClient client, string address, HttpMethod? method = null, ITestOutputHelper? outputHelper = null)
+    {
+        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
+        message.Headers.Authorization =
+            new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer);
+        var result = await client.SendAsync(message);
+        // outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
         var serializer = JsonSerializer.Create();
         var parsed = serializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
         Assert.NotNull(parsed);
         return parsed;
     }
 
-    public static async Task PostAsync(CollectItWebApplicationFactory factory, string address, object? toSend = null, ITestOutputHelper? outputHelper = null)
+    public static async Task PostAsync(CollectItWebApplicationFactory factory, string address, MultipartFormDataContent? form = null, ITestOutputHelper? outputHelper = null)
     {
         using var client = factory.CreateClient();
-        var result = await client.PostAsync(address, new MultipartContent());
+        using var message = new HttpRequestMessage(HttpMethod.Post, address)
+                            {
+                                Headers =
+                                {
+                                    Authorization = new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer)
+                                },
+                                Content = form
+                            };
+        var result = await client.SendAsync(message);
+        try
+        {
+            result.EnsureSuccessStatusCode();
+        }
+        catch (Exception exception)
+        {
+            outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
+            // throw;
+        }
+    }
+    
+    public static async Task PostAsync(HttpClient client, string address, MultipartFormDataContent? form = null, ITestOutputHelper? outputHelper = null)
+    {
+        using var message = new HttpRequestMessage(HttpMethod.Post, address)
+                            {
+                                Headers =
+                                {
+                                    Authorization = new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer)
+                                },
+                                Content = form
+                            };
+        var result = await client.SendAsync(message);
         try
         {
             result.EnsureSuccessStatusCode();

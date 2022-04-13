@@ -105,37 +105,14 @@ public class UserManager: UserManager<User>
     /// <exception cref="AccountException">User with provided username already exists</exception>
     public async Task ChangeUsernameAsync(int userId, string username)
     {
-        await using var connection = _context.Database.GetDbConnection();
-        await using var command = connection.CreateCommand();
-        command.CommandText = "UPDATE \"AspNetUsers\" SET \"UserName\" = @username WHERE \"Id\" = @id";
-        command.Parameters.Add(CreateParameter(command, "@username", username));
-        command.Parameters.Add(CreateParameter(command, "@id", userId));
-        await connection.OpenAsync();
-        try
+        var user = await FindUserByIdAsync(userId);
+        var result = await SetUserNameAsync(user, username);
+        if (result.Succeeded)
         {
-            var affected = await command.ExecuteNonQueryAsync();
-            if (affected == 0)
-            {
-                throw new UserNotFoundException(userId);
-            }
+            return;
         }
-        catch (DbUpdateException updateException)
-        {
-            if (updateException.InnerException is not PostgresException postgresException)
-            {
-                throw;
-            }
 
-            throw postgresException.ConstraintName switch
-                  {
-                      "UserNameIndex" => new AccountException("User with provided username already exists"),
-                      _               => updateException
-                  };
-        }
-        finally
-        {
-            await connection.CloseAsync();
-        }
+        throw new AccountException(result.Errors.Select(err => err.Description).Aggregate((s, n) => $"{s}\n{n}"));
     }
 
     private static DbParameter CreateParameter(DbCommand command, string name, object? value)

@@ -107,7 +107,7 @@ public class UsersController : ControllerBase
         }
         catch (AccountException accountException)
         {
-            return BadRequest("User with provided username already exists");
+            return BadRequest(accountException.Message);
         }
         catch (Exception ex)
         {

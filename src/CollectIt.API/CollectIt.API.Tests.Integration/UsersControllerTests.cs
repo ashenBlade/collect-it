@@ -71,11 +71,17 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task PostUsername_WithNewValidName_ShouldChangeUsername()
     {
-        var userId = PostgresqlCollectItDbContext.AdminUserId;
-        const string expectedNewUsername = "SomeNewUsername";
-        await TestsHelpers.PostAsync(_factory, $"api/v1/users/{userId}/username?username={expectedNewUsername}");
+        using var client = _factory.CreateClient();
+        const string expectedNewUsername = "SomeUserName";
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var userId = user.Id;
+        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/username",
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(expectedNewUsername), "username"}
+                                     }, _outputHelper);
         var actual =
-            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(_factory, $"api/v1/users/{userId}", outputHelper: _outputHelper);
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}");
         Assert.Equal(expectedNewUsername, actual.UserName);
     }
 }

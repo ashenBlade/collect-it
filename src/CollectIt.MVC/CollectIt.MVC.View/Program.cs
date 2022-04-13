@@ -34,7 +34,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
                           config.MigrationsAssembly("CollectIt.Database.Infrastructure");
                           config.UseNodaTime();
                       });
-    options.UseOpenIddict();
+    options.UseOpenIddict<int>();
 });
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
