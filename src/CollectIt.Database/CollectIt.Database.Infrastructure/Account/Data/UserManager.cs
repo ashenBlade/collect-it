@@ -51,12 +51,13 @@ public class UserManager: UserManager<User>
                        .ToListAsync();
     }
 
-    public Task<List<AcquiredUserResource>> GetResourcesForUserByIdAsync(int userId)
+    public Task<List<AcquiredUserResource>> GetAcquiredResourcesForUserByIdAsync(int userId)
     {
         return _context.AcquiredUserResources
-            .Where(us => us.UserId == userId)
-            .Include(us => us.User)
-            .ToListAsync();
+                       .Where(us => us.UserId == userId)
+                       .Include(us => us.Resource)
+                       .Include(us => us.User)
+                       .ToListAsync();
     }
     
     public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserAsync(User user)
@@ -69,7 +70,7 @@ public class UserManager: UserManager<User>
         return _context.ActiveUsersSubscriptions
                        .Where(aus => aus.UserId == userId)
                        .Include(aus => aus.Subscription)
-                            .ThenInclude(s => s.Restriction)
+                       .ThenInclude(s => s.Restriction)
                        .Include(aus => aus.User)
                        .ToListAsync();
     }

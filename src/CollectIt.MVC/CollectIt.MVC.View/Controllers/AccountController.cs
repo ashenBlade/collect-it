@@ -46,7 +46,7 @@ public class AccountController : Controller
                            Name = subscription.Subscription.Name,
                            ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
                        });
-        var resources =  ( await _userManager.GetResourcesForUserByIdAsync(userId) )
+        var resources =  ( await _userManager.GetAcquiredResourcesForUserByIdAsync(userId) )
             .Select(resource =>
                 new AccountUserResource()
                 {

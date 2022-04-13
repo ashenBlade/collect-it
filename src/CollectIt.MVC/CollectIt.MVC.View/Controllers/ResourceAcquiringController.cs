@@ -34,7 +34,7 @@ public class ResourceAcquiringController : Controller
         {
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
             _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId})", userId, imageId);
-            return NoContent();
+            return RedirectToAction("Image", "Images", new {id = imageId});
         }
         catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
         {
