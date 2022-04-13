@@ -153,27 +153,27 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> RemoveRoleFromUser(int userId, 
                                                         [FromForm(Name = "role_name")]string role)
     {
-        var result = await _userManager.RemoveFromRoleAsync(new User(){Id = userId}, role);
+        var result = await _userManager.RemoveFromRoleAsync(await _userManager.GetUserAsync(User), role);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest();
     }
 
     [HttpPost("{userId:int}/activate")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ActivateAccount(int userId)
     {
-        var result = await _userManager.SetLockoutEnabledAsync(new User() {Id = userId}, false);
+        var result = await _userManager.SetLockoutEnabledAsync(await _userManager.GetUserAsync(User), false);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest();
     }
     
     [HttpPost("{userId:int}/deactivate")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeactivateAccount(int userId)
     {
-        var result = await _userManager.SetLockoutEnabledAsync(new User() {Id = userId}, true);
+        var result = await _userManager.SetLockoutEnabledAsync(await _userManager.GetUserAsync(User), true);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest();

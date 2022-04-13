@@ -89,11 +89,11 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         const string expectedNewUsername = "SomeUserName";
         var user = PostgresqlCollectItDbContext.AdminUser;
         var userId = user.Id;
-        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/username", bearer,
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/username", bearer,
                                      new MultipartFormDataContent()
                                      {
                                          {new StringContent(expectedNewUsername), "username"}
-                                     }, _outputHelper);
+                                     }, _outputHelper, method: HttpMethod.Post);
         var actual =
             await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}", bearer);
         Assert.Equal(expectedNewUsername, actual.UserName);
@@ -107,12 +107,13 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         const string expectedNewEmail = "thisisbrandnewemail@mail.ru";
         var user = PostgresqlCollectItDbContext.AdminUser;
         var userId = user.Id;
-        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/email", bearer,
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/email", bearer,
                                      new MultipartFormDataContent()
                                      {
                                          {new StringContent(expectedNewEmail), "email"}
                                      },
-                                     _outputHelper);
+                                     _outputHelper,
+                                     method: HttpMethod.Post);
         var actual =
             await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}",
                                                                                bearer);
@@ -125,14 +126,15 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     {
         var (client, bearer) = await Initialize();
         var roleToAssign = Role.TechSupportRoleName;
-        var user = PostgresqlCollectItDbContext.AdminUser;
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
         var userId = user.Id;
-        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/roles", bearer,
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/roles", bearer,
                                      new MultipartFormDataContent()
                                      {
                                          {new StringContent(roleToAssign), "role_name"}
                                      },
-                                     _outputHelper);
+                                     _outputHelper,
+                                     method: HttpMethod.Post);
         var actual =
             await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}",
                                                                                bearer);
@@ -147,7 +149,7 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var roleToRemove = Role.TechSupportRoleName;
         var user = PostgresqlCollectItDbContext.TechSupportUser;
         var userId = user.Id;
-        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/roles", bearer,
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/roles", bearer,
                                      new MultipartFormDataContent()
                                      {
                                          {new StringContent(roleToRemove), "role_name"}
@@ -179,5 +181,27 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var response = await client.SendAsync(message);
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         client.Dispose();
+    }
+
+    [Fact]
+    public async Task ActivateUserAccount_WithDeactivatedAccount_ShouldReturnNoContent()
+    {
+        var (client, bearer) = await Initialize();
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        var response = await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/activate", bearer,
+                                                    outputHelper: _outputHelper, ensure: true, method: HttpMethod.Post);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task DeactivateUserAccount_WithActivatedAccount_ShouldReturnNoContent()
+    {
+        var (client, bearer) = await Initialize();
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        var response = await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/activate", bearer,
+                                                    outputHelper: _outputHelper, ensure: true, method: HttpMethod.Post);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 }

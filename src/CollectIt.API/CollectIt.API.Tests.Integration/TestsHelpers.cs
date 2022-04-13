@@ -97,30 +97,36 @@ public static class TestsHelpers
         }
     }
     
-    public static async Task PostAsync(HttpClient client,
+    public static async Task<HttpResponseMessage> SendAsync(HttpClient client,
                                                             string address,
                                                             string bearer,
-                                                            MultipartFormDataContent? form = null,
-                                                            ITestOutputHelper? outputHelper = null)
+                                                            HttpContent? content = null,
+                                                            ITestOutputHelper? outputHelper = null,
+                                                            bool ensure = true,
+                                                            HttpMethod? method = null)
     {
-        using var message = new HttpRequestMessage(HttpMethod.Post, address)
+        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address)
                             {
                                 Headers =
                                 {
                                     Authorization = new AuthenticationHeaderValue("Bearer", bearer)
                                 },
-                                Content = form
+                                Content = content
                             };
         var result = await client.SendAsync(message);
-        try
+        if (ensure)
         {
-            result.EnsureSuccessStatusCode();
+            try
+            {
+                result.EnsureSuccessStatusCode();
+            }
+            catch (Exception exception)
+            {
+                outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
+                throw;
+            }
         }
-        catch (Exception exception)
-        {
-            outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
-            throw;
-        }
+        return result;
     }
 
     public static Task AssertNotFoundAsync(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null)
@@ -140,10 +146,15 @@ public static class TestsHelpers
     public static async Task AssertStatusCodeAsync(HttpClient client, 
                                                    string address, 
                                                    HttpStatusCode expectedStatusCode, 
-                                                   HttpMethod? method = null)
+                                                   HttpMethod? method = null,
+                                                   string? bearer = null,
+                                                   HttpContent? content = null)
     {
-        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
-        message.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer);
+        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address)
+                            {
+                                Headers = { Authorization = new AuthenticationHeaderValue("Bearer", bearer)},
+                                Content = content
+                            };
         var result = await client.SendAsync(message);
         Assert.Equal(expectedStatusCode, result.StatusCode);
     }
