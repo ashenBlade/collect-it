@@ -73,7 +73,7 @@ public class ImagesController : Controller
     [Route("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
-        var address = appEnvironment.WebRootPath  + "/imagesFromDb/";
+        var address = appEnvironment.WebRootPath + "/imagesFromDb/";
         await _imageManager.Create(address, uploadedFile.FileName, name, tags, uploadedFile);
         return View("ImagePostPage");
     }
