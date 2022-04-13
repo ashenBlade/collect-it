@@ -1,4 +1,5 @@
 using CollectIt.Database.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 
 namespace CollectIt.API.WebAPI;
@@ -16,6 +17,9 @@ public static class ProgramExtensions
                 })
                .AddServer(options =>
                 {
+                    // options.AddEncryptionKey(new SymmetricSecurityKey(Convert.FromBase64String("YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE="))); // 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+                    // For test
+                    // options.SetAccessTokenLifetime(TimeSpan.FromDays(365));
                     options.AcceptAnonymousClients()
                            .AllowAuthorizationCodeFlow()
                            .AllowPasswordFlow()
@@ -31,11 +35,10 @@ public static class ProgramExtensions
                     
                     var config = options.UseAspNetCore();
                         config.DisableTransportSecurityRequirement();
-
-                    config.EnableTokenEndpointPassthrough()
-                          .EnableAuthorizationEndpointPassthrough()
-                          .EnableUserinfoEndpointPassthrough()
-                          .EnableStatusCodePagesIntegration();
+                        config.EnableTokenEndpointPassthrough()
+                              .EnableAuthorizationEndpointPassthrough()
+                              .EnableUserinfoEndpointPassthrough()
+                              .EnableStatusCodePagesIntegration();
                 })
                .AddValidation();
        return services;

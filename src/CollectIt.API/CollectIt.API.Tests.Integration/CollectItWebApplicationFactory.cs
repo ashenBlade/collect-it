@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+// using Microsoft.Extensions.Hosting;
+// using Microsoft.Extensions.Logging;
+// using OpenIddict.Abstractions;
+using OpenIddict.EntityFrameworkCore.Models;
 
 namespace CollectIt.API.Tests.Integration;
 
@@ -44,7 +46,17 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             var context = scopedServices.GetRequiredService<PostgresqlCollectItDbContext>();
             context.Database.EnsureDeleted();
             context.Database.Migrate();
-            context.Database.EnsureCreated();
+            context.Add(new OpenIddictEntityFrameworkCoreToken<int>()
+                        {
+                            Id = 1,
+                            Subject = "2",
+                            ConcurrencyToken = "b6f28987-35c6-4645-9289-3644ffde17ac",
+                            CreationDate = new DateTime(2022, 4, 13, 7, 28, 26, DateTimeKind.Utc),
+                            ExpirationDate = new DateTime(2023, 4, 13, 7, 28, 26, DateTimeKind.Utc),
+                            Status = "valid",
+                            Type = "access_token",
+                        });
+            // context.Database.EnsureCreated();
         });
     }
 }
