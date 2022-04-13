@@ -54,14 +54,25 @@ public class AccountController : Controller
                     FileName = resource.Resource.Name,
                     Address = resource.Resource.Address,
                     Extension = resource.Resource.Extension,
-                    AcquireDate = resource.AcquiredDate
+                    Date = resource.AcquiredDate
+                });
+        var myResources = (await _userManager.GetUsersResourcesForUserByIdAsync(userId))
+            .Select(resource =>
+                new AccountUserResource()
+                {
+                    Id = resource.Id,
+                    FileName = resource.Name,
+                    Address = resource.Address,
+                    Extension = resource.Extension,
+                    Date = resource.UploadDate
                 });
        var model = new AccountViewModel()
                     {
                         UserName = User.FindFirstValue(ClaimTypes.Name),
                         Email = User.FindFirstValue(ClaimTypes.Email),
                         Subscriptions = subscriptions,
-                        Resources = resources
+                        AcquiredResources = resources,
+                        UsersResources = myResources
                     };
         return View(model);
     }

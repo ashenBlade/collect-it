@@ -17,5 +17,5 @@ public class AccountUserResource
     public string Extension { get; set; }
 
     [Required]
-    public DateTime AcquireDate { get; set; }
+    public DateTime Date { get; set; }
 }
