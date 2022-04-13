@@ -136,20 +136,22 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("{userId:int}/roles")]
-    [Authorize(Roles = "Admin")]
+    [Authorize, Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AssignRoleToUser(int userId, 
-                                                      [FromQuery(Name = "role_name")]string role)
+                                                      [FromForm(Name = "role_name")]
+                                                      [Required]
+                                                      string role)
     {
-        var result = await _userManager.AddToRoleAsync(new User(){Id = userId}, role);
+        var result = await _userManager.AddToRoleAsync(await _userManager.GetUserAsync(User), role);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest();
     }
  
     [HttpDelete("{userId:int}/roles")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> RemoveRoleFromUser(int userId, 
-                                                        [FromQuery(Name = "role_name")]string role)
+                                                        [FromForm(Name = "role_name")]string role)
     {
         var result = await _userManager.RemoveFromRoleAsync(new User(){Id = userId}, role);
         return result.Succeeded

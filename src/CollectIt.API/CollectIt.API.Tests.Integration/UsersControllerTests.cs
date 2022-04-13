@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using CollectIt.API.DTO;
+using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,10 +23,13 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         _outputHelper = outputHelper;
     }
 
-    private async Task<(HttpClient, string)> Initialize()
+    private async Task<(HttpClient, string)> Initialize(string? username = null, string? password = null)
     {
         var client = _factory.CreateClient();
-        var bearer = await TestsHelpers.GetBearerForUserAsync(client, helper: _outputHelper);
+        var bearer = await TestsHelpers.GetBearerForUserAsync(client, 
+                                                              helper: _outputHelper, 
+                                                              username: username, 
+                                                              password: password);
         return ( client, bearer );
     }
 
@@ -113,5 +119,65 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(expectedNewEmail, actual.Email);
         client.Dispose();
     }
+
+    [Fact]
+    public async Task AssignRole_WithValidRole_ShouldAssignUserToNewRole()
+    {
+        var (client, bearer) = await Initialize();
+        var roleToAssign = Role.TechSupportRoleName;
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var userId = user.Id;
+        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/roles", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(roleToAssign), "role_name"}
+                                     },
+                                     _outputHelper);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}",
+                                                                               bearer);
+        Assert.Contains(roleToAssign, actual.Roles);
+        client.Dispose();
+    }
     
+    [Fact]
+    public async Task DeleteRole_WithAssignedRole_ShouldRemoveRoleFromUser()
+    {
+        var (client, bearer) = await Initialize();
+        var roleToRemove = Role.TechSupportRoleName;
+        var user = PostgresqlCollectItDbContext.TechSupportUser;
+        var userId = user.Id;
+        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/roles", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(roleToRemove), "role_name"}
+                                     },
+                                     _outputHelper);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}",
+                                                                               bearer);
+        Assert.DoesNotContain(roleToRemove, actual.Roles);
+        client.Dispose();
+    }
+
+    [Fact]
+    public async Task DeleteRole_WithAssignedRoleAndUserNotInAdminRole_ShouldReturnForbidden()
+    {
+        var (client, bearer) = await Initialize(PostgresqlCollectItDbContext.DefaultUserOne.UserName, "12345678");
+        var roleToRemove = Role.TechSupportRoleName;
+        var user = PostgresqlCollectItDbContext.TechSupportUser;
+        var userId = user.Id;
+        using var message = new HttpRequestMessage(HttpMethod.Delete, $"api/v1/users/{userId}/roles")
+                            {
+                                Content = new FormUrlEncodedContent(new[]
+                                                                    {
+                                                                        new KeyValuePair<string, string>("role_name",
+                                                                                                         roleToRemove)
+                                                                    }),
+                                Headers = { Authorization = new AuthenticationHeaderValue("Bearer", bearer)}
+                            };
+        var response = await client.SendAsync(message);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        client.Dispose();
+    }
 }
