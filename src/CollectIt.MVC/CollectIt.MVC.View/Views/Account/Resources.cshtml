@@ -6,13 +6,13 @@
         <tr>
             <th class="">№</th>
             <th>Название</th>
-            <th>Дата подключения</th>
-            <th>Тэги</th>
-            <th>Ссылка</th>
+            <th>Дата покупки</th>
+            <th>Тип ресурса</th>
+            <th>Ссылка на изображение</th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var (subscription, i) in Model.Resources
+        @foreach (var (resource, i) in Model.Resources
                                                 .OrderByDescending(s => s.AcquireDate)
                                                 .Select((s, i) => ( s, i )))
         {
@@ -21,16 +21,19 @@
                     @(i + 1)
                 </td>
                 <td>
-                    @subscription.FileName
+                    @resource.FileName
                 </td>
                 <td>
-                    @subscription.AcquireDate.ToString("dd-MM-yyyy")
+                    @resource.AcquireDate.ToString("D")
                 </td>
                 <td>
-                    @subscription.Tags
+                    @if (resource.Extension == "jpg")
+                    {
+                        <div>Изображение</div>
+                    }
                 </td>
                 <td>
-                    @subscription.Address
+                    <a href ="../Images/@resource.Id">Images/@resource.Id</a>
                 </td>
             </tr>
         }

@@ -2,6 +2,7 @@
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Entities.Account;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.MVC.View.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +22,14 @@ public class AccountController : Controller
     private readonly SignInManager<User> _signInManager;
 
     public AccountController(ILogger<AccountController> logger,
-                             UserManager userManager,
-                             SignInManager<User> signInManager)
+        UserManager userManager,
+        SignInManager<User> signInManager)
     {
         _logger = logger;
         _userManager = userManager;
         _signInManager = signInManager;
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("")]
@@ -36,43 +37,45 @@ public class AccountController : Controller
     public async Task<IActionResult> Profile()
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(userId) )
-           .Select(subscription =>
-                       new AccountUserSubscription()
-                       {
-                           From = subscription.During.Start.ToDateTimeUnspecified(),
-                           To = subscription.During.End.ToDateTimeUnspecified(),
-                           LeftResourcesCount = subscription.LeftResourcesCount,
-                           Name = subscription.Subscription.Name,
-                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
-                       });
-        var resources =  ( await _userManager.GetAcquiredResourcesForUserByIdAsync(userId) )
+        var subscriptions = (await _userManager.GetSubscriptionsForUserByIdAsync(userId))
+            .Select(subscription =>
+                new AccountUserSubscription()
+                {
+                    From = subscription.During.Start.ToDateTimeUnspecified(),
+                    To = subscription.During.End.ToDateTimeUnspecified(),
+                    LeftResourcesCount = subscription.LeftResourcesCount,
+                    Name = subscription.Subscription.Name,
+                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
+                        ? "Изображение"
+                        : "Другое"
+                });
+        var resources = (await _userManager.GetAcquiredResourcesForUserByIdAsync(userId))
             .Select(resource =>
                 new AccountUserResource()
                 {
-                    Id = resource.Id,
+                    Id = resource.ResourceId,
                     FileName = resource.Resource.Name,
                     Address = resource.Resource.Address,
-                    Tags = resource.Resource.Tags,
+                    Extension = resource.Resource.Extension,
                     AcquireDate = resource.AcquiredDate
                 });
         var model = new AccountViewModel()
-                    {
-                        UserName = User.FindFirstValue(ClaimTypes.Name),
-                        Email = User.FindFirstValue(ClaimTypes.Email),
-                        Subscriptions = subscriptions,
-                        Resources = resources
-                    };
+        {
+            UserName = User.FindFirstValue(ClaimTypes.Name),
+            Email = User.FindFirstValue(ClaimTypes.Email),
+            Subscriptions = subscriptions,
+            Resources = resources
+        };
         return View(model);
     }
-    
+
     [HttpGet]
     [Route("login")]
     public IActionResult Login()
     {
         return View();
     }
-    
+
     [HttpGet]
     [Route("register")]
     public IActionResult Register()
@@ -88,6 +91,7 @@ public class AccountController : Controller
         {
             return View(model);
         }
+
         _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
         var user = new User {Email = model.Email, UserName = model.UserName};
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -96,13 +100,14 @@ public class AccountController : Controller
             _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
             return RedirectToAction("Login");
         }
+
         _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError("", error.Description);
         }
-        return View(model);
 
+        return View(model);
     }
 
     [HttpPost]
@@ -113,7 +118,7 @@ public class AccountController : Controller
         {
             return View(model);
         }
-        
+
         _logger.LogInformation("User with email: {Email} wants to login", model.Email);
 
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -123,7 +128,7 @@ public class AccountController : Controller
             return View();
         }
 
-        if (!( await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false) ).Succeeded)
+        if (!(await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false)).Succeeded)
         {
             ModelState.AddModelError("", "Неправильный пароль");
             return View(model);
@@ -132,7 +137,7 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
-    
+
     [HttpGet]
     [Route("logout")]
     public async Task<IActionResult> LogOut()
@@ -162,24 +167,25 @@ public class AccountController : Controller
         var subs = await _userManager.GetSubscriptionsForUserByIdAsync(user.Id);
 
         var accountModel = new AccountViewModel()
-                           {
-                               Email = user.UserName, 
-                               UserName = user.UserName, 
-                               Subscriptions = subs.Select(s => new AccountUserSubscription()
-                                                                {
-                                                                    From = s.During.Start.ToDateTimeUnspecified(),
-                                                                    To = s.During.End.ToDateTimeUnspecified(),
-                                                                    Name = s.Subscription.Name,
-                                                                    ResourceType = s.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое",
-                                                                    LeftResourcesCount = s.LeftResourcesCount
-                                                                })
-                                                   .ToList()
-                           };
+        {
+            Email = user.UserName,
+            UserName = user.UserName,
+            Subscriptions = subs.Select(s => new AccountUserSubscription()
+                {
+                    From = s.During.Start.ToDateTimeUnspecified(),
+                    To = s.During.End.ToDateTimeUnspecified(),
+                    Name = s.Subscription.Name,
+                    ResourceType = s.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое",
+                    LeftResourcesCount = s.LeftResourcesCount
+                })
+                .ToList()
+        };
         if (result.Succeeded)
         {
             await _signInManager.RefreshSignInAsync(user);
             return View("Profile", accountModel);
         }
+
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError("", error.Description);
@@ -193,6 +199,5 @@ public class AccountController : Controller
     [Route("upload")]
     public void UploadImage(ImageViewModel model)
     {
-        
     }
 }

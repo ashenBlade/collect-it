@@ -12,10 +12,10 @@ public class AccountUserResource
     
     [Required]
     public string Address { get; set; }
-
-    [Required]
-    public string[] Tags { get; set; }
     
+    [Required]
+    public string Extension { get; set; }
+
     [Required]
     public DateTime AcquireDate { get; set; }
 }
