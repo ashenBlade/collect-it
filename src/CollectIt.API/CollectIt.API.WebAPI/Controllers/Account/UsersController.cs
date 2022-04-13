@@ -117,8 +117,8 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("{userId:int}/email")]
-    [Authorize]
-    public async Task<IActionResult> ChangeUserEmail(int userId, string email)
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangeUserEmail(int userId, [FromForm(Name = "email")]string email)
     {
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
@@ -129,7 +129,7 @@ public class UsersController : ControllerBase
         {
             return Unauthorized();
         }
-        var result = await _userManager.SetEmailAsync(new User() {Id = userId}, email);
+        var result = await _userManager.SetEmailAsync(user, email);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest(result.Errors.Select(e => e.Description).Aggregate((s, n) => $"{s}\n{n}"));

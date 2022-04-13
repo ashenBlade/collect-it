@@ -93,4 +93,25 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(expectedNewUsername, actual.UserName);
         client.Dispose();
     }
+
+    [Fact]
+    public async Task PostEmail_WithNewValidEmail_ShouldChangeEmail()
+    {
+        var (client, bearer) = await Initialize();
+        const string expectedNewEmail = "thisisbrandnewemail@mail.ru";
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var userId = user.Id;
+        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/email", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(expectedNewEmail), "email"}
+                                     },
+                                     _outputHelper);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}",
+                                                                               bearer);
+        Assert.Equal(expectedNewEmail, actual.Email);
+        client.Dispose();
+    }
+    
 }
