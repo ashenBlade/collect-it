@@ -8,7 +8,7 @@
             <th>Название</th>
             <th>Дата покупки</th>
             <th>Тип ресурса</th>
-            <th>Ссылка на изображение</th>
+            <th>Загрузка</th>
         </tr>
         </thead>
         <tbody>
@@ -16,8 +16,8 @@
                                                 .OrderByDescending(s => s.AcquireDate)
                                                 .Select((s, i) => ( s, i )))
         {
-            <tr>
-                <td>
+            <tr onclick="window.location='../Images/@resource.Id'" role="button">
+            <td>
                     @(i + 1)
                 </td>
                 <td>
@@ -33,7 +33,7 @@
                     }
                 </td>
                 <td>
-                    <a href ="../Images/@resource.Id">Images/@resource.Id</a>
+                    <button class = "btn-success">Скачать</button>
                 </td>
             </tr>
         }
