@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <Compile Include="AccountMappers.fs" />
+      <Compile Include="ResourcesMappers.fs" />
     </ItemGroup>
 
 </Project>
