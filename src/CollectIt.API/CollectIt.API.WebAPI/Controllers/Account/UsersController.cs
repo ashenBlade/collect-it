@@ -95,7 +95,8 @@ public class UsersController : ControllerBase
             _logger.LogInformation("User id = {UserId}", user.Id);
             if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
             {
-                return Unauthorized();
+                
+                return Unauthorized("Not authorize blyat");
             }
 
             await _userManager.ChangeUsernameAsync(userId, username);

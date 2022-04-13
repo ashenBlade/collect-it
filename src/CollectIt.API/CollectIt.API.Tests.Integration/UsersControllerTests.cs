@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,6 +18,13 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     {
         _factory = factory;
         _outputHelper = outputHelper;
+    }
+
+    private async Task<(HttpClient, string)> Initialize()
+    {
+        var client = _factory.CreateClient();
+        var bearer = await TestsHelpers.GetBearerForUserAsync(client, helper: _outputHelper);
+        return ( client, bearer );
     }
 
     [Fact]
@@ -71,17 +79,18 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task PostUsername_WithNewValidName_ShouldChangeUsername()
     {
-        using var client = _factory.CreateClient();
+        var (client, bearer) = await Initialize();
         const string expectedNewUsername = "SomeUserName";
         var user = PostgresqlCollectItDbContext.AdminUser;
         var userId = user.Id;
-        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/username",
+        await TestsHelpers.PostAsync(client, $"api/v1/users/{userId}/username", bearer,
                                      new MultipartFormDataContent()
                                      {
                                          {new StringContent(expectedNewUsername), "username"}
                                      }, _outputHelper);
         var actual =
-            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}");
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}", bearer);
         Assert.Equal(expectedNewUsername, actual.UserName);
+        client.Dispose();
     }
 }
