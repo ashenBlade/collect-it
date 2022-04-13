@@ -24,12 +24,6 @@ public static class TestsHelpers
         password ??= "12345678";
         var message = new HttpRequestMessage(HttpMethod.Post, "connect/token")
                       {
-                          // Content = new StringContent(JsonSerializer.Serialize(new
-                          //                                                      {
-                          //                                                          grant_type = "password", 
-                          //                                                          username = username ?? PostgresqlCollectItDbContext.AdminUser.UserName, 
-                          //                                                          password = password ?? "12345678"
-                          //                                                      }), Encoding.UTF8, "application/json"),
                           Content = new FormUrlEncodedContent(new[]
                                                               {
                                                                   new KeyValuePair<string, string>("grant_type", "password"),
@@ -60,10 +54,7 @@ public static class TestsHelpers
         message.Headers.Authorization =
             new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer);
         var result = await client.SendAsync(message);
-        // outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
-        // var serializer = JsonSerializer.Create();
-        // var parsed = JsonSerializer.Deserialize<T>(new JsonTextReader(new StreamReader(await result.Content.ReadAsStreamAsync())));
-        var parsed = JsonSerializer.Deserialize<T>(await result.Content.ReadAsStringAsync());
+        var parsed = JsonSerializer.Deserialize<T>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web));
         Assert.NotNull(parsed);
         return parsed;
     }
