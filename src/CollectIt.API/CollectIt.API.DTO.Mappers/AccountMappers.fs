@@ -1,5 +1,6 @@
 module CollectIt.API.DTO.Mappers.AccountMappers
 
+open System
 open System.Collections.Generic
 open CollectIt.Database.Entities.Account
 open CollectIt.API.DTO.AccountDTO
@@ -49,3 +50,14 @@ let ToReadUserSubscriptionDTOFromActiveUserSubscription (aus: ActiveUserSubscrip
                     (aus.During.Start.ToDateTimeUnspecified())
                     (aus.During.End.ToDateTimeUnspecified())
     dto
+
+let ToRestrictionFromCreateRestrictionDTO (dto: CreateRestrictionDTO) =
+    match dto with
+    | :? CreateAuthorRestrictionDTO as author -> AuthorRestriction(AuthorId = author.AuthorId) :> Restriction 
+    | :? CreateDaysAfterRestrictionDTO as daysAfter -> DaysAfterRestriction(DaysAfter = daysAfter.DaysAfter)
+    | :? CreateDaysToRestrictionDTO as daysTo -> DaysToRestriction(DaysTo = daysTo.DaysTo)
+    | :? CreateTagsRestrictionDTO as tags -> TagRestriction(Tags = tags.Tags)
+    | _ -> raise (ArgumentOutOfRangeException "Unsupported restriction type")
+ 
+        
+        

@@ -7,277 +7,363 @@ open CollectIt.Database.Entities.Account
 open CollectIt.Database.Entities.Account.Restrictions
 
 [<CLIMutable>]
-type CreateUserDTO = {
-    [<Required>]
-    UserName : string
-    
-    [<Required>]
-    [<DataType(DataType.EmailAddress)>]
-    Email : string
-    
-    [<Required>]
-    [<DataType(DataType.Password)>]
-    Password : string
-}
+type CreateUserDTO =
+    { [<Required>]
+      UserName: string
 
-let CreateUserDTO username email password = {
-    UserName = username
-    Email = email
-    Password = password
-} 
+      [<Required>]
+      [<DataType(DataType.EmailAddress)>]
+      Email: string
+
+      [<Required>]
+      [<DataType(DataType.Password)>]
+      Password: string }
+
+let CreateUserDTO username email password =
+    { UserName = username
+      Email = email
+      Password = password }
 
 [<CLIMutable>]
-type ReadUserDTO = {
-    [<Required>]
-    Id : int
-    
-    [<Required>]
-    UserName : string
-    
-    [<Required>]
-    [<DataType(DataType.EmailAddress)>]
-    Email : string
-    
-    [<Required>]
-    Roles : string[] 
-}
+type ReadUserDTO =
+    { [<Required>]
+      Id: int
 
-let ReadUserDTO id username email roles = {
-    Id = id
-    UserName = username
-    Email = email
-    Roles = roles
-} 
+      [<Required>]
+      UserName: string
+
+      [<Required>]
+      [<DataType(DataType.EmailAddress)>]
+      Email: string
+
+      [<Required>]
+      Roles: string [] }
+
+let ReadUserDTO id username email roles =
+    { Id = id
+      UserName = username
+      Email = email
+      Roles = roles }
 
 
 type CreateRestrictionDTO =
-        val mutable private restrictionType: RestrictionType
-        member public this.RestrictionType
-            with get() = this.restrictionType
-            and set value = this.restrictionType <- value
-            
-        new(restrictionType: RestrictionType) = { restrictionType = restrictionType }
-    
-    
+    val mutable private restrictionType: RestrictionType
+
+    member this.RestrictionType
+        with public get () = this.restrictionType
+        and public set value = this.restrictionType <- value
+
+    new(restrictionType: RestrictionType) = {
+        restrictionType = restrictionType
+    }
+
+
 type CreateAuthorRestrictionDTO =
     inherit CreateRestrictionDTO
-       
-        val mutable private authorId : int
-        member this.AuthorId
-            with get() = this.authorId
-            and set value = this.authorId <- value
-        new(authorId: int) = {inherit CreateRestrictionDTO(RestrictionType.Author); authorId = authorId }
-                
+
+    val mutable private authorId: int
+
+    member this.AuthorId
+        with get () = this.authorId
+        and set value = this.authorId <- value
+
+    new(authorId: int) ={
+          inherit CreateRestrictionDTO(RestrictionType.Author)
+          authorId = authorId
+    }
+
 type CreateDaysToRestrictionDTO =
     inherit CreateRestrictionDTO
-        val mutable authorId : int
-        member this.AuthorId
-            with get() = this.authorId
-            and set value = this.authorId <- value
+
+    val mutable private daysTo: int
+
+    member this.DaysTo
+        with get () = this.daysTo
+        and set value = this.daysTo <- value
+
+    new(daysTo: int) = {
+          inherit CreateRestrictionDTO(RestrictionType.DaysTo)
+          daysTo = daysTo
+    }
+
+type CreateDaysAfterRestrictionDTO =
+    inherit CreateRestrictionDTO
+
+    val mutable private daysAfter: int
+
+    member this.DaysAfter
+        with get () = this.daysAfter
+        and set value = this.daysAfter <- value
+
+    new(daysAfter: int) = {
+          inherit CreateRestrictionDTO(RestrictionType.DaysAfter)
+          daysAfter = daysAfter
+    }
+
+type CreateTagsRestrictionDTO =
+    inherit CreateRestrictionDTO
+
+    val mutable private tags: string []
+
+    member this.Tags
+        with get () = this.tags
+        and set value = this.tags <- value
+
+    new(tags: string []) ={
+          inherit CreateRestrictionDTO(RestrictionType.Tags)
+          tags = tags
+          }
 
 [<CLIMutable>]
-type CreateSubscriptionDTO = {
-    [<Required>]
-    Name : string
-    
-    [<Required>]
-    Description : string
-    
-    [<Required>]
-    [<Range(0, Int32.MaxValue)>]
-    Price : int
-    
-    [<Required>]
-    [<Range(1, Int32.MaxValue)>]
-    MonthDuration : int
-    
-    [<Required>]
-    AppliedResourceType : ResourceType
-    
-    [<Required>]
-    [<Range(1, Int32.MaxValue)>]
-    MaxResourcesCount : int
-    
-    Restriction : CreateRestrictionDTO
-}
+type CreateSubscriptionDTO =
+    { [<Required>]
+      Name: string
 
-let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restriction = {
-    Name = name
-    Description = description
-    Price = price
-    MonthDuration = monthDuration
-    AppliedResourceType = resourceType
-    MaxResourcesCount = maxResourcesCount
-    Restriction = restriction
-}
+      [<Required>]
+      Description: string
+
+      [<Required>]
+      [<Range(0, Int32.MaxValue)>]
+      Price: int
+
+      [<Required>]
+      [<Range(1, Int32.MaxValue)>]
+      MonthDuration: int
+
+      [<Required>]
+      AppliedResourceType: ResourceType
+
+      [<Required>]
+      [<Range(1, Int32.MaxValue)>]
+      MaxResourcesCount: int
+
+      Restriction: CreateRestrictionDTO }
+
+let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restriction =
+    { Name = name
+      Description = description
+      Price = price
+      MonthDuration = monthDuration
+      AppliedResourceType = resourceType
+      MaxResourcesCount = maxResourcesCount
+      Restriction = restriction }
 
 type ReadRestrictionDTO =
-    new() = {}
+    val mutable private restrictionType: string
+
+    member this.RestrictionType
+        with get () = this.restrictionType
+        and set value = this.restrictionType <- value
+
+    new(restrictionType) = {
+        restrictionType = restrictionType
+    }
 
 type ReadAuthorRestrictionDTO =
+    inherit ReadRestrictionDTO
     val mutable private authorId: int
-    
+
     member this.AuthorId
-        with get() = this.authorId
+        with get () = this.authorId
         and set value = this.authorId <- value
-        
-    new(authorId: int) = {authorId = authorId}
-    
-[<CLIMutable>]
-type ReadSubscriptionDTO = {
-    [<Required>]
-    Id : int
-    
-    [<Required>]
-    Name : string
-    
-    [<Required>]
-    Description : string
-    
-    [<Required>]
-    [<Range(0, Int32.MaxValue)>]
-    Price : int
-    
-    [<Required>]
-    [<Range(1, Int32.MaxValue)>]
-    MonthDuration : int
-    
-    [<Required>]
-    AppliedResourceType : ResourceType
-    
-    [<Required>]
-    [<Range(1, Int32.MaxValue)>]
-    MaxResourcesCount : int
-    
-    [<Required>]
-    Active : bool
-    
-    RestrictionId : Nullable<int>
-}
 
-let ReadSubscriptionDTO id name description price monthDuration appliedResourceType maxResourcesCount active restrictionId = {
-    Id = id
-    Name = name
-    Description = description
-    Price = price
-    MonthDuration = monthDuration
-    AppliedResourceType = appliedResourceType
-    MaxResourcesCount = maxResourcesCount
-    RestrictionId = restrictionId
-    Active = active
-}
+    new(authorId: int) =
+        { inherit ReadRestrictionDTO("Author")
+          authorId = authorId }
+
+type ReadDaysAfterRestrictionDTO =
+    inherit ReadRestrictionDTO
+    val mutable private daysAfter: int
+
+    member this.DaysAfter
+        with get () = this.daysAfter
+        and set value = this.daysAfter <- value
+
+    new(daysAfter: int) =
+        { inherit ReadRestrictionDTO("DaysAfter")
+          daysAfter = daysAfter }
+
+
+type ReadDaysToRestrictionDTO =
+    inherit ReadRestrictionDTO
+    val mutable private daysTo: int
+
+    member this.DaysTo
+        with get () = this.daysTo
+        and set value = this.daysTo <- value
+
+    new(daysTo: int) =
+        { inherit ReadRestrictionDTO("DaysTo")
+          daysTo = daysTo }
+
+type ReadTagsRestrictionDTO =
+    inherit ReadRestrictionDTO
+    val mutable private tags: string []
+
+    member this.Tags
+        with get () = this.tags
+        and set value = this.tags <- value
+
+    new(tags) =
+        { inherit ReadRestrictionDTO("Author")
+          tags = tags }
 
 [<CLIMutable>]
-type ReadUserSubscriptionDTO = {
-    [<Required>]
-    Id : int
-    
-    [<Required>]
-    UserId : int
-    
-    [<Required>]
-    SubscriptionId : int
-    
-    [<Required>]
-    LeftResourcesCount : int
-    
-    [<Required>]
-    DateFrom : DateTime
-    
-    [<Required>]
-    DateTo : DateTime
-}
+type ReadSubscriptionDTO =
+    { [<Required>]
+      Id: int
 
-let ReadUserSubscriptionDTO id userId subscriptionId leftResourcesCount dateFrom dateTo = {
-    Id = id
-    UserId = userId
-    SubscriptionId = subscriptionId
-    LeftResourcesCount = leftResourcesCount
-    DateFrom = dateFrom
-    DateTo = dateTo
-}
+      [<Required>]
+      Name: string
 
-[<CLIMutable>]
-type CreateUserSubscriptionDTO = {
-    [<Required>]
-    UserId : int
-    
-    [<Required>]
-    SubscriptionId : int
-}
+      [<Required>]
+      Description: string
 
-let CreateUserSubscriptionDTO userId subscriptionId = {
-    UserId = userId
-    SubscriptionId = subscriptionId
-}
+      [<Required>]
+      [<Range(0, Int32.MaxValue)>]
+      Price: int
 
-[<CLIMutable>]
-type ReadRoleDTO = {
-    [<Required>]
-    Id : int
-    
-    [<Required>]
-    Name : string
-}
+      [<Required>]
+      [<Range(1, Int32.MaxValue)>]
+      MonthDuration: int
 
-let ReadRoleDTO id name = {
-    Id = id
-    Name = name
-}
+      [<Required>]
+      AppliedResourceType: ResourceType
+
+      [<Required>]
+      [<Range(1, Int32.MaxValue)>]
+      MaxResourcesCount: int
+
+      [<Required>]
+      Active: bool
+
+      RestrictionId: Nullable<int> }
+
+let ReadSubscriptionDTO
+    id
+    name
+    description
+    price
+    monthDuration
+    appliedResourceType
+    maxResourcesCount
+    active
+    restrictionId
+    =
+    { Id = id
+      Name = name
+      Description = description
+      Price = price
+      MonthDuration = monthDuration
+      AppliedResourceType = appliedResourceType
+      MaxResourcesCount = maxResourcesCount
+      RestrictionId = restrictionId
+      Active = active }
 
 [<CLIMutable>]
-type ReadActiveUserSubscription = {
-    [<Required>]
-    Id : int
-    
-    [<Required>]
-    UserId : int
-    
-    [<Required>]
-    SubscriptionId : int
-    
-    [<Required>]
-    [<Range(0, Int32.MaxValue)>]
-    LeftResourcesCount : int
-    
-    [<Required>]
-    [<DataType(DataType.Date)>]
-    DateFrom : DateTime
-    
-    [<Required>]
-    [<DataType(DataType.Date)>]
-    DateTo : DateTime
-}
+type ReadUserSubscriptionDTO =
+    { [<Required>]
+      Id: int
 
-let ReadActiveUserSubscription id userId subscriptionId leftResourcesCount dateFrom dateTo: ReadActiveUserSubscription = {
-    Id = id
-    UserId = userId
-    SubscriptionId = subscriptionId
-    LeftResourcesCount = leftResourcesCount
-    DateFrom = dateFrom
-    DateTo = dateTo
-}
+      [<Required>]
+      UserId: int
+
+      [<Required>]
+      SubscriptionId: int
+
+      [<Required>]
+      LeftResourcesCount: int
+
+      [<Required>]
+      DateFrom: DateTime
+
+      [<Required>]
+      DateTo: DateTime }
+
+let ReadUserSubscriptionDTO id userId subscriptionId leftResourcesCount dateFrom dateTo =
+    { Id = id
+      UserId = userId
+      SubscriptionId = subscriptionId
+      LeftResourcesCount = leftResourcesCount
+      DateFrom = dateFrom
+      DateTo = dateTo }
 
 [<CLIMutable>]
-type SearchSubscriptionsDTO = {
-    [<Required>]
-    ResourceType: ResourceType
-    Name : string
-}
+type CreateUserSubscriptionDTO =
+    { [<Required>]
+      UserId: int
+
+      [<Required>]
+      SubscriptionId: int }
+
+let CreateUserSubscriptionDTO userId subscriptionId =
+    { UserId = userId
+      SubscriptionId = subscriptionId }
 
 [<CLIMutable>]
-type OpenIddictResponseSuccess = {
-    [<JsonPropertyName("access_token")>]
-    AccessToken : string
-    
-    [<JsonPropertyName("token_type")>]
-    TokenType : string
-    
-    [<JsonPropertyName("expires_in")>]
-    ExpiresIn : int
-}
+type ReadRoleDTO =
+    { [<Required>]
+      Id: int
+
+      [<Required>]
+      Name: string }
+
+let ReadRoleDTO id name = { Id = id; Name = name }
 
 [<CLIMutable>]
-type OpenIddictResponseFail = {
-    NONE : int
-}
+type ReadActiveUserSubscription =
+    { [<Required>]
+      Id: int
+
+      [<Required>]
+      UserId: int
+
+      [<Required>]
+      SubscriptionId: int
+
+      [<Required>]
+      [<Range(0, Int32.MaxValue)>]
+      LeftResourcesCount: int
+
+      [<Required>]
+      [<DataType(DataType.Date)>]
+      DateFrom: DateTime
+
+      [<Required>]
+      [<DataType(DataType.Date)>]
+      DateTo: DateTime }
+
+let ReadActiveUserSubscription
+    id
+    userId
+    subscriptionId
+    leftResourcesCount
+    dateFrom
+    dateTo
+    : ReadActiveUserSubscription =
+    { Id = id
+      UserId = userId
+      SubscriptionId = subscriptionId
+      LeftResourcesCount = leftResourcesCount
+      DateFrom = dateFrom
+      DateTo = dateTo }
+
+[<CLIMutable>]
+type SearchSubscriptionsDTO =
+    { [<Required>]
+      ResourceType: ResourceType
+      Name: string }
+
+[<CLIMutable>]
+type OpenIddictResponseSuccess =
+    { [<JsonPropertyName("access_token")>]
+      AccessToken: string
+
+      [<JsonPropertyName("token_type")>]
+      TokenType: string
+
+      [<JsonPropertyName("expires_in")>]
+      ExpiresIn: int }
+
+[<CLIMutable>]
+type OpenIddictResponseFail = { NONE: int }

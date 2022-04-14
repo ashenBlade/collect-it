@@ -76,26 +76,9 @@ public class SubscriptionsController : ControllerBase
                                                         [FromForm(Name = "active")]
                                                         bool active = false)
     {
-        Restriction? restriction;
-        try
-        {
-            restriction = dto.Restriction switch
-                          {
-                              AccountDTO.CreateAuthorRestrictionDTO createAuthorRestrictionDTO =>
-                                  new AuthorRestriction() {AuthorId = createAuthorRestrictionDTO.AuthorId},
-                              null => null,
-                              var createRestrictionDTO => throw new UnsupportedContentTypeException($"Restriction type '{createRestrictionDTO.RestrictionType}' is unsupported"),
-                          };
-        }
-        catch (SwitchExpressionException switchExpressionException)
-        {
-            return BadRequest(new {Error = $"Unknown restriction type: {dto.Restriction.RestrictionType}"});
-        }
-        catch (UnsupportedContentTypeException unsupportedContentTypeException)
-        {
-            return UnprocessableEntity($"Restriction type is not supported");
-        }
-        
+        var restriction = dto.Restriction is null
+                              ? null
+                              : AccountMappers.ToRestrictionFromCreateRestrictionDTO(dto.Restriction);
         var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
                                                                               dto.Description, 
                                                                               dto.MonthDuration,

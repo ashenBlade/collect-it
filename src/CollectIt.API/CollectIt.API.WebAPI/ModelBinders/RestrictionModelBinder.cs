@@ -31,7 +31,7 @@ public class RestrictionModelBinder : IModelBinder
         RestrictionType restrictionType;
         try
         {
-             restrictionType = ( RestrictionType ) i;
+            restrictionType = ( RestrictionType ) i;
         }
         catch (Exception e)
         {
@@ -39,28 +39,84 @@ public class RestrictionModelBinder : IModelBinder
             return;
         }
         
-            switch (restrictionType)
-            {
-                case RestrictionType.Author:
-                    int authorId;
-                    try
+        switch (restrictionType)
+        {
+            case RestrictionType.Author:
+                int authorId;
+                try
+                {
+                    authorId = int.Parse(context.ValueProvider.GetValue("AuthorId").FirstValue);
+                }
+                catch (Exception e)
+                {
+                    context.ModelState.AddModelError("AuthorId", "Could not get author id for restriction");
+                    context.Result = ModelBindingResult.Failed();
+                    return;
+                }
+                var authorRestrictionDTO = new AccountDTO.CreateAuthorRestrictionDTO(authorId);
+                    
+                context.Result = ModelBindingResult.Success(authorRestrictionDTO);
+                break;
+            case RestrictionType.DaysTo:
+                int daysTo;
+                try
+                {
+                    daysTo = int.Parse(context.ValueProvider.GetValue("DaysTo").FirstValue);
+                }
+                catch (Exception e)
+                {
+                    context.ModelState.AddModelError("DaysTo", "Could not get amount of days for restriction");
+                    context.Result = ModelBindingResult.Failed();
+                    return;
+                }
+                var daysToRestrictionDTO = new AccountDTO.CreateDaysToRestrictionDTO(daysTo);
+                    
+                context.Result = ModelBindingResult.Success(daysToRestrictionDTO);
+                break;
+            case RestrictionType.DaysAfter:
+                int daysAfter;
+                try
+                {
+                    daysAfter = int.Parse(context.ValueProvider.GetValue("DaysAfter").FirstValue);
+                }
+                catch (Exception e)
+                {
+                    context.ModelState.AddModelError("DaysAfter", "Could not get amount of days after restriction");
+                    context.Result = ModelBindingResult.Failed();
+                    return;
+                }
+                var daysAfterRestrictionDTO = new AccountDTO.CreateDaysAfterRestrictionDTO(daysAfter);
+                    
+                context.Result = ModelBindingResult.Success(daysAfterRestrictionDTO);
+                break;
+            case RestrictionType.Tags:
+                string[] tags;
+                try
+                {
+                    tags = context.ValueProvider
+                                  .GetValue("Tags")
+                                  .SelectMany(str => str
+                                                 .Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                                  .ToArray();
+                    if (tags.Length == 0)
                     {
-                        authorId = int.Parse(context.ValueProvider.GetValue("AuthorId").FirstValue);
-                    }
-                    catch (Exception e)
-                    {
-                        context.ModelState.AddModelError("AuthorId", "Could not get author id for restriction");
-                        context.Result = ModelBindingResult.Failed();
+                        context.ModelState.AddModelError("Tags", "At least 1 tag must be specified");
                         return;
                     }
-                    var authorRestrictionDTO = new AccountDTO.CreateAuthorRestrictionDTO(authorId);
-                    
-                    context.Result = ModelBindingResult.Success(authorRestrictionDTO);
-                    break;
-                default:
-                    context.ModelState.AddModelError("RestrictionType", $"Restriction type '{restrictionType.ToString()}' is not supported");
-                    context.Result = ModelBindingResult.Success(new AccountDTO.CreateRestrictionDTO(restrictionType));
-                    break;
-            }
+                }
+                catch (Exception e)
+                {
+                    context.ModelState.AddModelError("Tags", "Could not get tags for restriction");
+                    context.Result = ModelBindingResult.Failed();
+                    return;
+                }
+                var tagsRestrictionDTO = new AccountDTO.CreateTagsRestrictionDTO(tags);
+                context.Result = ModelBindingResult.Success(tagsRestrictionDTO);
+                break;
+            default:
+                context.ModelState.AddModelError("RestrictionType", $"Restriction type '{(int)restrictionType}' is not supported");
+                context.Result = ModelBindingResult.Success(new AccountDTO.CreateRestrictionDTO(restrictionType));
+                break;
+        }
     }
 }

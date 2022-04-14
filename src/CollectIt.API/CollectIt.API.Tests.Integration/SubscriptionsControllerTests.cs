@@ -170,42 +170,42 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                            };
         var (client, bearer) = await Initialize();
         var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
-                                                  "api/v1/subscriptions",
-                                                  bearer,
-                                                  HttpMethod.Post,
-                                                  content: new FormUrlEncodedContent(new[]
-                                                                            {
-                                                                                new KeyValuePair<string, string>("Name",
-                                                                                                                 subscription
-                                                                                                                    .Name),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("Description",
-                                                                                            subscription.Description),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("Price",
-                                                                                            subscription.Price
-                                                                                                        .ToString()),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("MonthDuration",
-                                                                                            subscription.MonthDuration
-                                                                                                        .ToString()),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("MaxResourcesCount",
-                                                                                            subscription
-                                                                                               .MaxResourcesCount
-                                                                                               .ToString()),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("AppliedResourceType",
-                                                                                            ((int)subscription
-                                                                                                   .AppliedResourceType
-                                                                                            ).ToString()),
-                                                                                new KeyValuePair<string,
-                                                                                    string>("RestrictionId",
-                                                                                            subscription.Restriction
-                                                                                                       ?.ToString()
-                                                                                         ?? string.Empty)
-                                                                            }),
-                                                  outputHelper: _outputHelper);
+                                                                                                "api/v1/subscriptions",
+                                                                                                bearer,
+                                                                                                HttpMethod.Post,
+                                                                                                content: new FormUrlEncodedContent(new[]
+                                                                                                                                   {
+                                                                                                                                       new KeyValuePair<string, string>("Name",
+                                                                                                                                                                        subscription
+                                                                                                                                                                           .Name),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("Description",
+                                                                                                                                                   subscription.Description),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("Price",
+                                                                                                                                                   subscription.Price
+                                                                                                                                                               .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("MonthDuration",
+                                                                                                                                                   subscription.MonthDuration
+                                                                                                                                                               .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("MaxResourcesCount",
+                                                                                                                                                   subscription
+                                                                                                                                                      .MaxResourcesCount
+                                                                                                                                                      .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("AppliedResourceType",
+                                                                                                                                                   ((int)subscription
+                                                                                                                                                          .AppliedResourceType
+                                                                                                                                                   ).ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("RestrictionId",
+                                                                                                                                                   subscription.Restriction
+                                                                                                                                                              ?.ToString()
+                                                                                                                                                ?? string.Empty)
+                                                                                                                                   }),
+                                                                                                outputHelper: _outputHelper);
         var createdId = result.Id;
         var actual =
             await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
@@ -219,5 +219,6 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
         Assert.Equal(subscription.MonthDuration, actual.MonthDuration);
         Assert.Equal(subscription.AppliedResourceType, actual.AppliedResourceType);
     }
+    
 }
 
