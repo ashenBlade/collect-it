@@ -25,6 +25,7 @@ public class SubscriptionManager : ISubscriptionManager
                                                             string description,
                                                             int monthDuration,
                                                             ResourceType appliedResourceType,
+                                                            int price,
                                                             int maxResourcesCount,
                                                             int? restrictionId,
                                                             bool active = false)
@@ -35,8 +36,10 @@ public class SubscriptionManager : ISubscriptionManager
                                Description = description,
                                MonthDuration = monthDuration,
                                MaxResourcesCount = maxResourcesCount,
+                               AppliedResourceType = appliedResourceType,
                                RestrictionId = restrictionId,
-                               Active = true
+                               Active = true,
+                               Price = price
                            };
         var result = await _context.Subscriptions.AddAsync(subscription);
         await _context.SaveChangesAsync();

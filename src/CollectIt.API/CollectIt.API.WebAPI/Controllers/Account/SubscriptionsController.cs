@@ -67,16 +67,20 @@ public class SubscriptionsController : ControllerBase
 
     [HttpPost("")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> CreateSubscription([FromForm][Required] AccountDTO.CreateSubscriptionDTO dto, 
-                                                        [FromForm(Name = "active")]bool? active)
+    public async Task<IActionResult> CreateSubscription([FromForm]
+                                                        [Required] 
+                                                        AccountDTO.CreateSubscriptionDTO dto, 
+                                                        [FromForm(Name = "active")]
+                                                        bool active = false)
     {
         var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
                                                                               dto.Description, 
                                                                               dto.MonthDuration,
                                                                               dto.AppliedResourceType, 
+                                                                              dto.Price,
                                                                               dto.MaxResourcesCount,
                                                                               dto.RestrictionId, 
-                                                                              active ?? false);
+                                                                              active);
         return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
                                AccountMappers.ToReadSubscriptionDTO(subscription));
     }

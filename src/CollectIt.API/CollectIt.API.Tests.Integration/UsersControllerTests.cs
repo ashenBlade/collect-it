@@ -36,15 +36,20 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task GetUsersList_Return4InitialUsers()
     {
-        var users = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>(_factory, "api/v1/users");
+        var (client, bearer) = await Initialize();
+        var users = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO[]>(client, "api/v1/users", bearer, HttpMethod.Get, _outputHelper);
+        client.Dispose();
         Assert.Equal(4, users.Length);
     }
 
     [Fact]
     public async Task GetUserById_WithCorrectIdForExistingUser_ReturnRequiredUser()
     {
+        var (client, bearer) = await Initialize();
         var expected = PostgresqlCollectItDbContext.AdminUser;
-        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(_factory, $"api/v1/users/{expected.Id}");
+        
+        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{expected.Id}", bearer, HttpMethod.Get, _outputHelper);
+        client.Dispose();
         Assert.NotNull(actual);
         Assert.Equal(expected.UserName, actual.UserName);
         Assert.Equal(expected.Email, actual.Email);
@@ -59,7 +64,9 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task GetUsersSubscriptionsList_WithValidUserId_ReturnListOfSubscriptions()
     {
-        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>(_factory, "api/v1/users/1/subscriptions");
+        var (client, bearer) = await Initialize();
+        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>(client, "api/v1/users/1/subscriptions", bearer, HttpMethod.Get, _outputHelper);
+        client.Dispose();
         Assert.NotNull(result);
     }
 
@@ -67,8 +74,10 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task GetActiveUserSubscription_WithIdForUserWithActiveSubscriptions_ShouldReturnNotEmptyArrayOfUserSubscription()
     {
+        var (client, bearer) = await Initialize();
         var result =
-            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>(_factory, "api/v1/users/1/active-subscriptions");
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserSubscriptionDTO[]>(client, "api/v1/users/1/active-subscriptions", bearer, HttpMethod.Get, _outputHelper);
+        client.Dispose();
         Assert.NotNull(result);
         Assert.True(result.Length > 0);
     }
@@ -77,7 +86,13 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task GetUserRoles_WithAdminId_ShouldReturnArrayContainingAdminRoleString()
     {
-        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO[]>(_factory, "api/v1/users/1/roles");
+        var (client, bearer) = await Initialize();
+        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO[]>(client, 
+                                                                                          "api/v1/users/1/roles",
+                                                                                          bearer,
+                                                                                          HttpMethod.Get,
+                                                                                          _outputHelper);
+        client.Dispose();
         Assert.True(result.Length > 0);
         Assert.Contains(result, r => r.Name == "Admin");
     }

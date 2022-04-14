@@ -9,6 +9,7 @@ public interface ISubscriptionManager
                                                       string description,
                                                       int monthDuration,
                                                       ResourceType appliedResourceType,
+                                                      int price,
                                                       int maxResourcesCount,
                                                       int? restrictionId,
                                                       bool active = false);

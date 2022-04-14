@@ -33,18 +33,22 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
     [Fact]
     public async Task GetSubscriptionsList_ShouldReturnArrayOfSubscriptions()
     {
+        var (client, bearer) = await Initialize();
         var subscriptions =
-            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO[]>(_factory,
-                                                                                         $"api/v1/subscriptions?type={ResourceType.Image}&page_size=10&page_number=1");
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO[]>(client,
+                                                                                         $"api/v1/subscriptions?type={ResourceType.Image}&page_size=10&page_number=1",
+                                                                                         bearer);
         Assert.NotEmpty(subscriptions);
     }
 
     [Fact]
     public async Task GetSubscriptionById_WithValidId_ShouldReturnRequiredSubscription()
     {
+        var (client, bearer) = await Initialize();
         var subscription =
-            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(_factory,
-                                                                                       "api/v1/subscriptions/1");
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                       "api/v1/subscriptions/1",
+                                                                                       bearer);
         Assert.Equal(1, subscription.Id);
     }
 
@@ -57,8 +61,11 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
     [Fact]
     public async Task GetActiveSubscriptions_WithValidQueryParameters_ShouldReturnListOfSubscriptions()
     {
-        var subscriptions = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO[]>(_factory,
-                                                                                                         "api/v1/subscriptions/active?type=1&page_size=10&page_number=1");
+        var (client, bearer) = await Initialize();
+        var subscriptions = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO[]>(client,
+                                                                                                         "api/v1/subscriptions/active?type=1&page_size=10&page_number=1",
+                                                                                                         bearer);
+        client.Dispose();
         Assert.NotEmpty(subscriptions);
     }
 
@@ -147,6 +154,70 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                                                                                 _outputHelper);
         Assert.True(actual.Active);
     }
-    
+
+    [Fact]
+    public async Task CreateSubscription_WithValidSubscriptionData_ShouldCreateSubscription()
+    {
+        var subscription = new AccountDTO.CreateSubscriptionDTO()
+                           {
+                               Description = "Brand new subscription for elite members",
+                               Name = "Sample text",
+                               AppliedResourceType = ResourceType.Video,
+                               MaxResourcesCount = 10,
+                               MonthDuration = 2,
+                               Price = 100,
+                               RestrictionId = null
+                           };
+        var (client, bearer) = await Initialize();
+        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                  "api/v1/subscriptions",
+                                                  bearer,
+                                                  HttpMethod.Post,
+                                                  content: new FormUrlEncodedContent(new[]
+                                                                            {
+                                                                                new KeyValuePair<string, string>("Name",
+                                                                                                                 subscription
+                                                                                                                    .Name),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("Description",
+                                                                                            subscription.Description),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("Price",
+                                                                                            subscription.Price
+                                                                                                        .ToString()),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("MonthDuration",
+                                                                                            subscription.MonthDuration
+                                                                                                        .ToString()),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("MaxResourcesCount",
+                                                                                            subscription
+                                                                                               .MaxResourcesCount
+                                                                                               .ToString()),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("AppliedResourceType",
+                                                                                            ((int)subscription
+                                                                                                   .AppliedResourceType
+                                                                                            ).ToString()),
+                                                                                new KeyValuePair<string,
+                                                                                    string>("RestrictionId",
+                                                                                            subscription.RestrictionId
+                                                                                                       ?.ToString()
+                                                                                         ?? string.Empty)
+                                                                            }),
+                                                  outputHelper: _outputHelper);
+        var createdId = result.Id;
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                       $"api/v1/subscriptions/{createdId}",
+                                                                                       bearer, HttpMethod.Get,
+                                                                                       _outputHelper);
+        Assert.Equal(createdId, actual.Id);
+        Assert.Equal(subscription.Name, actual.Name);
+        Assert.Equal(subscription.Description, actual.Description);
+        Assert.Equal(subscription.Price, actual.Price);
+        Assert.Equal(subscription.MonthDuration, actual.MonthDuration);
+        Assert.Equal(subscription.AppliedResourceType, actual.AppliedResourceType);
+    }
 }
 

@@ -47,26 +47,17 @@ public static class TestsHelpers
 
     public static string AdminAccessTokenBearer => PostgresqlCollectItDbContext.AdminAccessTokenBearer;
     
-    public static async Task<T> GetResultParsedFromJson<T>(CollectItWebApplicationFactory factory, string address, HttpMethod? method = null, ITestOutputHelper? outputHelper = null)
-    {
-        using var client = factory.CreateClient();
-        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
-        message.Headers.Authorization =
-            new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer);
-        var result = await client.SendAsync(message);
-        var parsed = JsonSerializer.Deserialize<T>(await result.Content.ReadAsStringAsync(), new JsonSerializerOptions(JsonSerializerDefaults.Web));
-        Assert.NotNull(parsed);
-        return parsed;
-    }
     
     public static async Task<T> GetResultParsedFromJson<T>(HttpClient client,
                                                            string address,
                                                            string bearer,
                                                            HttpMethod? method = null,
-                                                           ITestOutputHelper? outputHelper = null)
+                                                           ITestOutputHelper? outputHelper = null,
+                                                           HttpContent? content = null)
     {
         using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address)
                             {
+                                Content = content,
                                 Headers = { Authorization = new AuthenticationHeaderValue("Bearer", bearer)}
                             };
         var result = await client.SendAsync(message);

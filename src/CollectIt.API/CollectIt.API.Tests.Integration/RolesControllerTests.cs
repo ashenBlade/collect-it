@@ -18,11 +18,24 @@ public class RolesControllerTests: IClassFixture<CollectItWebApplicationFactory>
         _factory = factory;
         _testOutputHelper = testOutputHelper;
     }
+    
+    private async Task<(HttpClient, string)> Initialize(string? username = null, string? password = null)
+    {
+        var client = _factory.CreateClient();
+        var bearer = await TestsHelpers.GetBearerForUserAsync(client, 
+                                                              helper: _testOutputHelper, 
+                                                              username: username, 
+                                                              password: password);
+        return ( client, bearer );
+    }
 
     [Fact]
     public async Task GetRolesList_ShouldReturnRolesList()
     {
-        var roles = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO[]>(_factory, "api/v1/roles");
+        var (client, bearer) = await Initialize();
+        var roles = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO[]>(client, 
+                                                                                         "api/v1/roles",
+                                                                                         bearer);
         Assert.NotEmpty(roles);
         Assert.Contains(roles, r => r.Name == "Admin");
     }
@@ -30,7 +43,8 @@ public class RolesControllerTests: IClassFixture<CollectItWebApplicationFactory>
     [Fact]
     public async Task GetRoleById_WithValidId_ShouldReturnRequiredRole()
     {
-        var adminRole = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO>(_factory, $"api/v1/roles/{Role.AdminRoleId}");
+        var (client, bearer) = await Initialize();
+        var adminRole = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadRoleDTO>(client, $"api/v1/roles/{Role.AdminRoleId}", bearer);
         Assert.Equal(Role.AdminRoleName, adminRole.Name);
         Assert.Equal(Role.AdminRoleId, adminRole.Id);
     }
