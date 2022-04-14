@@ -166,7 +166,7 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                MaxResourcesCount = 10,
                                MonthDuration = 2,
                                Price = 100,
-                               RestrictionId = null
+                               Restriction = null
                            };
         var (client, bearer) = await Initialize();
         var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
@@ -201,7 +201,7 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                                                                             ).ToString()),
                                                                                 new KeyValuePair<string,
                                                                                     string>("RestrictionId",
-                                                                                            subscription.RestrictionId
+                                                                                            subscription.Restriction
                                                                                                        ?.ToString()
                                                                                          ?? string.Empty)
                                                                             }),

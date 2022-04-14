@@ -3,6 +3,7 @@ module CollectIt.API.DTO.Mappers.AccountMappers
 open System.Collections.Generic
 open CollectIt.Database.Entities.Account
 open CollectIt.API.DTO.AccountDTO
+open CollectIt.Database.Entities.Account.Restrictions
 
 let ToReadUserDTO (user: User) (roles: string[]) : ReadUserDTO =
     let dto = ReadUserDTO user.Id user.UserName user.Email roles

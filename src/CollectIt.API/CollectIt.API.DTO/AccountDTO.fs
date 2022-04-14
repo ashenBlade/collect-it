@@ -98,19 +98,31 @@ type CreateSubscriptionDTO = {
     [<Range(1, Int32.MaxValue)>]
     MaxResourcesCount : int
     
-    RestrictionId : Nullable<int>
+    Restriction : CreateRestrictionDTO
 }
 
-let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restrictionId = {
+let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restriction = {
     Name = name
     Description = description
     Price = price
     MonthDuration = monthDuration
     AppliedResourceType = resourceType
     MaxResourcesCount = maxResourcesCount
-    RestrictionId = restrictionId
+    Restriction = restriction
 }
 
+type ReadRestrictionDTO =
+    new() = {}
+
+type ReadAuthorRestrictionDTO =
+    val mutable private authorId: int
+    
+    member this.AuthorId
+        with get() = this.authorId
+        and set value = this.authorId <- value
+        
+    new(authorId: int) = {authorId = authorId}
+    
 [<CLIMutable>]
 type ReadSubscriptionDTO = {
     [<Required>]

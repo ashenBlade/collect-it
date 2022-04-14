@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 
@@ -73,13 +76,33 @@ public class SubscriptionsController : ControllerBase
                                                         [FromForm(Name = "active")]
                                                         bool active = false)
     {
+        Restriction? restriction;
+        try
+        {
+            restriction = dto.Restriction switch
+                          {
+                              AccountDTO.CreateAuthorRestrictionDTO createAuthorRestrictionDTO =>
+                                  new AuthorRestriction() {AuthorId = createAuthorRestrictionDTO.AuthorId},
+                              null => null,
+                              var createRestrictionDTO => throw new UnsupportedContentTypeException($"Restriction type '{createRestrictionDTO.RestrictionType}' is unsupported"),
+                          };
+        }
+        catch (SwitchExpressionException switchExpressionException)
+        {
+            return BadRequest(new {Error = $"Unknown restriction type: {dto.Restriction.RestrictionType}"});
+        }
+        catch (UnsupportedContentTypeException unsupportedContentTypeException)
+        {
+            return UnprocessableEntity($"Restriction type is not supported");
+        }
+        
         var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
                                                                               dto.Description, 
                                                                               dto.MonthDuration,
                                                                               dto.AppliedResourceType, 
                                                                               dto.Price,
                                                                               dto.MaxResourcesCount,
-                                                                              dto.RestrictionId, 
+                                                                              restriction, 
                                                                               active);
         return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
                                AccountMappers.ToReadSubscriptionDTO(subscription));

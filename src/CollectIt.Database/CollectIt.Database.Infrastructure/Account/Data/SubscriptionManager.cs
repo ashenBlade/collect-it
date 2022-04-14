@@ -2,6 +2,7 @@ using System.Data.Common;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Update;
@@ -27,7 +28,7 @@ public class SubscriptionManager : ISubscriptionManager
                                                             ResourceType appliedResourceType,
                                                             int price,
                                                             int maxResourcesCount,
-                                                            int? restrictionId,
+                                                            Restriction? restriction,
                                                             bool active = false)
     {
         var subscription = new Subscription()
@@ -37,7 +38,7 @@ public class SubscriptionManager : ISubscriptionManager
                                MonthDuration = monthDuration,
                                MaxResourcesCount = maxResourcesCount,
                                AppliedResourceType = appliedResourceType,
-                               RestrictionId = restrictionId,
+                               Restriction = restriction,
                                Active = true,
                                Price = price
                            };

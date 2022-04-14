@@ -1,3 +1,4 @@
+using CollectIt.API.WebAPI.ModelBinders;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
@@ -18,7 +19,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(opts =>
+        {
+            opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider());
+        });
 
         builder.Services.AddCors(options =>
         {

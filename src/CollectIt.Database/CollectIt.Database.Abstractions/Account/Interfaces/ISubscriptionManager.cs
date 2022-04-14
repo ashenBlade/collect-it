@@ -1,4 +1,5 @@
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Identity;
 
 namespace CollectIt.Database.Abstractions.Account.Interfaces;
@@ -11,7 +12,7 @@ public interface ISubscriptionManager
                                                       ResourceType appliedResourceType,
                                                       int price,
                                                       int maxResourcesCount,
-                                                      int? restrictionId,
+                                                      Restriction? restriction,
                                                       bool active = false);
 
     public Task<List<Subscription>> GetSubscriptionsAsync(int pageNumber, int pageSize);
