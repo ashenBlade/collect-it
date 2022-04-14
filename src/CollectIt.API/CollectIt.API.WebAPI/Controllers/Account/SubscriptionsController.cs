@@ -96,7 +96,7 @@ public class SubscriptionsController : ControllerBase
     
     [HttpPost("{subscriptionId:int}/description")]
     [Authorize(Roles = "Admin",  AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId, string description)
+    public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId,[FromForm(Name = "description")][Required] string description)
     {
         var result = await _subscriptionManager.ChangeSubscriptionDescriptionAsync(subscriptionId, description);
         return result.Succeeded

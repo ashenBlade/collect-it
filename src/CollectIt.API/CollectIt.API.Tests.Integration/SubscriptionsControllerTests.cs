@@ -89,11 +89,11 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
         var (client, bearer) = await Initialize();
         var subscription = PostgresqlCollectItDbContext.BronzeSubscription;
         const string newDescription = "Another subscription description";
-        await TestsHelpers.SendAsync(client, $"api/v1/subscriptions/{subscription.Id}/name",
+        await TestsHelpers.SendAsync(client, $"api/v1/subscriptions/{subscription.Id}/description",
                                      bearer,
                                      new FormUrlEncodedContent(new[]
                                                                {
-                                                                   new KeyValuePair<string, string>("name",
+                                                                   new KeyValuePair<string, string>("description",
                                                                                                     newDescription)
                                                                }), method: HttpMethod.Post,
                                      outputHelper: _outputHelper);
@@ -111,7 +111,7 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
         var (client, bearer) = await Initialize();
         var subscription = PostgresqlCollectItDbContext.BronzeSubscription;
         await TestsHelpers.SendAsync(client, 
-                                     $"api/v1/subscriptions/{subscription.Id}/activate",
+                                     $"api/v1/subscriptions/{subscription.Id}/deactivate",
                                      bearer, 
                                      method: HttpMethod.Post,
                                      outputHelper: _outputHelper);
@@ -122,5 +122,31 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                                                                                 _outputHelper);
         Assert.False(actual.Active);
     }
+    
+    [Fact]
+    public async Task ActivateSubscription_WithValidIdAndDeactivatedSubscription_ShouldActivateSubscription()
+    {
+        var (client, bearer) = await Initialize();
+        // Single deactivated subscription that must be deactivated by default
+        var subscription = PostgresqlCollectItDbContext.AllowAllSubscription;
+        var before = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                                $"api/v1/subscriptions/{subscription.Id}",
+                                                                                                bearer,
+                                                                                                HttpMethod.Get,
+                                                                                                _outputHelper);
+        Assert.False(before.Active);
+        await TestsHelpers.SendAsync(client, 
+                                     $"api/v1/subscriptions/{subscription.Id}/activate",
+                                     bearer, 
+                                     method: HttpMethod.Post,
+                                     outputHelper: _outputHelper);
+        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                                $"api/v1/subscriptions/{subscription.Id}",
+                                                                                                bearer, 
+                                                                                                HttpMethod.Get,
+                                                                                                _outputHelper);
+        Assert.True(actual.Active);
+    }
+    
 }
 
