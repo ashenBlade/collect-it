@@ -127,13 +127,14 @@ public class SubscriptionManager : ISubscriptionManager
 
     public async Task<IdentityResult> ChangeSubscriptionNameAsync(int subscriptionId, string newName)
     {
+        await using var connection = _context.Database.GetDbConnection();
         try
         {
-            await using var connection = _context.Database.GetDbConnection();
             await using var command = connection.CreateCommand();
             command.CommandText = "UPDATE \"Subscriptions\" SET \"Name\" = @name WHERE \"Id\" = @id;";
             command.Parameters.Add(CreateParameter(command, "@name", newName));
-            command.Parameters.Add(CreateParameter(command, "@Id", subscriptionId));
+            command.Parameters.Add(CreateParameter(command, "@id", subscriptionId));
+            await connection.OpenAsync();
             var affected = await command.ExecuteNonQueryAsync();
             if (affected == 0)
             {
@@ -148,7 +149,14 @@ public class SubscriptionManager : ISubscriptionManager
         catch (DbUpdateException updateException)
         {
             _logger.LogError(updateException, "Error while updating name for subscription");
-            return IdentityResult.Failed(new IdentityError() {Code = "", Description = "Error while updating on database"});
+            return IdentityResult.Failed(new IdentityError()
+                                         {
+                                             Code = "", Description = "Error while updating on database"
+                                         });
+        }
+        finally
+        {
+            await connection.CloseAsync();
         }
     }
 
@@ -162,13 +170,14 @@ public class SubscriptionManager : ISubscriptionManager
 
     public async Task<IdentityResult> ChangeSubscriptionDescriptionAsync(int subscriptionId, string newDescription)
     {
+        await using var connection = _context.Database.GetDbConnection();
         try
         {
-            await using var connection = _context.Database.GetDbConnection();
             await using var command = connection.CreateCommand();
             command.CommandText = "UPDATE \"Subscriptions\" SET \"Description\" = @description WHERE \"Id\" = @id;";
             command.Parameters.Add(CreateParameter(command, "@description", newDescription));
-            command.Parameters.Add(CreateParameter(command, "@Id", subscriptionId));
+            command.Parameters.Add(CreateParameter(command, "@id", subscriptionId));
+            await connection.OpenAsync();
             var affected = await command.ExecuteNonQueryAsync();
             if (affected == 0)
             {
@@ -183,7 +192,14 @@ public class SubscriptionManager : ISubscriptionManager
         catch (DbUpdateException updateException)
         {
             _logger.LogError(updateException, "Error while updating name for subscription");
-            return IdentityResult.Failed(new IdentityError() {Code = "", Description = "Error while updating on database"});
+            return IdentityResult.Failed(new IdentityError()
+                                         {
+                                             Code = "", Description = "Error while updating on database"
+                                         });
+        }
+        finally
+        {
+            await connection.CloseAsync();
         }
     }
 
@@ -215,6 +231,14 @@ public class SubscriptionManager : ISubscriptionManager
                                              Description = isActive
                                                                ? "Could not activate subscription"
                                                                : "Could not deactivate subscription"
+                                         });
+        }
+        catch (SubscriptionNotFoundException subscriptionNotFoundException)
+        {
+            return IdentityResult.Failed(new IdentityError()
+                                         {
+                                             Code = "SubscriptionNotFound",
+                                             Description = $"Subscription with Id = {subscriptionId} not found"
                                          });
         }
     }

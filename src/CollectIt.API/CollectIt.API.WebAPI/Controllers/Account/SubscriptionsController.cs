@@ -5,6 +5,8 @@ using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Server.AspNetCore;
+using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
@@ -64,7 +66,7 @@ public class SubscriptionsController : ControllerBase
     }
 
     [HttpPost("")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateSubscription([FromForm][Required] AccountDTO.CreateSubscriptionDTO dto, 
                                                         [FromForm(Name = "active")]bool? active)
     {
@@ -79,9 +81,12 @@ public class SubscriptionsController : ControllerBase
                                AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 
-    [HttpPut("{subscriptionId:int}/name")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId, string name)
+    [HttpPost("{subscriptionId:int}/name")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId, 
+                                                            [FromForm(Name = "name")]
+                                                            [Required]
+                                                            string name)
     {
         var result = await _subscriptionManager.ChangeSubscriptionNameAsync(subscriptionId, name);
         return result.Succeeded
@@ -89,8 +94,8 @@ public class SubscriptionsController : ControllerBase
                    : BadRequest();
     }
     
-    [HttpPut("{subscriptionId:int}/description")]
-    [Authorize(Roles = "Admin")]
+    [HttpPost("{subscriptionId:int}/description")]
+    [Authorize(Roles = "Admin",  AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId, string description)
     {
         var result = await _subscriptionManager.ChangeSubscriptionDescriptionAsync(subscriptionId, description);
@@ -100,7 +105,7 @@ public class SubscriptionsController : ControllerBase
     }
 
     [HttpPost("{subscriptionId:int}/activate")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ActivateSubscription(int subscriptionId)
     {
         var result = await _subscriptionManager.ActivateSubscriptionAsync(subscriptionId);
@@ -110,7 +115,7 @@ public class SubscriptionsController : ControllerBase
     }
     
     [HttpPost("{subscriptionId:int}/deactivate")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeactivateSubscription(int subscriptionId)
     {
         var result = await _subscriptionManager.DeactivateSubscriptionAsync(subscriptionId);

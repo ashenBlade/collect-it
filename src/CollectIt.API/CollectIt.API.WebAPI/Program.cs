@@ -82,9 +82,11 @@ public class Program
                .AddRoleManager<RoleManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
                .AddDefaultTokenProviders();
+        
         builder.Services.AddCollectItOpenIddict(builder.Environment);
         
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+        
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
             config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], 
