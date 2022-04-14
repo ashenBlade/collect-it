@@ -5,6 +5,7 @@ using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Server.AspNetCore;
@@ -86,7 +87,7 @@ public class UsersController : ControllerBase
         _logger.LogInformation("Hit changeusername");
         try
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindUserByIdAsync(userId);
             if (user is null)
             {
                 // _logger.LogInformation("User not found: {User}", User.Identity.Name);
@@ -118,34 +119,46 @@ public class UsersController : ControllerBase
 
     [HttpPost("{userId:int}/email")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> ChangeUserEmail(int userId, [FromForm(Name = "email")]string email)
+    public async Task<IActionResult> ChangeUserEmail(int userId, 
+                                                     [FromForm(Name = "email")]
+                                                     [Required]
+                                                     string email)
     {
-        var user = await _userManager.GetUserAsync(User);
+        var user = await _userManager.FindUserByIdAsync(userId);
         if (user is null)
         {
             return NotFound();
         }
-        if (!(userId == user.Id || await _userManager.IsInRoleAsync(user, "Admin")))
+        if (!(userId == user.Id || await _userManager.IsInRoleAsync(user, Role.AdminRoleName)))
         {
-            return Unauthorized();
+            return Forbid();
         }
         var result = await _userManager.SetEmailAsync(user, email);
         return result.Succeeded
                    ? NoContent()
-                   : BadRequest(result.Errors.Select(e => e.Description).Aggregate((s, n) => $"{s}\n{n}"));
+                   : BadRequest(result.Errors
+                                      .Select(e => e.Description)
+                                      .ToArray());
     }
 
     [HttpPost("{userId:int}/roles")]
-    [Authorize, Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> AssignRoleToUser(int userId, 
                                                       [FromForm(Name = "role_name")]
                                                       [Required]
                                                       string role)
     {
-        var result = await _userManager.AddToRoleAsync(await _userManager.GetUserAsync(User), role);
+        var user = await _userManager.FindUserByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        var result = await _userManager.AddToRoleAsync(user, role);
         return result.Succeeded
                    ? NoContent()
-                   : BadRequest();
+                   : BadRequest(result.Errors
+                                      .Select(err => err.Description)
+                                      .ToArray());
     }
  
     [HttpDelete("{userId:int}/roles")]
@@ -153,29 +166,50 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> RemoveRoleFromUser(int userId, 
                                                         [FromForm(Name = "role_name")]string role)
     {
-        var result = await _userManager.RemoveFromRoleAsync(await _userManager.GetUserAsync(User), role);
+        var user = await _userManager.FindUserByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        var result = await _userManager.RemoveFromRoleAsync(user, role);
         return result.Succeeded
                    ? NoContent()
-                   : BadRequest();
+                   : BadRequest(result.Errors
+                                      .Select(err => err.Description)
+                                      .ToArray());
     }
 
     [HttpPost("{userId:int}/activate")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ActivateAccount(int userId)
     {
-        var result = await _userManager.SetLockoutEnabledAsync(await _userManager.GetUserAsync(User), false);
+        var user = await _userManager.FindUserByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        var result = await _userManager.SetLockoutEnabledAsync(user, false);
         return result.Succeeded
                    ? NoContent()
-                   : BadRequest();
+                   : BadRequest(result.Errors
+                                      .Select(err => err.Description)
+                                      .ToArray());
     }
     
     [HttpPost("{userId:int}/deactivate")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeactivateAccount(int userId)
     {
-        var result = await _userManager.SetLockoutEnabledAsync(await _userManager.GetUserAsync(User), true);
+        var user = await _userManager.FindUserByIdAsync(userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+        var result = await _userManager.SetLockoutEnabledAsync(user, true);
         return result.Succeeded
                    ? NoContent()
-                   : BadRequest();
+                   : BadRequest(result.Errors
+                                      .Select(err => err.Description)
+                                      .ToArray());
     }
 }

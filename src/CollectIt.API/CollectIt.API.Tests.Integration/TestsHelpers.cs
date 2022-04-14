@@ -65,9 +65,10 @@ public static class TestsHelpers
                                                            HttpMethod? method = null,
                                                            ITestOutputHelper? outputHelper = null)
     {
-        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address);
-        message.Headers.Authorization =
-            new AuthenticationHeaderValue("Bearer", bearer);
+        using var message = new HttpRequestMessage(method ?? HttpMethod.Get, address)
+                            {
+                                Headers = { Authorization = new AuthenticationHeaderValue("Bearer", bearer)}
+                            };
         var result = await client.SendAsync(message);
         var json = await result.Content.ReadAsStringAsync();
         var parsed = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));

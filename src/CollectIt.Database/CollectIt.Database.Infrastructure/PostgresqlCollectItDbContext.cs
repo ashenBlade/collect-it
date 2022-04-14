@@ -96,8 +96,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .HasData(DefaultUsers);
         
         builder.Entity<IdentityUserRole<int>>()
-               .HasData(new IdentityUserRole<int>() {RoleId = Admin.Id, UserId = 1},
-                        new IdentityUserRole<int>() {RoleId = TechSupport.Id, UserId = 3});
+               .HasData(new IdentityUserRole<int>() {RoleId = Admin.Id, UserId = AdminUserId},
+                        new IdentityUserRole<int>() {RoleId = TechSupport.Id, UserId = TechSupportUserId});
         builder.Entity<OpenIddictEntityFrameworkCoreToken<int>>()
                .HasData(new OpenIddictEntityFrameworkCoreToken<int>()
                         {
