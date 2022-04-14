@@ -4,6 +4,7 @@ open System
 open System.ComponentModel.DataAnnotations
 open System.Text.Json.Serialization
 open CollectIt.Database.Entities.Account
+open CollectIt.Database.Entities.Account.Restrictions
 
 [<CLIMutable>]
 type CreateUserDTO = {
@@ -48,6 +49,31 @@ let ReadUserDTO id username email roles = {
     Roles = roles
 } 
 
+
+type CreateRestrictionDTO =
+        val mutable private restrictionType: RestrictionType
+        member public this.RestrictionType
+            with get() = this.restrictionType
+            and set value = this.restrictionType <- value
+            
+        new(restrictionType: RestrictionType) = { restrictionType = restrictionType }
+    
+    
+type CreateAuthorRestrictionDTO =
+    inherit CreateRestrictionDTO
+       
+        val mutable private authorId : int
+        member this.AuthorId
+            with get() = this.authorId
+            and set value = this.authorId <- value
+        new(authorId: int) = {inherit CreateRestrictionDTO(RestrictionType.Author); authorId = authorId }
+                
+type CreateDaysToRestrictionDTO =
+    inherit CreateRestrictionDTO
+        val mutable authorId : int
+        member this.AuthorId
+            with get() = this.authorId
+            and set value = this.authorId <- value
 
 [<CLIMutable>]
 type CreateSubscriptionDTO = {

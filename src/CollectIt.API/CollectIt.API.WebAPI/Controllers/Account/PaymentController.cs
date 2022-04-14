@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
