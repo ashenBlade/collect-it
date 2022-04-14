@@ -37,31 +37,42 @@ public class AccountController : Controller
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(userId) )
-           .Select(subscription =>
-                       new AccountUserSubscription()
-                       {
-                           From = subscription.During.Start.ToDateTimeUnspecified(),
-                           To = subscription.During.End.ToDateTimeUnspecified(),
-                           LeftResourcesCount = subscription.LeftResourcesCount,
-                           Name = subscription.Subscription.Name,
-                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
-                       });
-        var resources =  ( await _userManager.GetAcquiredResourcesForUserByIdAsync(userId) )
+            .Select(subscription =>
+                new AccountUserSubscription()
+                {
+                    From = subscription.During.Start.ToDateTimeUnspecified(),
+                    To = subscription.During.End.ToDateTimeUnspecified(),
+                    LeftResourcesCount = subscription.LeftResourcesCount,
+                    Name = subscription.Subscription.Name,
+                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
+                });
+        var resources = (await _userManager.GetAcquiredResourcesForUserByIdAsync(userId))
+            .Select(resource =>
+                new AccountUserResource()
+                {
+                    Id = resource.ResourceId,
+                    FileName = resource.Resource.Name,
+                    Address = resource.Resource.Address,
+                    Extension = resource.Resource.Extension,
+                    Date = resource.AcquiredDate
+                });
+        var myResources = (await _userManager.GetUsersResourcesForUserByIdAsync(userId))
             .Select(resource =>
                 new AccountUserResource()
                 {
                     Id = resource.Id,
-                    FileName = resource.Resource.Name,
-                    Address = resource.Resource.Address,
-                    Tags = resource.Resource.Tags,
-                    AcquireDate = resource.AcquiredDate
+                    FileName = resource.Name,
+                    Address = resource.Address,
+                    Extension = resource.Extension,
+                    Date = resource.UploadDate
                 });
-        var model = new AccountViewModel()
+       var model = new AccountViewModel()
                     {
                         UserName = User.FindFirstValue(ClaimTypes.Name),
                         Email = User.FindFirstValue(ClaimTypes.Email),
                         Subscriptions = subscriptions,
-                        Resources = resources
+                        AcquiredResources = resources,
+                        UsersResources = myResources
                     };
         return View(model);
     }
@@ -88,6 +99,7 @@ public class AccountController : Controller
         {
             return View(model);
         }
+
         _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
         var user = new User {Email = model.Email, UserName = model.UserName};
         var result = await _userManager.CreateAsync(user, model.Password);
@@ -96,13 +108,14 @@ public class AccountController : Controller
             _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
             return RedirectToAction("Login");
         }
+
         _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError("", error.Description);
         }
-        return View(model);
 
+        return View(model);
     }
 
     [HttpPost]
@@ -161,7 +174,7 @@ public class AccountController : Controller
         var result = await _userManager.UpdateAsync(user);
         var subs = await _userManager.GetSubscriptionsForUserByIdAsync(user.Id);
 
-        var accountModel = new AccountViewModel()
+       var accountModel = new AccountViewModel()
                            {
                                Email = user.UserName, 
                                UserName = user.UserName, 
@@ -180,6 +193,7 @@ public class AccountController : Controller
             await _signInManager.RefreshSignInAsync(user);
             return View("Profile", accountModel);
         }
+
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError("", error.Description);
