@@ -46,6 +46,9 @@
       <Content Update="Views\Account\UploadImage.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
+      <Content Update="Views\Account\MyResources.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>

@@ -54,10 +54,18 @@ public class UserManager: UserManager<User>
     public Task<List<AcquiredUserResource>> GetAcquiredResourcesForUserByIdAsync(int userId)
     {
         return _context.AcquiredUserResources
-                       .Where(us => us.UserId == userId)
-                       .Include(us => us.Resource)
-                       .Include(us => us.User)
+                       .Where(aur => aur.UserId == userId)
+                       .Include(aur => aur.Resource)
+                       .Include(aur => aur.User)
                        .ToListAsync();
+    }
+    
+    public Task<List<Resource>> GetUsersResourcesForUserByIdAsync(int userId)
+    {
+        return _context.Resources
+            .Where(r => r.OwnerId == userId)
+            .Include(r => r.Owner)
+            .ToListAsync();
     }
     
     public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserAsync(User user)
