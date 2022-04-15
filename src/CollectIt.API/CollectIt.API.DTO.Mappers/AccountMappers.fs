@@ -6,6 +6,14 @@ open CollectIt.Database.Entities.Account
 open CollectIt.API.DTO.AccountDTO
 open CollectIt.Database.Entities.Account.Restrictions
 
+let ToReadRestrictionDTO (restriction: Restriction): ReadRestrictionDTO =
+    match restriction with
+    | null -> null
+    | :? AuthorRestriction as author -> ReadAuthorRestrictionDTO(AuthorId = author.AuthorId)
+    | :? DaysToRestriction as daysTo -> ReadDaysToRestrictionDTO(daysTo.DaysTo)
+    | :? DaysAfterRestriction as daysAfter -> ReadDaysAfterRestrictionDTO(daysAfter.DaysAfter)
+    | :? TagRestriction as tag -> ReadTagsRestrictionDTO(tag.Tags)
+    
 let ToReadUserDTO (user: User) (roles: string[]) : ReadUserDTO =
     let dto = ReadUserDTO user.Id user.UserName user.Email roles
     dto
@@ -20,7 +28,7 @@ let ToReadSubscriptionDTO (subscription: Subscription): ReadSubscriptionDTO =
                   subscription.AppliedResourceType
                   subscription.MaxResourcesCount
                   subscription.Active
-                  subscription.RestrictionId
+                  (ToReadRestrictionDTO subscription.Restriction)
     dto
     
 let ToReadRoleDTO (role: Role): ReadRoleDTO =

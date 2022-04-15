@@ -148,9 +148,9 @@ let CreateSubscriptionDTO name description price monthDuration resourceType maxR
       MaxResourcesCount = maxResourcesCount
       Restriction = restriction }
 
+[<AllowNullLiteral>]
 type ReadRestrictionDTO =
     val mutable private restrictionType: string
-
     member this.RestrictionType
         with get () = this.restrictionType
         and set value = this.restrictionType <- value
@@ -160,16 +160,19 @@ type ReadRestrictionDTO =
     }
 
 type ReadAuthorRestrictionDTO =
-    inherit ReadRestrictionDTO
-    val mutable private authorId: int
+    inherit ReadRestrictionDTO 
+        val mutable private authorId: int
 
-    member this.AuthorId
-        with get () = this.authorId
-        and set value = this.authorId <- value
+        member public this.AuthorId
+            with get () = this.authorId
+            and set value = this.authorId <- value
 
-    new(authorId: int) =
-        { inherit ReadRestrictionDTO("Author")
-          authorId = authorId }
+        new() = {
+            inherit ReadRestrictionDTO("Author")
+            authorId = 0
+        }
+        
+        
 
 type ReadDaysAfterRestrictionDTO =
     inherit ReadRestrictionDTO
@@ -179,9 +182,10 @@ type ReadDaysAfterRestrictionDTO =
         with get () = this.daysAfter
         and set value = this.daysAfter <- value
 
-    new(daysAfter: int) =
-        { inherit ReadRestrictionDTO("DaysAfter")
-          daysAfter = daysAfter }
+    new(daysAfter: int) = {
+          inherit ReadRestrictionDTO("DaysAfter")
+          daysAfter = daysAfter
+    }
 
 
 type ReadDaysToRestrictionDTO =
@@ -237,7 +241,8 @@ type ReadSubscriptionDTO =
       [<Required>]
       Active: bool
 
-      RestrictionId: Nullable<int> }
+      Restriction: ReadRestrictionDTO
+}
 
 let ReadSubscriptionDTO
     id
@@ -248,7 +253,7 @@ let ReadSubscriptionDTO
     appliedResourceType
     maxResourcesCount
     active
-    restrictionId
+    restriction
     =
     { Id = id
       Name = name
@@ -257,7 +262,7 @@ let ReadSubscriptionDTO
       MonthDuration = monthDuration
       AppliedResourceType = appliedResourceType
       MaxResourcesCount = maxResourcesCount
-      RestrictionId = restrictionId
+      Restriction = restriction
       Active = active }
 
 [<CLIMutable>]
