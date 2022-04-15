@@ -1,7 +1,9 @@
 using CollectIt.Database.Abstractions.Account.Interfaces;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.Database.Infrastructure.Resources.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -86,6 +88,8 @@ public class Program
         builder.Services.AddCollectItOpenIddict(builder.Environment);
         
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+        
+        builder.Services.AddScoped<IImageManager, PostgresqlImageManager>();
         
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
