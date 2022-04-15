@@ -114,6 +114,47 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(expectedNewUsername, actual.UserName);
         client.Dispose();
     }
+    
+    [Fact]
+    public async Task PostUsername_WithNewInvalidNameContainingWhitespaces_ShouldReturnBadRequest()
+    {
+        var (client, bearer) = await Initialize();
+        const string invalidUsername = "Invalid username";
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/{userId}/username",
+                                                 HttpStatusCode.BadRequest,
+                                                 HttpMethod.Post,
+                                                 bearer,
+                                                 new MultipartFormDataContent()
+                                                 {
+                                                     {new StringContent(invalidUsername), "username"}
+                                                 });
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task PostUsername_WithNewValidNameAndUserAsRequester_ShouldChangeUsername()
+    {
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        var (client, bearer) = await Initialize(user.UserName, "12345678");
+        const string expectedNewUsername = "SomeUserName";
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/username", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(expectedNewUsername), "username"}
+                                     }, 
+                                     _outputHelper, 
+                                     method: HttpMethod.Post);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}", bearer);
+        Assert.Equal(expectedNewUsername, actual.UserName);
+        client.Dispose();
+    }
+    
+    
 
     [Fact]
     public async Task PostEmail_WithNewValidEmail_ShouldChangeEmail()

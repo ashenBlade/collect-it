@@ -89,12 +89,12 @@ public class UsersController : ControllerBase
             var user = await _userManager.FindUserByIdAsync(userId);
             if (user is null)
             {
-                return NotFound("User with provided claims not found");
+                return NotFound();
             }
             if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
             {
                 
-                return Unauthorized("Not authorize blyat");
+                return Forbid();
             }
 
             await _userManager.ChangeUsernameAsync(userId, username);
@@ -107,10 +107,6 @@ public class UsersController : ControllerBase
         catch (AccountException accountException)
         {
             return BadRequest(accountException.Message);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
         }
     }
 
