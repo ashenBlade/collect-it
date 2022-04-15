@@ -47,6 +47,11 @@ public class VideoManager : IVideoManager
         throw new NotImplementedException();
     }
 
+    public Task<List<Video>> GetAllPaged(int pageNumber, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
+
     public IAsyncEnumerable<Video> GetAllByName(string name)
     {
         throw new NotImplementedException();

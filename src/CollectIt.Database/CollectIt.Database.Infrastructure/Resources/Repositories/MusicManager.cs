@@ -44,6 +44,12 @@ public class MusicManager : IMusicManager
         throw new NotImplementedException();
     }
 
+    public Task<List<Music>> GetAllPaged(int pageNumber, int pageSize)
+    {
+        throw new NotImplementedException();
+    }
+
+
     public IAsyncEnumerable<Music> GetAllByName(string name)
     {
         throw new NotImplementedException();
