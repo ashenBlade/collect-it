@@ -24,7 +24,7 @@ public class Program
         builder.Services.AddControllers(opts =>
         {
             opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider());
-        });
+        }).AddNewtonsoftJson();
 
         builder.Services.AddCors(options =>
         {

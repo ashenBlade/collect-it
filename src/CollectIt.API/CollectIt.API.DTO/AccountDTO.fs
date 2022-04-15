@@ -156,8 +156,8 @@ type ReadRestrictionDTO =
         with get () = this.restrictionType
         and set value = this.restrictionType <- value
 
-    new(restrictionType) = {
-        restrictionType = restrictionType
+    new() = {
+        restrictionType = ""
     }
 
 type ReadAuthorRestrictionDTO =
@@ -169,7 +169,7 @@ type ReadAuthorRestrictionDTO =
             and set value = this.authorId <- value
 
         new() = {
-            inherit ReadRestrictionDTO("Author")
+            inherit ReadRestrictionDTO(RestrictionType = "Author")
             authorId = 0
         }
         
@@ -183,9 +183,9 @@ type ReadDaysAfterRestrictionDTO =
         with get () = this.daysAfter
         and set value = this.daysAfter <- value
 
-    new(daysAfter: int) = {
-          inherit ReadRestrictionDTO("DaysAfter")
-          daysAfter = daysAfter
+    new() = {
+          inherit ReadRestrictionDTO(RestrictionType = "DaysAfter")
+          daysAfter = 0
     }
 
 
@@ -197,9 +197,9 @@ type ReadDaysToRestrictionDTO =
         with get () = this.daysTo
         and set value = this.daysTo <- value
 
-    new(daysTo: int) =
-        { inherit ReadRestrictionDTO("DaysTo")
-          daysTo = daysTo }
+    new() =
+        { inherit ReadRestrictionDTO(RestrictionType = "DaysTo")
+          daysTo = 0 }
 
 type ReadTagsRestrictionDTO =
     inherit ReadRestrictionDTO
@@ -209,9 +209,9 @@ type ReadTagsRestrictionDTO =
         with get () = this.tags
         and set value = this.tags <- value
 
-    new(tags) =
-        { inherit ReadRestrictionDTO("Author")
-          tags = tags }
+    new() =
+        { inherit ReadRestrictionDTO(RestrictionType = "Tags")
+          tags = [||] }
 
 [<CLIMutable>]
 type ReadSubscriptionDTO =

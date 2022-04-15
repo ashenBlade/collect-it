@@ -10,9 +10,9 @@ let ToReadRestrictionDTO (restriction: Restriction): ReadRestrictionDTO =
     match restriction with
     | null -> null
     | :? AuthorRestriction as author -> ReadAuthorRestrictionDTO(AuthorId = author.AuthorId)
-    | :? DaysToRestriction as daysTo -> ReadDaysToRestrictionDTO(daysTo.DaysTo)
-    | :? DaysAfterRestriction as daysAfter -> ReadDaysAfterRestrictionDTO(daysAfter.DaysAfter)
-    | :? TagRestriction as tag -> ReadTagsRestrictionDTO(tag.Tags)
+    | :? DaysToRestriction as daysTo -> ReadDaysToRestrictionDTO(DaysTo = daysTo.DaysTo)
+    | :? DaysAfterRestriction as daysAfter -> ReadDaysAfterRestrictionDTO(DaysAfter = daysAfter.DaysAfter)
+    | :? TagRestriction as tag -> ReadTagsRestrictionDTO(Tags = tag.Tags)
     
 let ToReadUserDTO (user: User) (roles: string[]) : ReadUserDTO =
     let dto = ReadUserDTO user.Id user.UserName user.Email roles

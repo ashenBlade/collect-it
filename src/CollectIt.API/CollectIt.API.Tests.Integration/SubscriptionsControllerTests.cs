@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -215,5 +216,71 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
         Assert.Equal(expected.AppliedResourceType, actual.AppliedResourceType);
     }
     
+    [Fact]
+    public async Task CreateSubscription_WithValidSubscriptionDataAndRestriction_ShouldCreateSubscription()
+    {
+        var createAuthorRestrictionDTO = new AccountDTO.CreateAuthorRestrictionDTO(PostgresqlCollectItDbContext.AdminUserId);
+        var expected = new AccountDTO.CreateSubscriptionDTO()
+                       {
+                           Description = "Brand new subscription for elite members",
+                           Name = "Sample text",
+                           AppliedResourceType = ResourceType.Image,
+                           MaxResourcesCount = 10,
+                           MonthDuration = 2,
+                           Price = 100,
+                           Restriction = createAuthorRestrictionDTO
+                       };
+        var (client, bearer) = await Initialize();
+        var result = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                                "api/v1/subscriptions",
+                                                                                                bearer,
+                                                                                                HttpMethod.Post,
+                                                                                                content: new FormUrlEncodedContent(new[]
+                                                                                                                                   {
+                                                                                                                                       new KeyValuePair<string, string>("Name",
+                                                                                                                                                                        expected
+                                                                                                                                                                           .Name),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("Description",
+                                                                                                                                                   expected.Description),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("Price",
+                                                                                                                                                   expected.Price
+                                                                                                                                                               .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("MonthDuration",
+                                                                                                                                                   expected.MonthDuration
+                                                                                                                                                               .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("MaxResourcesCount",
+                                                                                                                                                   expected
+                                                                                                                                                      .MaxResourcesCount
+                                                                                                                                                      .ToString()),
+                                                                                                                                       new KeyValuePair<string,
+                                                                                                                                           string>("AppliedResourceType",
+                                                                                                                                                   ((int)expected
+                                                                                                                                                          .AppliedResourceType )
+                                                                                                                                                  .ToString()),
+                                                                                                                                       new KeyValuePair<string, string>("RestrictionType",
+                                                                                                                                                                        ( (int)createAuthorRestrictionDTO
+                                                                                                                                                                               .RestrictionType ).ToString()),
+                                                                                                                                       new KeyValuePair<string, string>("AuthorId", createAuthorRestrictionDTO.AuthorId
+                                                                                                                                                                                                              .ToString())
+                                                                                                                                   }),
+                                                                                                outputHelper: _outputHelper);
+        var createdId = result.Id;
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadSubscriptionDTO>(client,
+                                                                                       $"api/v1/subscriptions/{createdId}",
+                                                                                       bearer, HttpMethod.Get,
+                                                                                       _outputHelper);
+        Assert.Equal(createdId, actual.Id);
+        Assert.Equal(expected.Name, actual.Name);
+        Assert.Equal(expected.Description, actual.Description);
+        Assert.Equal(expected.Price, actual.Price);
+        Assert.Equal(expected.MonthDuration, actual.MonthDuration);
+        Assert.Equal(expected.AppliedResourceType, actual.AppliedResourceType);
+        Assert.Equal(expected.Restriction.RestrictionType.ToString(), actual.Restriction.RestrictionType);
+    }
 }
 

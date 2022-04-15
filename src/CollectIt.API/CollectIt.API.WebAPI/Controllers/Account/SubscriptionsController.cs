@@ -62,13 +62,9 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
     {
         var subscription = await _subscriptionManager.FindSubscriptionByIdAsync(subscriptionId);
-        if (subscription is null)
-        {
-            return NotFound();
-        }
-
-        var readSubscriptionDTO = AccountMappers.ToReadSubscriptionDTO(subscription);
-        return Ok(readSubscriptionDTO);
+        return subscription is null
+                   ? NotFound()
+                   : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 
     [HttpPost("")]

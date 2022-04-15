@@ -109,7 +109,8 @@ public class AuthorizationController : ControllerBase
 
                 yield break;
 
-            case "AspNet.Identity.SecurityStamp": yield break;
+            case "AspNet.Identity.SecurityStamp": 
+                yield break;
 
             default:
                 yield return Destinations.AccessToken;

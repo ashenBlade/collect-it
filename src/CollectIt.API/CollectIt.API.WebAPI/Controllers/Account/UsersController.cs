@@ -84,16 +84,13 @@ public class UsersController : ControllerBase
                                                     string username, 
                                                     int userId)
     {
-        _logger.LogInformation("Hit changeusername");
         try
         {
             var user = await _userManager.FindUserByIdAsync(userId);
             if (user is null)
             {
-                // _logger.LogInformation("User not found: {User}", User.Identity.Name);
                 return NotFound("User with provided claims not found");
             }
-            _logger.LogInformation("User id = {UserId}", user.Id);
             if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
             {
                 
