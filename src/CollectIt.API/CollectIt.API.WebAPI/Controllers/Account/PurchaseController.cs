@@ -58,13 +58,7 @@ public class PurchaseController : ControllerBase
     [HttpPost("image/{imageId:int}")]
     public async Task<IActionResult> AcquireImage(int imageId)
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
-        {
-            return Forbid();
-        }
-
-        var userId = user.Id;
+        var userId = (await _userManager.GetUserAsync(User)).Id;
         try
         {
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
