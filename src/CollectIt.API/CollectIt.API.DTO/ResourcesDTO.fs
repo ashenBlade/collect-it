@@ -19,18 +19,13 @@ type ReadImageDTO = {
     Extension : string
     
     [<Required>]
-    UploadDate : DateTime
-    
-    [<Required>]
-    Image : byte[]
-    
+    UploadDate : DateTime 
 }
 
-let ReadImageDTO ownerId name tags extension uploadDate fileBytes = {
+let ReadImageDTO ownerId name tags extension uploadDate = {
     OwnerId = ownerId
     Name = name
     Tags = tags
     Extension = extension
     UploadDate = uploadDate
-    Image = fileBytes
 } 

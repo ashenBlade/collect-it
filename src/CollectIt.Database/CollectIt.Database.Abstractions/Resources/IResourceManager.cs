@@ -12,6 +12,8 @@ public interface IResourceManager<TItem>
     Task RemoveAsync(TItem item);
     IAsyncEnumerable<TItem> GetAllByQuery(string query);
     
+    Task<List<TItem>> GetAllPaged(int pageNumber, int pageSize);
+    
     IAsyncEnumerable<TItem> GetAllByName(string name);
     IAsyncEnumerable<TItem> GetAllByTag(string tag);
 }
