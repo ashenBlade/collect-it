@@ -67,5 +67,12 @@ let ToRestrictionFromCreateRestrictionDTO (dto: CreateRestrictionDTO) =
     | :? CreateTagsRestrictionDTO as tags -> TagRestriction(Tags = tags.Tags)
     | _ -> raise (ArgumentOutOfRangeException "Unsupported restriction type")
  
+
+let ToReadAcquiredUserResourceDTO (aur: AcquiredUserResource): ReadAcquiredUserResourceDTO = {
+       PurchaseDate = aur.AcquiredDate
+       Id = aur.ResourceId
+       Name = aur.Resource.Name
+       Address = aur.Resource.Address
+    }
         
         

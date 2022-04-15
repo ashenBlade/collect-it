@@ -130,4 +130,13 @@ public class UserManager: UserManager<User>
         parameter.Value = value;
         return parameter;
     }
+
+    public Task<List<AcquiredUserResource>> GetAcquiredUserImagesAsync(int userId)
+    {
+        return _context.AcquiredUserResources
+                       .Where(aur => aur.UserId == userId)
+                       .Join(_context.Images, aur => aur.ResourceId, i => i.Id, (aur, img) => aur)
+                       .Include(aur => aur.Resource)
+                       .ToListAsync();
+    }
 }

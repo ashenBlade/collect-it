@@ -373,3 +373,12 @@ type OpenIddictResponseSuccess =
 
 [<CLIMutable>]
 type OpenIddictResponseFail = { NONE: int }
+
+
+[<CLIMutable>]
+type ReadAcquiredUserResourceDTO = {
+    PurchaseDate: DateTime
+    Id: int
+    Address: string
+    Name: string
+}

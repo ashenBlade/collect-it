@@ -110,6 +110,16 @@ public class UsersController : ControllerBase
         }
     }
 
+    [HttpGet("{userId:int}/images")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAcquiredImage(int userId)
+    {
+        var acquiredImages = await _userManager.GetAcquiredUserImagesAsync(userId);
+        var readAcquiredUserResourceDtos = acquiredImages.Select(AccountMappers.ToReadAcquiredUserResourceDTO)
+                                                         .ToArray();
+        return Ok(readAcquiredUserResourceDtos);
+    }
+
     [HttpPost("{userId:int}/email")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ChangeUserEmail(int userId, 
