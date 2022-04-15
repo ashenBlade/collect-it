@@ -14,6 +14,11 @@ public class RestrictionModelBinder : IModelBinder
         }
 
         var types = context.ValueProvider.GetValue(nameof(RestrictionType));
+        if (types.Length is 0)
+        {
+            context.Result = ModelBindingResult.Success(null);
+            return;
+        }
         if (types.Length is not 1)
         {
             context.ModelState.AddModelError("RestrictionType", "Multiple restriction types are not allowed");

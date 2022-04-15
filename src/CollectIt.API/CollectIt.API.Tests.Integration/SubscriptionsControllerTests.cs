@@ -158,11 +158,11 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
     [Fact]
     public async Task CreateSubscription_WithValidSubscriptionData_ShouldCreateSubscription()
     {
-        var subscription = new AccountDTO.CreateSubscriptionDTO()
+        var expected = new AccountDTO.CreateSubscriptionDTO()
                            {
                                Description = "Brand new subscription for elite members",
                                Name = "Sample text",
-                               AppliedResourceType = ResourceType.Video,
+                               AppliedResourceType = ResourceType.Image,
                                MaxResourcesCount = 10,
                                MonthDuration = 2,
                                Price = 100,
@@ -176,34 +176,29 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                                                                                 content: new FormUrlEncodedContent(new[]
                                                                                                                                    {
                                                                                                                                        new KeyValuePair<string, string>("Name",
-                                                                                                                                                                        subscription
+                                                                                                                                                                        expected
                                                                                                                                                                            .Name),
                                                                                                                                        new KeyValuePair<string,
                                                                                                                                            string>("Description",
-                                                                                                                                                   subscription.Description),
+                                                                                                                                                   expected.Description),
                                                                                                                                        new KeyValuePair<string,
                                                                                                                                            string>("Price",
-                                                                                                                                                   subscription.Price
+                                                                                                                                                   expected.Price
                                                                                                                                                                .ToString()),
                                                                                                                                        new KeyValuePair<string,
                                                                                                                                            string>("MonthDuration",
-                                                                                                                                                   subscription.MonthDuration
+                                                                                                                                                   expected.MonthDuration
                                                                                                                                                                .ToString()),
                                                                                                                                        new KeyValuePair<string,
                                                                                                                                            string>("MaxResourcesCount",
-                                                                                                                                                   subscription
+                                                                                                                                                   expected
                                                                                                                                                       .MaxResourcesCount
                                                                                                                                                       .ToString()),
                                                                                                                                        new KeyValuePair<string,
                                                                                                                                            string>("AppliedResourceType",
-                                                                                                                                                   ((int)subscription
-                                                                                                                                                          .AppliedResourceType
-                                                                                                                                                   ).ToString()),
-                                                                                                                                       new KeyValuePair<string,
-                                                                                                                                           string>("RestrictionId",
-                                                                                                                                                   subscription.Restriction
-                                                                                                                                                              ?.ToString()
-                                                                                                                                                ?? string.Empty)
+                                                                                                                                                   ((int)expected
+                                                                                                                                                          .AppliedResourceType )
+                                                                                                                                                  .ToString())
                                                                                                                                    }),
                                                                                                 outputHelper: _outputHelper);
         var createdId = result.Id;
@@ -213,11 +208,11 @@ public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplication
                                                                                        bearer, HttpMethod.Get,
                                                                                        _outputHelper);
         Assert.Equal(createdId, actual.Id);
-        Assert.Equal(subscription.Name, actual.Name);
-        Assert.Equal(subscription.Description, actual.Description);
-        Assert.Equal(subscription.Price, actual.Price);
-        Assert.Equal(subscription.MonthDuration, actual.MonthDuration);
-        Assert.Equal(subscription.AppliedResourceType, actual.AppliedResourceType);
+        Assert.Equal(expected.Name, actual.Name);
+        Assert.Equal(expected.Description, actual.Description);
+        Assert.Equal(expected.Price, actual.Price);
+        Assert.Equal(expected.MonthDuration, actual.MonthDuration);
+        Assert.Equal(expected.AppliedResourceType, actual.AppliedResourceType);
     }
     
 }

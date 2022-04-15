@@ -137,7 +137,8 @@ type CreateSubscriptionDTO =
       [<Range(1, Int32.MaxValue)>]
       MaxResourcesCount: int
 
-      Restriction: CreateRestrictionDTO }
+      Restriction: CreateRestrictionDTO
+    }
 
 let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restriction =
     { Name = name

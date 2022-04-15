@@ -55,7 +55,7 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
             var context = scopedServices.GetRequiredService<PostgresqlCollectItDbContext>();
             context.Database.EnsureDeleted();
             context.Database.Migrate();
-            context.Database.EnsureCreated();
+            // context.Database.EnsureCreated();
         });
     }
 }
