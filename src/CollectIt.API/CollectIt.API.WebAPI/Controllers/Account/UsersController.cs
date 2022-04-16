@@ -84,37 +84,36 @@ public class UsersController : ControllerBase
                                                     string username, 
                                                     int userId)
     {
-        _logger.LogInformation("Hit changeusername");
         try
         {
             var user = await _userManager.FindUserByIdAsync(userId);
             if (user is null)
             {
-                // _logger.LogInformation("User not found: {User}", User.Identity.Name);
-                return NotFound("User with provided claims not found");
+                return NotFound();
             }
-            _logger.LogInformation("User id = {UserId}", user.Id);
-            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
+
+            var requester = await _userManager.GetUserAsync(User);
+            if (!( user.Id == requester.Id || await _userManager.IsInRoleAsync(requester, "ADMIN") ))
             {
-                
-                return Unauthorized("Not authorize blyat");
+                return Forbid();
             }
 
             await _userManager.ChangeUsernameAsync(userId, username);
             return NoContent();
         }
-        catch (UserNotFoundException notFoundException)
-        {
-            return NotFound();
-        }
         catch (AccountException accountException)
         {
             return BadRequest(accountException.Message);
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+    }
+
+    [HttpGet("{userId:int}/images")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> GetAcquiredImages(int userId)
+    {
+        var acquiredImages = await _userManager.GetAcquiredUserImagesAsync(userId);
+        return Ok(acquiredImages.Select(AccountMappers.ToReadAcquiredUserResourceDTO)
+                                .ToArray());
     }
 
     [HttpPost("{userId:int}/email")]
@@ -122,6 +121,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> ChangeUserEmail(int userId, 
                                                      [FromForm(Name = "email")]
                                                      [Required]
+                                                     [DataType(DataType.EmailAddress)]
                                                      string email)
     {
         var user = await _userManager.FindUserByIdAsync(userId);
@@ -129,9 +129,11 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-        if (!(userId == user.Id || await _userManager.IsInRoleAsync(user, Role.AdminRoleName)))
+
+        var requester = await _userManager.GetUserAsync(User);
+        if (!(requester.Id == user.Id || await _userManager.IsInRoleAsync(requester, Role.AdminRoleName)))
         {
-            return Forbid();
+            return StatusCode(StatusCodes.Status403Forbidden);
         }
         var result = await _userManager.SetEmailAsync(user, email);
         return result.Succeeded

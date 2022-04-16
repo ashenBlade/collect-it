@@ -10,7 +10,7 @@ public class TagRestriction : Restriction
 
     public override bool IsSatisfiedBy(Resource resource)
     {
-        throw new NotImplementedException("No tags for resource type implemented yet");
+        return resource.Tags.Any(tag => Tags.Contains(tag));
     }
 
     public override string ErrorMessage => "Требуемый ресурс не имеет необходимого тега";

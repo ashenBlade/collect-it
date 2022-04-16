@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
@@ -8,47 +9,41 @@ using CollectIt.MVC.Account.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
 
-[Authorize]
-[Route("payment")]
-public class PaymentController : Controller
+[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+[Route("api/v1/purchase")]
+[ApiController]
+public class PurchaseController : ControllerBase
 {
     private readonly ISubscriptionService _subscriptionService;
     private readonly UserManager _userManager;
-    private readonly ISubscriptionManager _subscriptionManager;
-    private readonly ILogger<PaymentController> _logger;
+    private readonly ILogger<PurchaseController> _logger;
     private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
-    public PaymentController(ISubscriptionService subscriptionService,
-                             UserManager userManager,
-                             ISubscriptionManager subscriptionManager,
-                             ILogger<PaymentController> logger,
-                             IResourceAcquisitionService resourceAcquisitionService,
-                             IImageManager imageManager)
+    public PurchaseController(ISubscriptionService subscriptionService,
+                              UserManager userManager,
+                              ILogger<PurchaseController> logger,
+                              IResourceAcquisitionService resourceAcquisitionService)
     {
         _subscriptionService = subscriptionService;
         _userManager = userManager;
-        _subscriptionManager = subscriptionManager;
         _logger = logger;
         _resourceAcquisitionService = resourceAcquisitionService;
     }
     
-    [HttpPost]
-    [Route("subscribe")]
+    [HttpPost("subscription/{subscriptionId:int}")]
     public async Task<IActionResult> SubscribeUser(int subscriptionId)
     {
         var user = await _userManager.GetUserAsync(User);
         try
         {
             var subscription = await _subscriptionService.SubscribeUserAsync(user.Id, subscriptionId);
+            _logger.LogInformation("User (UserId = {UserId}) successfully subscribed (SubscriptionId = {SubscriptionId}). Created user subscription id: {UserSubscriptionId}", user.Id, subscriptionId, subscription.Id);
             return Ok(AccountMappers.ToReadUserSubscriptionDTO(subscription));
-        }
-        catch (NullReferenceException nullReferenceException)
-        {
-            return NotFound("User with provided id not found");
         }
         catch (UserAlreadySubscribedException userAlreadySubscribedException)
         {
@@ -60,22 +55,15 @@ public class PaymentController : Controller
         }
     }
 
-    [HttpPost("acquire/image/{imageId:int}")]
+    [HttpPost("image/{imageId:int}")]
     public async Task<IActionResult> AcquireImage(int imageId)
     {
+        var userId = (await _userManager.GetUserAsync(User)).Id;
         try
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
-            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId}). AcquiredUserResource Id = {AquiredUserResourceId}", userId,
-                                   imageId, acquired.Id);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId}). AcquiredUserResource Id = {AquiredUserResourceId}", userId, imageId, acquired.Id);
             return NoContent();
-        }
-        catch (FormatException formatException)
-        {
-            _logger.LogError(formatException, "Could not parse user id from user");
-            await HttpContext.SignOutAsync();
-            return UnprocessableEntity();
         }
         catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
         {

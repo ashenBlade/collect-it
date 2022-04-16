@@ -114,7 +114,83 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(expectedNewUsername, actual.UserName);
         client.Dispose();
     }
-
+    
+    [Fact]
+    public async Task PostUsername_WithNewInvalidNameContainingWhitespaces_ShouldReturnBadRequest()
+    {
+        var (client, bearer) = await Initialize();
+        const string invalidUsername = "Invalid username";
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/{userId}/username",
+                                                 HttpStatusCode.BadRequest,
+                                                 HttpMethod.Post,
+                                                 bearer,
+                                                 new MultipartFormDataContent()
+                                                 {
+                                                     {new StringContent(invalidUsername), "username"}
+                                                 });
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task PostUsername_WithNewValidNameAndUserAsRequester_ShouldChangeUsername()
+    {
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        var (client, bearer) = await Initialize(user.UserName, "12345678");
+        const string expectedNewUsername = "SomeUserName";
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/username", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(expectedNewUsername), "username"}
+                                     }, 
+                                     _outputHelper, 
+                                     method: HttpMethod.Post);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}", bearer);
+        Assert.Equal(expectedNewUsername, actual.UserName);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task PostUsername_WithNonexistentUserId_ShouldReturnNotFound()
+    {
+        var (client, bearer) = await Initialize();
+        const string expectedNewUsername = "SomeUserName";
+        await TestsHelpers.AssertStatusCodeAsync(client, 
+                                                 "api/v1/users/80/username", 
+                                                 HttpStatusCode.NotFound,
+                                                 HttpMethod.Post,
+                                                 bearer,
+                                                 new MultipartFormDataContent()
+                                                 {
+                                                     {new StringContent(expectedNewUsername), "username"}
+                                                 });
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task PostUsername_WithValidUsernameAndAdminAsRequester_ShouldChangeUsername()
+    {
+        var user = PostgresqlCollectItDbContext.DefaultUserOne;
+        var userId = user.Id;
+        var (client, bearer) = await Initialize();
+        const string expectedNewUsername = "SomeUserName";
+        await TestsHelpers.SendAsync(client, $"api/v1/users/{userId}/username", bearer,
+                                     new MultipartFormDataContent()
+                                     {
+                                         {new StringContent(expectedNewUsername), "username"}
+                                     }, 
+                                     _outputHelper, 
+                                     method: HttpMethod.Post);
+        var actual =
+            await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, $"api/v1/users/{userId}", bearer);
+        Assert.Equal(expectedNewUsername, actual.UserName);
+        client.Dispose();
+    }
+    
     [Fact]
     public async Task PostEmail_WithNewValidEmail_ShouldChangeEmail()
     {
@@ -123,11 +199,11 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var user = PostgresqlCollectItDbContext.DefaultUserTwo;
         var userId = user.Id;
         var result = await TestsHelpers.SendAsync(client, 
-                                     $"api/v1/users/{userId}/email", 
-                                     bearer,
-                                     new FormUrlEncodedContent(new[]{new KeyValuePair<string, string>("email", expectedNewEmail)}),
-                                     _outputHelper,
-                                     method: HttpMethod.Post);
+                                                  $"api/v1/users/{userId}/email", 
+                                                  bearer,
+                                                  new FormUrlEncodedContent(new[]{new KeyValuePair<string, string>("email", expectedNewEmail)}),
+                                                  _outputHelper,
+                                                  method: HttpMethod.Post);
         var actual =
             await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client, 
                                                                                $"api/v1/users/{userId}",
@@ -136,7 +212,49 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         client.Dispose();
         Assert.Equal(expectedNewEmail, actual.Email);
     }
-
+    
+    [Fact]
+    public async Task PostEmail_WithInvalidEmail_ShouldReturnBadRequest()
+    {
+        var (client, bearer) = await Initialize();
+        const string invalidEmail = "invalid-email-without 'at' sign";
+        var user = PostgresqlCollectItDbContext.DefaultUserTwo;
+        await TestsHelpers.AssertStatusCodeAsync(client, 
+                                                 $"api/v1/users/{user.Id}/email", HttpStatusCode.BadRequest,
+                                                 HttpMethod.Post, bearer, 
+                                                 new FormUrlEncodedContent(new[]
+                                                                           {
+                                                                               new KeyValuePair
+                                                                                   <string,
+                                                                                   string>("email",
+                                                                                           invalidEmail        )
+                                                                           }));
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task PostEmail_WithRequesterNotUserItselfOrAdmin_ShouldReturnForbidden()
+    {
+        var requester = PostgresqlCollectItDbContext.DefaultUserTwo;
+        var userToChange = PostgresqlCollectItDbContext.DefaultUserOne;
+        var (client, bearer) = await Initialize(requester.UserName, "12345678");
+        const string newEmail = "sometotalynewemail@mail.ru";
+        await TestsHelpers.AssertStatusCodeAsync(client, 
+                                                 $"api/v1/users/{userToChange.Id}/email", 
+                                                 HttpStatusCode.Forbidden,
+                                                 HttpMethod.Post, 
+                                                 bearer, 
+                                                 new FormUrlEncodedContent(new[]
+                                                                           {
+                                                                               new KeyValuePair
+                                                                                   <string,
+                                                                                   string>("email",
+                                                                                           newEmail)
+                                                                           }));
+        client.Dispose();
+    }
+    
+    
     [Fact]
     public async Task AssignRole_WithValidRole_ShouldAssignUserToNewRole()
     {

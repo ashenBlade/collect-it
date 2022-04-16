@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Entities.Account;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectIt.API.WebAPI.Controllers.Resources;
@@ -10,23 +12,42 @@ namespace CollectIt.API.WebAPI.Controllers.Resources;
 public class ImageController : Controller
 {
     private IImageManager _imageManager;
-    
+
     public ImageController(IImageManager imageManager)
     {
         _imageManager = imageManager;
     }
 
     [HttpGet("{id:int}")]
-    public  async Task<IActionResult> FindImageById(int id)
+    public async Task<IActionResult> FindImageById(int id)
     {
         var image = await _imageManager.FindByIdAsync(id);
         if (image is null)
             return NotFound();
-        await using (var fileStream = new FileStream(image.Address, FileMode.Open))
-        {
-            var buffer = new byte[fileStream.Length];
-            await fileStream.ReadAsync(buffer);
-            return Ok(ResourcesMappers.ToReadImageDTO(image, buffer));
-        }
+        return Ok(ResourcesMappers.ToReadImageDTO(image));
+    }
+
+    public async Task<IActionResult> FindPhysicalImageById(int id)
+    {
+        var image = await _imageManager.FindByIdAsync(id);
+        if (image is null)
+            return NotFound();
+        return PhysicalFile(image.Address, $"image/{image.Extension}");
+    }
+    
+    [HttpGet("")]
+    public async Task<IActionResult> GetResourcesPaged([FromQuery(Name = "page_number")] 
+        [Range(1, int.MaxValue)]
+        [Required]
+        int pageNumber,
+                                                           
+        [FromQuery(Name = "page_size")] 
+        [Range(1, int.MaxValue)]
+        [Required]
+        int pageSize)
+    {
+        var images = await _imageManager.GetAllPaged(pageNumber, pageSize);
+        return Ok(images.Select(ResourcesMappers.ToReadImageDTO)
+            .ToArray());
     }
 }

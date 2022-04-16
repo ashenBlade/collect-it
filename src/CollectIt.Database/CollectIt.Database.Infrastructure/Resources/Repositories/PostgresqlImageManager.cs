@@ -70,6 +70,13 @@ public class PostgresqlImageManager : IImageManager
         await _context.SaveChangesAsync();
     }
 
+    public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)
+    {
+        return await _context.Images
+            .Skip(( pageNumber - 1 ) * pageSize)
+            .Take(pageSize).ToListAsync();
+    }
+
     public IAsyncEnumerable<Image> GetAllByName(string name)
     {
         return _context.Images

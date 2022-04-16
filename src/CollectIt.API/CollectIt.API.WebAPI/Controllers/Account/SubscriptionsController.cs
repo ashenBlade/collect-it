@@ -1,10 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 
@@ -59,7 +62,6 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
     {
         var subscription = await _subscriptionManager.FindSubscriptionByIdAsync(subscriptionId);
-        
         return subscription is null
                    ? NotFound()
                    : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
@@ -73,13 +75,16 @@ public class SubscriptionsController : ControllerBase
                                                         [FromForm(Name = "active")]
                                                         bool active = false)
     {
+        var restriction = dto.Restriction is null
+                              ? null
+                              : AccountMappers.ToRestrictionFromCreateRestrictionDTO(dto.Restriction);
         var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
                                                                               dto.Description, 
                                                                               dto.MonthDuration,
                                                                               dto.AppliedResourceType, 
                                                                               dto.Price,
                                                                               dto.MaxResourcesCount,
-                                                                              dto.RestrictionId, 
+                                                                              restriction, 
                                                                               active);
         return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
                                AccountMappers.ToReadSubscriptionDTO(subscription));
