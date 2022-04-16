@@ -49,6 +49,9 @@
       <Content Update="Views\Account\MyResources.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
+      <Content Update="Views\Account\TechSupportTab.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
