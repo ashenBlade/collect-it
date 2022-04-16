@@ -67,28 +67,6 @@ public static class TestsHelpers
         return parsed;
     }
 
-    public static async Task PostAsync(CollectItWebApplicationFactory factory, string address, MultipartFormDataContent? form = null, ITestOutputHelper? outputHelper = null)
-    {
-        using var client = factory.CreateClient();
-        using var message = new HttpRequestMessage(HttpMethod.Post, address)
-                            {
-                                Headers =
-                                {
-                                    Authorization = new AuthenticationHeaderValue("Bearer", AdminAccessTokenBearer)
-                                },
-                                Content = form
-                            };
-        var result = await client.SendAsync(message);
-        try
-        {
-            result.EnsureSuccessStatusCode();
-        }
-        catch (Exception exception)
-        {
-            outputHelper?.WriteLine(await result.Content.ReadAsStringAsync());
-        }
-    }
-    
     public static async Task<HttpResponseMessage> SendAsync(HttpClient client,
                                                             string address,
                                                             string bearer,

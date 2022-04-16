@@ -91,18 +91,15 @@ public class UsersController : ControllerBase
             {
                 return NotFound();
             }
-            if (!( user.Id == userId || await _userManager.IsInRoleAsync(user, "ADMIN") ))
+
+            var requester = await _userManager.GetUserAsync(User);
+            if (!( user.Id == requester.Id || await _userManager.IsInRoleAsync(requester, "ADMIN") ))
             {
-                
                 return Forbid();
             }
 
             await _userManager.ChangeUsernameAsync(userId, username);
             return NoContent();
-        }
-        catch (UserNotFoundException notFoundException)
-        {
-            return NotFound();
         }
         catch (AccountException accountException)
         {
@@ -112,12 +109,11 @@ public class UsersController : ControllerBase
 
     [HttpGet("{userId:int}/images")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> GetAcquiredImage(int userId)
+    public async Task<IActionResult> GetAcquiredImages(int userId)
     {
         var acquiredImages = await _userManager.GetAcquiredUserImagesAsync(userId);
-        var readAcquiredUserResourceDtos = acquiredImages.Select(AccountMappers.ToReadAcquiredUserResourceDTO)
-                                                         .ToArray();
-        return Ok(readAcquiredUserResourceDtos);
+        return Ok(acquiredImages.Select(AccountMappers.ToReadAcquiredUserResourceDTO)
+                                .ToArray());
     }
 
     [HttpPost("{userId:int}/email")]
@@ -125,6 +121,7 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> ChangeUserEmail(int userId, 
                                                      [FromForm(Name = "email")]
                                                      [Required]
+                                                     [DataType(DataType.EmailAddress)]
                                                      string email)
     {
         var user = await _userManager.FindUserByIdAsync(userId);
@@ -132,9 +129,11 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-        if (!(userId == user.Id || await _userManager.IsInRoleAsync(user, Role.AdminRoleName)))
+
+        var requester = await _userManager.GetUserAsync(User);
+        if (!(requester.Id == user.Id || await _userManager.IsInRoleAsync(requester, Role.AdminRoleName)))
         {
-            return Forbid();
+            return StatusCode(StatusCodes.Status403Forbidden);
         }
         var result = await _userManager.SetEmailAsync(user, email);
         return result.Succeeded
