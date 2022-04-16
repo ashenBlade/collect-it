@@ -79,7 +79,7 @@ public class ImagesController : Controller
         var user = await _userManager.GetUserAsync(User);
         var address = appEnvironment.WebRootPath + "/imagesFromDb/";
         await using var stream = uploadedFile.OpenReadStream();
-        await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, uploadedFile);
+        await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);
         return View("ImagePostPage");
     }
 

@@ -26,7 +26,7 @@ public class VideoManager : IVideoManager
         return await context.Videos.Where(video => video.Id == id).SingleOrDefaultAsync();
     }
 
-    public Task Create(int ownerId, string address, string fileName, string name, string tags, IFormFile uploadedFile)
+    public Task Create(int ownerId, string address, string fileName, string name, string tags, Stream uploadedFile)
     {
         throw new NotImplementedException();
     }
