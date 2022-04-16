@@ -15,6 +15,9 @@
             <li class="nav-item">
                 <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Home" asp-action="Index">Видео</a>
             </li>
+            <li class="nav-item me-4 ">
+                <a class="nav-link btn-dark transparent text-dark rounded mx-1" asp-controller="Images" asp-action="GetPostView">Изображения</a>
+            </li>
         </ul>
         <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards">Подписки</a>
         @if(User.Identity!.IsAuthenticated)
