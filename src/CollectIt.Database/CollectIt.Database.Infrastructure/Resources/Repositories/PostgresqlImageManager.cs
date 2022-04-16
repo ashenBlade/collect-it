@@ -16,7 +16,7 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(string address,string fileName, string name, string tags, IFormFile uploadedFile)
+    public async Task Create(int ownerId, string address,string fileName, string name, string tags, IFormFile uploadedFile)
     {
         var tagsArray = tags.Split(" ");
         await using (var fileStream = new FileStream(address + fileName, FileMode.Create))
@@ -32,8 +32,7 @@ public class PostgresqlImageManager : IImageManager
             FileName = fileName,
             UploadDate = DateTime.UtcNow,
             Extension = GetExtension(fileName),
-            //Заглушка дальше
-            Owner = await _context.Users.FirstOrDefaultAsync()
+            OwnerId = ownerId
         };
         await AddAsync(image);
     }

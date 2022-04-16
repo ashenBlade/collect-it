@@ -17,7 +17,8 @@ public class ImagesController : Controller
     private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
 
-    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager, ICommentManager commentManager)
+    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
+        ICommentManager commentManager)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
@@ -46,14 +47,16 @@ public class ImagesController : Controller
         if (source == null)
         {
             return View("Error");
-        } 
+        }
+
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
-       // var commentViewModels = new List<CommentViewModel>();
+        // var commentViewModels = new List<CommentViewModel>();
         var model = new ImageViewModel()
         {
             ImageId = id,
-            Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
+            Comments = comments.Select(c => new CommentViewModel()
+                { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
             Owner = source.Owner,
             UploadDate = source.UploadDate,
             Path = source.Address,
@@ -73,14 +76,16 @@ public class ImagesController : Controller
     [Route("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
+        var user = await _userManager.GetUserAsync(User);
         var address = appEnvironment.WebRootPath + "/imagesFromDb/";
-        await _imageManager.Create(address, uploadedFile.FileName, name, tags, uploadedFile);
+        await using var stream = uploadedFile.OpenReadStream();
+        await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, uploadedFile);
         return View("ImagePostPage");
     }
 
     [HttpPost("comment")]
     [Authorize]
-    public async Task<IActionResult> LeaveComment([FromForm]LeaveCommentVewModel model)
+    public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
         var imageId = model.ImageId;
@@ -103,6 +108,6 @@ public class ImagesController : Controller
         //                                                              PostTime = c.UploadDate
         //                                                          })
         //                      };
-        return RedirectToAction("Image", new {id = model.ImageId});
+        return RedirectToAction("Image", new { id = model.ImageId });
     }
 }
