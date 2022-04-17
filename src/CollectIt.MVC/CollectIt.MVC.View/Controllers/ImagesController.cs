@@ -16,6 +16,7 @@ public class ImagesController : Controller
     private readonly ICommentManager _commentManager;
     private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
+    private static readonly int MaxPageSize = 5;
 
     public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager, ICommentManager commentManager)
     {
@@ -25,17 +26,27 @@ public class ImagesController : Controller
         _userManager = userManager;
     }
 
-    [HttpGet]
-    [Route("")]
-    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] [Required] string query)
+    [HttpGet("")]
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")]
+                                                     [Required] 
+                                                     string query, 
+                                                     [FromQuery(Name = "p")]
+                                                     [Range(1, int.MaxValue)]
+                                                     int pageNumber = 1)
     {
         var images = new List<Image>();
-        await foreach (var image in _imageManager.GetAllByQuery(query))
+        await foreach (var image in _imageManager.GetAllByQuery(query, pageNumber, MaxPageSize))
         {
             images.Add(image);
         }
 
-        return View("Images", new ImageCardsViewModel() { Images = images });
+        return View("Images", new ImageCardsViewModel() 
+                              { 
+                                  Images = images, 
+                                  PageNumber = pageNumber,
+                                  MaxImagesCount = MaxPageSize,
+                                  Query = query
+                              });
     }
 
     [HttpGet]
@@ -49,17 +60,17 @@ public class ImagesController : Controller
         } 
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
-       // var commentViewModels = new List<CommentViewModel>();
+        // var commentViewModels = new List<CommentViewModel>();
         var model = new ImageViewModel()
-        {
-            ImageId = id,
-            Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
-            Owner = source.Owner,
-            UploadDate = source.UploadDate,
-            Path = source.Address,
-            Tags = source.Tags,
-            IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
-        };
+                    {
+                        ImageId = id,
+                        Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
+                        Owner = source.Owner,
+                        UploadDate = source.UploadDate,
+                        Path = source.Address,
+                        Tags = source.Tags,
+                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
+                    };
         return View(model);
     }
 

@@ -25,16 +25,16 @@ public class PostgresqlImageManager : IImageManager
         }
 
         var image = new Image()
-        {
-            Address = address,
-            Tags = tagsArray,
-            Name = name,
-            FileName = fileName,
-            UploadDate = DateTime.UtcNow,
-            Extension = GetExtension(fileName),
-            //Заглушка дальше
-            Owner = await _context.Users.FirstOrDefaultAsync()
-        };
+                    {
+                        Address = address,
+                        Tags = tagsArray,
+                        Name = name,
+                        FileName = fileName,
+                        UploadDate = DateTime.UtcNow,
+                        Extension = GetExtension(fileName),
+                        //Заглушка дальше
+                        Owner = await _context.Users.FirstOrDefaultAsync()
+                    };
         await AddAsync(image);
     }
 
@@ -53,9 +53,9 @@ public class PostgresqlImageManager : IImageManager
     public async Task<Image?> FindByIdAsync(int id)
     {
         return await _context.Images
-            .Where(img => img.Id == id)
+                             .Where(img => img.Id == id)
                              .Include(img => img.Owner)
-            .SingleOrDefaultAsync();
+                             .SingleOrDefaultAsync();
     }
 
     public Task UpdateAsync(Image item)
@@ -73,8 +73,8 @@ public class PostgresqlImageManager : IImageManager
     public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)
     {
         return await _context.Images
-            .Skip(( pageNumber - 1 ) * pageSize)
-            .Take(pageSize).ToListAsync();
+                             .Skip(( pageNumber - 1 ) * pageSize)
+                             .Take(pageSize).ToListAsync();
     }
 
     public IAsyncEnumerable<Image> GetAllByName(string name)
@@ -96,12 +96,14 @@ public class PostgresqlImageManager : IImageManager
                        .AnyAsync(aus => aus.UserId == userId && aus.ResourceId == imageId);
     }
 
-    public IAsyncEnumerable<Image> GetAllByQuery(string query)
+    public IAsyncEnumerable<Image> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
     {
         return _context.Images
                        .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
                        .Include(img => img.Owner)
                        .OrderByDescending(img => img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian", query)))
+                       .Skip((pageNumber - 1) * pageSize)
+                       .Take(pageSize)
                        .AsAsyncEnumerable();
     }
 }

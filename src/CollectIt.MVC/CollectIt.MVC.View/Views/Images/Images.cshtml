@@ -15,11 +15,19 @@
             </div>
             <div class="d-flex justify-content-center mh-100">
                 <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">></a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="@(Model.PageNumber == 1 
+                                                         ? "" 
+                                                         : Url.Action("GetImagesByName", new {p = Model.PageNumber - 1, q = Model.Query}))">
+                            previous
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="@(Model.Images.Count == Model.MaxImagesCount
+                                                       ? Url.Action("GetImagesByName", new {p = Model.PageNumber + 1, q = Model.Query})
+                                                       : "")">next</a>
+                        @* @Html.ActionLink("next", "GetImagesByName", new {p = Model.PageNumber + 1, q = Model.Query}, new {@class = "page-link"}) *@
+                    </li>
                 </ul>
             </div>
         </div>

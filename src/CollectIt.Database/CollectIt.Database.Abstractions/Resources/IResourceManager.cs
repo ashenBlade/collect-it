@@ -10,7 +10,7 @@ public interface IResourceManager<TItem>
     Task<TItem?> FindByIdAsync(int id);
     Task Create(string address, string fileName, string name, string tags, IFormFile uploadedFile);
     Task RemoveAsync(TItem item);
-    IAsyncEnumerable<TItem> GetAllByQuery(string query);
+    IAsyncEnumerable<TItem> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15);
     
     Task<List<TItem>> GetAllPaged(int pageNumber, int pageSize);
     
