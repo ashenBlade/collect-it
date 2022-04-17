@@ -6,6 +6,7 @@ using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Infrastructure.Account;
+using CollectIt.MVC.View.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +40,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
-
+services.AddSignalR();
 services.AddIdentity<User, Role>(config =>
          {
              config.User = new UserOptions
@@ -91,4 +92,5 @@ app.MapControllerRoute(
                        name: "default",
                        pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.Run();
