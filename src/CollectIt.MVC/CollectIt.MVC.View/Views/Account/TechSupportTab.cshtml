@@ -68,16 +68,14 @@ const enterInitialState = () => {
     startConversationBtn.enable();
     startConversationBtn.show();
     $('#search-helper-div').hide();
-    let $conversation = $('#conversation-section');
-    $conversation.empty();
-    $conversation.hide();
+    $('#chat').empty();
+    $('#conversation-section').hide();
 }
 
 startConversationBtn.click(async _ => {
     try {
         enterSearchingSupportedState();
-        await hubConnection.start();
-        await hubConnection.invoke('@(isSupport ? "RegisterSupport" : "RegisterClient")');
+        await connectToTechChat();
     } catch (e) { 
         console.error(e);
         enterInitialState();
@@ -104,10 +102,7 @@ function createMessageHtml(user, message) {
     userSpan.classList.add('sr-message-username');
     userSpan.innerHTML = user;
     p.appendChild(userSpan);
-    const messageSpan = document.createElement('span');
-    messageSpan.classList.add('sr-message-text');
-    messageSpan.innerHTML = message;
-    p.appendChild(messageSpan);
+    p.append(message);
     return p;
 }
 const addMessageToChat = (user, message) => {
@@ -156,8 +151,9 @@ hubConnection.on('ChatStarted', () => {
      }
 });
 
-hubConnection.on('ChatEnded', () => {
+hubConnection.on('ChatEnded', async () => {
     enterInitialState();
+    await hubConnection.stop();
 })
 
 hubConnection.on('SendMessageAsync', (user, message) => {

@@ -15,7 +15,7 @@ public class TechSupportChatManager : ITechSupportChatManager
     {
         return $"{client}::{support}";
     }
-    public TechSupportConversation? AddClient(string id)
+    public TechSupportConversation? AddClient(string clientId)
     {
         lock (_locker)
         {
@@ -23,17 +23,19 @@ public class TechSupportChatManager : ITechSupportChatManager
             var techSupportId = _pendingSupportsIds.FirstOrDefault();
             if (techSupportId is not null)
             {
-                _pendingSupportsIds.Remove(id);
+                _pendingSupportsIds.Remove(techSupportId);
                 conversation = new TechSupportConversation()
                                {
-                                   ClientId = id, TechSupportId = techSupportId, GroupId = GetGroupId(id, techSupportId)
+                                   ClientId = clientId, 
+                                   TechSupportId = techSupportId, 
+                                   GroupId = GetGroupId(clientId, techSupportId)
                                };
-                _idToSupportConversations.Add(id, conversation);
+                _idToSupportConversations.Add(clientId, conversation);
                 _idToSupportConversations.Add(techSupportId, conversation);
             }
             else
             {
-                _pendingClientsIds.Add(id);
+                _pendingClientsIds.Add(clientId);
             }
 
             return conversation;
@@ -41,7 +43,7 @@ public class TechSupportChatManager : ITechSupportChatManager
     }
 
 
-    public TechSupportConversation? AddTechSupport(string id)
+    public TechSupportConversation? AddTechSupport(string techSupportId)
     {
         lock (_locker)
         {
@@ -49,17 +51,19 @@ public class TechSupportChatManager : ITechSupportChatManager
             var clientId = _pendingClientsIds.FirstOrDefault();
             if (clientId is not null)
             {
-                _pendingClientsIds.Remove(id);
+                _pendingClientsIds.Remove(clientId);
                 conversation = new TechSupportConversation()
                                {
-                                   ClientId = clientId, TechSupportId = id, GroupId = GetGroupId(clientId, id)
+                                   ClientId = clientId, 
+                                   TechSupportId = techSupportId, 
+                                   GroupId = GetGroupId(clientId, techSupportId)
                                };
-                _idToSupportConversations.Add(id, conversation);
+                _idToSupportConversations.Add(techSupportId, conversation);
                 _idToSupportConversations.Add(clientId, conversation);
             }
             else
             {
-                _pendingSupportsIds.Add(id);
+                _pendingSupportsIds.Add(techSupportId);
             }
 
             return conversation;
@@ -70,20 +74,13 @@ public class TechSupportChatManager : ITechSupportChatManager
     {
         lock (_locker)
         {
-            if (_idToSupportConversations.Remove(id, out var conversation))
+            if (_idToSupportConversations.TryGetValue(id, out var conversation))
             {
-                _idToSupportConversations.Remove(id == conversation.ClientId
-                                                     ? conversation.TechSupportId
-                                                     : conversation.ClientId);
+                _idToSupportConversations.Remove(conversation.ClientId);
+                _idToSupportConversations.Remove(conversation.TechSupportId);
             }
-            else if (_pendingClientsIds.Remove(id))
-            {
-                
-            }
-            else if (_pendingSupportsIds.Remove(id))
-            {
-                
-            }
+            _pendingClientsIds.Remove(id);
+            _pendingSupportsIds.Remove(id);
             return conversation;
         }
     }

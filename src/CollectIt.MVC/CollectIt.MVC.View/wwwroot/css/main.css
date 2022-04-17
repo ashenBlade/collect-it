@@ -372,8 +372,10 @@
 /* 'sr' - SignalR */
 .sr-chat-block {
     height: 500px;
-    overflow: scroll;
     text-align: start;
+    overflow: scroll hidden;
+    word-break: break-all;
+    word-wrap: anywhere;
 }
 
 .sr-message {
