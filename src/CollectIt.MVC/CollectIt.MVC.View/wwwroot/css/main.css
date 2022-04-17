@@ -138,6 +138,10 @@
     margin-top: 291px; 
 }
 
+.l-s-t-none{
+    list-style-type: none;
+}
+
 .ms-6{
     margin-left: 10%;
 }
