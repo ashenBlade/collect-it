@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.View.ViewModels;
 
 public class ProfileAccountViewModel
 {
