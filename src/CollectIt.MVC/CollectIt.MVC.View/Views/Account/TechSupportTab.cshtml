@@ -1,22 +1,92 @@
+    <div><button id="start-conversation-btn" class="btn btn-success p-1">Требуется помощь</button></div>
 <section id="start-conversation-section">
-    <button id="start-conversation-btn" class="btn btn-success p-1">Требуется помощь</button>
+    <div id="search-helper-div">Поиск помощника...</div>
 </section>
-<section id="conversation-section" hidden="hidden">
-    <div>This is conversation section</div>
+<section id="conversation-section">
+    <div>
+        <div id="chat" class="sr-chat-block">
+            <p class="sr-message">
+                <span class="sr-message-username">Some username</span>
+                This is sample user message
+            </p>
+            <p class="sr-message">
+                <span class="sr-message-username">Fuck me</span>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci animi delectus doloremque ducimus error esse natus necessitatibus, omnis quis, recusandae, voluptates. Exercitationem magnam magni nam omnis recusandae, reiciendis tempora.
+            </p>
+        </div>
+        <div id="control-btns" class="mt-2">
+            <div>
+                <input type="text" id="input-message" placeholder="Сообщение" class="form-control"/>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button role="button" id="end-chat" class="btn btn-danger p-1">
+                    Закончить чат
+                </button>
+                <button role="button" id="send-message" class="btn btn-success p-1">
+                    Отправить
+                </button>
+            </div>
+        </div>
+    </div>
 </section>
 
 <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
 <script>
 const hubConnection = new signalR.HubConnectionBuilder().withUrl('/tech-support').build();
 const conversationSection = $('#conversation-section');
-const startConversationBtn = $('#start-conversation-btn');
-const startConversation = () => {
-    startConversationBtn.disable();
-    $("start-conversation-section").hide(); 
-    hubConnection.start();
+const startConversationBtn = document.getElementById('start-conversation-btn');
+const startConversationSection = document.getElementById('start-conversation-section');
+const startConversation = async () => {
+    startConversationBtn.disabled = true;
+    $("#start-conversation-section").hide();
+    $('#conversation-section').show()
+    // await hubConnection.start();
 };
-startConversationBtn.addEventListener('click', _ => {
-    startConversation();
+startConversationBtn.addEventListener('click', async _ => {
+    await startConversation();
+});
+
+const endChat = $('#end-chat');
+const endConversation = async () => {
+    startConversationBtn.disabled = false;
+    startConversationSection
+    .hidden = true;
+    await hubConnection.close();
+}
+const sendMessageButton = $('#send-message');
+
+const inputMessageInput = $('#input-message');
+
+const addMessageToChat = (user, message) => {
+    const messageHtml = createMessageHtml(user === 'Client' ? 'Вы' : 'Помощник', message);
+    document.getElementById('chat').appendChild(messageHtml);
+    
+}
+
+const sendMessage = async msg => {
+    if (typeof msg !== 'string')
+        return;
+    msg = msg.trim();
+    if (msg === '')
+        return;
+    try {
+        await hubConnection.invoke('SendMessage', 'Client', msg)
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+function createMessageHtml(user, message) {
+    const p = document.createElement('p');
+    p.classList.add('sr-message');
+    const userSpan = document.createElement('span');
+    userSpan.classList.add('sr-message-username');
+    userSpan.innerHTML = user;
+    p.appendChild(userSpan);
+    p.append(message);
+    return p;
+}
+hubConnection.on('ReceiveMessage', (user, message) => {
+    addMessageToChat(user, message);
 });
 </script>
-

@@ -366,3 +366,28 @@
     height: 30px;
     width: 30px;
 }
+
+
+/* Tech support */
+/* 'sr' - SignalR */
+.sr-chat-block {
+    height: 500px;
+    overflow: scroll;
+    text-align: start;
+}
+
+.sr-message {
+
+}
+
+.sr-message-username {
+    font-weight: bold;
+}
+
+.sr-message-username::after {
+    content: ': ';
+}
+
+.sr-message-text {
+
+}
