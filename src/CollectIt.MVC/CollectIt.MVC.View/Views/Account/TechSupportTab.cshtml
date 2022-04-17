@@ -70,6 +70,7 @@ const enterInitialState = () => {
     $('#search-helper-div').hide();
     $('#chat').empty();
     $('#conversation-section').hide();
+    inputMessageInput.val('');
 }
 
 startConversationBtn.click(async _ => {
@@ -135,6 +136,7 @@ sendMessageButton.addEventListener('click', async _ => {
         return;
     
     await sendMessage(message);
+    inputMessageInput.val('');
     } catch (e) {
         console.error(e);
     } finally {
