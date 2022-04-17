@@ -42,20 +42,14 @@
         <h6>Автор</h6>
         <img src="@Model.Path" class="img-fluid photo photo-s-3" alt=""/> @Model.Owner.UserName
     </div>
-    <div class="row p-2 m-0" style="width: 40%">
-        <div class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
-            tag
-        </div>
-        <div class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
-            tag
-        </div>
-        <div class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
-            tag
-        </div>
-        <div class="rounded-pill blur-dark wh-0 maw-2 mah-1 mt-2">
-            tag
-        </div> 
-    </div>
+    <ul class="row p-2 m-0 l-s-t-none" style="width: 40%">
+         @foreach (var tag in Model.Tags)
+         {
+             <li class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
+                 @tag
+             </li>
+         }
+    </ul>
 </div>
 <div class="text-decoration-none">
         @foreach (var comment in Model.Comments)
