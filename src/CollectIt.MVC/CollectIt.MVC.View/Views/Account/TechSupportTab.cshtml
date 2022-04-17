@@ -1,2 +1,22 @@
-<div>This is sample tech support tab</div>
+<section id="start-conversation-section">
+    <button id="start-conversation-btn" class="btn btn-success p-1">Требуется помощь</button>
+</section>
+<section id="conversation-section" hidden="hidden">
+    <div>This is conversation section</div>
+</section>
+
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+<script>
+const hubConnection = new signalR.HubConnectionBuilder().withUrl('/tech-support').build();
+const conversationSection = $('#conversation-section');
+const startConversationBtn = $('#start-conversation-btn');
+const startConversation = () => {
+    startConversationBtn.disable();
+    $("start-conversation-section").hide(); 
+    hubConnection.start();
+};
+startConversationBtn.addEventListener('click', _ => {
+    startConversation();
+});
+</script>
 
