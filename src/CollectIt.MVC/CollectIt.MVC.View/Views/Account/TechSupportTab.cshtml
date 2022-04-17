@@ -1,28 +1,30 @@
-    <div><button id="start-conversation-btn" class="btn btn-success p-1">Требуется помощь</button></div>
+@model CollectIt.MVC.View.ViewModels.TechSupportViewModel
+@{
+    var isSupport = Model.IsTechSupport;
+}
 <section id="start-conversation-section">
-    <div id="search-helper-div">Поиск помощника...</div>
-</section>
-<section id="conversation-section">
     <div>
-        <div id="chat" class="sr-chat-block">
-            <p class="sr-message">
-                <span class="sr-message-username">Some username</span>
-                This is sample user message
-            </p>
-            <p class="sr-message">
-                <span class="sr-message-username">Fuck me</span>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus adipisci animi delectus doloremque ducimus error esse natus necessitatibus, omnis quis, recusandae, voluptates. Exercitationem magnam magni nam omnis recusandae, reiciendis tempora.
-            </p>
-        </div>
-        <div id="control-btns" class="mt-2">
+        <button id="start-conversation-btn" class="btn btn-success p-1">
+            @(isSupport ? "Найти нуждающегося" : "Требуется помощь")
+        </button>
+    </div>
+    <div id="search-helper-div" style="display: none">
+        @(isSupport ? "Поиск клиента..." : "Поиск помощника...")
+    </div>
+</section>
+<section id="conversation-section" style="display: none">
+    <div id="chat" class="sr-chat-block">
+    </div>
+    <div>
+        <div id="control-btns" class="my-2">
             <div>
                 <input type="text" id="input-message" placeholder="Сообщение" class="form-control"/>
             </div>
             <div class="d-flex justify-content-between">
-                <button role="button" id="end-chat" class="btn btn-danger p-1">
+                <button role="button" id="end-chat-btn" class="btn btn-danger p-1">
                     Закончить чат
                 </button>
-                <button role="button" id="send-message" class="btn btn-success p-1">
+                <button role="button" id="send-message-btn" class="btn btn-success p-1">
                     Отправить
                 </button>
             </div>
@@ -31,50 +33,69 @@
 </section>
 
 <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+
 <script>
-const hubConnection = new signalR.HubConnectionBuilder().withUrl('/tech-support').build();
+const hubConnection = new signalR.HubConnectionBuilder().withUrl('/tech-support/chat').build();
 const conversationSection = $('#conversation-section');
-const startConversationBtn = document.getElementById('start-conversation-btn');
+const startConversationBtn = $('#start-conversation-btn');
+startConversationBtn.enable = function () {
+    this.prop('disabled', false);
+}
+startConversationBtn.disable = function () {
+    this.prop('disabled', true);
+}
 const startConversationSection = document.getElementById('start-conversation-section');
-const startConversation = async () => {
-    startConversationBtn.disabled = true;
-    $("#start-conversation-section").hide();
-    $('#conversation-section').show()
-    // await hubConnection.start();
+
+const connectToTechChat = async () => {
+    await hubConnection.start();
+    await hubConnection.invoke('@(isSupport ? "RegisterSupport" : "RegisterClient")');
 };
-startConversationBtn.addEventListener('click', async _ => {
-    await startConversation();
+
+const enterSearchingSupportedState = () => {
+    startConversationBtn.disable();
+    $('#search-helper-div').show();
+    $('#conversation-section').hide();
+}
+
+const enterConversationState = () => {
+    startConversationBtn.disable();
+    startConversationBtn.hide();
+    $('#search-helper-div').hide();
+    $('#conversation-section').show();
+}
+
+const enterInitialState = () => {
+    startConversationBtn.enable();
+    startConversationBtn.show();
+    $('#search-helper-div').hide();
+    let $conversation = $('#conversation-section');
+    $conversation.empty();
+    $conversation.hide();
+}
+
+startConversationBtn.click(async _ => {
+    try {
+        enterSearchingSupportedState();
+        await hubConnection.start();
+        await hubConnection.invoke('@(isSupport ? "RegisterSupport" : "RegisterClient")');
+    } catch (e) { 
+        console.error(e);
+        enterInitialState();
+    }
 });
 
-const endChat = $('#end-chat');
-const endConversation = async () => {
-    startConversationBtn.disabled = false;
-    startConversationSection
-    .hidden = true;
-    await hubConnection.close();
-}
-const sendMessageButton = $('#send-message');
+const endChatBtn = $('#end-chat-btn');
 
+const endConversation = async () => {
+    enterInitialState();
+    await hubConnection.stop();
+}
+
+endChatBtn.click(async _ => await endConversation())
+
+const sendMessageButton = document.getElementById('send-message-btn');
 const inputMessageInput = $('#input-message');
 
-const addMessageToChat = (user, message) => {
-    const messageHtml = createMessageHtml(user === 'Client' ? 'Вы' : 'Помощник', message);
-    document.getElementById('chat').appendChild(messageHtml);
-    
-}
-
-const sendMessage = async msg => {
-    if (typeof msg !== 'string')
-        return;
-    msg = msg.trim();
-    if (msg === '')
-        return;
-    try {
-        await hubConnection.invoke('SendMessage', 'Client', msg)
-    } catch (err) {
-        console.error(err)
-    }
-}
 
 function createMessageHtml(user, message) {
     const p = document.createElement('p');
@@ -83,10 +104,63 @@ function createMessageHtml(user, message) {
     userSpan.classList.add('sr-message-username');
     userSpan.innerHTML = user;
     p.appendChild(userSpan);
-    p.append(message);
+    const messageSpan = document.createElement('span');
+    messageSpan.classList.add('sr-message-text');
+    messageSpan.innerHTML = message;
+    p.appendChild(messageSpan);
     return p;
 }
-hubConnection.on('ReceiveMessage', (user, message) => {
-    addMessageToChat(user, message);
+const addMessageToChat = (user, message) => {
+    const chat = document.getElementById('chat');
+    const messageHtml = createMessageHtml(user, message);
+    chat.appendChild(messageHtml); 
+}
+
+const sendMessage = async msg => {
+    if (typeof(msg) !== 'string')
+        return;
+    msg = msg.trim();
+    if (msg === '')
+        return;
+    try {
+        await hubConnection.invoke('SendMessage', msg);
+    } catch (err) {
+        console.error(err);
+        alert('Something happend on server. Stopping conversation...');
+        enterConversationState();
+        await hubConnection.stop();
+    }
+}
+
+sendMessageButton.addEventListener('click', async _ => {
+    sendMessageButton.disabled = true;
+    try {
+    const message = inputMessageInput.val().trim();
+    if (!message || message === '')
+        return;
+    
+    await sendMessage(message);
+    } catch (e) {
+        console.error(e);
+    } finally {
+      sendMessageButton.disabled = false;
+    }
+});
+
+hubConnection.on('ChatStarted', () => {
+     try {
+       enterConversationState();
+     } catch (e) {
+        console.error(e);
+        enterInitialState();
+     }
+});
+
+hubConnection.on('ChatEnded', () => {
+    enterInitialState();
+})
+
+hubConnection.on('SendMessageAsync', (user, message) => {
+    addMessageToChat(user === 'Client' ? '@(isSupport ? Html.Raw("Клиент") : Html.Raw( "Вы" ))' : '@(isSupport ? Html.Raw("Вы") : Html.Raw( "Помощник" ) )', message);
 });
 </script>

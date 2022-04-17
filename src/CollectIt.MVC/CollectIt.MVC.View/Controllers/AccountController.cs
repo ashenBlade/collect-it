@@ -72,7 +72,8 @@ public class AccountController : Controller
                         Email = User.FindFirstValue(ClaimTypes.Email),
                         Subscriptions = subscriptions,
                         AcquiredResources = resources,
-                        UsersResources = myResources
+                        UsersResources = myResources,
+                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User))
                     };
         return View(model);
     }

@@ -10,7 +10,6 @@ public class TechSupportChatManager : ITechSupportChatManager
     private readonly HashSet<string> _pendingClientsIds = new();
     private readonly HashSet<string> _pendingSupportsIds = new();
     private readonly Dictionary<string, TechSupportConversation> _idToSupportConversations = new();
-    // private readonly List<TechSupportConversation> _conversations = new();
 
     private static string GetGroupId(string client, string support)
     {
@@ -71,15 +70,16 @@ public class TechSupportChatManager : ITechSupportChatManager
     {
         lock (_locker)
         {
-            TechSupportConversation? conversation = null;
-            if (_idToSupportConversations.Remove(id, out conversation))
+            if (_idToSupportConversations.Remove(id, out var conversation))
             {
-                
+                _idToSupportConversations.Remove(id == conversation.ClientId
+                                                     ? conversation.TechSupportId
+                                                     : conversation.ClientId);
             }
             else if (_pendingClientsIds.Remove(id))
             {
                 
-            } 
+            }
             else if (_pendingSupportsIds.Remove(id))
             {
                 

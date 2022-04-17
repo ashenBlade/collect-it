@@ -16,4 +16,5 @@ public class AccountViewModel
     public IEnumerable<AccountUserResource> AcquiredResources { get; set; }
     
     public IEnumerable<AccountUserResource> UsersResources { get; set; }
+    public IEnumerable<string> Roles { get; set; }
 }

@@ -94,7 +94,10 @@
         </div>
         <div class="tab-pane fade" id="tech-support-tab" role="tabpanel">
             <div class="p-4">
-                @await Html.PartialAsync("TechSupportTab")
+                @await Html.PartialAsync("TechSupportTab", new TechSupportViewModel()
+                                                           {
+                                                               IsTechSupport = Model.Roles.Any(r => r == "Technical Support")
+                                                           })
             </div>
         </div>
     </div>

@@ -17,17 +17,15 @@ public class TechSupportChatHub : Hub<ITechSupportHub>
         _chatManager = chatManager;
     }
 
-    public override Task OnConnectedAsync()
-    {
-        return base.OnConnectedAsync();
-    }
-
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         var conversation = _chatManager.DisconnectUser(Context.ConnectionId);
         if (conversation is not null)
         {
-            Clients.Group(conversation.GroupId).ChatEnded();
+            var group = conversation.GroupId;
+            Clients.Group(group).ChatEnded();
+            Groups.RemoveFromGroupAsync(conversation.ClientId, group);
+            Groups.RemoveFromGroupAsync(conversation.TechSupportId, group);
         }
         return base.OnDisconnectedAsync(exception);
     }
@@ -54,7 +52,6 @@ public class TechSupportChatHub : Hub<ITechSupportHub>
         {
             return;
         }
-
         var group = conversation.GroupId;
         await Groups.AddToGroupAsync(conversation.ClientId, group);
         await Groups.AddToGroupAsync(conversation.TechSupportId, group);
@@ -65,6 +62,10 @@ public class TechSupportChatHub : Hub<ITechSupportHub>
     public async Task SendMessageAsync(string message)
     {
         var conversation = _chatManager.GetConversationByUserId(Context.ConnectionId);
+        if (conversation is null)
+        {
+            return;
+        }
         var groupId = conversation.GroupId;
         var requesterId = Context.ConnectionId;
         await Clients.Group(groupId)

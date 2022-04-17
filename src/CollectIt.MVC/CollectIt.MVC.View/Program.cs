@@ -89,9 +89,9 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.MapControllerRoute(
                        name: "default",
                        pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.Run();
