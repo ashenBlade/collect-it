@@ -50,6 +50,15 @@ public class TechSupportChatHub : Hub<ITechSupportHub>
     public async Task RegisterSupport()
     { 
         var conversation = _chatManager.AddTechSupport(Context.ConnectionId);
+        if (conversation is null)
+        {
+            return;
+        }
+
+        var group = conversation.GroupId;
+        await Groups.AddToGroupAsync(conversation.ClientId, group);
+        await Groups.AddToGroupAsync(conversation.TechSupportId, group);
+        await Clients.Group(group).ChatStarted();
     }
 
     [HubMethodName("SendMessage")]

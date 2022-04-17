@@ -5,6 +5,7 @@ using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
+using CollectIt.MVC.Abstractions.TechSupport;
 using CollectIt.MVC.Infrastructure.Account;
 using CollectIt.MVC.View.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -71,7 +72,7 @@ services.AddIdentity<User, Role>(config =>
 services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
-
+services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
