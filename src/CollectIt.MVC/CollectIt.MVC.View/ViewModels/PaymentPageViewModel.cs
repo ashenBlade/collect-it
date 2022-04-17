@@ -1,6 +1,6 @@
 using CollectIt.Database.Entities.Account;
 
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.View.ViewModels;
 
 public class PaymentPageViewModel
 {

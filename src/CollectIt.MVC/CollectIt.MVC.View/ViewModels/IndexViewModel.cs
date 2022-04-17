@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CollectIt.Database.Entities.Account;
-using Microsoft.AspNetCore.Mvc;
 
-namespace CollectIt.MVC.View.Models;
+namespace CollectIt.MVC.View.ViewModels;
 
 public class IndexViewModel
 {
