@@ -1,5 +1,7 @@
-import {Column, DataType, Model, PrimaryKey, Table} from "sequelize-typescript";
+import {BelongsToMany, Column, DataType, Model, PrimaryKey, Table} from "sequelize-typescript";
 import {CHAR} from "sequelize";
+import { Role } from "src/roles/roles.model";
+import {UserRole} from "../roles/user-role.model";
 
 export interface UsersModelInterface {
     email: string;
@@ -133,4 +135,7 @@ export class User extends Model<User, UsersModelInterface> {
         defaultValue: 0
     })
     accessFailedCount: number;
+
+    @BelongsToMany(() => Role, () => UserRole)
+    roles: Role[];
 }
