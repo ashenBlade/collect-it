@@ -37,4 +37,10 @@ export class AuthService {
             })
         }
     }
+
+    verifyJwt(jwt: string) {
+        return this.jwtService.verify(jwt, {
+            secret: process.env.JWT_PRIVATE_KEY
+        })
+    }
 }
