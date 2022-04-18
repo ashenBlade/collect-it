@@ -19,6 +19,14 @@ export class RolesService {
             });
     }
 
+    async getRoleByName(roleName: string) {
+        return await this.roleRepository.findOne({
+            where: {
+                normalizedName: roleName.toUpperCase()
+            }
+        });
+    }
+
     async getRolesForUser(userId: number) {
         throw Error('Can get roles for user yet');
     }

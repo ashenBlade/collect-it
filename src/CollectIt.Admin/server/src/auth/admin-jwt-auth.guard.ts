@@ -11,14 +11,21 @@ export class AdminJwtAuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const req = context.switchToHttp().getRequest();
         try {
-            const authHeader: string = req.headers.authorization;
-            const [bearer, token] = authHeader.split(' ');
-            if (!((bearer === 'Bearer') && token)) {
+            const authHeader: string | undefined = req.headers.authorization;
+            if (!authHeader) {
                 throw new UnauthorizedException({
                     message: 'Authorization header is not provided'
                 });
             }
-            const user = this.jwtService.verify(token);
+            const [bearer, token] = authHeader.split(' ');
+            if (!((bearer === 'Bearer') && token)) {
+                throw new UnauthorizedException({
+                    message: 'Authorization header is invalid'
+                });
+            }
+            const user = this.jwtService.verify(token, {
+                secret: process.env.JWT_PRIVATE_KEY
+            });
             if (user.roles.some(r => r === 'Admin')) {
                 req.user = user;
                 return true;
