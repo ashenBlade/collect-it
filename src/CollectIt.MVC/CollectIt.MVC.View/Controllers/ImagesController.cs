@@ -77,11 +77,11 @@ public class ImagesController : Controller
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
         var address = Path.Combine(Directory
             .GetParent(appEnvironment.ContentRootPath)
-            .Parent
-            .Parent
-            .Parent.FullName, "res","database","images");
+            .Parent.FullName, "content", "images");
     
         await using var stream = uploadedFile.OpenReadStream();
         await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);

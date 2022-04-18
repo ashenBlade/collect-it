@@ -56,13 +56,7 @@ public class PostgresqlImageManager : IImageManager
                              .Include(img => img.Owner)
             .SingleOrDefaultAsync();
     }
-
-    public Task UpdateAsync(Image item)
-    {
-        _context.Images.Update(item);
-        return _context.SaveChangesAsync();
-    }
-
+    
     public async Task RemoveAsync(Image item)
     {
         _context.Images.Remove(item);
