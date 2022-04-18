@@ -1,6 +1,6 @@
 import {Column, DataType, Model, Table} from "sequelize-typescript";
 
-interface UserCreationAttributes {
+export interface UsersModelInterface {
     email: string;
     username: string;
     passwordHash: string;
@@ -9,7 +9,7 @@ interface UserCreationAttributes {
 @Table({
     tableName: 'AspNetUsers',
 })
-export class User extends Model<User, UserCreationAttributes> {
+export class User extends Model<User, UsersModelInterface> {
     @Column({
         allowNull: false,
         type: DataType.INTEGER,
