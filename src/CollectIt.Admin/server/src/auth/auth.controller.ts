@@ -10,10 +10,7 @@ export class AuthController {
     }
     @Post('login')
     async login(@Body() dto: LoginDto) {
-        try {
             return await this.authService.login(dto);
-        } catch (e) {
-            throw new HttpException(e.message, HttpStatus.BAD_REQUEST);
-        }
+
     }
 }
