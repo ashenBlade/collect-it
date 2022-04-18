@@ -2,7 +2,11 @@ import {Column, ForeignKey, Model, Table} from "sequelize-typescript";
 import {User} from "../users/users.model";
 import {Role} from "./roles.model";
 
-@Table({tableName: 'AspNetUserRoles'})
+@Table({
+    tableName: 'AspNetUserRoles',
+    timestamps: false,
+    paranoid: false,
+})
 export class UserRole extends Model<UserRole> {
     @Column({
         allowNull: false,
