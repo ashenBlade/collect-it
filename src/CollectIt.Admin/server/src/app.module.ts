@@ -10,7 +10,7 @@ import {UserRole} from "./roles/user-role.model";
 
 @Module({
   controllers: [],
-  providers: [RolesService],
+  providers: [],
   imports: [
       ConfigModule.forRoot({
           envFilePath: `.${process.env.NODE_ENV}.env`
