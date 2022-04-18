@@ -1,4 +1,5 @@
-import {Column, DataType, Model, Table} from "sequelize-typescript";
+import {Column, DataType, Model, PrimaryKey, Table} from "sequelize-typescript";
+import {CHAR} from "sequelize";
 
 export interface UsersModelInterface {
     email: string;
@@ -34,10 +35,36 @@ export class User extends Model<User, UsersModelInterface> {
     @Column({
         allowNull: true,
         type: DataType.CHAR,
+        unique: true,
+        field: 'NormalizedUserName'
+    })
+    normalizedUsername: string;
+
+    @Column({
+        allowNull: true,
+        type: DataType.CHAR,
         unique: false,
         field: 'Email'
     })
     email: string;
+
+    @Column({
+        allowNull: true,
+        type: DataType.CHAR,
+        unique: true,
+        primaryKey: false,
+        field: 'NormalizedEmail'
+    })
+    normalizedEmail: string;
+
+    @Column({
+        allowNull: false,
+        type: DataType.BOOLEAN,
+        unique: false,
+        defaultValue: false,
+        field: 'EmailConfirmed'
+    })
+    emailConfirmed: boolean;
 
     @Column({
         allowNull: true,
@@ -46,4 +73,64 @@ export class User extends Model<User, UsersModelInterface> {
         field: 'PasswordHash',
     })
     passwordHash: string;
+
+    @Column({
+        allowNull: true,
+        type: DataType.TEXT,
+        field: 'SecurityStamp'
+    })
+    securityStamp: string;
+
+    @Column({
+        allowNull: true,
+        type: DataType.TEXT,
+        field: 'ConcurrencyStamp'
+    })
+    concurrencyStamp: string;
+
+    @Column({
+        allowNull: true,
+        field: 'PhoneNumber',
+        type: DataType.TEXT
+    })
+    phoneNumber: string;
+
+    @Column({
+        allowNull: false,
+        field: 'PhoneNumberConfirmed',
+        type: DataType.BOOLEAN,
+        defaultValue: false
+    })
+    phoneNumberConfirmed: boolean;
+
+    @Column({
+        allowNull: false,
+        field: 'TwoFactorEnabled',
+        type: DataType.BOOLEAN,
+        defaultValue: false
+    })
+    twoFactorEnabled: string;
+
+    @Column({
+        allowNull: true,
+        field: 'LockoutEnd',
+        type: DataType.DATE,
+    })
+    lockoutEnd: Date;
+
+    @Column({
+        allowNull: false,
+        type: DataType.BOOLEAN,
+        field: 'LockoutEnabled',
+        defaultValue: false
+    })
+    lockoutEnable: boolean;
+
+    @Column({
+        allowNull: false,
+        type: DataType.INTEGER,
+        field: 'AccessFailedCount',
+        defaultValue: 0
+    })
+    accessFailedCount: number;
 }
