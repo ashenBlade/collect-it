@@ -1,4 +1,5 @@
 import {Column, DataType, Model, Table} from "sequelize-typescript";
+import sequelize from "sequelize";
 
 export interface UsersModelInterface {
     email: string;
@@ -8,6 +9,9 @@ export interface UsersModelInterface {
 
 @Table({
     tableName: 'AspNetUsers',
+    // Remove 'createdAt', 'deletedAt' columns
+    paranoid: false,
+    timestamps: false
 })
 export class User extends Model<User, UsersModelInterface> {
     @Column({
