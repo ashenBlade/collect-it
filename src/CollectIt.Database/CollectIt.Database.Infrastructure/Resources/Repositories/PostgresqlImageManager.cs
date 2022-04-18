@@ -19,7 +19,7 @@ public class PostgresqlImageManager : IImageManager
     public async Task Create(int ownerId, string address,string fileName, string name, string tags, Stream uploadedFile)
     {
         var tagsArray = tags.Split(" ");
-        await using (var fileStream = new FileStream(address + fileName, FileMode.Create))
+        await using (var fileStream = new FileStream(Path.Combine(address,fileName), FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }

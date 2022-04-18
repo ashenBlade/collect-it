@@ -77,7 +77,12 @@ public class ImagesController : Controller
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
         var user = await _userManager.GetUserAsync(User);
-        var address = appEnvironment.WebRootPath + "/imagesFromDb/";
+        var address = Path.Combine(Directory
+            .GetParent(appEnvironment.ContentRootPath)
+            .Parent
+            .Parent
+            .Parent.FullName, "res","database","images");
+    
         await using var stream = uploadedFile.OpenReadStream();
         await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);
         return View("ImagePostPage");
