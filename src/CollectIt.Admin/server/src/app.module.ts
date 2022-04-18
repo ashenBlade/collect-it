@@ -7,20 +7,21 @@ import {ConfigModule} from "@nestjs/config";
 import {User} from "./users/users.model";
 
 @Module({
-  controllers: [UsersController],
-  providers: [UsersService],
+  controllers: [],
+  providers: [],
   imports: [
       ConfigModule.forRoot({
           envFilePath: `.${process.env.NODE_ENV}.env`
       }),
       SequelizeModule.forRoot({
           dialect: 'postgres',
-          host: process.env.POSGRES_HOST,
-          port: Number(process.env.POSGRES_PORT),
+          host: process.env.POSTGRES_HOST,
+          port: Number(process.env.POSTGRES_PORT),
           username: process.env.POSTGRES_USER,
-          password: String(process.env.POSGRES_PASSWORD),
+          password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User]
+          models: [User],
+          logging: true,
       }),
       UsersModule
   ],
