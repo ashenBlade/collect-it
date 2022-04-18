@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import {UsersService} from "./users/users.service";
 import {UsersController} from "./users/users.controller";
 import {ConfigModule} from "@nestjs/config";
+import {User} from "./users/users.model";
 
 @Module({
   controllers: [UsersController],
@@ -19,7 +20,7 @@ import {ConfigModule} from "@nestjs/config";
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: []
+          models: [User]
       }),
       UsersModule
   ],
