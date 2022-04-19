@@ -24,6 +24,8 @@ export class Subscription extends Model<Subscription, CreateSubscriptionInterfac
         type: DataType.INTEGER,
         allowNull: false,
         primaryKey: true,
+        autoIncrementIdentity: true,
+        autoIncrement: true
     })
     id: number;
 

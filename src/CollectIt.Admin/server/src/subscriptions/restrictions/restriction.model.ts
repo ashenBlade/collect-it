@@ -16,13 +16,13 @@ export class CreateRestrictionInterface {
     timestamps: false,
     paranoid: false,
 })
-export class Restriction extends Model<Restriction> {
+export class Restriction extends Model<Restriction, CreateRestrictionInterface> {
     @Column({
         field: 'Id',
         type: DataType.INTEGER,
-        unique: true,
-        autoIncrementIdentity: true,
         primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
     })
     id: number;
 

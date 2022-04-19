@@ -7,22 +7,6 @@ import {RestrictionType} from "./restriction-type";
 export class RestrictionsService {
     constructor(@InjectModel(Restriction) private restrictionsRepository: typeof Restriction) {  }
 
-    createRestrictionAsync(restrictionType: RestrictionType, ...rest: any): Promise<Restriction> {
-        switch (restrictionType) {
-            case RestrictionType.Author:
-                return this.createAuthorRestrictionAsync(rest.authorId);
-            case RestrictionType.DaysAfter:
-                return this.createDaysAfterRestrictionAsync(rest.daysAfter);
-            case RestrictionType.DaysTo:
-                return this.createDaysToRestrictionAsync(rest.daysTo);
-            case RestrictionType.Tags:
-                return this.createTagsRestrictionAsync(rest.tags);
-            case RestrictionType.Size:
-                return this.createSizeRestrictionAsync(rest.sizeBytes);
-        }
-        throw new Error('Unsupported restriction type')
-    }
-
     async createAuthorRestrictionAsync(authorId: number) {
         const restriction = await this.restrictionsRepository.create({
             restrictionType: RestrictionType.Author,
@@ -30,7 +14,7 @@ export class RestrictionsService {
             daysAfter: null,
             daysTo: null,
             tags: null,
-            sizeBytes: null,
+            sizeBytes: null
         });
         return restriction;
     }
@@ -86,6 +70,14 @@ export class RestrictionsService {
     async findRestrictionById(id: number): Promise<Restriction> {
         const restriction = await this.restrictionsRepository.findByPk(id);
         return restriction;
+    }
+
+    async deleteRestrictionById(id: number) {
+        await this.restrictionsRepository.destroy({
+            where: {
+                id: id
+            }
+        });
     }
 
 }

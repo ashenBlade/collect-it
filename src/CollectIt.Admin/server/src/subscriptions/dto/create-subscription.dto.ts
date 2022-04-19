@@ -1,5 +1,6 @@
 import {ResourceType} from "../../common/resource-type";
 import {IsInt, IsNumber, Min, MinLength} from "class-validator";
+import {CreateRestrictionDto} from "../restrictions/dto/create-restriction.dto";
 
 export class CreateSubscriptionDto {
     readonly name: string;
@@ -17,6 +18,6 @@ export class CreateSubscriptionDto {
     readonly appliedResourceType: ResourceType;
     @Min(1)
     readonly maxResourcesCount: number;
-    readonly restriction: CreateSubscriptionDto | null;
+    readonly restriction: CreateRestrictionDto | null;
     readonly active: boolean | null;
 }
