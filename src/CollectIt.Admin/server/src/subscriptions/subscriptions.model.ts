@@ -19,7 +19,7 @@ export interface CreateSubscriptionInterface {
     timestamps: false,
     paranoid: false
 })
-export class Subscription extends Model<Subscription> {
+export class Subscription extends Model<Subscription, CreateSubscriptionInterface> {
     @Column({
         field: 'Id',
         type: DataType.INTEGER,
