@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {Subscription} from "./subscriptions.model";
-import {Restriction} from "../restrictions/restriction.model";
-import {RestrictionsService} from "../restrictions/restrictions.service";
+import {Restriction} from "./restrictions/restriction.model";
+import {RestrictionsService} from "./restrictions/restrictions.service";
 import {ResourceType} from "../common/resource-type";
-import {RestrictionType} from "../restrictions/restriction-type";
+import {RestrictionType} from "./restrictions/restriction-type";
 
 @Injectable()
 export class SubscriptionsService {
@@ -46,5 +46,19 @@ export class SubscriptionsService {
     async getSubscriptionById(subscriptionId: number): Promise<Subscription> {
         const subscription = await this.subscriptionsRepository.findByPk(subscriptionId);
         return subscription;
+    }
+
+    async getSubscriptionsByResourceType(resourceType: ResourceType,
+                                         pageNumber: number | null,
+                                         pageSize: number | null) {
+        await this.subscriptionsRepository.findAndCountAll({
+            where: {
+                appliedResourceType: resourceType
+            },
+            limit: pageSize,
+            offset: pageNumber
+                    ? (pageNumber - 1) * pageSize
+                    : null
+        })
     }
 }

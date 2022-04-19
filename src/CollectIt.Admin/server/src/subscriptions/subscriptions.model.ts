@@ -1,7 +1,6 @@
 import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {ResourceType} from "../common/resource-type";
-import {ENUM} from "sequelize";
-import {Restriction} from "../restrictions/restriction.model";
+import {Restriction} from "./restrictions/restriction.model";
 
 export interface CreateSubscriptionInterface {
     name: string;
@@ -64,8 +63,9 @@ export class Subscription extends Model<Subscription, CreateSubscriptionInterfac
 
     @Column({
         field: 'AppliedResourceType',
-        type: DataType.ENUM('Any', 'Image', 'Video', 'Music'),
+        type: DataType.TEXT,
         allowNull: false,
+        values: ['Any', 'Image', 'Video', 'Music']
     })
     appliedResourceType: ResourceType;
 

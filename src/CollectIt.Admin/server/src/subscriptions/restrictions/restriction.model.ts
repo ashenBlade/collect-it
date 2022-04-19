@@ -1,6 +1,6 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {RestrictionType} from "./restriction-type";
-import {User} from "../users/users.model";
+import {User} from "../../users/users.model";
 
 export class CreateRestrictionInterface {
     readonly restrictionType: RestrictionType;
@@ -22,6 +22,7 @@ export class Restriction extends Model<Restriction> {
         type: DataType.INTEGER,
         unique: true,
         autoIncrementIdentity: true,
+        primaryKey: true,
     })
     id: number;
 

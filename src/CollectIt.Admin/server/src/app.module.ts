@@ -11,11 +11,13 @@ import { AuthModule } from './auth/auth.module';
 import { SubscriptionsService } from './subscriptions/subscriptions.service';
 import { SubscriptionsController } from './subscriptions/subscriptions.controller';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { RestrictionsService } from './restrictions/restrictions.service';
+import { RestrictionsService } from './subscriptions/restrictions/restrictions.service';
+import {Restriction} from "./subscriptions/restrictions/restriction.model";
+import {Subscription} from "./subscriptions/subscriptions.model";
 
 @Module({
-  controllers: [SubscriptionsController],
-  providers: [SubscriptionsService, RestrictionsService],
+  controllers: [],
+  providers: [],
   imports: [
       ConfigModule.forRoot({
           envFilePath: `.${process.env.NODE_ENV}.env`
@@ -27,7 +29,7 @@ import { RestrictionsService } from './restrictions/restrictions.service';
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User, Role, UserRole],
+          models: [User, Role, UserRole, Restriction, Subscription],
       }),
       UsersModule,
       RolesModule,
