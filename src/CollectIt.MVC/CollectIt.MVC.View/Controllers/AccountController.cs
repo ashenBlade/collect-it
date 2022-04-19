@@ -2,7 +2,7 @@
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Entities.Account;
-using CollectIt.MVC.View.Models;
+using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -72,7 +72,8 @@ public class AccountController : Controller
                         Email = User.FindFirstValue(ClaimTypes.Email),
                         Subscriptions = subscriptions,
                         AcquiredResources = resources,
-                        UsersResources = myResources
+                        UsersResources = myResources,
+                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User))
                     };
         return View(model);
     }

@@ -2,7 +2,7 @@
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.MVC.View.Models;
+using CollectIt.MVC.View.ViewModels;
 using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,10 @@ public class ImagesController : Controller
     private readonly ICommentManager _commentManager;
     private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
+
     private readonly string address;
+
+    private static readonly int MaxPageSize = 5;
 
     public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
         ICommentManager commentManager)
@@ -30,17 +33,27 @@ public class ImagesController : Controller
             .Parent.FullName, "content", "images");
     }
 
-    [HttpGet]
-    [Route("")]
-    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] [Required] string query)
+    [HttpGet("")]
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")]
+                                                     [Required] 
+                                                     string query, 
+                                                     [FromQuery(Name = "p")]
+                                                     [Range(1, int.MaxValue)]
+                                                     int pageNumber = 1)
     {
         var images = new List<Image>();
-        await foreach (var image in _imageManager.GetAllByQuery(query))
+        await foreach (var image in _imageManager.GetAllByQuery(query, pageNumber, MaxPageSize))
         {
             images.Add(image);
         }
 
-        return View("Images", new ImageCardsViewModel() { Images = images });
+        return View("Images", new ImageCardsViewModel() 
+                              { 
+                                  Images = images, 
+                                  PageNumber = pageNumber,
+                                  MaxImagesCount = MaxPageSize,
+                                  Query = query
+                              });
     }
 
     [HttpGet]

@@ -39,7 +39,7 @@ public class MusicManager : IMusicManager
         await context.SaveChangesAsync();
     }
 
-    public IAsyncEnumerable<Music> GetAllByQuery(string query)
+    public IAsyncEnumerable<Music> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
     {
         throw new NotImplementedException();
     }

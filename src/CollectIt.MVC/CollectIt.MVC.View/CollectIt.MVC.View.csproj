@@ -8,6 +8,7 @@
   </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -47,6 +48,9 @@
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
       <Content Update="Views\Account\MyResources.cshtml">
+        <DependentUpon>Profile.cshtml</DependentUpon>
+      </Content>
+      <Content Update="Views\Account\TechSupportTab.cshtml">
         <DependentUpon>Profile.cshtml</DependentUpon>
       </Content>
     </ItemGroup>

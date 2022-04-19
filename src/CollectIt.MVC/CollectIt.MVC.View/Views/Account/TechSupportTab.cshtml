@@ -1,0 +1,164 @@
+@model CollectIt.MVC.View.ViewModels.TechSupportViewModel
+@{
+    var isSupport = Model.IsTechSupport;
+}
+<section id="start-conversation-section">
+    <div>
+        <button id="start-conversation-btn" class="btn btn-success p-1">
+            @(isSupport ? "Найти нуждающегося" : "Требуется помощь")
+        </button>
+    </div>
+    <div id="search-helper-div" style="display: none">
+        @(isSupport ? "Поиск клиента..." : "Поиск помощника...")
+    </div>
+</section>
+<section id="conversation-section" style="display: none">
+    <div id="chat" class="sr-chat-block">
+    </div>
+    <div>
+        <div id="control-btns" class="my-2">
+            <div>
+                <input type="text" id="input-message" placeholder="Сообщение" class="form-control"/>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button role="button" id="end-chat-btn" class="btn btn-danger p-1">
+                    Закончить чат
+                </button>
+                <button role="button" id="send-message-btn" class="btn btn-success p-1">
+                    Отправить
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+
+<script>
+const hubConnection = new signalR.HubConnectionBuilder().withUrl('/tech-support/chat').build();
+const conversationSection = $('#conversation-section');
+const startConversationBtn = $('#start-conversation-btn');
+startConversationBtn.enable = function () {
+    this.prop('disabled', false);
+}
+startConversationBtn.disable = function () {
+    this.prop('disabled', true);
+}
+const startConversationSection = document.getElementById('start-conversation-section');
+
+const connectToTechChat = async () => {
+    await hubConnection.start();
+    await hubConnection.invoke('@(isSupport ? "RegisterSupport" : "RegisterClient")');
+};
+
+const enterSearchingSupportedState = () => {
+    startConversationBtn.disable();
+    $('#search-helper-div').show();
+    $('#conversation-section').hide();
+}
+
+const enterConversationState = () => {
+    startConversationBtn.disable();
+    startConversationBtn.hide();
+    $('#search-helper-div').hide();
+    $('#conversation-section').show();
+}
+
+const enterInitialState = () => {
+    startConversationBtn.enable();
+    startConversationBtn.show();
+    $('#search-helper-div').hide();
+    $('#chat').empty();
+    $('#conversation-section').hide();
+    inputMessageInput.val('');
+}
+
+startConversationBtn.click(async _ => {
+    try {
+        enterSearchingSupportedState();
+        await connectToTechChat();
+    } catch (e) { 
+        console.error(e);
+        enterInitialState();
+    }
+});
+
+const endChatBtn = $('#end-chat-btn');
+
+const endConversation = async () => {
+    enterInitialState();
+    await hubConnection.stop();
+}
+
+endChatBtn.click(async _ => await endConversation())
+
+const sendMessageButton = document.getElementById('send-message-btn');
+const inputMessageInput = $('#input-message');
+
+
+function createMessageHtml(user, message) {
+    const p = document.createElement('p');
+    p.classList.add('sr-message');
+    const userSpan = document.createElement('span');
+    userSpan.classList.add('sr-message-username');
+    userSpan.innerHTML = user;
+    p.appendChild(userSpan);
+    p.append(message);
+    return p;
+}
+const addMessageToChat = (user, message) => {
+    const chat = document.getElementById('chat');
+    const messageHtml = createMessageHtml(user, message);
+    chat.appendChild(messageHtml); 
+}
+
+const sendMessage = async msg => {
+    if (typeof(msg) !== 'string')
+        return;
+    msg = msg.trim();
+    if (msg === '')
+        return;
+    try {
+        await hubConnection.invoke('SendMessage', msg);
+    } catch (err) {
+        console.error(err);
+        alert('Something happend on server. Stopping conversation...');
+        enterConversationState();
+        await hubConnection.stop();
+    }
+}
+
+sendMessageButton.addEventListener('click', async _ => {
+    sendMessageButton.disabled = true;
+    try {
+    const message = inputMessageInput.val().trim();
+    if (!message || message === '')
+        return;
+    
+    await sendMessage(message);
+    inputMessageInput.val('');
+    } catch (e) {
+        console.error(e);
+    } finally {
+      sendMessageButton.disabled = false;
+    }
+});
+
+hubConnection.on('ChatStarted', () => {
+     try {
+       enterConversationState();
+     } catch (e) {
+        console.error(e);
+        enterInitialState();
+     }
+});
+
+hubConnection.on('ChatEnded', async () => {
+    enterInitialState();
+    await hubConnection.stop();
+})
+
+hubConnection.on('SendMessageAsync', (user, message) => {
+    addMessageToChat(user === 'Client' ? '@(isSupport ? Html.Raw("Клиент") : Html.Raw( "Вы" ))' : '@(isSupport ? Html.Raw("Вы") : Html.Raw( "Помощник" ) )', message);
+});
+</script>

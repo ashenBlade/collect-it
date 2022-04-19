@@ -2,8 +2,8 @@
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
+using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using CollectIt.MVC.View.Models;
 using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
 
 namespace CollectIt.MVC.View.Controllers;

@@ -5,7 +5,9 @@ using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
+using CollectIt.MVC.Abstractions.TechSupport;
 using CollectIt.MVC.Infrastructure.Account;
+using CollectIt.MVC.View.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +41,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
-
+services.AddSignalR();
 services.AddIdentity<User, Role>(config =>
          {
              config.User = new UserOptions
@@ -70,7 +72,7 @@ services.AddIdentity<User, Role>(config =>
 services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
-
+services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -87,6 +89,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.MapControllerRoute(
                        name: "default",
                        pattern: "{controller=Home}/{action=Index}/{id?}");

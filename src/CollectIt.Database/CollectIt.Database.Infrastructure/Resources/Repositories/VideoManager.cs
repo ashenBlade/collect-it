@@ -42,7 +42,7 @@ public class VideoManager : IVideoManager
         await context.SaveChangesAsync();
     }
 
-    public IAsyncEnumerable<Video> GetAllByQuery(string query)
+    public IAsyncEnumerable<Video> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
     {
         throw new NotImplementedException();
     }
