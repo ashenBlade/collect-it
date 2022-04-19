@@ -1,5 +1,6 @@
-import {Column, DataType, Model, Table} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {RestrictionType} from "./restriction-type";
+import {User} from "../users/users.model";
 
 export class CreateRestrictionInterface {
     readonly restrictionType: RestrictionType;
@@ -34,9 +35,14 @@ export class Restriction extends Model<Restriction> {
     @Column({
         field: 'AuthorId',
         type: DataType.INTEGER,
-        allowNull: true
+        allowNull: true,
+        defaultValue: null,
     })
+    @ForeignKey(() => User)
     authorId: number | null;
+
+    @BelongsTo(() => User)
+    author: User;
 
     @Column({
         field: 'DaysAfter',
@@ -44,7 +50,8 @@ export class Restriction extends Model<Restriction> {
         allowNull: true,
         validate: {
             min: 1
-        }
+        },
+        defaultValue: null,
     })
     daysAfter: number | null;
 
@@ -54,7 +61,8 @@ export class Restriction extends Model<Restriction> {
         allowNull: true,
         validate: {
             min: 1
-        }
+        },
+        defaultValue: null,
     })
     daysTo: number | null;
 
@@ -62,13 +70,15 @@ export class Restriction extends Model<Restriction> {
         field: 'SizeBytes',
         type: DataType.INTEGER,
         allowNull: true,
+        defaultValue: null,
     })
     sizeBytes: number | null;
 
     @Column({
         field: 'Tags',
         type: DataType.ARRAY(DataType.STRING),
-        allowNull: true
+        allowNull: true,
+        defaultValue: null,
     })
     tags: string[] | null;
 }
