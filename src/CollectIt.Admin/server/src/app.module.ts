@@ -8,10 +8,14 @@ import { RolesModule } from './roles/roles.module';
 import {Role} from "./roles/roles.model";
 import {UserRole} from "./roles/user-role.model";
 import { AuthModule } from './auth/auth.module';
+import { SubscriptionsService } from './subscriptions/subscriptions.service';
+import { SubscriptionsController } from './subscriptions/subscriptions.controller';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { RestrictionsService } from './restrictions/restrictions.service';
 
 @Module({
-  controllers: [],
-  providers: [],
+  controllers: [SubscriptionsController],
+  providers: [SubscriptionsService, RestrictionsService],
   imports: [
       ConfigModule.forRoot({
           envFilePath: `.${process.env.NODE_ENV}.env`
@@ -27,7 +31,8 @@ import { AuthModule } from './auth/auth.module';
       }),
       UsersModule,
       RolesModule,
-      AuthModule
+      AuthModule,
+      SubscriptionsModule
   ],
 })
 export class AppModule {
