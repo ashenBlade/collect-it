@@ -16,6 +16,7 @@ public class ImagesController : Controller
     private readonly ICommentManager _commentManager;
     private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
+    private readonly string address;
 
     public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
         ICommentManager commentManager)
@@ -24,6 +25,9 @@ public class ImagesController : Controller
         _commentManager = commentManager;
         this.appEnvironment = appEnvironment;
         _userManager = userManager;
+        address = Path.Combine(Directory
+            .GetParent(appEnvironment.ContentRootPath)
+            .Parent.FullName, "content", "images");
     }
 
     [HttpGet]
@@ -76,17 +80,55 @@ public class ImagesController : Controller
     [Route("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
+        var ext = uploadedFile.FileName.Split(".").Last();
+        if (ext != "jpg" && ext != "png")
+            return View("Error");
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToAction("Login", "Account");
-        var address = Path.Combine(Directory
-            .GetParent(appEnvironment.ContentRootPath)
-            .Parent.FullName, "content", "images");
-    
         await using var stream = uploadedFile.OpenReadStream();
         await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);
         return View("ImagePostPage");
     }
+
+    [Route("download/{id:int}")]
+    public async Task<IActionResult> DownloadImage(int id)
+    {
+        var source = await _imageManager.FindByIdAsync(id);
+        if (source == null)
+        {
+            return View("Error");
+        }
+
+        var fi = new FileInfo(Path.Combine(address, source.FileName));
+
+        await using var fileStream = fi.OpenRead();
+        var contentType = $"application/{source.Extension}";
+
+        return new FileStreamResult(fileStream, contentType)
+        {
+            FileDownloadName = fi.Name
+        };
+    }
+
+    /*
+[NonAction]
+private IActionResult StreamDownload(FileInfo fi)
+{
+    // Открываем поток.
+    var stream = fi.OpenRead(); //System.IO.File.OpenRead(path);
+
+    var contentType = MyUtility.ContentTypes(fi.Extension);
+
+    // 1 способ
+    // return File(stream, content_type, file);
+
+    // 2 способ
+    return new FileStreamResult(stream, contentType)
+    {
+        FileDownloadName = fi.Name
+    };
+}*/
 
     [HttpPost("comment")]
     [Authorize]

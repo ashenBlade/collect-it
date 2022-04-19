@@ -39,7 +39,7 @@ public class PostgresqlImageManager : IImageManager
 
     private string GetExtension(string fileName)
     {
-        return fileName.Split(".").Last();
+        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
     }
     
     public async Task<int> AddAsync(Image item)
