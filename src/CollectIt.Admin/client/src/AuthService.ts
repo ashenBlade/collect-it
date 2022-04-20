@@ -1,7 +1,14 @@
 import React from "react";
+import jwt_decode from 'jwt-decode';
 
-const jwtKeyName = "admin.jwt"
-
+const jwtKeyName = "admin.jwt";
+const loginPath = '/login';
+const assertAdminRole = (jwt: string) => {
+    const decoded: any = jwt_decode(jwt);
+    if (!decoded.roles?.some((r: string) => r === 'Admin')) {
+        throw new Error('User not in admin role');
+    }
+}
 const authState = {
     isAuthenticated: () : boolean => {
         return !!window.localStorage.getItem(jwtKeyName);
@@ -15,7 +22,8 @@ const authState = {
         return jwt;
     },
 
-    login: (jwt: string): void => {
+    adminLogin: (jwt: string): void => {
+        assertAdminRole(jwt);
         window.localStorage.setItem(jwtKeyName, jwt);
     },
 
@@ -28,9 +36,9 @@ const authState = {
         return jwt
             ? [true, jwt]
             : [false, null];
-    }
+    },
 
-
+    loginPath: (): string => loginPath,
 }
 
 export const AuthContext = React.createContext(authState);
