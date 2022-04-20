@@ -7,7 +7,7 @@ const authState = {
         return !!window.localStorage.getItem(jwtKeyName);
     },
 
-    getJwt: () : string => {
+    jwt: () : string => {
         const jwt = window.localStorage.getItem(jwtKeyName);
         if (!jwt) {
             throw new Error('No jwt stored');
@@ -15,8 +15,12 @@ const authState = {
         return jwt;
     },
 
-    setJwt: (jwt: string): void => {
+    login: (jwt: string): void => {
         window.localStorage.setItem(jwtKeyName, jwt);
+    },
+
+    logout: (): void => {
+        window.localStorage.removeItem(jwtKeyName);
     },
 
     tryGetJwt: (): [boolean, string | null] => {
@@ -25,6 +29,8 @@ const authState = {
             ? [true, jwt]
             : [false, null];
     }
+
+
 }
 
 export const AuthContext = React.createContext(authState);
