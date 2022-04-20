@@ -33,13 +33,13 @@ export class UsersController {
 
 
 
-    @Post(':userId/role')
+    @Post(':userId/roles')
     @AuthorizeAdmin()
     async assignRole(@Body() {role, userId}: AssignRoleDto) {
         await this.usersService.addRoleToUser(userId, role);
     }
 
-    @Delete(':userId/role')
+    @Delete(':userId/roles')
     @AuthorizeAdmin()
     async removeRole(@Body() {userId, role}: RemoveRoleDto) {
         await this.usersService.removeRoleFromUser(userId, role);
