@@ -1,8 +1,6 @@
 import {BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
 import {User} from "./users.model";
 import {InjectModel} from "@nestjs/sequelize";
-import {CreateUserDto} from "./dto/create-user.dto";
-// import {Role} from "../roles/roles.model";
 import {RolesService} from "../roles/roles.service";
 import {Role} from "../roles/roles.model";
 
@@ -14,9 +12,6 @@ export class UsersService {
     constructor(@InjectModel(User) private usersRepository: typeof User,
                 private rolesService: RolesService) { }
 
-    async createUser(dto: CreateUserDto) {
-        return await this.usersRepository.create(dto);
-    }
 
     async getAllUsersAsync(pageNumber: number, pageSize: number) {
         return await this.usersRepository.findAndCountAll({
