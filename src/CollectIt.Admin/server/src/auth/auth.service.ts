@@ -3,9 +3,7 @@ import { UsersService } from "../users/users.service";
 import { LoginDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "../users/users.model";
-import * as bcrypt from 'bcrypt';
 import * as identity from 'aspnetcore-identity-password-hasher';
-import {STATUS_CODES} from "http";
 
 @Injectable()
 export class AuthService {
@@ -13,7 +11,7 @@ export class AuthService {
                 private jwtService: JwtService) { }
 
     async login({username, password}: LoginDto) {
-        const user = await this.userService.getUserByUsername(username);
+        const user = await this.userService.getUserByUsernameAsync(username);
         if (!user) {
             throw new HttpException('Invalid Username/Password couple', HttpStatus.BAD_REQUEST);
         }

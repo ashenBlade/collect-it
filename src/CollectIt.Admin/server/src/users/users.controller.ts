@@ -1,12 +1,12 @@
-import {Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Res, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Query, Res} from '@nestjs/common';
 import {UsersService} from "./users.service";
-import {AdminJwtAuthGuard, AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
+import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
 import {AssignRoleDto} from "./dto/assign-role.dto";
 import {Authorize} from "../auth/jwt-auth.guard";
 import {RemoveRoleDto} from "./dto/remove-role.dto";
-import {ReadUserDto, ToReadUserDto} from "./dto/read-user.dto";
+import {ToReadUserDto} from "./dto/read-user.dto";
 import {Response} from "express";
-import {STATUS_CODES} from "http";
+import {NotFoundError} from "rxjs";
 
 @Authorize()
 @Controller('api/v1/users')
@@ -32,18 +32,12 @@ export class UsersController {
     }
 
     @Get(':userId')
-    async getUserById(@Param('userId') userId: number, @Res() res: Response) {
+    async getUserById(@Param('userId', new ParseIntPipe({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})) userId: number, @Res() res: Response) {
         const user = await this.usersService.getUserByIdAsync(userId);
         if (!user) {
             res.status(HttpStatus.NOT_FOUND);
         } else {
-            const dto: ReadUserDto = {
-                id: user.id,
-                roles: user.roles.map(r => r.name),
-                email: user.email,
-                username: user.username
-            }
-            res.send(dto);
+            res.send(ToReadUserDto(user));
         }
         res.end();
     }
@@ -57,6 +51,15 @@ export class UsersController {
             res.status(HttpStatus.NOT_FOUND);
         }
         res.end();
+    }
+
+    @Get('/with-username/:username')
+    async getUserByUsername(@Param('username')username: string) {
+        const user = await this.usersService.getUserByUsernameAsync(username);
+        if (!user) {
+            throw new NotFoundError(`User with username = ${username} not found`);
+        }
+        return ToReadUserDto(user);
     }
 
     @Post(':userId/roles')
