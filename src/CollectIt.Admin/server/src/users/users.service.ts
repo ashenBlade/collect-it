@@ -6,6 +6,8 @@ import {CreateUserDto} from "./dto/create-user.dto";
 import {RolesService} from "../roles/roles.service";
 import {Role} from "../roles/roles.model";
 
+const emailRegex = /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
+
 @Injectable()
 export class UsersService {
 
@@ -73,5 +75,17 @@ export class UsersService {
         return await this.usersRepository.findByPk(userId, {
             include: [{all: true}],
         });
+    }
+
+    async changeEmailAsync(userId: number, email: string) {
+        if (!emailRegex.test(email)) {
+            throw new Error('Email is not in correct form');
+        }
+        await this.usersRepository.update({email: email},
+            {
+                where: {
+                    id: userId
+                }
+            });
     }
 }

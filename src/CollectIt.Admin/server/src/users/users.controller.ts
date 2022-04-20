@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, HttpStatus, Param, ParseIntPipe, Post, Query, Res} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
+    Post,
+    Query,
+    Res
+} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
 import {AssignRoleDto} from "./dto/assign-role.dto";
@@ -7,6 +19,7 @@ import {RemoveRoleDto} from "./dto/remove-role.dto";
 import {ToReadUserDto} from "./dto/read-user.dto";
 import {Response} from "express";
 import {NotFoundError} from "rxjs";
+import {ParseEmailPipe} from "../common/parse-email.pipe";
 
 @Authorize()
 @Controller('api/v1/users')
@@ -62,6 +75,20 @@ export class UsersController {
         return ToReadUserDto(user);
     }
 
+    @Post(':userId/email')
+    @AuthorizeAdmin()
+    async changeUserEmail(@Param('userId', new ParseIntPipe()) userId: number,
+                          @Body('email', new ParseEmailPipe()) email: string) {
+        try {
+            await this.usersService.changeEmailAsync(userId, email);
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: e.message
+            });
+        }
+    }
+
     @Post(':userId/roles')
     @AuthorizeAdmin()
     async assignRole(@Body() {role, userId}: AssignRoleDto) {
@@ -72,6 +99,5 @@ export class UsersController {
     @AuthorizeAdmin()
     async removeRole(@Body() {userId, role}: RemoveRoleDto) {
         await this.usersService.removeRoleFromUser(userId, role);
-
     }
 }
