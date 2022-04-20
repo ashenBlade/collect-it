@@ -4,6 +4,7 @@ import {InjectModel} from "@nestjs/sequelize";
 import {CreateUserDto} from "./dto/create-user.dto";
 // import {Role} from "../roles/roles.model";
 import {RolesService} from "../roles/roles.service";
+import {Role} from "../roles/roles.model";
 
 @Injectable()
 export class UsersService {
@@ -16,8 +17,13 @@ export class UsersService {
         return user;
     }
 
-    async getAllUsers() {
-        const users = await this.usersRepository.findAll();
+    async getAllUsersAsync(pageNumber: number, pageSize: number) {
+        const users = await this.usersRepository.findAndCountAll({
+            limit: pageSize,
+            offset: (pageNumber - 1) * pageSize,
+            include: Role,
+            order: [['Id', 'ASC']]
+        });
         return users;
     }
 
