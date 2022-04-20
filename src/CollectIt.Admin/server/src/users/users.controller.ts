@@ -20,6 +20,7 @@ import {ToReadUserDto} from "./dto/read-user.dto";
 import {Response} from "express";
 import {NotFoundError} from "rxjs";
 import {ParseEmailPipe} from "../common/parse-email.pipe";
+import {ParseUsernamePipe} from "../common/parse-username.pipe";
 
 @Authorize()
 @Controller('api/v1/users')
@@ -67,7 +68,7 @@ export class UsersController {
     }
 
     @Get('/with-username/:username')
-    async getUserByUsername(@Param('username')username: string) {
+    async getUserByUsername(@Param('username', new ParseUsernamePipe())username: string) {
         const user = await this.usersService.getUserByUsernameAsync(username);
         if (!user) {
             throw new NotFoundError(`User with username = ${username} not found`);
