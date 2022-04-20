@@ -4,7 +4,7 @@ import {AdminJwtAuthGuard, AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
 import {AssignRoleDto} from "./dto/assign-role.dto";
 import {Authorize} from "../auth/jwt-auth.guard";
 import {RemoveRoleDto} from "./dto/remove-role.dto";
-import {ReadUserDto} from "./dto/read-user.dto";
+import {ReadUserDto, ToReadUserDto} from "./dto/read-user.dto";
 import {Response} from "express";
 import {STATUS_CODES} from "http";
 
@@ -48,7 +48,16 @@ export class UsersController {
         res.end();
     }
 
-
+    @Get('/with-email/:email')
+    async getUserByEmail(@Param('email') email: string, @Res() res: Response) {
+        const user = await this.usersService.getUserByEmailAsync(email);
+        if (user) {
+            res.send(ToReadUserDto(user));
+        } else {
+            res.status(HttpStatus.NOT_FOUND);
+        }
+        res.end();
+    }
 
     @Post(':userId/roles')
     @AuthorizeAdmin()
