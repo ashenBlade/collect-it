@@ -36,7 +36,7 @@ public class ImageController : Controller
     }
     
     [HttpGet("")]
-    public async Task<IActionResult> GetResourcesPaged([FromQuery(Name = "page_number")] 
+    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "page_number")] 
         [Range(1, int.MaxValue)]
         [Required]
         int pageNumber,

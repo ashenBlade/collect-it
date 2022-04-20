@@ -16,31 +16,30 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(string address,string fileName, string name, string tags, IFormFile uploadedFile)
+    public async Task Create(int ownerId, string address,string fileName, string name, string tags, Stream uploadedFile)
     {
         var tagsArray = tags.Split(" ");
-        await using (var fileStream = new FileStream(address + fileName, FileMode.Create))
+        await using (var fileStream = new FileStream(Path.Combine(address,fileName), FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }
 
         var image = new Image()
-                    {
-                        Address = address,
-                        Tags = tagsArray,
-                        Name = name,
-                        FileName = fileName,
-                        UploadDate = DateTime.UtcNow,
-                        Extension = GetExtension(fileName),
-                        //Заглушка дальше
-                        Owner = await _context.Users.FirstOrDefaultAsync()
-                    };
+        {
+            Address = address,
+            Tags = tagsArray,
+            Name = name,
+            FileName = fileName,
+            UploadDate = DateTime.UtcNow,
+            Extension = GetExtension(fileName),
+            OwnerId = ownerId
+        };
         await AddAsync(image);
     }
 
     private string GetExtension(string fileName)
     {
-        return fileName.Split(".").Last();
+        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
     }
     
     public async Task<int> AddAsync(Image item)
@@ -57,13 +56,7 @@ public class PostgresqlImageManager : IImageManager
                              .Include(img => img.Owner)
                              .SingleOrDefaultAsync();
     }
-
-    public Task UpdateAsync(Image item)
-    {
-        _context.Images.Update(item);
-        return _context.SaveChangesAsync();
-    }
-
+    
     public async Task RemoveAsync(Image item)
     {
         _context.Images.Remove(item);

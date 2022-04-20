@@ -16,14 +16,21 @@ public class ImagesController : Controller
     private readonly ICommentManager _commentManager;
     private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
+
+    private readonly string address;
+
     private static readonly int MaxPageSize = 5;
 
-    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager, ICommentManager commentManager)
+    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
+        ICommentManager commentManager)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
         this.appEnvironment = appEnvironment;
         _userManager = userManager;
+        address = Path.Combine(Directory
+            .GetParent(appEnvironment.ContentRootPath)
+            .Parent.FullName, "content", "images");
     }
 
     [HttpGet("")]
@@ -57,20 +64,22 @@ public class ImagesController : Controller
         if (source == null)
         {
             return View("Error");
-        } 
+        }
+
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
         // var commentViewModels = new List<CommentViewModel>();
         var model = new ImageViewModel()
-                    {
-                        ImageId = id,
-                        Comments = comments.Select(c=> new CommentViewModel(){Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content}),
-                        Owner = source.Owner,
-                        UploadDate = source.UploadDate,
-                        Path = source.Address,
-                        Tags = source.Tags,
-                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
-                    };
+        {
+            ImageId = id,
+            Comments = comments.Select(c => new CommentViewModel()
+                { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
+            Owner = source.Owner,
+            UploadDate = source.UploadDate,
+            Path = source.Address,
+            Tags = source.Tags,
+            IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
+        };
         return View(model);
     }
 
@@ -84,14 +93,59 @@ public class ImagesController : Controller
     [Route("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
-        var address = appEnvironment.WebRootPath + "/imagesFromDb/";
-        await _imageManager.Create(address, uploadedFile.FileName, name, tags, uploadedFile);
+        var ext = uploadedFile.FileName.Split(".").Last();
+        if (ext != "jpg" && ext != "png")
+            return View("Error");
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+            return RedirectToAction("Login", "Account");
+        await using var stream = uploadedFile.OpenReadStream();
+        await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);
         return View("ImagePostPage");
     }
 
+    [Route("download/{id:int}")]
+    public async Task<IActionResult> DownloadImage(int id)
+    {
+        var source = await _imageManager.FindByIdAsync(id);
+        if (source == null)
+        {
+            return View("Error");
+        }
+
+        var fi = new FileInfo(Path.Combine(address, source.FileName));
+
+        await using var fileStream = fi.OpenRead();
+        var contentType = $"application/{source.Extension}";
+
+        return new FileStreamResult(fileStream, contentType)
+        {
+            FileDownloadName = fi.Name
+        };
+    }
+
+    /*
+[NonAction]
+private IActionResult StreamDownload(FileInfo fi)
+{
+    // Открываем поток.
+    var stream = fi.OpenRead(); //System.IO.File.OpenRead(path);
+
+    var contentType = MyUtility.ContentTypes(fi.Extension);
+
+    // 1 способ
+    // return File(stream, content_type, file);
+
+    // 2 способ
+    return new FileStreamResult(stream, contentType)
+    {
+        FileDownloadName = fi.Name
+    };
+}*/
+
     [HttpPost("comment")]
     [Authorize]
-    public async Task<IActionResult> LeaveComment([FromForm]LeaveCommentVewModel model)
+    public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
         var user = await _userManager.GetUserAsync(User);
         var imageId = model.ImageId;
@@ -114,6 +168,6 @@ public class ImagesController : Controller
         //                                                              PostTime = c.UploadDate
         //                                                          })
         //                      };
-        return RedirectToAction("Image", new {id = model.ImageId});
+        return RedirectToAction("Image", new { id = model.ImageId });
     }
 }
