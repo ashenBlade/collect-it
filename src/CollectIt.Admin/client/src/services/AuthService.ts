@@ -41,4 +41,4 @@ const authState = {
     loginPath: (): string => loginPath,
 }
 
-export const AuthContext = React.createContext(authState);
+export const AdminAuthContext = React.createContext(authState);
