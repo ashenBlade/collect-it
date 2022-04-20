@@ -72,4 +72,11 @@ export class UsersService {
             }, HttpStatus.BAD_REQUEST);
         }
     }
+
+    async getUserByIdAsync(userId: number) {
+        const user = await this.usersRepository.findByPk(userId, {
+            include: Role,
+        });
+        return user;
+    }
 }
