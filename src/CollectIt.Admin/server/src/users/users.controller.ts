@@ -13,7 +13,6 @@ export class UsersController {
     constructor(private usersService: UsersService) { }
 
     @Get('')
-    @UseGuards(AdminJwtAuthGuard)
     async getAll(@Query('page_number') pageNumber: number,
                  @Query('page_size') pageSize: number,
                  @Res() response: Response) {
