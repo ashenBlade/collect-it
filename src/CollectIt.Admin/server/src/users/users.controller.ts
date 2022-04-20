@@ -13,9 +13,7 @@ import {
 } from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
-import {AssignRoleDto} from "./dto/assign-role.dto";
 import {Authorize} from "../auth/jwt-auth.guard";
-import {RemoveRoleDto} from "./dto/remove-role.dto";
 import {ToReadUserDto} from "./dto/read-user.dto";
 import {Response} from "express";
 import {NotFoundError} from "rxjs";
@@ -109,13 +107,15 @@ export class UsersController {
 
     @Post(':userId/roles')
     @AuthorizeAdmin()
-    async assignRole(@Body() {role, userId}: AssignRoleDto) {
+    async assignRole(@Param('userId', new ParseIntPipe()) userId: number,
+                     @Body('role') role: string) {
         await this.usersService.addRoleToUser(userId, role);
     }
 
     @Delete(':userId/roles')
     @AuthorizeAdmin()
-    async removeRole(@Body() {userId, role}: RemoveRoleDto) {
+    async removeRole(@Param('userId', new ParseIntPipe()) userId: number,
+                     @Body('role') role: string) {
         await this.usersService.removeRoleFromUser(userId, role);
     }
 }
