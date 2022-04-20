@@ -3,7 +3,7 @@ import {
     Body,
     Controller,
     Delete,
-    Get,
+    Get, HttpException,
     HttpStatus,
     Param,
     ParseIntPipe,
@@ -87,6 +87,23 @@ export class UsersController {
             throw new BadRequestException({
                 message: e.message
             });
+        }
+    }
+
+    @Post(':userId/username')
+    @AuthorizeAdmin()
+    async changeUserUsername(@Param('userId', new ParseIntPipe()) userId: number,
+                             @Body('username', new ParseUsernamePipe()) username: string) {
+        try {
+            await this.usersService.changeUsernameAsync(userId, username);
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Something went wrong'
+            }, 'Error occurred while changing username')
         }
     }
 

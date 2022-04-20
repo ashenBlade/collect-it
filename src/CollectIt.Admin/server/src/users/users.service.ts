@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
 import {User} from "./users.model";
 import {InjectModel} from "@nestjs/sequelize";
 import {CreateUserDto} from "./dto/create-user.dto";
@@ -7,7 +7,7 @@ import {RolesService} from "../roles/roles.service";
 import {Role} from "../roles/roles.model";
 
 const emailRegex = /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
-
+const usernameRegex = /\w[\w\d]{5,}/;
 @Injectable()
 export class UsersService {
 
@@ -81,11 +81,24 @@ export class UsersService {
         if (!emailRegex.test(email)) {
             throw new Error('Email is not in correct form');
         }
-        await this.usersRepository.update({email: email},
+        await this.usersRepository.update({email: email, normalizedEmail: email.toUpperCase()},
             {
                 where: {
                     id: userId
                 }
             });
+    }
+
+    async changeUsernameAsync(userId: number, username: string) {
+        if (!usernameRegex.test(username)) {
+            throw new BadRequestException({
+                message: 'Username must consist of min 6 letters, only digits and letters, first character is letter'
+            })
+        }
+        await this.usersRepository.update({username: username, normalizedUsername: username.toUpperCase()}, {
+            where: {
+                id: userId
+            }
+        });
     }
 }
