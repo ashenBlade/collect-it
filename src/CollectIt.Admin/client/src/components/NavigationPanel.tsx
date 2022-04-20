@@ -1,11 +1,12 @@
 import React, {useContext} from 'react';
-import {Link, NavLink} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {AdminAuthContext} from "../services/AuthService";
 
 const NavigationPanel = () => {
     const auth = useContext(AdminAuthContext);
     const logout = () => {
         auth.logout();
+        // Need to reload page
         window.location.href = '/login';
     }
     return (

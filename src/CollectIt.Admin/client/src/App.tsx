@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import Login from "./components/pages/Login";
 import {AdminAuthContext} from "./services/AuthService";

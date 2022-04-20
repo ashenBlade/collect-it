@@ -3,12 +3,14 @@ import jwt_decode from 'jwt-decode';
 
 const jwtKeyName = "admin.jwt";
 const loginPath = '/login';
+
 const assertAdminRole = (jwt: string) => {
     const decoded: any = jwt_decode(jwt);
     if (!decoded.roles?.some((r: string) => r === 'Admin')) {
         throw new Error('User not in admin role');
     }
 }
+
 const authState = {
     isAuthenticated: () : boolean => {
         return !!window.localStorage.getItem(jwtKeyName);
