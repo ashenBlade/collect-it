@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import Login from "./Login";
+import Login from "./components/pages/Login";
 import {AdminAuthContext} from "./services/AuthService";
 import NavigationPanel from "./components/NavigationPanel";
 import ResourcesList from "./components/pages/resources/ResourcesList";
@@ -14,16 +14,13 @@ import EditResource from "./components/pages/resources/EditResource";
 function App() {
     const auth = React.useContext(AdminAuthContext);
     const isAuthenticated = auth.isAuthenticated();
-
   return (
-
       <div>
           <BrowserRouter>
-              {isAuthenticated && <NavigationPanel/>}
-              <Routes>
-                  <Route path='/login' element={<Login/>}/>
-                  {isAuthenticated
-                      ? <>
+              {isAuthenticated
+                  ? <>
+                      <NavigationPanel/>
+                      <Routes>
                           <Route path='/resources'>
                               <Route path='' element={<ResourcesList/>}/>
                               <Route path=':resourceId' element={<EditResource/>}/>
@@ -39,9 +36,13 @@ function App() {
                           </Route>
                           { /* Fallback */}
                           <Route path='*' element={<UsersList/>}/>
-                      </>
-                      : <Route path='*' element={<Navigate to='/login'/>}/> }
-              </Routes>
+                          <Route path='/login' element={<Login/>}/>
+                      </Routes>
+                  </>
+                  : <Routes>
+                      <Route path={auth.loginPath()} element={<Login/>}/>
+                      <Route path='*' element={<Navigate to={auth.loginPath()}/>}/>
+                  </Routes>}
           </BrowserRouter>
       </div>
   );

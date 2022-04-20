@@ -1,24 +1,31 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Link, NavLink} from "react-router-dom";
-import UsersList from "./pages/users/UsersList";
+import {AdminAuthContext} from "../services/AuthService";
 
 const NavigationPanel = () => {
+    const auth = useContext(AdminAuthContext);
+    const logout = () => {
+        auth.logout();
+        window.location.href = '/login';
+    }
     return (
-        <nav className='nav navbar'>
-            <ul >
-                <li className='nav-item'>
-                    {/*<a href='/users' className='nav-link'>Users</a>*/}
-                    {/*<a href='/subscriptions' className='nav-link'>Users</a>*/}
-                    {/*<a href='/resources' className='nav-link'>Users</a>*/}
-                    <Link to='/users' >Users</Link>
-                </li>
-                <li>
-                    <Link to='/subscriptions'>Subscriptions</Link>
-                </li>
-                <li>
-                    <Link to='/resources'>Resources</Link>
-                </li>
-            </ul>
+        <nav className='navbar navbar-light bg-light'>
+            <div className='container-fluid'>
+                <div className='navbar-collapse' id='navbarSupportedContent'>
+                    <ul className='navbar-nav me-auto mb-2 mb-lg-0 flex-row'>
+                        <li className='nav-item mx-2'>
+                            <Link to='/users' className='nav-link active nav-item'>Users</Link>
+                        </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/subscriptions' className='nav-link nav-item'>Subscriptions</Link>
+                        </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/resources' className='nav-link nav-item'>Resources</Link>
+                        </li>
+                    </ul>
+                    <a className='btn btn-danger p-1' onClick={logout}>Logout</a>
+                </div>
+            </div>
         </nav>
     );
 };
