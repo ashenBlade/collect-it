@@ -1,6 +1,7 @@
-import React, {useContext} from 'react';
+import React, {useContext,useState} from 'react';
 import {Link} from "react-router-dom";
 import {AdminAuthContext} from "../services/AuthService";
+import './NavbarStyle.css'
 
 const NavigationPanel = () => {
     const auth = useContext(AdminAuthContext);
@@ -9,25 +10,32 @@ const NavigationPanel = () => {
         // Need to reload page
         window.location.href = '/login';
     }
+    const [page, setPage] = useState(0);
+
     return (
         <nav className='navbar navbar-light bg-light'>
-            <div className='container-fluid'>
-                <div className='navbar-collapse' id='navbarSupportedContent'>
-                    <ul className='navbar-nav me-auto mb-2 mb-lg-0 flex-row'>
-                        <li className='nav-item mx-2'>
-                            <Link to='/users' className='nav-link active nav-item'>Users</Link>
+            <div className='container-lg'>
+                <div className='navbar-collapse navbar' id='navbarSupportedContent'>
+                    <div>
+                        <a className={'navbar-brand px-4'}>CollectIt</a>
+                    </div>
+                    <ul className='navbar-nav flex-row'>
+                        <li className='nav-item px-5'>
+                            <Link to='/users' className={page === 0 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(0)}>Users</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/subscriptions' className='nav-link nav-item'>Subscriptions</Link>
+                        <li className=' nav-item px-5'>
+                            <Link to='/subscriptions' className={page === 1 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(1)}>Subscriptions</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/resources' className='nav-link nav-item'>Resources</Link>
+                        <li className='nav-item px-5'>
+                            <Link to='/resources' className={page === 2 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(2)}>Resources</Link>
                         </li>
                         <li className='nav-item mx-2'>
                             <Link to='/resources/0' className='nav-link nav-item'>Resource</Link>
                         </li>
                     </ul>
-                    <a className='btn btn-danger p-1' onClick={logout}>Logout</a>
+                    <span>
+                        <a className='btn btn-danger justify-content-end' onClick={logout}>Logout</a>
+                    </span>
                 </div>
             </div>
         </nav>

@@ -1,4 +1,4 @@
-import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {ResourceType} from "../common/resource-type";
 import {Restriction} from "./restrictions/restriction.model";
 
@@ -97,4 +97,7 @@ export class Subscription extends Model<Subscription, CreateSubscriptionInterfac
     })
     @ForeignKey(() => Restriction)
     restrictionId: number | null;
+
+    @BelongsTo(() => Restriction)
+    restriction: Restriction | null;
 }
