@@ -12,12 +12,11 @@ const SubscriptionsList = () => {
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
-                <form>
-                    <input id='email' className='form-control my-2' type='text' placeholder='Введите название подписки'/>
-                </form>
+                <input id='email' className='form-control my-2' type='text' placeholder='Enter subscription`s name'/>
+                <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className="usersRow firstRow">
-                    <td className='usersCell color-purple'>ID</td>
+                    <td className='idCell color-purple'>ID</td>
                     <td className='usersCell color-purple'>Name</td>
                     <td className='usersCell color-purple'>Description</td>
                     <td className='usersCell color-purple'>Duration</td>
@@ -26,7 +25,7 @@ const SubscriptionsList = () => {
                 </tr>
                 {iterations.map(i => (
                     <tr className="usersRow">
-                        <td className='usersCell'>{i}</td>
+                        <td className='idCell'>{i}</td>
                         <td className='usersCell'>{Names[+i-1]}</td>
                         <td className='usersCell'>{Descriptions[+i-1]}</td>
                         <td className='usersCell'>{Duration[+i-1]}</td>
