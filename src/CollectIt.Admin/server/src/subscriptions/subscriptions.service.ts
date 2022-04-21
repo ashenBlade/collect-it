@@ -25,8 +25,8 @@ export class SubscriptionsService {
                                   daysTo: number | null = null,
                                   daysAfter: number | null = null,
                                   tags: string[] | null = null): Promise<Subscription> {
-        let restriction: Restriction | null = null;
-        let subscription: Subscription | null = null;
+        let restriction: Restriction | null;
+        let subscription: Subscription | null;
         try {
             if (restrictionType) {
                 switch (restrictionType) {
@@ -149,6 +149,27 @@ export class SubscriptionsService {
         });
         if (affected[0] === 0) {
             throw new Error('Subscription with provided id not found')
+        }
+    }
+
+    async activateSubscriptionAsync(subscriptionId: number) {
+        await this.setSubscriptionStateAsync(subscriptionId, true);
+    }
+
+    async deactivateSubscriptionAsync(subscriptionId: number) {
+        await this.setSubscriptionStateAsync(subscriptionId, false);
+    }
+
+    private async setSubscriptionStateAsync(subscriptionId: number, isActive: boolean) {
+        const affected = await this.subscriptionsRepository.update({
+            active: isActive
+        }, {
+            where: {
+                id: subscriptionId
+            }
+        });
+        if (affected[0] === 0) {
+            throw new Error('Subscription with provided id not found');
         }
     }
 }

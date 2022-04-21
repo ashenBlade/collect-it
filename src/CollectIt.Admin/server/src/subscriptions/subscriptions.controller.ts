@@ -1,7 +1,7 @@
 import {
     BadRequestException,
     Body,
-    Controller,
+    Controller, Delete,
     Get,
     NotFoundException,
     Param,
@@ -115,5 +115,31 @@ export class SubscriptionsController {
                 message: e.message
             })
         }
+    }
+
+    @Post(':subscriptionId/activate')
+    @AuthorizeAdmin()
+    async activateSubscription(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number) {
+        try {
+            await this.subscriptionsService.activateSubscriptionAsync(subscriptionId);
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: e.message
+            });
+        }
+    }
+
+    @Post(':subscriptionId/deactivate')
+    @AuthorizeAdmin()
+    async deactivateSubscription(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number) {
+         try {
+             await this.subscriptionsService.deactivateSubscriptionAsync(subscriptionId);
+         } catch (e) {
+             console.error(e);
+             throw new BadRequestException({
+                 message: e.message
+             })
+         }
     }
 }
