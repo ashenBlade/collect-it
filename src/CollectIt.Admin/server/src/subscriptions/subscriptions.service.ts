@@ -96,8 +96,10 @@ export class SubscriptionsService {
         }
     }
 
-    async getSubscriptionById(subscriptionId: number): Promise<Subscription> {
-        const subscription = await this.subscriptionsRepository.findByPk(subscriptionId);
+    async getSubscriptionByIdAsync(subscriptionId: number): Promise<Subscription> {
+        const subscription = await this.subscriptionsRepository.findByPk(subscriptionId, {
+            include: [{all: true}]
+        });
         return subscription;
     }
 
@@ -111,7 +113,8 @@ export class SubscriptionsService {
             limit: pageSize,
             offset: pageNumber
                     ? (pageNumber - 1) * pageSize
-                    : null
+                    : null,
+            include: [{all: true}]
         });
     }
 }
