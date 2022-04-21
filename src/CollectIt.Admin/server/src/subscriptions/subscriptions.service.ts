@@ -117,4 +117,20 @@ export class SubscriptionsService {
             include: [{all: true}]
         });
     }
+
+    async changeSubscriptionNameAsync(subscriptionId: number, name: string) {
+        if (name?.length < 6) {
+            throw new Error('Length of name of subscription must be greater than 6')
+        }
+        const x = await this.subscriptionsRepository.update({
+            name: name
+        }, {
+            where: {
+                id: subscriptionId
+            }
+        });
+        if (x[0] === 0) {
+            throw new Error('Subscription with provided is not found');
+        }
+    }
 }

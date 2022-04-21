@@ -87,4 +87,19 @@ export class SubscriptionsController {
             })
         }
     }
+
+    @Post(':subscriptionId/name')
+    @UsePipes(ValidationPipe)
+    @AuthorizeAdmin()
+    async changeSubscriptionName(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number,
+                                 @Body('name') name: string) {
+        try {
+            await this.subscriptionsService.changeSubscriptionNameAsync(subscriptionId, name);
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: e.message
+            });
+        }
+    }
 }
