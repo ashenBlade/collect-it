@@ -1,30 +1,30 @@
-﻿<nav class="navbar align-items-center navbar-expand-sm text-dark navbar-toggleable-sm p-0 ps-3 pe-3 pt-1">
-    <a class="navbar-brand fw-bold text-dark" asp-controller="Home" asp-action="Index">Collect It</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse ">
-        <ul class="navbar-nav flex-grow-1">
-            <li class="nav-item me-4 ">
-                <a class="nav-link btn-dark transparent text-dark rounded mx-1" asp-controller="Home" asp-action="Index">Изображения</a>
-            </li>
-            <li class="nav-item me-4">
-                <a class="nav-link btn-light transparent text-dark rounded mx-1"  asp-controller="Home" asp-action="Index">Музыка</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Home" asp-action="Index">Видео</a>
-            </li>
-        </ul>
-        <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards">Подписки</a>
-        @if(User.Identity!.IsAuthenticated)
-        {
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1"  asp-controller="Account" asp-action="Profile">Профиль</a>
-        }
-        else
-        {
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Account" asp-action="Login">Войти</a>
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-controller="Account" asp-action="Register">Регистрация</a>
-        }
-    </div>
-</nav>
+﻿    <nav class="navbar align-items-center navbar-expand-sm text-dark navbar-toggleable-sm p-0 ps-3 pe-3 pt-1">
+        <a class="navbar-brand fw-bold text-dark" asp-controller="Home" asp-action="Index">Collect It</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="navbar-collapse collapse ">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item me-4 ">
+                    <a class="nav-link btn-dark transparent text-dark rounded mx-1" asp-controller="Home" asp-action="Index">Изображения</a>
+                </li>
+                <li class="nav-item me-4">
+                    <a class="nav-link btn-light transparent text-dark rounded mx-1"  asp-controller="Home" asp-action="Index">Музыка</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Home" asp-action="Index">Видео</a>
+                </li>
+            </ul>
+            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards">Подписки</a>
+            @if(User.Identity!.IsAuthenticated)
+            {
+                <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1"  asp-controller="Account" asp-action="Profile">Профиль</a>
+            }
+            else
+            {
+                <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Account" asp-action="Login">Войти</a>
+                <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-controller="Account" asp-action="Register">Регистрация</a>
+            }
+        </div>
+    </nav>

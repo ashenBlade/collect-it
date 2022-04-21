@@ -1,6 +1,7 @@
-import React, {useContext} from 'react';
+import React, {useContext,useState} from 'react';
 import {Link} from "react-router-dom";
 import {AdminAuthContext} from "../services/AuthService";
+import './NavbarStyle.css'
 
 const NavigationPanel = () => {
     const auth = useContext(AdminAuthContext);
@@ -9,22 +10,29 @@ const NavigationPanel = () => {
         // Need to reload page
         window.location.href = '/login';
     }
+    const [page, setpage] = useState(0);
+
     return (
-        <nav className='navbar navbar-light bg-light'>
+        <nav className='navbar navbar-light bg-navbar'>
             <div className='container-fluid'>
                 <div className='navbar-collapse' id='navbarSupportedContent'>
                     <ul className='navbar-nav me-auto mb-2 mb-lg-0 flex-row'>
-                        <li className='nav-item mx-2'>
-                            <Link to='/users' className='nav-link active nav-item'>Users</Link>
+                        <li className='px-4'>
+                            <h2>Collect it</h2>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/subscriptions' className='nav-link nav-item'>Subscriptions</Link>
+                        <li className={page === 0 ? 'bg-white nav-item px-5' : 'nav-item px-5'}>
+                            <Link to='/users' className='nav-link nav-item' onClick={() => setpage(0)}>Users</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/resources' className='nav-link nav-item'>Resources</Link>
+                        <li className={page === 1 ? 'bg-white nav-item px-5' : 'nav-item px-5'}>
+                            <Link to='/subscriptions' className='nav-link nav-item'onClick={() => setpage(1)}>Subscriptions</Link>
+                        </li>
+                        <li className={page === 2 ? 'bg-white nav-item px-5' : 'nav-item px-5'}>
+                            <Link to='/resources' className='nav-link nav-item'onClick={() => setpage(2)}>Resources</Link>
+                        </li>
+                        <li>
+                            <a className='btn btn-lg btn-danger position-absolute btn-logout' onClick={logout}>Logout</a>
                         </li>
                     </ul>
-                    <a className='btn btn-danger p-1' onClick={logout}>Logout</a>
                 </div>
             </div>
         </nav>
