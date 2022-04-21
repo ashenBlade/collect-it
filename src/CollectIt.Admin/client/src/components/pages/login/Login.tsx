@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {AdminAuthContext} from "../../../services/AuthService";
 // Only for tests
-const testJwt = 'eyJhbGciOiJIUNiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJBZG1pbiIsIlRlY2hpbmNhbCBTdXBwb3J0Il19.dNmydD98AtJKSIPIGC2K_P_obQfb6qp2mbt_0eT2iTo';
+const testJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhc2RmQG1haWwucnUiLCJyb2xlcyI6WyJBZG1pbiJdLCJpYXQiOjE2NTA1MjU2NjYsImV4cCI6MTY2MDg5MzY2Niwic3ViIjoiMSJ9.od7EHL8Bp4snLiGhNDpC9t-Sp98TEF443BxslYHDtgw';
 const isTest = process.env.NODE_ENV === 'development' || true;
 const Login = () => {
     const auth = React.useContext(AdminAuthContext);

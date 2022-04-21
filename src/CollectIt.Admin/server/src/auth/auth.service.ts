@@ -25,7 +25,7 @@ export class AuthService {
         };
         return this.jwtService.sign(payload, {
                 secret: process.env.JWT_PRIVATE_KEY,
-                expiresIn: '24h',
+                expiresIn: '120d',
                 subject: user.id.toString()
         });
     }
