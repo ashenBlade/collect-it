@@ -1,4 +1,14 @@
-import {BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    NotFoundException,
+    Param,
+    ParseIntPipe,
+    Post,
+    Query, UsePipes, ValidationPipe
+} from '@nestjs/common';
 import {SubscriptionsService} from "./subscriptions.service";
 import {Authorize} from "../auth/jwt-auth.guard";
 import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
@@ -14,8 +24,15 @@ export class SubscriptionsController {
     constructor(private subscriptionsService: SubscriptionsService) { }
 
     @Get(':subscriptionId')
-    async getSubscriptionById(@Param('subscriptionId') subscriptionId: number) {
-        return await this.subscriptionsService.getSubscriptionById(subscriptionId);
+    @UsePipes(ValidationPipe)
+    async getSubscriptionById(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number) {
+        const subscription = await this.subscriptionsService.getSubscriptionByIdAsync(subscriptionId);
+        if (!subscription) {
+            throw new NotFoundException({
+                message: `Subscription with id = ${subscriptionId} not found`
+            })
+        }
+        return ToReadSubscriptionDto(subscription);
     }
 
     @AuthorizeAdmin()
