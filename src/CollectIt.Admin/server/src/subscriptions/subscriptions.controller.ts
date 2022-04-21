@@ -1,9 +1,12 @@
-import {BadRequestException, Body, Controller, Get, Param, Post} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Post, Query} from '@nestjs/common';
 import {SubscriptionsService} from "./subscriptions.service";
 import {Authorize} from "../auth/jwt-auth.guard";
 import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
 import {CreateSubscriptionDto} from "./dto/create-subscription.dto";
 import CreationException from "../common/creation.exception";
+import {ParseResourceTypePipe} from "../common/parse-resource-type.pipe";
+import {ResourceType} from "../common/resource-type";
+import {ToReadSubscriptionDto} from "./dto/read-subscription.dto";
 
 @Authorize()
 @Controller('api/v1/subscriptions')
@@ -50,4 +53,21 @@ export class SubscriptionsController {
         }
     }
 
+    @Get('')
+    async getSubscriptionsList(@Query('page_number', new ParseIntPipe())pageNumber: number,
+                               @Query('page_size', new ParseIntPipe())pageSize: number,
+                               @Query('type', new ParseResourceTypePipe())resourceType: ResourceType) {
+        try {
+            const paged = await this.subscriptionsService.getSubscriptionsByResourceType(resourceType, pageNumber, pageSize);
+            return {
+                totalCount: paged.count,
+                subscriptions: paged.rows.map(s => ToReadSubscriptionDto(s))
+            }
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Something went wrong on server. Try later.'
+            })
+        }
+    }
 }

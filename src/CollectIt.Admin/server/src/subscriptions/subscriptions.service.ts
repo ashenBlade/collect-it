@@ -104,7 +104,7 @@ export class SubscriptionsService {
     async getSubscriptionsByResourceType(resourceType: ResourceType,
                                          pageNumber: number | null,
                                          pageSize: number | null) {
-        await this.subscriptionsRepository.findAndCountAll({
+        return await this.subscriptionsRepository.findAndCountAll({
             where: {
                 appliedResourceType: resourceType
             },
@@ -112,6 +112,6 @@ export class SubscriptionsService {
             offset: pageNumber
                     ? (pageNumber - 1) * pageSize
                     : null
-        })
+        });
     }
 }
