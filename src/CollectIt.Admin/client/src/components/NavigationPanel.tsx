@@ -13,7 +13,7 @@ const NavigationPanel = () => {
     const [page, setpage] = useState(0);
 
     return (
-        <nav className='navbar navbar-light bg-navbar'>
+        <nav className='navbar navbar-light color-purple'>
             <div className='container-fluid'>
                 <div className='navbar-collapse' id='navbarSupportedContent'>
                     <ul className='navbar-nav me-auto mb-2 mb-lg-0 flex-row'>
