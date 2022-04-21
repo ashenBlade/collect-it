@@ -1,8 +1,8 @@
 import React from 'react';
 
-const DeleteButton = () => {
+const DeleteButton = (props: any) => {
     return (
-        <button className='btn btn-danger justify-content-center my-2'>
+        <button className='btn btn-danger justify-content-center my-2' {...props}>
             Delete
         </button>
     );

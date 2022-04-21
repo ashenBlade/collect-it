@@ -2,10 +2,10 @@ import React from 'react';
 import EditInput from "../../UI/input/EditInput";
 import SaveButton from "../../UI/saveButton/SaveButton";
 
-const InputBlock = () => {
+const InputBlock = (props: any) => {
     return (
         <div className='row m-0 ms-4'>
-            <EditInput></EditInput>
+            <EditInput>{props.children}</EditInput>
             <SaveButton></SaveButton>
         </div>
     );
