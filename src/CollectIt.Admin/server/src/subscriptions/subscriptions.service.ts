@@ -5,6 +5,7 @@ import {Restriction} from "./restrictions/restriction.model";
 import {RestrictionsService} from "./restrictions/restrictions.service";
 import {ResourceType} from "../common/resource-type";
 import {RestrictionType} from "./restrictions/restriction-type";
+import CreationException from "../common/creation.exception";
 
 @Injectable()
 export class SubscriptionsService {
@@ -45,8 +46,28 @@ export class SubscriptionsService {
                         restriction = await this.restrictionService.createSizeRestrictionAsync(sizeBytes);
                         break;
                     default:
-                        throw new Error(`Unsupported restriction type: ${restrictionType}`);
+                        throw new CreationException('Could not create restriction',[`Unsupported restriction type: ${restrictionType}`]);
                 }
+            }
+            const errors: string[] = []
+            if (monthDuration < 1) {
+                errors.push('Month duration must be positive');
+            }
+            if (name?.length < 6) {
+                errors.push('Minimum name length is 6');
+            }
+            if(description?.length < 10) {
+                errors.push('Minimum description length is 10');
+            }
+            if(price < 0) {
+                errors.push('Price can not be negative');
+            }
+            if(maxResourcesCount < 1) {
+                errors.push('Max resources count must be positive');
+            }
+
+            if (errors.length > 0) {
+                throw new CreationException('Could not create subscription', errors)
             }
 
             subscription = await this.subscriptionsRepository.create({
@@ -71,6 +92,7 @@ export class SubscriptionsService {
                     }
                 });
             }
+            throw e;
         }
     }
 
