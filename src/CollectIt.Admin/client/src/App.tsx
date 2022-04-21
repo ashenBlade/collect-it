@@ -9,6 +9,7 @@ import EditSubscription from "./components/pages/subscriptions/EditSubscription"
 import UsersList from "./components/pages/users/UsersList";
 import EditUser from "./components/pages/users/EditUser";
 import EditResource from "./components/pages/resources/EditResource";
+import './styles/main.css'
 
 function App() {
     const auth = React.useContext(AdminAuthContext);

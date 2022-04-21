@@ -23,6 +23,9 @@ const NavigationPanel = () => {
                         <li className='nav-item mx-2'>
                             <Link to='/resources' className='nav-link nav-item'>Resources</Link>
                         </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/resources/0' className='nav-link nav-item'>Resource</Link>
+                        </li>
                     </ul>
                     <a className='btn btn-danger p-1' onClick={logout}>Logout</a>
                 </div>

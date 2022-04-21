@@ -1,0 +1,18 @@
+.hc-0{
+    height: 38px;
+}
+
+.vertical-center{
+    vertical-align: middle;
+}
+
+.before {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.inner {
+    display: inline-block;
+    vertical-align: middle;
+}
