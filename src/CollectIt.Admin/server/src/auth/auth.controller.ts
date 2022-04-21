@@ -1,4 +1,9 @@
-import { Body, Controller, HttpException, HttpStatus, Post } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Post,
+} from '@nestjs/common';
 import { UsersService } from "../users/users.service";
 import { LoginDto } from "./dto/login.dto";
 import { AuthService } from "./auth.service";
@@ -9,7 +14,22 @@ export class AuthController {
                 private authService: AuthService) {
     }
     @Post('login')
-    async login(@Body() dto: LoginDto) {
-        return await this.authService.login(dto);
+    async login(@Body() {password, username}: LoginDto) {
+        let jwt: string | null;
+        if (!(password && username)) {
+            throw new BadRequestException({
+                message: 'Username or password not provided'
+            })
+        }
+        try {
+            jwt = await this.authService.login(username, password);
+        } catch (e) {
+            throw new BadRequestException({
+                message: e.message
+            });
+        }
+        return {
+            token: jwt
+        };
     }
 }

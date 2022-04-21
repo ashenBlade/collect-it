@@ -1,35 +1,121 @@
-import {Body, Controller, Delete, Get, Post, UseGuards} from '@nestjs/common';
-import { CreateUserDto } from "./dto/create-user.dto";
-import { UsersService } from "./users.service";
-import {AuthorizeAdmin, AdminJwtAuthGuard} from "../auth/admin-jwt-auth.guard";
-import {AssignRoleDto} from "./dto/assign-role.dto";
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get, HttpException,
+    HttpStatus,
+    Param,
+    ParseIntPipe,
+    Post,
+    Query,
+    Res
+} from '@nestjs/common';
+import {UsersService} from "./users.service";
+import {AuthorizeAdmin} from "../auth/admin-jwt-auth.guard";
 import {Authorize} from "../auth/jwt-auth.guard";
-import {RemoveRoleDto} from "./dto/remove-role.dto";
+import {ToReadUserDto} from "./dto/read-user.dto";
+import {Response} from "express";
+import {NotFoundError} from "rxjs";
+import {ParseEmailPipe} from "../common/parse-email.pipe";
+import {ParseUsernamePipe} from "../common/parse-username.pipe";
 
 @Authorize()
 @Controller('api/v1/users')
 export class UsersController {
     constructor(private usersService: UsersService) { }
 
-    @Get()
-    @UseGuards(AdminJwtAuthGuard)
-    getAll() {
-        return this.usersService.getAllUsers();
+    @Get('')
+    async getAll(@Query('page_number') pageNumber: number,
+                 @Query('page_size') pageSize: number,
+                 @Res() response: Response) {
+        const result = await this.usersService.getAllUsersAsync(pageNumber, pageSize);
+        const count = result.count;
+        const users = result.rows;
+        response.setHeader('X-Total-Count', count);
+        const dtos = users.map(u => ({
+            id: u.id,
+            username: u.username,
+            email: u.email,
+            roles: u.roles?.map(r => r.name) ?? []})
+        );
+        response.send(dtos);
+        response.end();
     }
 
+    @Get(':userId')
+    async getUserById(@Param('userId', new ParseIntPipe({errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY})) userId: number, @Res() res: Response) {
+        const user = await this.usersService.getUserByIdAsync(userId);
+        if (!user) {
+            res.status(HttpStatus.NOT_FOUND);
+        } else {
+            res.send(ToReadUserDto(user));
+        }
+        res.end();
+    }
 
+    @Get('/with-email/:email')
+    async getUserByEmail(@Param('email') email: string, @Res() res: Response) {
+        const user = await this.usersService.getUserByEmailAsync(email);
+        if (user) {
+            res.send(ToReadUserDto(user));
+        } else {
+            res.status(HttpStatus.NOT_FOUND);
+        }
+        res.end();
+    }
 
-    @Post(':userId/role')
+    @Get('/with-username/:username')
+    async getUserByUsername(@Param('username', new ParseUsernamePipe())username: string) {
+        const user = await this.usersService.getUserByUsernameAsync(username);
+        if (!user) {
+            throw new NotFoundError(`User with username = ${username} not found`);
+        }
+        return ToReadUserDto(user);
+    }
+
+    @Post(':userId/email')
     @AuthorizeAdmin()
-    async assignRole(@Body() {role, userId}: AssignRoleDto) {
+    async changeUserEmail(@Param('userId', new ParseIntPipe()) userId: number,
+                          @Body('email', new ParseEmailPipe()) email: string) {
+        try {
+            await this.usersService.changeEmailAsync(userId, email);
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: e.message
+            });
+        }
+    }
+
+    @Post(':userId/username')
+    @AuthorizeAdmin()
+    async changeUserUsername(@Param('userId', new ParseIntPipe()) userId: number,
+                             @Body('username', new ParseUsernamePipe()) username: string) {
+        try {
+            await this.usersService.changeUsernameAsync(userId, username);
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Something went wrong'
+            }, 'Error occurred while changing username')
+        }
+    }
+
+    @Post(':userId/roles')
+    @AuthorizeAdmin()
+    async assignRole(@Param('userId', new ParseIntPipe()) userId: number,
+                     @Body('role') role: string) {
         await this.usersService.addRoleToUser(userId, role);
     }
 
-    @Delete(':userId/role')
+    @Delete(':userId/roles')
     @AuthorizeAdmin()
-    async removeRole(@Body() {userId, role}: RemoveRoleDto) {
+    async removeRole(@Param('userId', new ParseIntPipe()) userId: number,
+                     @Body('role') role: string) {
         await this.usersService.removeRoleFromUser(userId, role);
-
     }
-
 }
