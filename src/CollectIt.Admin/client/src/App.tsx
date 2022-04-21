@@ -1,6 +1,6 @@
 import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
-import Login from "./components/pages/Login";
+import Login from "./components/pages/login/Login";
 import {AdminAuthContext} from "./services/AuthService";
 import NavigationPanel from "./components/NavigationPanel";
 import ResourcesList from "./components/pages/resources/ResourcesList";
@@ -14,7 +14,7 @@ function App() {
     const auth = React.useContext(AdminAuthContext);
     const isAuthenticated = auth.isAuthenticated();
   return (
-      <div>
+      <div className={'h-100'}>
           <BrowserRouter>
               {isAuthenticated
                   ? <>
