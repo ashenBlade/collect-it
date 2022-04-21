@@ -133,4 +133,22 @@ export class SubscriptionsService {
             throw new Error('Subscription with provided is not found');
         }
     }
+
+    async changeSubscriptionDescriptionAsync(subscriptionId: number, description: string) {
+        console.log('description', description)
+        console.log('id', subscriptionId)
+        if (!(description && description.length > 9)) {
+            throw new Error('Length of description must be greater than 9');
+        }
+        const affected = await this.subscriptionsRepository.update({
+            description: description
+        }, {
+            where: {
+                id: subscriptionId
+            }
+        });
+        if (affected[0] === 0) {
+            throw new Error('Subscription with provided id not found')
+        }
+    }
 }

@@ -102,4 +102,18 @@ export class SubscriptionsController {
             });
         }
     }
+
+    @Post(':subscriptionId/description')
+    @AuthorizeAdmin()
+    async changeSubscriptionDescription(@Body('description') description: string,
+                                        @Param('subscriptionId', new ParseIntPipe()) subscriptionId: number) {
+        try {
+            await this.subscriptionsService.changeSubscriptionDescriptionAsync(subscriptionId, description);
+        } catch (e) {
+            console.error(e);
+            throw new BadRequestException({
+                message: e.message
+            })
+        }
+    }
 }
