@@ -1,6 +1,5 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersService } from "../users/users.service";
-import { LoginDto } from "./dto/login.dto";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "../users/users.model";
 import * as identity from 'aspnetcore-identity-password-hasher';
@@ -10,13 +9,10 @@ export class AuthService {
     constructor(private userService: UsersService,
                 private jwtService: JwtService) { }
 
-    async login({username, password}: LoginDto) {
+    async login(username: string, password: string) {
         const user = await this.userService.getUserByUsernameAsync(username);
-        if (!user) {
-            throw new HttpException('Invalid Username/Password couple', HttpStatus.BAD_REQUEST);
-        }
-        if (!await identity.verify(password, user.passwordHash)) {
-            throw new HttpException('Invalid Username/Password couple', HttpStatus.BAD_REQUEST);
+        if (!(user && await identity.verify(password, user.passwordHash))) {
+            throw new Error('Invalid Username/Password couple');
         }
         return await this.generateToken(user);
     }
@@ -27,13 +23,11 @@ export class AuthService {
             email: user.email,
             roles: user.roles.map(role => role.name)
         };
-        return {
-            token: this.jwtService.sign(payload, {
+        return this.jwtService.sign(payload, {
                 secret: process.env.JWT_PRIVATE_KEY,
                 expiresIn: '24h',
-                subject: user.id.toString(),
-            })
-        }
+                subject: user.id.toString()
+        });
     }
 
     verifyJwt(jwt: string) {

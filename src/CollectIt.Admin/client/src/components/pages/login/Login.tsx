@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {AdminAuthContext} from "../../../services/AuthService";
-import axios from "axios";
 // Only for tests
 const testJwt = 'eyJhbGciOiJIUNiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJyb2xlcyI6WyJBZG1pbiIsIlRlY2hpbmNhbCBTdXBwb3J0Il19.dNmydD98AtJKSIPIGC2K_P_obQfb6qp2mbt_0eT2iTo';
 const isTest = process.env.NODE_ENV === 'development' || true;
 const Login = () => {
-    const authContext = React.useContext(AdminAuthContext);
+    const auth = React.useContext(AdminAuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>('');
@@ -17,26 +16,41 @@ const Login = () => {
             setError('Fill password and username');
             return;
         }
-
-        try {
-            const response = await axios.post('http://localhost:7000/auth/login', {
+        const response = await fetch('http://localhost:7000/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({
                 password: passwordCleaned,
                 username: usernameCleaned
-            });
-            const jwt = response.data.token;
-            if (!jwt) {
-                setError('No token provided in response from server');
-                return;
-            }
-            authContext.adminLogin(jwt);
-            window.location.href = '/';
+            }),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            const description = await response.json();
+            const message = description.message;
+            console.error(`Response failed with code ${response.status}. Description: ${message}`);
+            setError(message);
+            return;
+        }
+
+        const jwt = (await response.json()).token;
+        if (!jwt) {
+            setError('No token provided in response');
+            return;
+        }
+
+        try {
+            auth.adminLogin(jwt);
         } catch (e: any) {
-            setError(e.message)
+            console.error(e);
+            setError(e.message);
         }
     }
     const onClickTestButton = (e: React.MouseEvent) => {
         e.preventDefault();
-        authContext.adminLogin(testJwt);
+        auth.adminLogin(testJwt);
         window.location.href = '/';
     }
     return (
