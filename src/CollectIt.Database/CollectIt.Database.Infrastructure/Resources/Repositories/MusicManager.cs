@@ -28,7 +28,7 @@ public class MusicManager : IMusicManager
             .SingleOrDefaultAsync();
     }
 
-    public Task Create(int ownerId, string address, string fileName, string name, string tags, Stream uploadedFile)
+    public Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension)
     {
         throw new NotImplementedException();
     }

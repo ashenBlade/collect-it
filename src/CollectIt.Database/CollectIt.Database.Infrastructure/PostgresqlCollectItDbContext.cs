@@ -343,7 +343,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                                  new Image
                         {
                             Id = 1,
-                            Address = "/imagesFromDb/abstract-img.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Мониторы с аниме",
@@ -354,7 +353,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 2,
-                            Address = "/imagesFromDb/bird-img.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Птица зимородок",
@@ -365,7 +363,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 3,
-                            Address = "/imagesFromDb/car-img.jpg",
                             OwnerId = TechSupportUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Машина на дороге",
@@ -376,7 +373,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 4,
-                            Address = "/imagesFromDb/cat-img.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Котенок на одеяле",
@@ -387,7 +383,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 5,
-                            Address = "/imagesFromDb/house-img.jpg",
                             OwnerId = TechSupportUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Стандартный американский дом",
@@ -398,7 +393,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 6,
-                            Address = "/imagesFromDb/nature-img.jpg",
                             OwnerId = DefaultUserTwoId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Осенний лес в природе",
@@ -409,7 +403,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 7,
-                            Address = "/imagesFromDb/school-img.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Дети за партами в школе перед учителем",
@@ -420,7 +413,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 8,
-                            Address = "/imagesFromDb/cat-img-2.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Кот смотрит в камеру на зеленом фоне",
@@ -431,7 +423,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 9,
-                            Address = "/imagesFromDb/cat-img-3.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Крутой кот в очках",
@@ -442,7 +433,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 10,
-                            Address = "/imagesFromDb/cat-img-4.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Белоснежный кот застыл в мяукающей позе",
@@ -453,7 +443,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 11,
-                            Address = "/imagesFromDb/cat-img-5.jpg",
                             OwnerId = DefaultUserTwoId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Рыжий кот заснул на полу",
@@ -464,7 +453,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 12,
-                            Address = "/imagesFromDb/cat-img-6.jpg",
                             OwnerId = DefaultUserOneId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Спящий кот прикрывается лапой от солнца",
@@ -475,7 +463,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 13,
-                            Address = "/imagesFromDb/cat-img-7.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "На стуле лежит кот",
@@ -486,7 +473,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 14,
-                            Address = "/imagesFromDb/cat-img-8.jpg",
                             OwnerId = AdminUserId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Идущий по забору кот у причала",
@@ -497,7 +483,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         new Image
                         {
                             Id = 15,
-                            Address = "/imagesFromDb/cat-img-9.jpg",
                             OwnerId = DefaultUserOneId,
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Name = "Кот у елки сморит на лес",

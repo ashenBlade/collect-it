@@ -27,13 +27,13 @@ public class ImageController : Controller
         return Ok(ResourcesMappers.ToReadImageDTO(image));
     }
 
-    public async Task<IActionResult> FindPhysicalImageById(int id)
+   /* public async Task<IActionResult> FindPhysicalImageById(int id)
     {
         var image = await _imageManager.FindByIdAsync(id);
         if (image is null)
             return NotFound();
         return PhysicalFile(image.Address, $"image/{image.Extension}");
-    }
+    }*/
     
     [HttpGet("")]
     public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "page_number")] 

@@ -16,9 +16,6 @@ public class Resource
     [Required]
     [ForeignKey(nameof(Owner))]
     public int OwnerId { get; set; }
-    
-    [Required]
-    public string Address { get; set; }
 
     [Required]
     public string Name { get; set; }
