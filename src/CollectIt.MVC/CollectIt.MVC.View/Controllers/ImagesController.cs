@@ -30,7 +30,7 @@ public class ImagesController : Controller
         _userManager = userManager;
         address = Path.Combine(Directory
             .GetParent(appEnvironment.ContentRootPath)
-            .Parent.FullName, "content", "images");
+            .FullName, "content", "images");
     }
 
     [HttpGet("")]
@@ -93,15 +93,24 @@ public class ImagesController : Controller
     [Route("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
-        var ext = uploadedFile.FileName.Split(".").Last();
-        if (ext != "jpg" && ext != "png")
+        var ext = GetExtension(uploadedFile.FileName);
+        if (ext is null)
             return View("Error");
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
             return RedirectToAction("Login", "Account");
         await using var stream = uploadedFile.OpenReadStream();
-        await _imageManager.Create(user.Id, address, uploadedFile.FileName, name, tags, stream);
+        await _imageManager.Create(user.Id, address, name, tags, stream, ext);
         return View("ImagePostPage");
+    }
+    
+    [NonAction]
+    private string? GetExtension(string fileName)
+    {
+        var ext = fileName.Split(".").Last();
+        if (ext != "jpg" && ext != "png")
+            return null;
+        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
     }
 
     [Route("download/{id:int}")]
@@ -124,24 +133,6 @@ public class ImagesController : Controller
         };
     }
 
-    /*
-[NonAction]
-private IActionResult StreamDownload(FileInfo fi)
-{
-    // Открываем поток.
-    var stream = fi.OpenRead(); //System.IO.File.OpenRead(path);
-
-    var contentType = MyUtility.ContentTypes(fi.Extension);
-
-    // 1 способ
-    // return File(stream, content_type, file);
-
-    // 2 способ
-    return new FileStreamResult(stream, contentType)
-    {
-        FileDownloadName = fi.Name
-    };
-}*/
 
     [HttpPost("comment")]
     [Authorize]

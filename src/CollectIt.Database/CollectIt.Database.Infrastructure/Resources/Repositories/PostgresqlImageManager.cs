@@ -16,9 +16,10 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(int ownerId, string address,string fileName, string name, string tags, Stream uploadedFile)
+    public async Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension)
     {
         var tagsArray = tags.Split(" ");
+        var fileName = await RenamePostedImage(name) + $".{extension}";
         await using (var fileStream = new FileStream(Path.Combine(address,fileName), FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
@@ -31,15 +32,16 @@ public class PostgresqlImageManager : IImageManager
             Name = name,
             FileName = fileName,
             UploadDate = DateTime.UtcNow,
-            Extension = GetExtension(fileName),
+            Extension = extension,
             OwnerId = ownerId
         };
         await AddAsync(image);
     }
-
-    private string GetExtension(string fileName)
+    
+    private async Task<string> RenamePostedImage(string name)
     {
-        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
+        return name.Replace(" ", "-").ToLower() + "-" + (_context.Images.Count() + 1); 
+        //Тут может не только пробелы, но ещё запятые там, точки хз как лучше
     }
     
     public async Task<int> AddAsync(Image item)

@@ -8,7 +8,7 @@ public interface IResourceManager<TItem>
 {
     Task<int> AddAsync(TItem item);
     Task<TItem?> FindByIdAsync(int id);
-    Task Create(int ownerId, string address, string fileName, string name, string tags, Stream uploadedFile);
+    Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension);
     Task RemoveAsync(TItem item);
     IAsyncEnumerable<TItem> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15);
     
