@@ -28,9 +28,7 @@ public class ImagesController : Controller
         _commentManager = commentManager;
         this.appEnvironment = appEnvironment;
         _userManager = userManager;
-        address = Path.Combine(Directory
-            .GetParent(appEnvironment.ContentRootPath)
-            .FullName, "content", "images");
+        address = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagesFromDb");
     }
 
     [HttpGet("")]
@@ -56,8 +54,7 @@ public class ImagesController : Controller
                               });
     }
 
-    [HttpGet]
-    [Route("{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Image(int id)
     {
         var source = await _imageManager.FindByIdAsync(id);
@@ -73,23 +70,22 @@ public class ImagesController : Controller
             ImageId = id,
             Comments = comments.Select(c => new CommentViewModel()
                 { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
-            Owner = source.Owner,
+            OwnerName = source.Owner.UserName,
             UploadDate = source.UploadDate,
-            Path = address + source.FileName,
+            Address = $"images/download/{id}",
             Tags = source.Tags,
             IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
         };
         return View(model);
     }
 
-    [Route("postView")]
+    [HttpGet("postView")]
     public IActionResult GetPostView()
     {
         return View("ImagePostPage");
     }
 
-    [HttpPost]
-    [Route("post")]
+    [HttpPost("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
         var ext = GetExtension(uploadedFile.FileName);
@@ -124,8 +120,7 @@ public class ImagesController : Controller
         var fi = new FileInfo(Path.Combine(address, source.FileName));
 
         await using var fileStream = fi.OpenRead();
-        var contentType = $"application/{source.Extension}";
-
+        var contentType = $"image/{source.Extension}";
         return new FileStreamResult(fileStream, contentType)
         {
             FileDownloadName = fi.Name
@@ -142,22 +137,6 @@ public class ImagesController : Controller
         var comment = await _commentManager.CreateComment(imageId, user.Id, model.Content);
         if (comment is null)
             return BadRequest($"This feature is not implemented yet\nImage Id: {imageId}\nComment: {model.Content}");
-        // var image = await _imageManager.FindByIdAsync(imageId);
-        // var comments = await _commentManager.GetResourcesComments(imageId);
-        // var imageViewModel = new ImageViewModel()
-        //                      {
-        //                          ImageId = imageId,
-        //                          UploadDate = image.UploadDate,
-        //                          Path = image.Address,
-        //                          Tags = image.Tags,
-        //                          Owner = image.Owner,
-        //                          Comments = comments.Select(c => new CommentViewModel()
-        //                                                          {
-        //                                                              Author = c.Owner.UserName,
-        //                                                              Comment = c.Content,
-        //                                                              PostTime = c.UploadDate
-        //                                                          })
-        //                      };
         return RedirectToAction("Image", new { id = model.ImageId });
     }
 }

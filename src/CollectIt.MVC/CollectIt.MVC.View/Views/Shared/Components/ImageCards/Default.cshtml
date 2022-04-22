@@ -1,4 +1,5 @@
-﻿@using CollectIt.Database.Entities.Resources
+﻿@using CollectIt.MVC.View.ViewModels
+@using CollectIt.MVC.View.Views.Shared.Components.ImageCard
 @model CollectIt.MVC.View.Views.Shared.Components.ImageCards.ImageCardsViewModel
 @{
     var j = 0;
@@ -10,7 +11,7 @@
 <div class="d-flex">
     @for (var i = 0; i < 3; i++)
         {
-            var temp = new List<Image>();
+            var temp = new List<ImageViewModel>();
             if (i * k < Model.Images.Count)
             {
                 if (i != 1)

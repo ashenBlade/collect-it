@@ -8,7 +8,7 @@
 <div class="rounded bg-light mb-2">
     <div class="mb-3 p-3">
         <div>
-            <img src="@Model.Path" class="img-fluid main-img mah-2" alt=""/>
+            <img src="@Model.Address" class="img-fluid main-img mah-2" alt=""/>
         </div>
         <div class="d-flex m-0 mb-2 mt-3">
             <div class="image-action-btn">
@@ -20,7 +20,7 @@
             <div class="image-action-btn">
         @if (Model.IsAcquired)
         {
-            <a href="@Model.Path" class="image-action-btn border-0 rounded-pill bg-success" download>Загрузить</a>
+            <a href="@Model.Address" class="image-action-btn border-0 rounded-pill bg-success" download>Загрузить</a>
         }
         else
         {
@@ -40,7 +40,7 @@
     </div>
     <div class="border-end" style="width: 30%">
         <h6>Автор</h6>
-        <img src="@Model.Path" class="img-fluid photo photo-s-3" alt=""/> @Model.Owner.UserName
+        @Model.OwnerName
     </div>
     <ul class="row p-2 m-0 l-s-t-none" style="width: 40%">
          @foreach (var tag in Model.Tags)

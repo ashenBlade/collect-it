@@ -1,9 +1,9 @@
-﻿@model CollectIt.Database.Entities.Resources.Image
+﻿@model CollectIt.MVC.View.ViewModels.ImageViewModel
 @{
     double size = 0;
 }
-<div class="resource-box rounded mb-3 me-2 p-0 @Model.Id">
-    <a asp-controller="Images" asp-action="Image" asp-route-id="@Model.Id" class="ls"></a>
+<div class="resource-box rounded mb-3 me-2 p-0 @Model.ImageId">
+    <a asp-controller="Images" asp-action="Image" asp-route-id="@Model.ImageId" class="ls"></a>
     <div class="toolbar-1">
         <div class="top-box rounded-top"></div>
         <div class="toolbar-2">
@@ -21,13 +21,13 @@
         <div class="gradient rounded-bottom"></div>
     </div>
     <div class="image">
-        <img id="@Model.Id" src="https://images.genius.com/6afe41d668a5016b8600fb3ed2e6417c.1000x772x1.png" class="rounded s-2" alt=""/>
+        <img id="@Model.ImageId" src="@Model.Address" class="rounded s-2" alt=""/>
     </div>
         
     <script>
-         var img = document.getElementById("@Model.Id");
-         var width = img.width;
-         var height = img.height;
-         $(".@Model.Id").append("<div style='padding-bottom:" + height / width * 100 + "%'></div>")
+         const img = document.getElementById("@Model.ImageId");
+         const width = img.width;
+         const height = img.height;
+         $(".@Model.ImageId").append("<div style='padding-bottom:" + height / width * 100 + "%'></div>")
     </script>
 </div> 

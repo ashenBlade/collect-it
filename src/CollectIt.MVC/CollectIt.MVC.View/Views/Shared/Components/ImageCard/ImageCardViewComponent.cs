@@ -1,12 +1,13 @@
 ﻿using CollectIt.Database.Entities.Resources;
+using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CollectIt.MVC.View.Views.Shared.Components.ImageCard;
 
 public class ImageCardViewComponent : ViewComponent
 {
-    public IViewComponentResult Invoke(Image image)
+    public IViewComponentResult Invoke(ImageViewModel model)
     {
-        return View(image);
+        return View(model);
     }
 }
