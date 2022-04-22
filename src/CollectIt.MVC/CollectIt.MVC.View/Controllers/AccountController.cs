@@ -52,7 +52,7 @@ public class AccountController : Controller
                 {
                     Id = resource.ResourceId,
                     FileName = resource.Resource.Name,
-                    Address = resource.Resource.Address,
+                   // Address = resource.Resource.Address,
                     Extension = resource.Resource.Extension,
                     Date = resource.AcquiredDate
                 });
@@ -62,7 +62,7 @@ public class AccountController : Controller
                 {
                     Id = resource.Id,
                     FileName = resource.Name,
-                    Address = resource.Address,
+                    //Address = resource.Address,
                     Extension = resource.Extension,
                     Date = resource.UploadDate
                 });

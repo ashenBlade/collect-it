@@ -27,7 +27,6 @@ public class PostgresqlImageManager : IImageManager
 
         var image = new Image()
         {
-            Address = address,
             Tags = tagsArray,
             Name = name,
             FileName = fileName,

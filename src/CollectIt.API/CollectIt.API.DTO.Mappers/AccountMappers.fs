@@ -72,7 +72,7 @@ let ToReadAcquiredUserResourceDTO (aur: AcquiredUserResource): ReadAcquiredUserR
        PurchaseDate = aur.AcquiredDate
        Id = aur.ResourceId
        Name = aur.Resource.Name
-       Address = aur.Resource.Address
+   //    Address = aur.Resource.Address
     }
         
         

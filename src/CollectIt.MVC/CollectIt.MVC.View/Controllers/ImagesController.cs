@@ -68,7 +68,6 @@ public class ImagesController : Controller
 
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
-        // var commentViewModels = new List<CommentViewModel>();
         var model = new ImageViewModel()
         {
             ImageId = id,
@@ -76,7 +75,7 @@ public class ImagesController : Controller
                 { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
             Owner = source.Owner,
             UploadDate = source.UploadDate,
-            Path = source.Address,
+            Path = address + source.FileName,
             Tags = source.Tags,
             IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
         };

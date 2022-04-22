@@ -379,6 +379,6 @@ type OpenIddictResponseFail = { NONE: int }
 type ReadAcquiredUserResourceDTO = {
     PurchaseDate: DateTime
     Id: int
-    Address: string
+  //  Address: string
     Name: string
 }
