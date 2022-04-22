@@ -29,6 +29,9 @@ const NavigationPanel = () => {
                         <li className='nav-item px-5'>
                             <Link to='/resources' className={page === 2 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(2)}>Resources</Link>
                         </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/resources/0' className='nav-link nav-item'>Resource</Link>
+                        </li>
                     </ul>
                     <span>
                         <a className='btn btn-danger justify-content-end' onClick={logout}>Logout</a>
