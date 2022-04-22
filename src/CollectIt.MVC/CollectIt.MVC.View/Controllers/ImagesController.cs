@@ -6,6 +6,7 @@ using CollectIt.MVC.View.ViewModels;
 using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -22,7 +23,7 @@ public class ImagesController : Controller
     private static readonly int MaxPageSize = 5;
 
     public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
-        ICommentManager commentManager)
+                            ICommentManager commentManager)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
@@ -47,7 +48,16 @@ public class ImagesController : Controller
 
         return View("Images", new ImageCardsViewModel() 
                               { 
-                                  Images = images, 
+                                  Images = images.Select(i => new ImageViewModel(){
+                                                                                      Address = $"/imagesFromDb/{i.FileName}",
+                                                                                      Name = i.Name,
+                                                                                      ImageId = i.Id,
+                                                                                      Comments = Array.Empty<CommentViewModel>(),
+                                                                                      Tags = i.Tags,
+                                                                                      OwnerName = i.Owner.UserName,
+                                                                                      UploadDate = i.UploadDate,
+                                                                                      IsAcquired = false
+                                                                                  }).ToList(), 
                                   PageNumber = pageNumber,
                                   MaxImagesCount = MaxPageSize,
                                   Query = query
@@ -66,16 +76,17 @@ public class ImagesController : Controller
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
         var model = new ImageViewModel()
-        {
-            ImageId = id,
-            Comments = comments.Select(c => new CommentViewModel()
-                { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
-            OwnerName = source.Owner.UserName,
-            UploadDate = source.UploadDate,
-            Address = $"images/download/{id}",
-            Tags = source.Tags,
-            IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
-        };
+                    {
+                        ImageId = id,
+                        Comments = comments.Select(c => new CommentViewModel()
+                                                        { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
+                        Name = source.Name,
+                        OwnerName = source.Owner.UserName,
+                        UploadDate = source.UploadDate,
+                        Address = $"/imagesFromDb/{source.FileName}",
+                        Tags = source.Tags,
+                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
+                    };
         return View(model);
     }
 
@@ -117,14 +128,11 @@ public class ImagesController : Controller
             return View("Error");
         }
 
-        var fi = new FileInfo(Path.Combine(address, source.FileName));
+        var file = new FileInfo(Path.Combine(address, source.FileName));
 
-        await using var fileStream = fi.OpenRead();
-        var contentType = $"image/{source.Extension}";
-        return new FileStreamResult(fileStream, contentType)
-        {
-            FileDownloadName = fi.Name
-        };
+        return file.Exists
+                   ? PhysicalFile(file.FullName, $"image/jpg")
+                   : BadRequest(new {Message = "File not found"});
     }
 
 

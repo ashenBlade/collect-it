@@ -6,8 +6,8 @@ namespace CollectIt.MVC.View.Views.Shared.Components.ImageCard;
 
 public class ImageCardViewComponent : ViewComponent
 {
-    public IViewComponentResult Invoke(ImageViewModel model)
+    public IViewComponentResult Invoke(ImageViewModel image)
     {
-        return View(model);
+        return View(image);
     }
-}
+} 
