@@ -1,12 +1,19 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import React, {useEffect, useState} from 'react';
 import '../../NavbarStyle.css'
-
-const iterations = ['1','2','3','4','5','6','7','8','9','10'];
-const Subscriptions = ['2','1','3','0'];
-const Roles = ['Admin','TechSupport'];
+import useAuthFetch from "../../../services/AuthorizedFetch";
+// import {serverAddress} from "../../../constants";
+import User from "../../entities/user";
 
 const UsersList = () => {
+    const fetch = useAuthFetch();
+    const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
+    // const effect = useEffect(( ) => {
+    //     fetch(`${serverAddress}/api/v1/users?page_number=1&page_size=10`, {
+    //         method: 'GET'
+    //     }).then(res => res.json()).then(json => setUsers(json)).catch(reason => {
+    //         setUsers([{id: -1, username: 'Error', subscriptions: [], roles: [], email: 'Could not download', authorOf: []}])
+    //     });
+    // }, []);
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
@@ -20,13 +27,13 @@ const UsersList = () => {
                     <td className='usersCell color-purple'>Role</td>
                     <td className='usersCell color-purple'>Subscriptions</td>
                 </tr>
-                {iterations.map(i => (
+                {users.map((u, i) => (
                     <tr className="usersRow">
                         <td className='idCell'>{i}</td>
-                        <td className='usersCell'>login</td>
-                        <td className='usersCell'>e-mail@mail.ru</td>
-                        <td className='usersCell'>{Roles[+i%2]}</td>
-                        <td className='usersCell'>{Subscriptions[+i%4]}</td>
+                        <td className='usersCell'>{u.username}</td>
+                        <td className='usersCell'>{u.email}</td>
+                        <td className='usersCell'>{u.roles?.join(', ') ?? ''}</td>
+                        <td className='usersCell'>{u.subscriptions?.length ?? 0}</td>
                     </tr>
                 ))}
                 </tbody>

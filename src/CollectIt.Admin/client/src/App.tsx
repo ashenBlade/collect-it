@@ -1,7 +1,7 @@
 import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import Login from "./components/pages/login/Login";
-import {AdminAuthContext} from "./services/AuthContext";
+import {AdminAuthContext} from "./services/AuthService";
 import NavigationPanel from "./components/NavigationPanel";
 import ResourcesList from "./components/pages/resources/ResourcesList";
 import SubscriptionsList from "./components/pages/subscriptions/SubscriptionsList";
