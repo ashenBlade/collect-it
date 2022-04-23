@@ -14,6 +14,9 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { RestrictionsService } from './subscriptions/restrictions/restrictions.service';
 import {Restriction} from "./subscriptions/restrictions/restriction.model";
 import {Subscription} from "./subscriptions/subscriptions.model";
+import {ResourcesModule} from "./resources/resources.module";
+import {Music} from "./resources/music/musics.model";
+import {Resource} from "./resources/resources.model";
 
 @Module({
   controllers: [],
@@ -29,12 +32,13 @@ import {Subscription} from "./subscriptions/subscriptions.model";
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User, Role, UserRole, Restriction, Subscription],
+          models: [User, Role, UserRole, Restriction, Subscription, Music, Resource],
       }),
       UsersModule,
       RolesModule,
       AuthModule,
-      SubscriptionsModule
+      SubscriptionsModule,
+      ResourcesModule
   ],
 })
 export class AppModule {

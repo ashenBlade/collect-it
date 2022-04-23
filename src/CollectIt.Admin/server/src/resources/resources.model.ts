@@ -5,8 +5,8 @@ export interface CreateResourceInterface {
     readonly name: string;
     readonly ownerId: number;
     readonly uploadDate: Date;
-    readonly tags: string[] | null;
-    readonly
+    readonly tags: string[];
+    readonly extension: string;
 }
 
 
@@ -15,13 +15,15 @@ export interface CreateResourceInterface {
     timestamps: false,
     paranoid: false
 })
-export abstract class Resource extends Model<Resource> {
+export class Resource extends Model<Resource, CreateResourceInterface> {
     @Column({
         type: DataType.INTEGER,
         primaryKey: true,
         field: 'Id',
         unique: true,
         allowNull: false,
+        autoIncrement: true,
+        autoIncrementIdentity: true
     })
     readonly id: number;
 
