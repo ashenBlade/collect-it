@@ -18,11 +18,4 @@ export const ToReadMusicDto = (m: Music): ReadMusicDto => ({
     tags: m.resource.tags,
     extension: m.resource.extension,
     uploadDate: m.resource.uploadDate
-    // id: 0,
-    // duration: 0,
-    // name: '',
-    // uploadDate: new Date(),
-    // extension: '',
-    // tags: [],
-    // ownerId: 1
 });

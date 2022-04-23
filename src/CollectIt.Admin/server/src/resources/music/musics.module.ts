@@ -6,7 +6,6 @@ import {MusicsController} from "./musics.controller";
 import {ResourcesModule} from "../resources.module";
 import {AuthModule} from "../../auth/auth.module";
 import {Resource} from "../resources.model";
-import {ResourcesService} from "../resources.service";
 
 @Module({
     providers: [MusicsService],

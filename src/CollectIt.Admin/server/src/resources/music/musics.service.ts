@@ -46,7 +46,7 @@ export class MusicsService {
 
     async findMusicByIdAsync(id: number): Promise<Music> {
         const music = await this.musicRepository.findByPk(id, {
-            include: [{all: true, model: Resource, foreignKey: 'Id'}]
+            include: [{all: true}]
         });
         if (!music) {
             throw new NotFoundError('Music with specified id not found');
@@ -58,11 +58,7 @@ export class MusicsService {
         if (pageNumber < 1) throw new RangeError('Page number must be positive');
         if (pageSize < 1) throw new RangeError('Page size must be positive');
         return await this.musicRepository.findAndCountAll({
-            include: [{
-                all: true,
-                model: Resource,
-                foreignKey: 'Id'
-            }],
+            include: [{all: true,}],
             limit: pageSize,
             offset: (pageNumber - 1) * pageSize,
             order: [['Id', 'ASC']]
