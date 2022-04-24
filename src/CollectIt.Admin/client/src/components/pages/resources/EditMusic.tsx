@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
+import Music from "../../entities/music";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
-import Music from "../../entities/music";
+
 
 const EditMusic = () => {
-    const music = new Music(1, 'New', new Date(), 'Dog',
-        ["red", "green", "blue"], 'jpg', 1);
+    const music = new Music(2, 'New-York', new Date(), 'Red-Dog',
+        ["red", "dog", "stray"], 'mp3', 1);
 
     const [name,setName] = useState<string|undefined>(music.name)
 
@@ -35,6 +36,9 @@ const EditMusic = () => {
                     </div>
                     <div className='h6 d-block' style={{width: "50%"}}>
                         Owner ID: {music.ownerId}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Duration: 600s(10min)
                     </div>
                 </div>
 

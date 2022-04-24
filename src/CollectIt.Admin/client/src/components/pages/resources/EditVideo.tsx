@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import Image from "../../entities/image";
+import Video from "../../entities/image";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
 
 const EditVideo = () => {
-    const video = new Image(1, 'New', new Date(), 'Dog',
-        ["red", "green", "blue"], 'jpg', 1);
+    const video = new Video(3, 'New-Dawn', new Date(), 'Dawn-of-epoch',
+        ["dawn", "short", "clear"], 'mp4', 1);
 
     const [name,setName] = useState<string|undefined>(video.name)
 
@@ -35,6 +35,9 @@ const EditVideo = () => {
                     </div>
                     <div className='h6 d-block' style={{width: "50%"}}>
                         Owner ID: {video.ownerId}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Duration: 45s
                     </div>
                 </div>
 
