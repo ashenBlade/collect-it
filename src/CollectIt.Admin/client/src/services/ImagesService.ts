@@ -1,23 +1,19 @@
-import useAuthFetch from "./AuthorizedFetch";
 import Image from "../components/entities/image";
 import {serverAddress as server} from "../constants";
 import NotFoundError from "../utils/NotFoundError";
+import authorizedFetch from "./AuthorizedFetch";
 
 const baseApiPath = `${server}/api/v1/images`;
 
 export default class ImagesService {
-    private readonly fetch: (info: RequestInfo,
-                             init: RequestInit | null) => Promise<Response>;
-    constructor() {
-        this.fetch = useAuthFetch();
-    }
+    private static readonly fetch = authorizedFetch();
 
-    async getImagesPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
+    static async getImagesPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
         : Promise<Image[]> {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
-        const response = await this.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
+        const response = await ImagesService.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
             method: 'GET'
         });
         if (!response.ok) {
@@ -26,8 +22,8 @@ export default class ImagesService {
         return await response.json();
     }
 
-    async getImageByIdAsync(id: number): Promise<Image> {
-        const response = await this.fetch(`${baseApiPath}/${id}`, {
+    static async getImageByIdAsync(id: number): Promise<Image> {
+        const response = await ImagesService.fetch(`${baseApiPath}/${id}`, {
             method: 'GET'
         });
         try {

@@ -1,19 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import '../../NavbarStyle.css'
-import useAuthFetch from "../../../services/AuthorizedFetch";
-// import {serverAddress} from "../../../constants";
 import User from "../../entities/user";
 
 const UsersList = () => {
-    const fetch = useAuthFetch();
     const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
-    // const effect = useEffect(( ) => {
-    //     fetch(`${serverAddress}/api/v1/users?page_number=1&page_size=10`, {
-    //         method: 'GET'
-    //     }).then(res => res.json()).then(json => setUsers(json)).catch(reason => {
-    //         setUsers([{id: -1, username: 'Error', subscriptions: [], roles: [], email: 'Could not download', authorOf: []}])
-    //     });
-    // }, []);
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>

@@ -1,4 +1,4 @@
-import useAuthFetch from "./AuthorizedFetch";
+import authorizedFetch from "./AuthorizedFetch";
 import Image from "../components/entities/image";
 import {serverAddress as server} from "../constants";
 import NotFoundError from "../utils/NotFoundError";
@@ -6,18 +6,14 @@ import NotFoundError from "../utils/NotFoundError";
 const baseApiPath = `${server}/api/v1/musics`;
 
 export default class MusicsService {
-    private readonly fetch: (info: RequestInfo,
-                             init: RequestInit | null) => Promise<Response>;
-    constructor() {
-        this.fetch = useAuthFetch();
-    }
+    private static readonly fetch = authorizedFetch();
 
     async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
         : Promise<Image[]> {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
-        const response = await this.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
+        const response = await MusicsService.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
             method: 'GET'
         });
         if (!response.ok) {
@@ -27,7 +23,7 @@ export default class MusicsService {
     }
 
     async getMusicByIdAsync(id: number): Promise<Image> {
-        const response = await this.fetch(`${baseApiPath}/${id}`, {
+        const response = await MusicsService.fetch(`${baseApiPath}/${id}`, {
             method: 'GET'
         });
         try {
