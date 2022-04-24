@@ -2,11 +2,11 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 
 namespace CollectIt.MVC.Infrastructure.Resources;
 
-public class VideoPhysicalFileManager : IVideoFileManager
+public class GenericPhysicalFileManager : IMusicFileManager, IVideoFileManager
 {
     private readonly string _basePath;
 
-    public VideoPhysicalFileManager(string basePath)
+    public GenericPhysicalFileManager(string basePath)
     {
         _basePath = basePath;
     }

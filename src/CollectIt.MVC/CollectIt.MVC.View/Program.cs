@@ -45,7 +45,9 @@ services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 
 var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Videos");
-services.AddTransient<IVideoFileManager>(_ => new VideoPhysicalFileManager(videoPath));
+var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Musics");
+services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
+services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
 services.AddScoped<IVideoManager, PostgresqlVideoManager>();
 
 services.AddSignalR();
