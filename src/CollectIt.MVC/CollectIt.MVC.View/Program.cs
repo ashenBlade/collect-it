@@ -48,6 +48,10 @@ var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Videos
 var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Musics");
 services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
 services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
+Console.WriteLine(videoPath);
+Console.WriteLine(musicPath);
+Directory.CreateDirectory(videoPath);
+Directory.CreateDirectory(musicPath);
 services.AddScoped<IVideoManager, PostgresqlVideoManager>();
 
 services.AddSignalR();

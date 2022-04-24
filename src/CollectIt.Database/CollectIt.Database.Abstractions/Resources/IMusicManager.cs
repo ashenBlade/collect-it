@@ -16,4 +16,6 @@ public interface IMusicManager
     Task<PagedResult<Music>> GetAllPagedAsync(int pageNumber, int pageSize);
     Task ChangeMusicNameAsync(int musicId, string name);
     Task ChangeMusicTagsAsync(int musicId, string[] tags);
+    Task<bool> IsAcquiredBy(int musicId, int userId);
+    Task<Stream> GetContentAsync(int musicId);
 }

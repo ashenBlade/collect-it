@@ -167,4 +167,22 @@ public class PostgresqlMusicManager : IMusicManager
         music.Tags = tags;
         await _context.SaveChangesAsync();
     }
+
+    public Task<bool> IsAcquiredBy(int musicId, int userId)
+    {
+        return _context.AcquiredUserResources
+                       .AnyAsync(m => m.ResourceId == musicId && m.UserId == userId);
+    }
+
+    public async Task<Stream> GetContentAsync(int musicId)
+    {
+        var file = await _context.Musics.SingleOrDefaultAsync(m => m.Id == musicId);
+        if (file is null)
+        {
+            throw new ResourceNotFoundException(musicId, "Music with provided id not found");
+        }
+
+        var filename = file.Name;
+        return _fileManager.GetContent(filename);
+    }
 }

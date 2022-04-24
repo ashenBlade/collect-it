@@ -1,30 +1,30 @@
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 using CollectIt.Database.Abstractions.Resources;
-using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.MVC.View.DTO;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CollectIt.MVC.View.Controllers;
 
-[Route("videos")]
-public class VideosController : Controller
+[Route("musics")]
+public class MusicsController : Controller
 {
-    private readonly IVideoManager _videoManager;
+    private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
 
-    public VideosController(IVideoManager videoManager, UserManager userManager)
+    public MusicsController(IMusicManager musicManager, UserManager userManager)
     {
-        _videoManager = videoManager;
+        _musicManager = musicManager;
         _userManager = userManager;
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] string query, 
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] string query, 
                                                       [Range(1, int.MaxValue)]
                                                       [FromQuery(Name = "page_number")]
                                                       int pageNumber,
@@ -39,9 +39,9 @@ public class VideosController : Controller
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetVideoPageAsync(int id)
+    public async Task<IActionResult> GetMusicsPageAsync(int id)
     {
-        var image = await _videoManager.FindByIdAsync(id);
+        var image = await _musicManager.FindByIdAsync(id);
         if (image is null)
         {
             return NotFound();
@@ -55,19 +55,19 @@ public class VideosController : Controller
 
     [HttpPost("")]
     [Authorize]
-    public async Task<IActionResult> UploadNewVideo(
+    public async Task<IActionResult> UploadNewMusic(
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
         [Required] 
-        CreateVideoDTO dto)
+        CreateMusicDTO dto)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
         try
         {
             await using var stream = dto.FormFile.OpenReadStream();
-            var video = await _videoManager.CreateAsync(dto.Name, userId, dto.Tags, stream, dto.Extension,
+            var music = await _musicManager.CreateAsync(dto.Name, userId, dto.Tags, stream, dto.Extension,
                                                         dto.Duration);
 
-            return CreatedAtAction("GetVideoPage", new {id = video.Id}, new { });
+            return CreatedAtAction("GetMusicsPage", new {id = music.Id}, new { });
         }
         catch (Exception ex)
         {
@@ -77,13 +77,13 @@ public class VideosController : Controller
     
     [HttpGet("download/{id:int}")]
     [Authorize]
-    public async Task<IActionResult> DownloadVideoContent(int id)
+    public async Task<IActionResult> DownloadMusicContent(int id)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
-        if (await _videoManager.IsAcquiredBy(id, userId))
+        if (await _musicManager.IsAcquiredBy(id, userId))
         {
-            var stream = await _videoManager.GetContentAsync(id);
-            return File(stream, "video/*");
+            var stream = await _musicManager.GetContentAsync(id);
+            return File(stream, "music/*");
         }
 
         return BadRequest();
