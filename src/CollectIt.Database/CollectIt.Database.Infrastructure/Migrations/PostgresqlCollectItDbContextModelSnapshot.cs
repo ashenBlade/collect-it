@@ -1077,8 +1077,8 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
 
                     b.ToTable("Musics");
                 });
@@ -1087,8 +1087,8 @@ namespace CollectIt.MVC.View.Migrations
                 {
                     b.HasBaseType("CollectIt.Database.Entities.Resources.Resource");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("interval");
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
 
                     b.ToTable("Videos");
                 });

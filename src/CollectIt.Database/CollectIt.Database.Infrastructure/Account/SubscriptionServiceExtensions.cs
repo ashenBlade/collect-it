@@ -1,7 +1,7 @@
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
 
-namespace CollectIt.MVC.Account.Infrastructure;
+namespace CollectIt.Database.Infrastructure.Account;
 
 public static class SubscriptionServiceExtensions
 {

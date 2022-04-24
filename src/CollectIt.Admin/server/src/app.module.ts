@@ -3,17 +3,18 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { UsersModule } from './users/users.module';
 import {ConfigModule} from "@nestjs/config";
 import {User} from "./users/users.model";
-import { RolesService } from './roles/roles.service';
 import { RolesModule } from './roles/roles.module';
 import {Role} from "./roles/roles.model";
 import {UserRole} from "./roles/user-role.model";
 import { AuthModule } from './auth/auth.module';
-import { SubscriptionsService } from './subscriptions/subscriptions.service';
-import { SubscriptionsController } from './subscriptions/subscriptions.controller';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { RestrictionsService } from './subscriptions/restrictions/restrictions.service';
 import {Restriction} from "./subscriptions/restrictions/restriction.model";
 import {Subscription} from "./subscriptions/subscriptions.model";
+import {ResourcesModule} from "./resources/resources.module";
+import {Music} from "./resources/musics/musics.model";
+import {Resource} from "./resources/resources.model";
+import {Video} from "./resources/videos/videos.model";
+import {Image} from "./resources/images/images.model";
 
 @Module({
   controllers: [],
@@ -29,12 +30,13 @@ import {Subscription} from "./subscriptions/subscriptions.model";
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User, Role, UserRole, Restriction, Subscription],
+          models: [User, Role, UserRole, Restriction, Subscription, Resource, Music, Video, Image],
       }),
       UsersModule,
       RolesModule,
       AuthModule,
-      SubscriptionsModule
+      SubscriptionsModule,
+      ResourcesModule
   ],
 })
 export class AppModule {

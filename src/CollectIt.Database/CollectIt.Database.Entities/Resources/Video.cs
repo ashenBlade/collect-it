@@ -6,8 +6,7 @@ namespace CollectIt.Database.Entities.Resources;
 [Table("Videos")]
 public class Video : Resource
 {
-    public int Id { get; set; }
-    
     [Required]
-    public TimeSpan Duration { get; set; }
+    [Range(0, int.MaxValue)]
+    public int Duration { get; set; }
 }

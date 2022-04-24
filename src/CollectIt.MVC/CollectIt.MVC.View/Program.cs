@@ -4,9 +4,11 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Abstractions.TechSupport;
 using CollectIt.MVC.Infrastructure.Account;
+using CollectIt.MVC.Infrastructure.Resources;
 using CollectIt.MVC.View.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
@@ -41,6 +43,17 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+
+var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Videos");
+var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Musics");
+services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
+services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
+Console.WriteLine(videoPath);
+Console.WriteLine(musicPath);
+Directory.CreateDirectory(videoPath);
+Directory.CreateDirectory(musicPath);
+services.AddScoped<IVideoManager, PostgresqlVideoManager>();
+
 services.AddSignalR();
 services.AddIdentity<User, Role>(config =>
          {

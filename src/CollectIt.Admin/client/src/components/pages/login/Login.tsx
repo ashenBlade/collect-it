@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
-import {AdminAuthContext} from "../../../services/AuthService";
+import {AuthService} from "../../../services/AuthService";
 // Only for tests
 const testJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhc2RmQG1haWwucnUiLCJyb2xlcyI6WyJBZG1pbiJdLCJpYXQiOjE2NTA1MjU2NjYsImV4cCI6MTY2MDg5MzY2Niwic3ViIjoiMSJ9.od7EHL8Bp4snLiGhNDpC9t-Sp98TEF443BxslYHDtgw';
 const isTest = process.env.NODE_ENV === 'development' || true;
 const Login = () => {
-    const auth = React.useContext(AdminAuthContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>('');
@@ -42,7 +41,7 @@ const Login = () => {
         }
 
         try {
-            auth.adminLogin(jwt);
+            AuthService.adminLogin(jwt);
         } catch (e: any) {
             console.error(e);
             setError(e.message);
@@ -50,7 +49,7 @@ const Login = () => {
     }
     const onClickTestButton = (e: React.MouseEvent) => {
         e.preventDefault();
-        auth.adminLogin(testJwt);
+        AuthService.adminLogin(testJwt);
         window.location.href = '/';
     }
     return (

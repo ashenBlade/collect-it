@@ -1,4 +1,3 @@
-import React from "react";
 import jwt_decode from 'jwt-decode';
 
 const jwtKeyName = "admin.jwt";
@@ -11,7 +10,7 @@ const assertAdminRole = (jwt: string) => {
     }
 }
 
-const authState = {
+export const AuthService = {
     isAuthenticated: () : boolean => {
         return !!window.localStorage.getItem(jwtKeyName);
     },
@@ -43,4 +42,4 @@ const authState = {
     loginPath: (): string => loginPath,
 }
 
-export const AdminAuthContext = React.createContext(authState);
+// export const AdminAuthContext = React.createContext(AuthService);

@@ -1,4 +1,3 @@
-using System.Resources;
 using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
@@ -6,7 +5,6 @@ using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.MVC.Account.Infrastructure;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
