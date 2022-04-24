@@ -3,6 +3,7 @@ using CollectIt.Database.Abstractions;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;

@@ -1,4 +1,4 @@
-namespace CollectIt.Database.Infrastructure;
+namespace CollectIt.Database.Infrastructure.Resources.FileManagers;
 
 public interface IVideoFileManager : IResourceFileManager
 { }
