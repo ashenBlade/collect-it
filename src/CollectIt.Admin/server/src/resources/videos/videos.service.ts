@@ -77,4 +77,35 @@ export class VideosService {
             throw new NotFoundError('Video with specified id not found');
         }
     }
+
+    async changeVideoNameAsync(videoId: number, name: string) {
+        if (name?.length < 6) {
+            throw new Error('Music name length must be greater than 5');
+        }
+
+        try {
+            await this.resourcesService.changeResourceNameAsync(videoId, name);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundError('No video with provided id found');
+            }
+            throw e;
+        }
+
+    }
+
+    async changeVideoTagsAsync(videoId: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('Tags must be provided')
+        }
+
+        try {
+            await this.resourcesService.changeResourceTagsAsync(videoId, tags);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundError('No video with specified id found');
+            }
+            throw e;
+        }
+    }
 }

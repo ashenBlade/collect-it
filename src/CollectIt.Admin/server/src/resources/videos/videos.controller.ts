@@ -1,10 +1,10 @@
 import {
-    BadRequestException,
+    BadRequestException, Body,
     Controller, Delete,
     Get,
     NotFoundException,
     Param,
-    ParseIntPipe,
+    ParseIntPipe, Post,
     Query
 } from "@nestjs/common";
 import {VideosService} from "./videos.service";
@@ -68,8 +68,53 @@ export class VideosController {
                     message: 'Video with specified id not found'
                 })
             }
+            console.error(e);
             throw new BadRequestException({
                 message: 'Unexpected error occurred while deleting video. Try later.'
+            })
+        }
+    }
+
+    @Post(':videoId/name')
+    @AuthorizeAdmin()
+    async changeVideoName(@Param('videoId', new ParseIntPipe()) videoId: number,
+                          @Body('name') name: string) {
+        try {
+            if (name?.length < 6) {
+                throw new Error('Length of name must be greater than 6');
+            }
+            await this.videosService.changeVideoNameAsync(videoId, name);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundException({
+                    message: 'Video with specified id not found'
+                })
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Unexpected error occurred while processing request'
+            })
+        }
+    }
+
+    @Post(':videoId/tags')
+    @AuthorizeAdmin()
+    async changeVideoTags(@Param('videoId', new ParseIntPipe()) videoId: number,
+                          @Body('tags') tags: string[]) {
+        try {
+            if (!tags) {
+                throw new Error('No tags provided');
+            }
+            await this.videosService.changeVideoTagsAsync(videoId, tags);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundException({
+                    message: 'Video with specified id not found'
+                })
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Unexpected error occurred while processing request',
             })
         }
     }

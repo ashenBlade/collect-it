@@ -1,10 +1,10 @@
 import {
-    BadRequestException,
+    BadRequestException, Body,
     Controller, Delete,
     Get,
     NotFoundException,
     Param,
-    ParseIntPipe,
+    ParseIntPipe, Post,
     Query
 } from "@nestjs/common";
 import {MusicsService} from "./musics.service";
@@ -68,8 +68,52 @@ export class MusicsController {
                     message: 'Music with specified id not found'
                 })
             }
+            console.error(e);
             throw new BadRequestException({
                 message: 'Unexpected error occurred while deleting music. Try later.'
+            })
+        }
+    }
+
+    @Post(':musicId/name')
+    @AuthorizeAdmin()
+    async changeMusicName(@Param('musicId', new ParseIntPipe()) musicId: number, @Body('name') name: string) {
+        try {
+            if (name?.length < 6) {
+                throw new Error('Length of name must be greater than 6');
+            }
+            await this.musicsService.changeMusicNameAsync(musicId, name);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundException({
+                    message: 'Music with specified id not found'
+                })
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Unexpected error occurred while processing request'
+            })
+        }
+    }
+
+    @Post(':musicId/tags')
+    @AuthorizeAdmin()
+    async changeMusicTags(@Param('musicId', new ParseIntPipe()) musicId: number,
+                          @Body('tags') tags: string[]) {
+        try {
+            if (!tags) {
+                throw new Error('No tags provided');
+            }
+            await this.musicsService.changeMusicTagsAsync(musicId, tags);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundException({
+                    message: 'Music with specified id not found'
+                })
+            }
+            console.error(e);
+            throw new BadRequestException({
+                message: 'Unexpected error occurred while processing request',
             })
         }
     }

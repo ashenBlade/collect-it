@@ -76,4 +76,35 @@ export class MusicsService {
             throw new NotFoundError('Music with specified id not found');
         }
     }
+
+    async changeMusicNameAsync(musicId: number, name: string) {
+        if (name?.length < 6) {
+            throw new Error('Music name length must be greater than 5');
+        }
+
+        try {
+            await this.resourcesService.changeResourceNameAsync(musicId, name);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundError('No music with provided id found');
+            }
+            throw e;
+        }
+
+    }
+
+    async changeMusicTagsAsync(musicId: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('Tags must be provided')
+        }
+
+        try {
+            await this.resourcesService.changeResourceTagsAsync(musicId, tags);
+        } catch (e) {
+            if (e instanceof NotFoundError) {
+                throw new NotFoundError('No music with specified id found');
+            }
+            throw e;
+        }
+    }
 }

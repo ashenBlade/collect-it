@@ -1,5 +1,6 @@
 import {InjectModel} from "@nestjs/sequelize";
 import {Resource} from "./resources.model";
+import {NotFoundError} from "rxjs";
 
 export class ResourcesService {
     constructor(@InjectModel(Resource)private readonly resourcesRepository: typeof Resource) {  }
@@ -15,20 +16,22 @@ export class ResourcesService {
         if (!name) {
             throw new Error('Resource name not provided');
         }
+        if (name.length < 6) {
+            throw new Error('Length of resource name must be greater than 5');
+        }
         if (!extension) {
             throw new Error('Resource extension not provided')
         }
         if (!tags) {
             tags = []
         }
-        const resource = await this.resourcesRepository.create({
+        return await this.resourcesRepository.create({
             name: name,
             ownerId: ownerId,
             tags: tags,
             uploadDate: uploadDate,
             extension: extension
         });
-        return resource;
     }
 
     async deleteResourceByIdAsync(id: number) {
@@ -39,6 +42,36 @@ export class ResourcesService {
         });
         if (affected === 0) {
             throw new Error('Resource with specified id not found');
+        }
+    }
+
+    async changeResourceNameAsync(id: number, name: string) {
+        const affected = await this.resourcesRepository.update({
+            name: name
+        }, {
+            where: {
+                id: id
+            }
+        });
+        if (affected[0] === 0) {
+            throw new NotFoundError('No resource with provided id found');
+        }
+    }
+
+    async changeResourceTagsAsync(musicId: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('No tags provided');
+        }
+
+        const affected = await this.resourcesRepository.update({
+            tags: tags
+        }, {
+            where: {
+                id: musicId
+            }
+        });
+        if (affected[0] === 0) {
+            throw new NotFoundError('No resource with specified id found');
         }
     }
 }
