@@ -108,7 +108,6 @@ public class PostgresqlVideoManager : IVideoManager
             throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
         }
 
-        var total = await _context.Videos.CountAsync();
         return new PagedResult<Video>()
                {
                    Result = await _context.Videos
@@ -116,7 +115,7 @@ public class PostgresqlVideoManager : IVideoManager
                                           .Skip(( pageNumber - 1 ) * pageSize)
                                           .Take(pageSize)
                                           .ToListAsync(),
-                   TotalCount = total
+                   TotalCount = await _context.Videos.CountAsync()
                };
 
     }

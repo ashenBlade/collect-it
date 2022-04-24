@@ -32,7 +32,10 @@ public class VideosController : Controller
                                                       [FromQuery(Name = "page_size")]
                                                       int pageSize)
     {
-        return View("Error");
+        return View("Error", new ErrorViewModel()
+                             {
+                                 Message = "Videos page is not implemented yet"
+                             });
     }
 
     [HttpGet("{id:int}")]
@@ -44,7 +47,10 @@ public class VideosController : Controller
             return NotFound();
         }
 
-        return View("Error");
+        return View("Error", new ErrorViewModel()
+                             {
+                                 Message = "Videos page is not implemented yet"
+                             });
     }
 
     [HttpPost("")]

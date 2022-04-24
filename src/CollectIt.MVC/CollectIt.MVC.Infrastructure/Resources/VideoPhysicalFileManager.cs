@@ -1,10 +1,12 @@
-namespace CollectIt.Database.Infrastructure.Resources.FileManagers;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 
-public class VideoFileManager : IVideoFileManager
+namespace CollectIt.MVC.Infrastructure.Resources;
+
+public class VideoPhysicalFileManager : IVideoFileManager
 {
     private readonly string _basePath;
 
-    public VideoFileManager(string basePath)
+    public VideoPhysicalFileManager(string basePath)
     {
         _basePath = basePath;
     }
