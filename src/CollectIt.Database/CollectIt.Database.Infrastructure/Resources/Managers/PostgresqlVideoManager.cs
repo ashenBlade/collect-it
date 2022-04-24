@@ -60,10 +60,9 @@ public class PostgresqlVideoManager : IVideoManager
                         Extension = extension,
                         UploadDate = DateTime.UtcNow,
                     };
-        EntityEntry<Video> entity;
         try
         {
-            entity = await _context.Videos.AddAsync(video);
+            var entity = await _context.Videos.AddAsync(video);
             video = entity.Entity;
             await _context.SaveChangesAsync();
             var file = await _fileManager.CreateAsync(filename, content);
