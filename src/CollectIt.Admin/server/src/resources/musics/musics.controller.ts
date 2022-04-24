@@ -19,8 +19,8 @@ export class MusicsController {
     constructor(private readonly musicsService: MusicsService) {  }
 
     @Get('')
-    async getAllMusicsPaged(@Query('page_number') pageNumber: number,
-                            @Query('page_size') pageSize: number) {
+    async getAllMusicsPaged(@Query('page_number', new ParseIntPipe()) pageNumber: number,
+                            @Query('page_size', new ParseIntPipe()) pageSize: number) {
         if (pageNumber < 1) {
             throw new BadRequestException({
                 message: 'Page number must be positive'
@@ -35,7 +35,7 @@ export class MusicsController {
         const dtos: ReadMusicDto[] = musics.rows.map(ToReadMusicDto);
         return {
             totalCount: musics.count,
-            musics: dtos
+            videos: dtos
         }
     }
 

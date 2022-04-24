@@ -13,6 +13,7 @@ import {Subscription} from "./subscriptions/subscriptions.model";
 import {ResourcesModule} from "./resources/resources.module";
 import {Music} from "./resources/musics/musics.model";
 import {Resource} from "./resources/resources.model";
+import {Video} from "./resources/videos/videos.model";
 
 @Module({
   controllers: [],
@@ -28,7 +29,7 @@ import {Resource} from "./resources/resources.model";
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User, Role, UserRole, Restriction, Subscription, Music, Resource],
+          models: [User, Role, UserRole, Restriction, Subscription, Resource, Music, Video],
       }),
       UsersModule,
       RolesModule,

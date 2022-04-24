@@ -19,8 +19,8 @@ export class VideosController {
     constructor(private readonly videosService: VideosService) {  }
 
     @Get('')
-    async getAllMusicsPaged(@Query('page_number') pageNumber: number,
-                            @Query('page_size') pageSize: number) {
+    async getAllVideosPaged(@Query('page_number', new ParseIntPipe()) pageNumber: number,
+                            @Query('page_size', new ParseIntPipe()) pageSize: number) {
         if (pageNumber < 1) {
             throw new BadRequestException({
                 message: 'Page number must be positive'
@@ -31,23 +31,23 @@ export class VideosController {
                 message: 'Page size must be positive'
             });
         }
-        const musics = await this.videosService.getAllVideosPagedOrderedAsync(pageNumber, pageSize);
-        const dtos: ReadVideoDto[] = musics.rows.map(ToReadVideoDto);
+        const videos = await this.videosService.getAllVideosPagedOrderedAsync(pageNumber, pageSize);
+        const dtos: ReadVideoDto[] = videos.rows.map(ToReadVideoDto);
         return {
-            totalCount: musics.count,
-            musics: dtos
+            totalCount: videos.count,
+            videos: dtos
         }
     }
 
-    @Get(':musicId')
-    async findMusicById(@Param('musicId', new ParseIntPipe()) musicId: number): Promise<ReadVideoDto> {
+    @Get(':videoId')
+    async findVideoById(@Param('videoId', new ParseIntPipe()) videoId: number): Promise<ReadVideoDto> {
         try {
-            const music = await this.videosService.findVideoByIdAsync(musicId);
-            return ToReadVideoDto(music);
+            const video = await this.videosService.findVideoByIdAsync(videoId);
+            return ToReadVideoDto(video);
         } catch (e) {
             if (e instanceof NotFoundError) {
                 throw new NotFoundException({
-                    message: 'Music with specified id not found'
+                    message: 'Video with specified id not found'
                 })
             }
             console.error(e)
@@ -57,19 +57,19 @@ export class VideosController {
         }
     }
 
-    @Delete(':musicId')
+    @Delete(':videoId')
     @AuthorizeAdmin()
-    async deleteMusicById(@Param('musicId', new ParseIntPipe()) musicId: number) {
+    async deleteVideoById(@Param('videoId', new ParseIntPipe()) videoId: number) {
         try {
-            await this.videosService.deleteVideoByIdAsync(musicId);
+            await this.videosService.deleteVideoByIdAsync(videoId);
         } catch (e) {
             if (e instanceof NotFoundError) {
                 throw new NotFoundException({
-                    message: 'Music with specified id not found'
+                    message: 'Video with specified id not found'
                 })
             }
             throw new BadRequestException({
-                message: 'Unexpected error occurred while deleting music. Try later.'
+                message: 'Unexpected error occurred while deleting video. Try later.'
             })
         }
     }

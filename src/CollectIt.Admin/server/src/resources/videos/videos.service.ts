@@ -7,7 +7,7 @@ import {Video} from "./videos.model";
 
 export class VideosService {
     constructor(private readonly resourcesService: ResourcesService,
-                @InjectModel(Music)private readonly videosRepository: typeof Video) {  }
+                @InjectModel(Video) private readonly videosRepository: typeof Video) {  }
     async createVideoAsync(name: string, ownerId: number, tags: string[], extension: string, uploadDate: Date, duration: number): Promise<Music> {
         if (!name) {
             throw new Error('Video name not provided');
