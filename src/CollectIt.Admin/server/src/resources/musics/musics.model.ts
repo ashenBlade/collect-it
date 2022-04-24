@@ -1,4 +1,4 @@
-import {BelongsTo, Column, DataType, HasOne, Table, Model} from "sequelize-typescript";
+import {BelongsTo, Column, DataType, Table, Model} from "sequelize-typescript";
 import {Resource} from "../resources.model";
 
 export interface CreateMusicInterface {

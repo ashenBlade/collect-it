@@ -11,7 +11,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import {Restriction} from "./subscriptions/restrictions/restriction.model";
 import {Subscription} from "./subscriptions/subscriptions.model";
 import {ResourcesModule} from "./resources/resources.module";
-import {Music} from "./resources/music/musics.model";
+import {Music} from "./resources/musics/musics.model";
 import {Resource} from "./resources/resources.model";
 
 @Module({
