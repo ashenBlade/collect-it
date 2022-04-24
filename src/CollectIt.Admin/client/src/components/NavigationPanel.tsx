@@ -30,7 +30,16 @@ const NavigationPanel = () => {
                             <Link to='/resources' className={page === 2 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(2)}>Resources</Link>
                         </li>
                         <li className='nav-item mx-2'>
-                            <Link to='/resources/0' className='nav-link nav-item'>Resource</Link>
+                            <Link to='/resources/image' className='nav-link nav-item'>Image</Link>
+                        </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/resources/music' className='nav-link nav-item'>Music</Link>
+                        </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/resources/video' className='nav-link nav-item'>Video</Link>
+                        </li>
+                        <li className='nav-item mx-2'>
+                            <Link to='/create' className='nav-link nav-item'>Create Subscription</Link>
                         </li>
                     </ul>
                     <span>
