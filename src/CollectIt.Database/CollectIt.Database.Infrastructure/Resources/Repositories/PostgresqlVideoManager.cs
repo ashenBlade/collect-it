@@ -170,4 +170,21 @@ public class PostgresqlVideoManager : IVideoManager
         _context.Videos.Update(video);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Stream> GetContentAsync(int videoId)
+    {
+        var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == videoId);
+        if (video is null)
+        {
+            throw new VideoNotFoundException(videoId, "Video with specified id not found");
+        }
+
+        return _fileManager.GetContent(video.FileName);
+    }
+
+    public Task<bool> IsAcquiredBy(int videoId, int userId)
+    {
+        return _context.AcquiredUserResources
+                       .AnyAsync(aur => aur.ResourceId == videoId && aur.UserId == userId);
+    }
 }
