@@ -14,6 +14,7 @@ import {ResourcesModule} from "./resources/resources.module";
 import {Music} from "./resources/musics/musics.model";
 import {Resource} from "./resources/resources.model";
 import {Video} from "./resources/videos/videos.model";
+import {Image} from "./resources/images/images.model";
 
 @Module({
   controllers: [],
@@ -29,7 +30,7 @@ import {Video} from "./resources/videos/videos.model";
           username: process.env.POSTGRES_USER,
           password: String(process.env.POSTGRES_PASSWORD),
           database: process.env.POSTGRES_DB,
-          models: [User, Role, UserRole, Restriction, Subscription, Resource, Music, Video],
+          models: [User, Role, UserRole, Restriction, Subscription, Resource, Music, Video, Image],
       }),
       UsersModule,
       RolesModule,
