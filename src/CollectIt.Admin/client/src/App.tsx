@@ -8,8 +8,11 @@ import SubscriptionsList from "./components/pages/subscriptions/SubscriptionsLis
 import EditSubscription from "./components/pages/subscriptions/EditSubscription";
 import UsersList from "./components/pages/users/UsersList";
 import EditUser from "./components/pages/users/EditUser";
-import EditResource from "./components/pages/resources/EditResource";
 import './styles/main.css'
+import EditImage from "./components/pages/resources/EditImage";
+import EditMusic from "./components/pages/resources/EditMusic";
+import EditVideo from "./components/pages/resources/EditVideo";
+import CreateSubscription from "./components/pages/subscriptions/CreateSubscription";
 
 function App() {
     const isAuthenticated = AuthService.isAuthenticated();
@@ -22,7 +25,9 @@ function App() {
                         <Routes>
                             <Route path='/resources'>
                                 <Route path='' element={<ResourcesList/>}/>
-                                <Route path=':resourceId' element={<EditResource/>}/>
+                                <Route path='image' element={<EditImage/>}/>
+                                <Route path='music' element={<EditMusic/>}/>
+                                <Route path='video' element={<EditVideo/>}/>
                             </Route>
 
                             <Route path='/subscriptions'>
@@ -32,6 +37,9 @@ function App() {
                             <Route path='/users'>
                                 <Route path='' element={<UsersList/>}/>
                                 <Route path=':userId' element={<EditUser/>}/>
+                            </Route>
+                            <Route path='/create'>
+                                <Route path='' element={<CreateSubscription/>}/>
                             </Route>
                             { /* Fallback */}
                             <Route path='*' element={<UsersList/>}/>
