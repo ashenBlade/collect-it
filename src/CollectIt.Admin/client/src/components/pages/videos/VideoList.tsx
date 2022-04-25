@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Video from "../../entities/video";
 import VideosService from "../../../services/VideosService";
 
@@ -7,11 +7,12 @@ import VideosService from "../../../services/VideosService";
 const VideoList = () => {
     let pageSize = 10;
     let pageNumber = 1;
-    const [video, setVideo] = useState<Video[]>();
-    async function getImage() {
-        const a = await VideosService.getVideosPagedAsync({pageSize,pageNumber});
-        setVideo(a);
-    }
+    const [videos, setVideos] = useState<Video[]>([]);
+    useEffect(() => {
+        VideosService.getVideosPagedAsync({pageSize, pageNumber}).then(x => {
+            setVideos(x.videos);
+        });
+    });
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
@@ -25,7 +26,7 @@ const VideoList = () => {
                     <td className= 'usersCell color-purple'>FileName</td>
                     <td className= 'usersCell color-purple'>UploadTime</td>
                 </tr>
-                {video?.map(i=>
+                {videos?.map(i=>
                     <tr className ='usersRow'>
                         <td className ='idCell'>{i.id}</td>
                         <td className ='usersCell'>{i.name}</td>

@@ -1,16 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ImageService from '../../../services/ImagesService'
 import Image from "../../entities/image";
 
 const ImageList = () => {
     let pageSize = 10;
     let pageNumber = 1;
-    const [image, setImage] = useState<Image[]>();
-    async function getImage() {
-        const a = await ImageService.getImagesPagedAsync({pageSize,pageNumber});
-        setImage(a);
-    }
-    getImage();
+    const [images, setImages] = useState<Image[]>([]);
+    useEffect(() => {
+        ImageService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
+            setImages(x.images);
+        })
+    }, [])
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
@@ -24,7 +24,7 @@ const ImageList = () => {
                     <td className= 'usersCell color-purple'>FileName</td>
                     <td className= 'usersCell color-purple'>UploadTime</td>
                 </tr>
-                {image?.map(i=>
+                {images?.map(i=>
                     <tr className ='usersRow'>
                         <td className ='idCell'>{i.id}</td>
                         <td className ='usersCell'>{i.name}</td>

@@ -8,8 +8,7 @@ const baseApiPath = `${server}/api/v1/images`;
 export default class ImagesService {
     private static readonly fetch = authorizedFetch();
 
-    static async getImagesPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
-        : Promise<Image[]> {
+    static async getImagesPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number}){
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
@@ -19,7 +18,13 @@ export default class ImagesService {
         if (!response.ok) {
             throw new Error('Could not get images from server');
         }
-        return await response.json();
+        const result = await response.json();
+        const total = Number(result.totalCount);
+        const images: Image[] = result.images;
+        return {
+            totalCount: total,
+            images: images
+        };
     }
 
     static async getImageByIdAsync(id: number): Promise<Image> {

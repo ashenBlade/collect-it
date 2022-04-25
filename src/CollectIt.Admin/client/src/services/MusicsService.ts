@@ -8,8 +8,7 @@ const baseApiPath = `${server}/api/v1/musics`;
 export default class MusicsService {
     private static readonly fetch = authorizedFetch();
 
-    static async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
-        : Promise<Music[]> {
+    static async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number}) {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
@@ -19,7 +18,14 @@ export default class MusicsService {
         if (!response.ok) {
             throw new Error('Could not get musics from server');
         }
-        return await response.json();
+        const json = await response.json();
+
+        const musics: Music[] = json.musics;
+        const totalCount: Number = Number(json.totalCount);
+        return {
+            totalCount: totalCount,
+            musics: musics
+        };
     }
 
     static async getMusicByIdAsync(id: number): Promise<Music> {

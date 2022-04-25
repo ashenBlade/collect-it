@@ -1,16 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MusicsService from '../../../services/MusicsService'
 import Music from "../../entities/music";
 
 const MusicList = () => {
     let pageSize = 10;
     let pageNumber = 1;
-    const [music, setMusic] = useState<Music[]>();
-    async function getMusic() {
-        const a = await MusicsService.getMusicsPagedAsync({pageSize,pageNumber});
-        setMusic(a);
-    }
-    getMusic();
+    const [music, setMusic] = useState<Music[]>([]);
+    useEffect(() => {
+        MusicsService.getMusicsPagedAsync({pageSize,pageNumber}).then(x => {
+            setMusic(x.musics);
+        });
+    }, []);
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
