@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Roles tests")]
 public class RolesControllerTests: IClassFixture<CollectItWebApplicationFactory>
 {
     private readonly CollectItWebApplicationFactory _factory;

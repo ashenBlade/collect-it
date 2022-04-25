@@ -1,17 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Policy;
 using System.Threading.Tasks;
+using System.Web;
 using CollectIt.API.DTO;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Users tests")]
 public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
 {
     private readonly CollectItWebApplicationFactory _factory;
@@ -391,6 +396,52 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         var (client, bearer) = await Initialize();
         await TestsHelpers.AssertStatusCodeAsync(client, "api/v1/users/1000/deactivate", HttpStatusCode.NotFound,
                                                  HttpMethod.Post, bearer);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task FindByUsername_WithExistingUsername_ShouldReturnUser()
+    {
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var expected = new AccountDTO.ReadUserDTO()
+                       {
+                           Email = user.Email,
+                           Id = user.Id,
+                           Roles = new[] {Role.AdminRoleName},
+                           UserName = user.UserName
+                       };
+        var (client, bearer) = await Initialize();
+        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client,
+                                                                           $"api/v1/users/with-username/{HttpUtility.UrlPathEncode(user.UserName)}",
+                                                                           bearer, HttpMethod.Get, _outputHelper);
+        Assert.NotNull(actual);
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Equal(expected.Email, actual.Email);
+        Assert.Equal(expected.UserName, actual.UserName);
+        Assert.Equal(expected.Roles, actual.Roles);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task FindByUsername_WithExistingEmail_ShouldReturnUser()
+    {
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var expected = new AccountDTO.ReadUserDTO()
+                       {
+                           Email = user.Email,
+                           Id = user.Id,
+                           Roles = new[] {Role.AdminRoleName},
+                           UserName = user.UserName
+                       };
+        var (client, bearer) = await Initialize();
+        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client,
+                                                                                        $"api/v1/users/with-email/{HttpUtility.UrlPathEncode(expected.Email)}",
+                                                                                        bearer, HttpMethod.Get, _outputHelper);
+        Assert.NotNull(actual);
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Equal(expected.Email, actual.Email);
+        Assert.Equal(expected.UserName, actual.UserName);
+        Assert.Equal(expected.Roles, actual.Roles);
         client.Dispose();
     }
 }

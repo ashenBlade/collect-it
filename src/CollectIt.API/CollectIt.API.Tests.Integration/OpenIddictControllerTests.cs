@@ -10,6 +10,7 @@ using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Open id dict tests")]
 public class OpenIddictControllerTests : IClassFixture<CollectItWebApplicationFactory>
 {
     private readonly CollectItWebApplicationFactory _factory;

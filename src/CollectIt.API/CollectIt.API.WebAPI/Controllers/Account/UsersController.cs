@@ -214,4 +214,41 @@ public class UsersController : ControllerBase
                                       .Select(err => err.Description)
                                       .ToArray());
     }
+
+    [HttpGet("with-username/{username}")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> FindUserByUsername([Required] string username)
+    {
+        if (string.IsNullOrEmpty(username))
+        {
+            return BadRequest();
+        }
+
+        var user = await _userManager.FindByNameAsync(username);
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok( AccountMappers.ToReadUserDTO(user, roles.ToArray()));
+    }
+
+    [HttpGet("with-email/{email}")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> FindUserByEmail([EmailAddress][Required] string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest(new {Message = "Email not provided"});
+        }
+
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return NotFound();
+        }
+    
+        return Ok(AccountMappers.ToReadUserDTO(user, (await _userManager.GetRolesAsync(user)).ToArray()));
+    }
 }
