@@ -8,9 +8,9 @@ import EditSubscription from "./components/pages/subscriptions/EditSubscription"
 import UsersList from "./components/pages/users/UsersList";
 import EditUser from "./components/pages/users/EditUser";
 import './styles/main.css'
-import EditImage from "./components/pages/resources/EditImage";
-import EditMusic from "./components/pages/resources/EditMusic";
-import EditVideo from "./components/pages/resources/EditVideo";
+import EditImage from "./components/pages/images/EditImage";
+import EditMusic from "./components/pages/musics/EditMusic";
+import EditVideo from "./components/pages/videos/EditVideo";
 import CreateSubscription from "./components/pages/subscriptions/CreateSubscription";
 import MusicList from "./components/pages/musics/MusicList";
 import ImageList from "./components/pages/images/ImageList";

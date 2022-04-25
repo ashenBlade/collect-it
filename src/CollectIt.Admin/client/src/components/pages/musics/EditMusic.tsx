@@ -51,42 +51,44 @@ const EditMusic = () => {
 
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
-            {loaded
-                ? <form className='col-12 p-3'>
-                <p className='h2 text-center'>{displayName}</p>
+            {
+                loaded ?
+                    <form className='col-12 p-3'>
+                        <p className='h2 text-center'>{displayName}</p>
 
-                <div className='ms-4 row'>
-                    <div className='h6 d-block' style={{width: "50%"}}>
-                        ID: {music?.id}
-                    </div>
-                    <div className='h6 d-block' style={{width: "50%"}}>
-                        Filename: {music?.filename}
-                    </div>
-                    <div className='h6 d-block' style={{width: "50%"}}>
-                        Extension: {music?.extension}
-                    </div>
-                    <div className='h6 d-block' style={{width: "50%"}}>
-                        Owner ID: {music?.ownerId}
-                    </div>
-                    <div className='h6 d-block' style={{width: "50%"}}>
-                        Duration: {music?.duration} seconds
-                    </div>
-                </div>
+                        <div className='ms-4 row'>
+                            <div className='h6 d-block' style={{width: "50%"}}>
+                                ID: {music?.id}
+                            </div>
+                            <div className='h6 d-block' style={{width: "50%"}}>
+                                Filename: {music?.filename}
+                            </div>
+                            <div className='h6 d-block' style={{width: "50%"}}>
+                                Extension: {music?.extension}
+                            </div>
+                            <div className='h6 d-block' style={{width: "50%"}}>
+                                Owner ID: {music?.ownerId}
+                            </div>
+                            <div className='h6 d-block' style={{width: "50%"}}>
+                                Duration: {music?.duration} seconds
+                            </div>
+                        </div>
 
-                <InputBlock id={musicId}
-                            fieldName={'Name'}
-                            placeholder={"Music name"}
-                            initial={name}
-                            onSave={e => saveName(e)}/>
-                <InputBlock id={musicId}
-                            fieldName={'Tags'}
-                            placeholder={"Music tags separated by whitespace"}
-                            initial={tags.join(' ')}
-                            onSave={e => saveTags(e.split(' ').filter(t => t !== ''))} />
+                        <InputBlock id={musicId}
+                                    fieldName={'Name'}
+                                    placeholder={"Music name"}
+                                    initial={name}
+                                    onSave={e => saveName(e)}/>
+                        <InputBlock id={musicId}
+                                    fieldName={'Tags'}
+                                    placeholder={"Music tags separated by whitespace"}
+                                    initial={tags.join(' ')}
+                                    onSave={e => saveTags(e.split(' ').filter(t => t !== ''))} />
 
-                <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'/>
-            </form>
-            : <p>Loading...</p>}
+                        <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'/>
+                    </form>
+                : <p>Loading...</p>
+            }
         </div>
     );
 };

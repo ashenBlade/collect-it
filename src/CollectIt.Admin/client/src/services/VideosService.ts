@@ -1,7 +1,6 @@
 import authorizedFetch from "./AuthorizedFetch";
 import {serverAddress} from "../constants";
 import Video from "../components/entities/video";
-import Image from "../components/entities/image";
 import NotFoundError from "../utils/NotFoundError";
 
 const baseApiPath = `${serverAddress}/api/v1/videos`;
@@ -25,7 +24,7 @@ export default class VideosService {
         return { videos, totalCount };
     }
 
-    static async getVideoByIdAsync(id: number): Promise<Image> {
+    static async getVideoByIdAsync(id: number): Promise<Video> {
         const response = await VideosService.fetch(`${baseApiPath}/${id}`, {
             method: 'GET'
         });
@@ -40,6 +39,47 @@ export default class VideosService {
 
         } catch (e: any) {
             throw new Error(e.message);
+        }
+    }
+
+
+    static async changeVideoNameAsync(id: number, name: string) {
+        if (!name) {
+            throw new Error('No name provided');
+        }
+
+        const response = await VideosService.fetch(`${baseApiPath}/${id}/name`, {
+            method: 'POST',
+            body: JSON.stringify({
+                name: name
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            console.error(`Could not change video name. Server status: ${response.status}`);
+            throw new Error('Could not change video name');
+        }
+    }
+
+    static async changeVideoTagsAsync(id: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('Tags can not be null or undefined');
+        }
+
+        const response = await VideosService.fetch(`${baseApiPath}/${id}/tags`, {
+            method: 'POST',
+            body: JSON.stringify({
+                tags: tags
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            console.error(`Could not change video tags. Server status: ${response.status}`);
+            throw new Error('Could not change tags');
         }
     }
 }
