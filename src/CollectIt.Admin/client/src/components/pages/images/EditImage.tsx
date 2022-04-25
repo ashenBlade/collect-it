@@ -56,17 +56,17 @@ const EditImage = () => {
                     <form className='col-12 p-3'>
                         <p className='h2 text-center'>{displayName}</p>
 
-                        <div className='ms-4 row'>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                        <div className='ms-4'>
+                            <div className='h6 d-block'>
                                 ID: {image?.id}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Filename: {image?.filename}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Extension: {image?.extension}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Owner ID: {image?.ownerId}
                             </div>
                         </div>

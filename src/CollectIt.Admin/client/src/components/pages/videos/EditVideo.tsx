@@ -56,20 +56,20 @@ const EditVideo = () => {
                     <form className='col-12 p-3'>
                         <p className='h2 text-center'>Edit Resource {displayName}</p>
 
-                        <div className='ms-4 row'>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                        <div className='ms-4'>
+                            <div className='h6 d-block'>
                                 ID: {video?.id}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Filename: {video?.filename}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Extension: {video?.extension}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Owner ID: {video?.ownerId}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Duration: {video?.duration}s
                             </div>
                         </div>
