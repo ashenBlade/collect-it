@@ -56,20 +56,20 @@ const EditMusic = () => {
                     <form className='col-12 p-3'>
                         <p className='h2 text-center'>{displayName}</p>
 
-                        <div className='ms-4 row'>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                        <div className='ms-4'>
+                            <div className='h6 d-block'>
                                 ID: {music?.id}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Filename: {music?.filename}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Extension: {music?.extension}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Owner ID: {music?.ownerId}
                             </div>
-                            <div className='h6 d-block' style={{width: "50%"}}>
+                            <div className='h6 d-block'>
                                 Duration: {music?.duration} seconds
                             </div>
                         </div>
