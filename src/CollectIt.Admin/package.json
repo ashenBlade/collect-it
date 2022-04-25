@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "build": "concurrently \"npm run --prefix client build\" \"npm run --prefix server build\"",
-    "run": "concurrently \"npm run --prefix client start\" \"npm run --prefix server start\""
+    "run": "concurrently \"npm run --prefix client start\" \"npm run --prefix server start:dev\""
   },
   "author": "",
   "license": "ISC",
