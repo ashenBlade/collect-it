@@ -27,20 +27,20 @@ export class UsersController {
 
     @Get('')
     async getAll(@Query('page_number') pageNumber: number,
-                 @Query('page_size') pageSize: number,
-                 @Res() response: Response) {
+                 @Query('page_size') pageSize: number) {
         const result = await this.usersService.getAllUsersAsync(pageNumber, pageSize);
         const count = result.count;
         const users = result.rows;
-        response.setHeader('X-Total-Count', count);
         const dtos = users.map(u => ({
             id: u.id,
             username: u.username,
             email: u.email,
             roles: u.roles?.map(r => r.name) ?? []})
         );
-        response.send(dtos);
-        response.end();
+        return {
+            totalCount: count,
+            users: dtos
+        }
     }
 
     @Get(':userId')

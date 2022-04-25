@@ -81,7 +81,6 @@ export class MusicsService {
         if (name?.length < 6) {
             throw new Error('Music name length must be greater than 5');
         }
-
         try {
             await this.resourcesService.changeResourceNameAsync(musicId, name);
         } catch (e) {

@@ -39,4 +39,38 @@ export default class ImagesService {
             throw new Error(e.message);
         }
     }
+
+    static async changeImageNameAsync(id: number, name: string) {
+        if (!name) {
+            throw new Error('No name provided');
+        }
+
+        const response = await ImagesService.fetch(`${baseApiPath}/${id}/name`, {
+            method: 'POST',
+            body: JSON.stringify({
+                name: name
+            })
+        });
+        if (!response.ok) {
+            console.error(`Could not change image name. Server status: ${response.status}`);
+            throw new Error('Could not change image name');
+        }
+    }
+
+    static async changeImageTagsAsync(id: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('Tags can not be null or undefined');
+        }
+
+        const response = await ImagesService.fetch(`${baseApiPath}/${id}/tags`, {
+            method: 'POST',
+            body: JSON.stringify({
+                tags: tags
+            })
+        });
+        if (!response.ok) {
+            console.error(`Could not change image tags. Server status: ${response.status}`);
+            throw new Error('Could not change tags');
+        }
+    }
 }

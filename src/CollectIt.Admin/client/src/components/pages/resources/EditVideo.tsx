@@ -1,0 +1,47 @@
+import React, {useState} from 'react';
+import Video from "../../entities/image";
+import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
+
+const EditVideo = () => {
+    const video = new Video(3, 'New-Dawn', new Date(), 'Dawn-of-epoch',
+        ["dawn", "short", "clear"], 'mp4', 1);
+
+    const [name, setName] = useState<string|undefined>(video.name)
+
+    return (
+        <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
+            <form className='col-12 p-3'>
+                <p className='h2 text-center'>Edit Resource {name}</p>
+
+                <div className='ms-4 row'>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        ID: {video.id}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Filename: {video.filename}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Extension: {video.extension}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Owner ID: {video.ownerId}
+                    </div>
+                    <div className='h6 d-block' style={{width: "50%"}}>
+                        Duration: 45s
+                    </div>
+                </div>
+
+                {/*<InputBlock id={video.id} fieldName={'Name'} placeholder={"Video name"} value={name} onSave={_ => { }}>*/}
+                {/*    {name}*/}
+                {/*</InputBlock>*/}
+                {/*<InputBlock id={video.id} placeholder={"Tags:"} initial={t} onSave={_ => { }}>*/}
+                {/*    {video.tags.join(' ')}*/}
+                {/*</InputBlock>*/}
+
+                <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'></DeleteButton>
+            </form>
+        </div>
+    );
+};
+
+export default EditVideo;

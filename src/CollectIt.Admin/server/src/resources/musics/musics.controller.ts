@@ -5,13 +5,15 @@ import {
     NotFoundException,
     Param,
     ParseIntPipe, Post,
-    Query
+    Query, UsePipes, ValidationPipe
 } from "@nestjs/common";
 import {MusicsService} from "./musics.service";
 import {Authorize} from "../../auth/jwt-auth.guard";
 import {ReadMusicDto, ToReadMusicDto} from "./dtos/read-music.dto";
 import {NotFoundError} from "rxjs";
 import {AuthorizeAdmin} from "../../auth/admin-jwt-auth.guard";
+import {ChangeTagsDto} from "../common/change-tags.dto";
+import {ChangeNameDto} from "../common/change-name.dto";
 
 @Authorize()
 @Controller('api/v1/musics')
@@ -77,9 +79,13 @@ export class MusicsController {
 
     @Post(':musicId/name')
     @AuthorizeAdmin()
-    async changeMusicName(@Param('musicId', new ParseIntPipe()) musicId: number, @Body('name') name: string) {
+    async changeMusicName(@Param('musicId', new ParseIntPipe()) musicId: number,
+                          @Body() {name}: ChangeNameDto) {
         try {
-            if (name?.length < 6) {
+            if (!name) {
+                throw new Error('No name provided');
+            }
+            if (name.length < 6) {
                 throw new Error('Length of name must be greater than 6');
             }
             await this.musicsService.changeMusicNameAsync(musicId, name);
@@ -98,8 +104,9 @@ export class MusicsController {
 
     @Post(':musicId/tags')
     @AuthorizeAdmin()
+    @UsePipes(ValidationPipe)
     async changeMusicTags(@Param('musicId', new ParseIntPipe()) musicId: number,
-                          @Body('tags') tags: string[]) {
+                          @Body() {tags}: ChangeTagsDto) {
         try {
             if (!tags) {
                 throw new Error('No tags provided');
