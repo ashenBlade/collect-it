@@ -13,7 +13,7 @@ export class ParseResourceTypePipe implements PipeTransform {
                     return ResourceType.Image;
                 case 'video':
                     return ResourceType.Video;
-                case 'musics':
+                case 'music':
                     return ResourceType.Music;
                 default:
                     throw new ValidationError(`Could not parse resource type: ${value}`, [])
