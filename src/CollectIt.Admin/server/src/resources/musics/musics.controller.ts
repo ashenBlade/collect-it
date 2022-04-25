@@ -37,7 +37,7 @@ export class MusicsController {
         const dtos: ReadMusicDto[] = musics.rows.map(ToReadMusicDto);
         return {
             totalCount: musics.count,
-            videos: dtos
+            musics: dtos
         }
     }
 

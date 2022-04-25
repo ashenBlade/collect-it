@@ -66,14 +66,12 @@ export class MusicsService {
     }
 
     async deleteMusicByIdAsync(id: number) {
-        const affected = await this.musicRepository.destroy({
-            where: {
-                id: id
-            },
-            cascade: true
-        });
-        if (affected === 0) {
-            throw new NotFoundError('Music with specified id not found');
+        try {
+            await this.resourcesService.deleteResourceByIdAsync(id);
+        } catch (e) {
+            if (e instanceof NotFoundError)
+                throw new NotFoundError('Music with specified id not found');
+            throw e;
         }
     }
 

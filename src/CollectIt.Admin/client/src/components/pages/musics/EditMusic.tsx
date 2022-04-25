@@ -49,11 +49,20 @@ const EditMusic = () => {
         })
     }
 
+    const deleteMusic = () => {
+        MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
+            alert('Music deleted successfully');
+            nav('/musics')
+        }).catch(x => {
+            console.error(x);
+        });
+    }
+
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             {
                 loaded ?
-                    <form className='col-12 p-3'>
+                    <div className='col-12 p-3'>
                         <p className='h2 text-center'>{displayName}</p>
 
                         <div className='ms-4'>
@@ -85,8 +94,8 @@ const EditMusic = () => {
                                     initial={tags.join(' ')}
                                     onSave={e => saveTags(e.split(' ').filter(t => t !== ''))} />
 
-                        <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'/>
-                    </form>
+                        <DeleteButton onDeleteClick={deleteMusic}/>
+                    </div>
                 : <p>Loading...</p>
             }
         </div>

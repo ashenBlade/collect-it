@@ -78,4 +78,14 @@ export default class ImagesService {
             throw new Error('Could not change tags');
         }
     }
+
+    static async deleteImageByIdAsync(id: number) {
+        const response = await ImagesService.fetch(`${baseApiPath}/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            if (response.status === 404) throw new NotFoundError('No music found')
+            throw new Error('Could not delete image');
+        }
+    }
 }

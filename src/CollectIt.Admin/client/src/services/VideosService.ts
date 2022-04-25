@@ -82,4 +82,14 @@ export default class VideosService {
             throw new Error('Could not change tags');
         }
     }
+
+    static async deleteVideoByIdAsync(id: number) {
+        const response = await VideosService.fetch(`${baseApiPath}/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            if (response.status === 404) throw new NotFoundError('No video found')
+            throw new Error('Could not delete video');
+        }
+    }
 }

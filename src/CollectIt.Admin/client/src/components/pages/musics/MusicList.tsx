@@ -5,11 +5,13 @@ import Music from "../../entities/music";
 const MusicList = () => {
     let pageSize = 10;
     let pageNumber = 1;
-    const [music, setMusic] = useState<Music[]>([]);
+    const [musics, setMusics] = useState<Music[]>([]);
     useEffect(() => {
         MusicsService.getMusicsPagedAsync({pageSize,pageNumber}).then(x => {
-            setMusic(x.musics);
-        });
+            console.log(x.musics);
+            console.log(x.totalCount);
+            setMusics(x.musics);
+        }).catch(x => alert(x.message));
     }, []);
     return (
         <div>
@@ -24,7 +26,7 @@ const MusicList = () => {
                     <td className= 'usersCell color-purple'>FileName</td>
                     <td className= 'usersCell color-purple'>UploadTime</td>
                 </tr>
-                {music?.map(i=>
+                {musics?.map(i=>
                         <tr className ='usersRow'>
                             <td className ='idCell'>{i.id}</td>
                             <td className ='usersCell'>{i.name}</td>

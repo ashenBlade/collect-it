@@ -49,11 +49,20 @@ const EditVideo = () => {
         })
     }
 
+    const deleteVideo = () => {
+        VideosService.deleteVideoByIdAsync(videoId).then(() => {
+            alert('Video deleted successfully');
+            nav('/videos');
+        }).catch(x => {
+            alert(x.message);
+        })
+    }
+
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             {
                 loaded ?
-                    <form className='col-12 p-3'>
+                    <div className='col-12 p-3'>
                         <p className='h2 text-center'>Edit Resource {displayName}</p>
 
                         <div className='ms-4'>
@@ -85,8 +94,8 @@ const EditVideo = () => {
                                     initial={tags.join(' ')}
                                     onSave={e => saveTags(e.split(' ').filter(t => t !== ''))} />
 
-                        <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'></DeleteButton>
-                    </form>
+                        <DeleteButton onDeleteClick={deleteVideo}/>
+                    </div>
                 :<p>Loading...</p>
             }
         </div>
