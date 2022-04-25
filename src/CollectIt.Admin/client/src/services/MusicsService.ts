@@ -1,15 +1,15 @@
 import authorizedFetch from "./AuthorizedFetch";
-import Image from "../components/entities/image";
 import {serverAddress as server} from "../constants";
 import NotFoundError from "../utils/NotFoundError";
+import Music from "../components/entities/music";
 
 const baseApiPath = `${server}/api/v1/musics`;
 
 export default class MusicsService {
     private static readonly fetch = authorizedFetch();
 
-    async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
-        : Promise<Image[]> {
+    static async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
+        : Promise<Music[]> {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
@@ -22,7 +22,7 @@ export default class MusicsService {
         return await response.json();
     }
 
-    async getMusicByIdAsync(id: number): Promise<Image> {
+    static async getMusicByIdAsync(id: number): Promise<Music> {
         const response = await MusicsService.fetch(`${baseApiPath}/${id}`, {
             method: 'GET'
         });
@@ -37,6 +37,47 @@ export default class MusicsService {
 
         } catch (e: any) {
             throw new Error(e.message);
+        }
+    }
+
+
+    static async changeMusicNameAsync(id: number, name: string) {
+        if (!name) {
+            throw new Error('No name provided');
+        }
+
+        const response = await MusicsService.fetch(`${baseApiPath}/${id}/name`, {
+            method: 'POST',
+            body: JSON.stringify({
+                name: name
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            console.error(`Could not change music name. Server status: ${response.status}`);
+            throw new Error('Could not change music name');
+        }
+    }
+
+    static async changeMusicTagsAsync(id: number, tags: string[]) {
+        if (!tags) {
+            throw new Error('Tags can not be null or undefined');
+        }
+
+        const response = await MusicsService.fetch(`${baseApiPath}/${id}/tags`, {
+            method: 'POST',
+            body: JSON.stringify({
+                tags: tags
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            console.error(`Could not change music tags. Server status: ${response.status}`);
+            throw new Error('Could not change tags');
         }
     }
 }

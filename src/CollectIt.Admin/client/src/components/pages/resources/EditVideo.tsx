@@ -1,22 +1,12 @@
 import React, {useState} from 'react';
 import Video from "../../entities/image";
-import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
 
 const EditVideo = () => {
     const video = new Video(3, 'New-Dawn', new Date(), 'Dawn-of-epoch',
         ["dawn", "short", "clear"], 'mp4', 1);
 
-    const [name,setName] = useState<string|undefined>(video.name)
-
-    const saveChanges = (e: React.ChangeEvent) => {
-        e.preventDefault()
-        console.log(name);
-    }
-
-    const cv = (name?: string) => {
-        setName(name)
-    }
+    const [name, setName] = useState<string|undefined>(video.name)
 
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
@@ -41,12 +31,12 @@ const EditVideo = () => {
                     </div>
                 </div>
 
-                <InputBlock id={video.id} label={"Name:"} onClickSaveButton={saveChanges} change={cv}>
-                    {name}
-                </InputBlock>
-                <InputBlock id={video.id} label={"Tags:"} onClickSaveButton={saveChanges} change={cv}>
-                    {video.tags.join(' ')}
-                </InputBlock>
+                {/*<InputBlock id={video.id} fieldName={'Name'} placeholder={"Video name"} value={name} onSave={_ => { }}>*/}
+                {/*    {name}*/}
+                {/*</InputBlock>*/}
+                {/*<InputBlock id={video.id} placeholder={"Tags:"} initial={t} onSave={_ => { }}>*/}
+                {/*    {video.tags.join(' ')}*/}
+                {/*</InputBlock>*/}
 
                 <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'></DeleteButton>
             </form>

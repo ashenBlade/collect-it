@@ -8,6 +8,7 @@ export interface ReadMusicDto {
     readonly uploadDate: Date;
     readonly tags: string[];
     readonly extension: string;
+    readonly filename: string;
 }
 
 export const ToReadMusicDto = (m: Music): ReadMusicDto => ({
@@ -17,5 +18,6 @@ export const ToReadMusicDto = (m: Music): ReadMusicDto => ({
     ownerId: m.resource.ownerId,
     tags: m.resource.tags,
     extension: m.resource.extension,
-    uploadDate: m.resource.uploadDate
+    uploadDate: m.resource.uploadDate,
+    filename: m.resource.filename
 });

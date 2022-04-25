@@ -29,9 +29,20 @@ const EditImage = () => {
         })
     }, []);
 
-    const saveChanges = (e: React.ChangeEvent) => {
-        e.preventDefault()
-        // console.log(name);
+    const saveName = (newName: string) => {
+        ImagesService.changeImageNameAsync(imageId, newName).then(_ => {
+            setName(newName);
+        }).catch(_ => {
+            alert('Could not change image name. Try later.')
+        })
+    }
+
+    const saveTags = (newTags: string[]) => {
+        ImagesService.changeImageTagsAsync(imageId, newTags).then(_ => {
+            setTags(newTags);
+        }).catch(_ => {
+            alert('Could not change image tags. Try later.')
+        })
     }
 
     return (
@@ -54,19 +65,16 @@ const EditImage = () => {
                     </div>
                 </div>
 
-                <InputBlock id={image?.id} label={"Name:"} onClickSaveButton={saveChanges} change={val => {
-                    if (!val) return;
-                    setName(val);
-                }}>
-                    {name}
-                </InputBlock>
-                <InputBlock id={image?.id} label={"Tags:"} onClickSaveButton={saveChanges} change={val => {
-                    if (!val) return;
-                    setTags(val.split(' '));
-                }}>
-                    {tags.join(', ')}
-                </InputBlock>
-
+                <InputBlock fieldName={'Name'}
+                            id={image?.id}
+                            placeholder={'Image name'}
+                            initial={name}
+                            onSave={saveName}/>
+                <InputBlock id={image?.id}
+                            fieldName={'Tags'}
+                            placeholder={'Image tags separated by whitespace'}
+                            initial={tags.join(', ')}
+                            onSave={t => saveTags(t.split(' ').filter(x => x !== ''))}/>
                 <DeleteButton className='btn btn-danger justify-content-center my-2 hc-0 ms-4'></DeleteButton>
             </form>
         </div>

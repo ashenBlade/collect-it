@@ -2,13 +2,12 @@ import React, {FC} from 'react';
 
 interface EditInputParams {
     children?: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const EditInput: FC<EditInputParams> = ({children, onChange}) => {
+const EditInput: FC<EditInputParams> = ({children}) => {
     return (
         <input className='border rounded my-2 col-9 me-4' type='text' placeholder='Resource`s tags'
-               value={children} onChange={onChange}/>
+               value={children}/>
     );
 };
 

@@ -46,6 +46,7 @@ export class ResourcesService {
     }
 
     async changeResourceNameAsync(id: number, name: string) {
+        console.log('In resources service', id, name);
         const affected = await this.resourcesRepository.update({
             name: name
         }, {
