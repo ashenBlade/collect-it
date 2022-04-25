@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Purchase")]
 public class PurchaseControllerTests: IClassFixture<CollectItWebApplicationFactory>
 {
     private readonly CollectItWebApplicationFactory _factory;

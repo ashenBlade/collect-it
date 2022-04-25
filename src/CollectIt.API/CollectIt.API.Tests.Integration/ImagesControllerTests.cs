@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Images tests")]
 public class ImagesControllerTests : IClassFixture<CollectItWebApplicationFactory>
 {
     private readonly CollectItWebApplicationFactory _factory;
