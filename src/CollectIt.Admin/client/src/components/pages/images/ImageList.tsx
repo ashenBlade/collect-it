@@ -14,8 +14,11 @@ const ImageList = () => {
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
+                <input id='email' value={id} onChange={(e)=> setId(e.target.value)} className='form-control my-2' type='text' placeholder='Enter id'/>
+                <NavLink to={path}>
+                    Найти
+                </NavLink>
+
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className='firstRow usersRow'>
                     <td className ='idCell color-purple '>ID</td>
