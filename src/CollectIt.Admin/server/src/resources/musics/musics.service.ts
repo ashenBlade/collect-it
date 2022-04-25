@@ -29,7 +29,7 @@ export class MusicsService {
                 duration: duration
             });
             if (!music) {
-                throw new Error('Could not create music object');
+                throw new Error('Could not create musics object');
             }
             return music;
         } catch (e) {
@@ -85,7 +85,7 @@ export class MusicsService {
             await this.resourcesService.changeResourceNameAsync(musicId, name);
         } catch (e) {
             if (e instanceof NotFoundError) {
-                throw new NotFoundError('No music with provided id found');
+                throw new NotFoundError('No musics with provided id found');
             }
             throw e;
         }
@@ -101,7 +101,7 @@ export class MusicsService {
             await this.resourcesService.changeResourceTagsAsync(musicId, tags);
         } catch (e) {
             if (e instanceof NotFoundError) {
-                throw new NotFoundError('No music with specified id found');
+                throw new NotFoundError('No musics with specified id found');
             }
             throw e;
         }

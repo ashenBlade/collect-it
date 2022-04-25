@@ -17,7 +17,7 @@ export default class MusicsService {
             method: 'GET'
         });
         if (!response.ok) {
-            throw new Error('Could not get images from server');
+            throw new Error('Could not get musics from server');
         }
         return await response.json();
     }
@@ -31,7 +31,7 @@ export default class MusicsService {
                 if (response.status === 404) {
                     throw new NotFoundError('Music with specified id not found');
                 }
-                throw new Error('Could not get music from server')
+                throw new Error('Could not get musics from server')
             }
             return await response.json();
 

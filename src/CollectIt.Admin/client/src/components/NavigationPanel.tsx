@@ -26,19 +26,16 @@ const NavigationPanel = () => {
                             <Link to='/subscriptions' className={page === 1 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(1)}>Subscriptions</Link>
                         </li>
                         <li className='nav-item px-5'>
-                            <Link to='/resources' className={page === 2 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(2)}>Resources</Link>
+                            <Link to='/images' className={page === 3 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(3)}>Images</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/resources/image' className='nav-link nav-item'>Image</Link>
+                        <li className='nav-item px-5'>
+                            <Link to='/musics' className={page === 4 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(4)}>Musics</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/resources/music' className='nav-link nav-item'>Music</Link>
+                        <li className='nav-item px-5'>
+                            <Link to='/videos' className={page === 5 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(5)}>Videos</Link>
                         </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/resources/video' className='nav-link nav-item'>Video</Link>
-                        </li>
-                        <li className='nav-item mx-2'>
-                            <Link to='/create' className='nav-link nav-item'>Create Subscription</Link>
+                        <li className='nav-item px-5'>
+                            <Link to='/create' className={page === 6 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(6)}>Create Subscription</Link>
                         </li>
                     </ul>
                     <span>

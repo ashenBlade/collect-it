@@ -72,7 +72,7 @@ export class MusicsController {
             }
             console.error(e);
             throw new BadRequestException({
-                message: 'Unexpected error occurred while deleting music. Try later.'
+                message: 'Unexpected error occurred while deleting musics. Try later.'
             })
         }
     }
