@@ -444,4 +444,54 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
         Assert.Equal(expected.Roles, actual.Roles);
         client.Dispose();
     }
+
+    [Fact]
+    public async Task GetUserByUsername_WithNonExistingUsername_ShouldReturnNotFound()
+    {
+        const string username = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; // Does not exists by default
+        var ( client, bearer ) = await Initialize();
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/with-username/{HttpUtility.UrlPathEncode(username)}",
+                                                 HttpStatusCode.NotFound,
+                                                 HttpMethod.Get,
+                                                 bearer);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task GetUserByEmail_WithNonExistingEmail_ShouldReturnNotFound()
+    {
+        const string email = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@mail.ru"; // Does not exists by default
+        var ( client, bearer ) = await Initialize();
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/with-email/{HttpUtility.UrlPathEncode(email)}",
+                                                 HttpStatusCode.NotFound,
+                                                 HttpMethod.Get,
+                                                 bearer);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task GetUserByUsername_WithoutUsernameProvided_ShouldReturnBadRequest()
+    {
+        var ( client, bearer ) = await Initialize();
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/with-username/%20%20",
+                                                 HttpStatusCode.BadRequest,
+                                                 HttpMethod.Get,
+                                                 bearer);
+        client.Dispose();
+    }
+    
+    [Fact]
+    public async Task GetUserByEmail_WithoutEmailProvided_ShouldReturnBadRequest()
+    {
+        var ( client, bearer ) = await Initialize();
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 $"api/v1/users/with-email/%20%20",
+                                                 HttpStatusCode.BadRequest,
+                                                 HttpMethod.Get,
+                                                 bearer);
+        client.Dispose();
+    }
 }
