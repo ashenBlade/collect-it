@@ -38,10 +38,11 @@ export class ResourcesService {
         const affected = await this.resourcesRepository.destroy({
             where: {
                 id: id
-            }
+            },
+            cascade: true
         });
         if (affected === 0) {
-            throw new Error('Resource with specified id not found');
+            throw new NotFoundError('Resource with specified id not found');
         }
     }
 

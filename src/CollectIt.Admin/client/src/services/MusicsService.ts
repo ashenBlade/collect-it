@@ -8,8 +8,7 @@ const baseApiPath = `${server}/api/v1/musics`;
 export default class MusicsService {
     private static readonly fetch = authorizedFetch();
 
-    static async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number})
-        : Promise<Music[]> {
+    static async getMusicsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number}) {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
@@ -17,9 +16,16 @@ export default class MusicsService {
             method: 'GET'
         });
         if (!response.ok) {
-            throw new Error('Could not get images from server');
+            throw new Error('Could not get musics from server');
         }
-        return await response.json();
+        const json = await response.json();
+
+        const musics: Music[] = json.musics;
+        const totalCount: Number = Number(json.totalCount);
+        return {
+            totalCount: totalCount,
+            musics: musics
+        };
     }
 
     static async getMusicByIdAsync(id: number): Promise<Music> {
@@ -31,7 +37,7 @@ export default class MusicsService {
                 if (response.status === 404) {
                     throw new NotFoundError('Music with specified id not found');
                 }
-                throw new Error('Could not get music from server')
+                throw new Error('Could not get musics from server')
             }
             return await response.json();
 
@@ -78,6 +84,16 @@ export default class MusicsService {
         if (!response.ok) {
             console.error(`Could not change music tags. Server status: ${response.status}`);
             throw new Error('Could not change tags');
+        }
+    }
+
+    static async deleteMusicByIdAsync(id: number) {
+        const response = await MusicsService.fetch(`${baseApiPath}/${id}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) {
+            if (response.status === 404) throw new NotFoundError('No music found')
+            throw new Error('Could not delete music');
         }
     }
 }

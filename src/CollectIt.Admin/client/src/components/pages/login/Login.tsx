@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {AuthService} from "../../../services/AuthService";
+
 // Only for tests
 const testJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhc2RmQG1haWwucnUiLCJyb2xlcyI6WyJBZG1pbiJdLCJpYXQiOjE2NTA1MjU2NjYsImV4cCI6MTY2MDg5MzY2Niwic3ViIjoiMSJ9.od7EHL8Bp4snLiGhNDpC9t-Sp98TEF443BxslYHDtgw';
 const isTest = process.env.NODE_ENV === 'development' || true;
@@ -42,6 +43,7 @@ const Login = () => {
 
         try {
             AuthService.adminLogin(jwt);
+            window.location.href = '/users';
         } catch (e: any) {
             console.error(e);
             setError(e.message);

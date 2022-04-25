@@ -27,7 +27,7 @@ export class ImagesController {
         const dtos: ReadImageDto[] = images.rows.map(ToReadImageDto);
         return {
             totalCount: images.count,
-            videos: dtos
+            images: dtos
         }
     }
 

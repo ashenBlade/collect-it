@@ -11,6 +11,7 @@ using Xunit.Abstractions;
 
 namespace CollectIt.API.Tests.Integration;
 
+[Collection("Subscriptions tests")]
 public class SubscriptionsControllerTests: IClassFixture<CollectItWebApplicationFactory>
 {
     private async Task<(HttpClient, string)> Initialize(string? username = null, string? password = null)
