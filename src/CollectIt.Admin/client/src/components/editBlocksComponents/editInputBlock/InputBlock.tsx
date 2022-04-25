@@ -19,10 +19,10 @@ const InputBlock: FC<InputBlockParams> = (
         change
     }) =>
 {
-    const [value,setValue] = useState(children)
+    const [value, setValue] = useState(children)
     
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(e.target.value);
+      setValue(e.currentTarget.value);
       change(value)
     }
 

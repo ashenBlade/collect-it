@@ -23,11 +23,20 @@ function App() {
                     ? <>
                         <NavigationPanel/>
                         <Routes>
+                            <Route path='/images'>
+                                <Route path=':imageId' element={<EditImage/>}/>
+                            </Route>
+                            <Route path='/musics'>
+                                <Route path=':musicId' element={<EditMusic/>}/>
+
+                            </Route>
+                            <Route path='/videos'>
+                                <Route path=':videoId' element={<EditVideo/>}/>
+                            </Route>
+
+                            {/* Deprecated */}
                             <Route path='/resources'>
                                 <Route path='' element={<ResourcesList/>}/>
-                                <Route path='image' element={<EditImage/>}/>
-                                <Route path='music' element={<EditMusic/>}/>
-                                <Route path='video' element={<EditVideo/>}/>
                             </Route>
 
                             <Route path='/subscriptions'>
