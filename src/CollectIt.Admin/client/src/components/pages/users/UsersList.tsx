@@ -1,14 +1,21 @@
-import React, {useState} from 'react';
+import React, {ChangeEvent, useState} from 'react';
 import '../../NavbarStyle.css'
 import User from "../../entities/user";
+import Pagination from "../../UI/pagination/Pagination";
 
 const UsersList = () => {
     const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
+    const [enteredText, setEnteredText] = useState("");
+    const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.code === "Enter") {
+            window.location.href=(`../images/${enteredText}`);
+        }
+    };
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
                 <input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
+                <input type='text' onKeyDown={keyDownHandler} value={enteredText} onChange={(e) => setEnteredText(e.target.value)} id='email' className='form-control my-2'  placeholder='Enter id'/>
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className="usersRow firstRow">
                     <td className='idCell color-purple'>ID</td>
@@ -27,23 +34,6 @@ const UsersList = () => {
                     </tr>
                 ))}
                 </tbody>
-                <ul className="pagination">
-                    <li className="page-item">
-                        <button className="page-link" type="button">1</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">2</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">3</button>
-                    </li>
-                    <li>
-                        <h2 className='text-center mx-1 mb-0'>...</h2>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">9</button>
-                    </li>
-                </ul>
             </div>
         </div>
     );
