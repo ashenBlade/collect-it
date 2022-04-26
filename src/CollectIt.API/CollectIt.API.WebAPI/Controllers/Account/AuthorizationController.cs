@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using CollectIt.API.DTO.Mappers;
+using CollectIt.API.WebAPI.DTO;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
@@ -116,5 +118,30 @@ public class AuthorizationController : ControllerBase
                 yield return Destinations.AccessToken;
                 yield break;
         }
+    }
+
+    [HttpPost("/auth/register")]
+    public async Task<IActionResult> RegisterUser([FromForm]RegisterDTO dto)
+    {
+        var (username, email, password) = ( dto.Username, dto.Email, dto.Password );
+        var user = new User()
+                   {
+                       Email = email,
+                       NormalizedEmail = email.ToUpper(),
+                       UserName = username,
+                       NormalizedUserName = username.ToUpper(),
+                   };
+        var result = await _userManager.CreateAsync(user, password);
+        if (!result.Succeeded)
+        {
+            return BadRequest(new
+                              {
+                                  Message = "Error while registration",
+                                  Errors = result.Errors.Select(err => err.Description)
+                              });
+        }
+
+        var readUserDTO = AccountMappers.ToReadUserDTO(user, Array.Empty<string>());
+        return CreatedAtAction("GetUserById", "Users", new {userId = user.Id}, readUserDTO);
     }
 }
