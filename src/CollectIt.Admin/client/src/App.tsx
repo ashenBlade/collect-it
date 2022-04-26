@@ -15,6 +15,7 @@ import CreateSubscription from "./components/pages/subscriptions/CreateSubscript
 import MusicList from "./components/pages/musics/MusicList";
 import ImageList from "./components/pages/images/ImageList";
 import VideoList from "./components/pages/videos/VideoList";
+import ConfirmWindow from "./components/UI/ConfirmWindow/ConfirmWindow";
 
 function App() {
     const isAuthenticated = AuthService.isAuthenticated();
