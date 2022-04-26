@@ -8,9 +8,11 @@ import ImagesService from "../../../services/ImagesService";
 
 const EditImage = () => {
     const params = useParams();
-    const imageId = Number(params.imageId);
+    const imageId = Number(params.imageId?.trim());
     const nav = useNavigate();
-    if (imageId === undefined) nav('/images');
+    if (!Number.isInteger(imageId))
+        nav('/images');
+
     const [image, setImage] = useState<Image | null>(null);
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');
