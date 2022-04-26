@@ -8,9 +8,10 @@ import VideosService from "../../../services/VideosService";
 
 const EditVideo = () => {
     const params = useParams();
-    const videoId = Number(params.videoId);
+    const videoId = Number(params.videoId?.trim());
     const nav = useNavigate();
-    if (videoId === undefined) nav('/videos');
+    if (!Number.isInteger(videoId))
+        nav('/videos');
     const [video, setVideo] = useState<Video | null>(null)
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');

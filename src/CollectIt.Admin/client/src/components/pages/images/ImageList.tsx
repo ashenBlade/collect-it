@@ -21,7 +21,6 @@ const ImageList = () => {
     const toEditImagePage = (id: number) => nav(`/images/${id}`);
     const onSearch = (q: string) => {
         const id = Number(q);
-        console.log(id);
         if (!Number.isInteger(id)) {
             alert('Id must be an integer');
             return;
