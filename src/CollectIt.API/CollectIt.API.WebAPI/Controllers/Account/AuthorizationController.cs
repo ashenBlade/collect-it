@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.API.WebAPI.DTO;
+using CollectIt.API.DTO;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
