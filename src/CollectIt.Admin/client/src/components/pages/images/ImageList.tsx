@@ -1,21 +1,36 @@
 import React, {useEffect, useState} from 'react';
-import ImageService from '../../../services/ImagesService'
 import Image from "../../entities/image";
+import Pagination from "../../UI/pagination/Pagination";
+import ImagesService from "../../../services/ImagesService";
 
 const ImageList = () => {
     let pageSize = 10;
     let pageNumber = 1;
     const [images, setImages] = useState<Image[]>([]);
+    const [redirectID, SetID] = useState(0);
     useEffect(() => {
-        ImageService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
+        ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
             setImages(x.images);
         })
     }, [])
+    const [enteredText, setEnteredText] = useState("");
+    const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.code === "Enter") {
+            window.location.href=(`../images/${enteredText}`);
+        }
+    };
+    function redirect()
+    {
+        window.location.href=(`../images/${redirectID}`)
+    }
+    const downloadPageNumber = (pageNumber: number) => {
+        ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {setImages(x.images)})
+    }
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
                 <input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
+                <input onKeyDown={keyDownHandler} value={enteredText} onChange={(e) => setEnteredText(e.target.value)} id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className='firstRow usersRow'>
                     <td className ='idCell color-purple '>ID</td>
@@ -25,7 +40,8 @@ const ImageList = () => {
                     <td className= 'usersCell color-purple'>UploadTime</td>
                 </tr>
                 {images?.map(i=>
-                    <tr className ='usersRow'>
+                    <tr onClick={redirect} className ='usersRow'>
+                        {SetID(i.id)}
                         <td className ='idCell'>{i.id}</td>
                         <td className ='usersCell'>{i.name}</td>
                         <td className ='usersCell'>{i.ownerId}</td>
@@ -34,23 +50,7 @@ const ImageList = () => {
                     </tr>
                 )}
                 </tbody>
-                <ul className="pagination">
-                    <li className="page-item">
-                        <button className="page-link" type="button">1</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">2</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">3</button>
-                    </li>
-                    <li>
-                        <h2 className='text-center mx-1 mb-0'>...</h2>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">9</button>
-                    </li>
-                </ul>
+                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
