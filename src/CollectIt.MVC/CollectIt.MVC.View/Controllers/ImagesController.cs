@@ -15,7 +15,6 @@ public class ImagesController : Controller
 {
     private readonly IImageManager _imageManager;
     private readonly ICommentManager _commentManager;
-    private IWebHostEnvironment appEnvironment;
     private readonly UserManager _userManager;
 
     private readonly string address;
@@ -27,9 +26,8 @@ public class ImagesController : Controller
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
-        this.appEnvironment = appEnvironment;
         _userManager = userManager;
-        address = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "imagesFromDb");
+        address = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
     }
 
     [HttpGet("")]
@@ -99,7 +97,7 @@ public class ImagesController : Controller
     [HttpPost("post")]
     public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
     {
-        var ext = GetExtension(uploadedFile.FileName);
+        var ext = _imageManager.GetExtension(uploadedFile.FileName);
         if (ext is null)
             return View("Error");
         var user = await _userManager.GetUserAsync(User);
@@ -110,14 +108,6 @@ public class ImagesController : Controller
         return View("ImagePostPage");
     }
     
-    [NonAction]
-    private string? GetExtension(string fileName)
-    {
-        var ext = fileName.Split(".").Last();
-        if (ext != "jpg" && ext != "png")
-            return null;
-        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
-    }
 
     [Route("download/{id:int}")]
     public async Task<IActionResult> DownloadImage(int id)
