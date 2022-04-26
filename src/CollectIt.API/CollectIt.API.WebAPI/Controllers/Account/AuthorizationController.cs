@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using CollectIt.API.DTO;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
@@ -116,5 +118,28 @@ public class AuthorizationController : ControllerBase
                 yield return Destinations.AccessToken;
                 yield break;
         }
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(
+        [FromForm(Name = "username")]
+        [Required]
+        string username, 
+        [FromForm(Name = "email")]
+        [DataType(DataType.EmailAddress)]
+        [Required]
+        string email,
+        [FromForm(Name = "password")]
+        [Required]
+        [DataType(DataType.Password)]
+        [MinLength(6)]
+        string password
+        )
+    {
+        if (!ModelState.IsValid)
+            return BadRequest("something wrong");
+        var user = new User {Email = email, UserName = username};
+        await _userManager.CreateAsync(user, password);
+        return Ok();
     }
 }
