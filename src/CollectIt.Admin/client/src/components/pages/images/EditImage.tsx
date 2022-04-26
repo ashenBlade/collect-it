@@ -12,7 +12,6 @@ const EditImage = () => {
     const nav = useNavigate();
     if (!Number.isInteger(imageId))
         nav('/images');
-
     const [image, setImage] = useState<Image | null>(null);
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');

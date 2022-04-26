@@ -8,9 +8,10 @@ import MusicsService from "../../../services/MusicsService";
 
 const EditMusic = () => {
     const params = useParams();
-    const musicId = Number(params.musicId);
+    const musicId = Number(params.musicId?.trim());
     const nav = useNavigate();
-    if (musicId === undefined) nav('/musics');
+    if (!Number.isInteger(musicId))
+        nav('/musics');
     const [music, setMusic] = useState<Music | null>(null)
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');
