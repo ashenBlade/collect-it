@@ -51,12 +51,14 @@ const EditVideo = () => {
     }
 
     const deleteVideo = () => {
-        VideosService.deleteVideoByIdAsync(videoId).then(() => {
-            alert('Video deleted successfully');
-            nav('/videos');
-        }).catch(x => {
-            alert(x.message);
-        })
+        if (window.confirm('Delete video?')) {
+            VideosService.deleteVideoByIdAsync(videoId).then(() => {
+                alert('Video deleted successfully');
+                nav('/videos');
+            }).catch(x => {
+                alert(x.message);
+            });
+        }
     }
 
     return (

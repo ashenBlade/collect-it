@@ -51,12 +51,14 @@ const EditImage = () => {
     }
 
     const deleteImage = () => {
-        ImagesService.deleteImageByIdAsync(imageId).then(() => {
-            alert('Image deleted successfully');
-            nav('/images');
-        }).catch(x => {
-            alert(x.message);
-        });
+        if (window.confirm('Delete image?')) {
+            ImagesService.deleteImageByIdAsync(imageId).then(() => {
+                alert('Image deleted successfully');
+                nav('/images');
+            }).catch(x => {
+                alert(x.message);
+            });
+        }
     }
 
     return (

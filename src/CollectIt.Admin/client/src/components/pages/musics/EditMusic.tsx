@@ -51,12 +51,14 @@ const EditMusic = () => {
     }
 
     const deleteMusic = () => {
-        MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
-            alert('Music deleted successfully');
-            nav('/musics')
-        }).catch(x => {
-            console.error(x);
-        });
+        if (window.confirm('Delete music?')) {
+            MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
+                alert('Music deleted successfully');
+                nav('/musics')
+            }).catch(x => {
+                console.error(x);
+            });
+        }
     }
 
     return (
