@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import SaveButton from "../../UIComponents/saveButtonComponent/SaveButton";
+import SaveButton from "../../UI/SaveButton/SaveButton";
 
 interface InputBlockParams {
     id?: number;

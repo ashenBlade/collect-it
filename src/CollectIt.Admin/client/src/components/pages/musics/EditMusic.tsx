@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import Music from "../../entities/music";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
-import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
+import DeleteButton from "../../UI/DeleteButton/DeleteButton";
 import {useNavigate, useParams} from "react-router";
 import MusicsService from "../../../services/MusicsService";
 
 
 const EditMusic = () => {
     const params = useParams();
-    const musicId = Number(params.musicId);
+    const musicId = Number(params.musicId?.trim());
     const nav = useNavigate();
-    if (musicId === undefined) nav('/musics');
+    if (!Number.isInteger(musicId))
+        nav('/musics');
     const [music, setMusic] = useState<Music | null>(null)
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');
@@ -50,12 +51,14 @@ const EditMusic = () => {
     }
 
     const deleteMusic = () => {
-        MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
-            alert('Music deleted successfully');
-            nav('/musics')
-        }).catch(x => {
-            console.error(x);
-        });
+        if (window.confirm('Delete music?')) {
+            MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
+                alert('Music deleted successfully');
+                nav('/musics')
+            }).catch(x => {
+                console.error(x);
+            });
+        }
     }
 
     return (

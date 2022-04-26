@@ -7,13 +7,15 @@ export interface ReadImageDto {
     readonly uploadDate: Date;
     readonly tags: string[];
     readonly extension: string;
+    readonly filename: string;
 }
 
-export const ToReadImageDto = (img: Image): ReadImageDto => ({
-    id: img.id,
-    name: img.resource.name,
-    ownerId: img.resource.ownerId,
-    tags: img.resource.tags,
-    extension: img.resource.extension,
-    uploadDate: img.resource.uploadDate
+export const ToReadImageDto = (i: Image): ReadImageDto => ({
+    id: i.id,
+    name: i.resource.name,
+    ownerId: i.resource.ownerId,
+    tags: i.resource.tags,
+    extension: i.resource.extension,
+    uploadDate: i.resource.uploadDate,
+    filename: i.resource.filename
 });

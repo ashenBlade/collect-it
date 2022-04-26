@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import Login from "./components/pages/login/Login";
 import {AuthService} from "./services/AuthService";
-import NavigationPanel from "./components/NavigationPanel";
+import NavigationPanel from "./components/UI/NavBar/NavigationPanel";
 import SubscriptionsList from "./components/pages/subscriptions/SubscriptionsList";
 import EditSubscription from "./components/pages/subscriptions/EditSubscription";
 import UsersList from "./components/pages/users/UsersList";

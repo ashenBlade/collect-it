@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import Image from "../../entities/image";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
-import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
+import DeleteButton from "../../UI/DeleteButton/DeleteButton";
 import {useNavigate, useParams} from "react-router";
 import ImagesService from "../../../services/ImagesService";
 
 
 const EditImage = () => {
     const params = useParams();
-    const imageId = Number(params.imageId);
+    const imageId = Number(params.imageId?.trim());
     const nav = useNavigate();
-    if (imageId === undefined) nav('/images');
+    if (!Number.isInteger(imageId))
+        nav('/images');
     const [image, setImage] = useState<Image | null>(null);
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');
@@ -50,12 +51,14 @@ const EditImage = () => {
     }
 
     const deleteImage = () => {
-        ImagesService.deleteImageByIdAsync(imageId).then(() => {
-            alert('Image deleted successfully');
-            nav('/images');
-        }).catch(x => {
-            alert(x.message);
-        });
+        if (window.confirm('Delete image?')) {
+            ImagesService.deleteImageByIdAsync(imageId).then(() => {
+                alert('Image deleted successfully');
+                nav('/images');
+            }).catch(x => {
+                alert(x.message);
+            });
+        }
     }
 
     return (
