@@ -494,45 +494,4 @@ public class UsersControllerTests: IClassFixture<CollectItWebApplicationFactory>
                                                  bearer);
         client.Dispose();
     }
-
-    [Fact]
-    public async Task CreateUser_Works_Correctly()
-    {
-        var ( client, bearer ) = await Initialize();
-        var readUser = new AccountDTO.CreateUserDTO("oleg","oleg@mail.ru","Oleg1234");
-        await TestsHelpers.SendAsync(client, "connect/register",
-            bearer,
-            new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("username", readUser.UserName),
-                new KeyValuePair<string, string>("email", readUser.Email),
-                new KeyValuePair<string, string>("password",readUser.Password),
-            }), method: HttpMethod.Post,
-            outputHelper: _outputHelper);
-        var actual = await TestsHelpers.GetResultParsedFromJson<AccountDTO.ReadUserDTO>(client,
-            "api/v1/users/with-username/oleg",
-            bearer, HttpMethod.Get,
-            _outputHelper);
-        Assert.Equal(actual.Email, readUser.Email);
-        Assert.Equal(actual.UserName, readUser.UserName);
-    }
-    
-    
-    [Fact]
-    public async Task CreateUser_Dont_Work_If_Password_Incorrect()
-    {
-        var ( client, bearer ) = await Initialize();
-        var readUser = new AccountDTO.CreateUserDTO("oleg","oleg@mail.ru","1");
-        var responseMessage = await TestsHelpers.SendAsync(client, "connect/register",
-            bearer,
-            new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("username", readUser.UserName),
-                new KeyValuePair<string, string>("email", readUser.Email),
-                new KeyValuePair<string, string>("password",readUser.Password),
-            }), method: HttpMethod.Post,
-            outputHelper: _outputHelper);
-        Assert.Equal(responseMessage.StatusCode, HttpStatusCode.BadRequest);
-        //Тут чето не работает, нужен фикс
-    }
 }

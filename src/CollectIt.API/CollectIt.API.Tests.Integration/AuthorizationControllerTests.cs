@@ -60,7 +60,7 @@ public class AuthorizationControllerTests : IClassFixture<CollectItWebApplicatio
         var username = "SomeValidUsername";
         var password = "SomeP@ssw0rd";
         var email = "test@mail.ru";
-        var message = new HttpRequestMessage(HttpMethod.Post, "auth/register")
+        var message = new HttpRequestMessage(HttpMethod.Post, "connect/register")
                       {
                           Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[]
                                                               {
@@ -75,5 +75,24 @@ public class AuthorizationControllerTests : IClassFixture<CollectItWebApplicatio
         Assert.NotNull(actual);
         Assert.Equal(username, actual!.UserName);
         Assert.Equal(email, actual.Email);
+    }
+    
+    [Fact]
+    public async Task CreateUser_AlreadyRegisteredUsername_ShouldReturnBadRequest()
+    {
+        using var client = _factory.CreateClient();
+        var user = PostgresqlCollectItDbContext.AdminUser;
+        var dto = new AccountDTO.CreateUserDTO(user.UserName, "oleg@mail.ru", "P@ssw0rd2H@rd");
+        using var message = new HttpRequestMessage(HttpMethod.Post, "connect/register")
+                            {
+                                Content = new FormUrlEncodedContent(new KeyValuePair<string, string>[]
+                                                                    {
+                                                                        new("username", dto.UserName),
+                                                                        new("email", dto.Email),
+                                                                        new("password", dto.Password)
+                                                                    }),
+                            };
+        var response = await client.SendAsync(message);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }

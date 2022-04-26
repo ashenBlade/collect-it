@@ -122,7 +122,7 @@ public class AuthorizationController : ControllerBase
         }
     }
 
-    [HttpPost("/auth/register")]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromForm]RegisterDTO dto)
     {
         var (username, email, password) = ( dto.Username, dto.Email, dto.Password );
