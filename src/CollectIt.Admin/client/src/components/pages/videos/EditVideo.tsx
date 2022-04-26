@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Video from "../../entities/video";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
-import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
+import DeleteButton from "../../UI/DeleteButton/DeleteButton";
 import {useNavigate, useParams} from "react-router";
 import VideosService from "../../../services/VideosService";
 

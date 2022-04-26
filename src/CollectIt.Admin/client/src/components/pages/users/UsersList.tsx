@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState} from 'react';
-import '../../NavbarStyle.css'
+import '../../UI/NavBar/NavbarStyle.css'
 import User from "../../entities/user";
 import Pagination from "../../UI/pagination/Pagination";
 

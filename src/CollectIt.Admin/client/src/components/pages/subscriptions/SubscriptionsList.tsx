@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../NavbarStyle.css'
+import '../../UI/NavBar/NavbarStyle.css'
 
 const iterations = ['1','2','3','4'];
 const Names = ['Бронзовая','Серебряная','Обычная','Кардбланш']

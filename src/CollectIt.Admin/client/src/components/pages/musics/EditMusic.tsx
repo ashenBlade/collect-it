@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Music from "../../entities/music";
 import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
-import DeleteButton from "../../UIComponents/deleteButtonComponent/DeleteButton";
+import DeleteButton from "../../UI/DeleteButton/DeleteButton";
 import {useNavigate, useParams} from "react-router";
 import MusicsService from "../../../services/MusicsService";
 

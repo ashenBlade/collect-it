@@ -31,8 +31,8 @@ const MusicList = () => {
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>
-                <input onKeyDown={keyDownHandler} value={enteredText} onChange={(e) => setEnteredText(e.target.value)} id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
+                {/*<input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>*/}
+                {/*<input onKeyDown={keyDownHandler} value={enteredText} onChange={(e) => setEnteredText(e.target.value)} id='email' className='form-control my-2' type='text' placeholder='Enter id'/>*/}
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className='firstRow usersRow'>
                     <td className ='idCell color-purple '>ID</td>

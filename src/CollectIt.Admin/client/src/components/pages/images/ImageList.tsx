@@ -2,37 +2,24 @@ import React, {useEffect, useState} from 'react';
 import Image from "../../entities/image";
 import Pagination from "../../UI/pagination/Pagination";
 import ImagesService from "../../../services/ImagesService";
+import {useNavigate} from "react-router";
 
 const ImageList = () => {
     let pageSize = 10;
     let pageNumber = 1;
     const [images, setImages] = useState<Image[]>([]);
-    const [redirectID, SetID] = useState(0);
     useEffect(() => {
         ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
             setImages(x.images);
         })
     }, [])
-    const [enteredText, setEnteredText] = useState("");
-    const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.code === "Enter") {
-            window.location.href=(`../images/${enteredText}`);
-        }
-    };
-    function redirect()
-    {
-        window.location.href=(`../images/${redirectID}`)
-    }
     const downloadPageNumber = (pageNumber: number) => {
         ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {setImages(x.images)})
     }
+    const nav = useNavigate();
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
-                <input id='email' value={id} onChange={(e)=> setId(e.target.value)} className='form-control my-2' type='text' placeholder='Enter id'/>
-                <NavLink to={path}>
-                    Найти
-                </NavLink>
 
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className='firstRow usersRow'>
@@ -43,8 +30,7 @@ const ImageList = () => {
                     <td className= 'usersCell color-purple'>UploadTime</td>
                 </tr>
                 {images?.map(i=>
-                    <tr onClick={redirect} className ='usersRow'>
-                        {SetID(i.id)}
+                    <tr onClick={() => {nav(`/images/${i.id}`)}} className ='usersRow'>
                         <td className ='idCell'>{i.id}</td>
                         <td className ='usersCell'>{i.name}</td>
                         <td className ='usersCell'>{i.ownerId}</td>
