@@ -1,13 +1,141 @@
 import authorizedFetch from "./AuthorizedFetch";
+import NotFoundError from "../utils/NotFoundError";
+import {serverAddress} from "../constants";
+import User from "../components/entities/user";
+import {Role} from "../components/entities/role";
+
+const baseApiPath = `${serverAddress}/api/v1/users`;
 
 export class UsersService {
     private static readonly fetch = authorizedFetch();
     static async getUsersPagedAsync(pageNumber: number, pageSize: number) {
-        const result = await UsersService.fetch(`http://localhost:7000/api/v1/users?page_number=${pageNumber}&page_size=${pageSize}`, {});
-        let json = await result.json();
+        const result = await UsersService.fetch(`${baseApiPath}?page_number=${pageNumber}&page_size=${pageSize}`, {
+            method: 'GET'
+        });
+        const json = await result.json();
+        const users: User[] = json.users;
+        const totalCount = Number(json.totalCount);
         return {
-            totalCount: json.totalCount,
-            users: json.users
+            totalCount,
+            users
         };
+    }
+
+    static async findUserByIdAsync(id: number) {
+        if (!Number.isInteger(id)) {
+            throw new Error(`Id must be integer. Given id: ${id}`);
+        }
+        const result = await UsersService.fetch(`${baseApiPath}/${id}`, {
+            method: 'GET'
+        });
+
+        const json = await result.json();
+        if (!result.ok) {
+            if (result.status === 404) {
+                throw new NotFoundError()
+            }
+            throw new Error(json.message);
+        }
+
+        const user: User = json;
+        return user;
+    }
+
+    static async findUserByUsernameAsync(username: string) {
+        if (!username) throw new Error('Username is not provided');
+        const response = await UsersService.fetch(`${baseApiPath}/with-username/${encodeURIComponent(username)}`, {
+            method: 'GET'
+        });
+        const json = await response.json();
+        if (!response.ok) {
+            if (response.status === 404) throw new NotFoundError();
+            throw new Error(json.message);
+        }
+
+        const user: User = json;
+        return user;
+    }
+
+    static async findUserByEmailAsync(email: string) {
+        if (!email) throw new Error('Email not provided');
+        const response = await UsersService.fetch(`${baseApiPath}/with-email/${encodeURIComponent(email)}`, {
+            method: 'GET'
+        });
+        const json = await response.json();
+        if (!response.ok) {
+            if (response.status === 404) throw new NotFoundError();
+            throw new Error(json.message);
+        }
+
+        const user: User = json;
+        return user;
+    }
+
+    static async changeUsernameAsync(id: number, username: string) {
+        if (!username) throw new Error('Username not provided');
+        if (username.length < 6) throw new Error('Username length must be greater than 6');
+        if (!Number.isInteger(id)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${id}/username`, {
+            method: 'POST',
+            body: JSON.stringify({
+                username
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const json = await response.json();
+        if (!response.ok) throw new Error(json.message);
+    }
+
+    static async changeEmailAsync(id: number, email: string) {
+        if (!email) throw new Error('Email not provided');
+        if (email.length < 6) throw new Error('Email length must be greater than 6');
+        if (!Number.isInteger(id)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${id}/email`, {
+            method: 'POST',
+            body: JSON.stringify({
+                email
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const json = await response.json();
+        if (!response.ok) throw new Error(json.message);
+    }
+
+    static async addUserToRoleAsync(id: number, role: Role) {
+        if (!Number.isInteger(id)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${id}/roles`, {
+            method: 'POST',
+            body: JSON.stringify({
+                role: role
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
+    }
+
+    static async removeUserFromRoleAsync(id: number, role: Role) {
+        if (!Number.isInteger(id)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${id}/roles`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                role: role
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
     }
 }
