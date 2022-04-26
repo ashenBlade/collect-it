@@ -8,6 +8,7 @@ export interface ReadVideoDto {
     readonly uploadDate: Date;
     readonly tags: string[];
     readonly extension: string;
+    readonly filename: string;
 }
 
 export const ToReadVideoDto = (v: Video): ReadVideoDto => ({
@@ -17,5 +18,6 @@ export const ToReadVideoDto = (v: Video): ReadVideoDto => ({
     ownerId: v.resource.ownerId,
     uploadDate: v.resource.uploadDate,
     tags: v.resource.tags,
-    extension: v.resource.extension
+    extension: v.resource.extension,
+    filename: v.resource.filename
 })
