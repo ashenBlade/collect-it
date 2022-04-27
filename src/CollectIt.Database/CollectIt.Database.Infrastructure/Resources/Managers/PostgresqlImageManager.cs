@@ -16,7 +16,7 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(int ownerId, string name, string[] tags, Stream uploadedFile, string extension, string address)
+    public async Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension)
     {
         var fileName = $"{Guid.NewGuid()}.{extension}";
         await using (var fileStream = new FileStream(Path.Combine(address, fileName), FileMode.Create))
@@ -26,7 +26,7 @@ public class PostgresqlImageManager : IImageManager
 
         var image = new Image()
         {
-            Tags = tags,
+            Tags = tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
             Name = name,
             FileName = fileName,
             UploadDate = DateTime.UtcNow,

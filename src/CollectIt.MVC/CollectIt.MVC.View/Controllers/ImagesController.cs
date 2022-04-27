@@ -115,12 +115,12 @@ public class ImagesController : Controller
             return View(model);
         }
 
-        var (name, tags) = ( model.Name, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries) );
+        var (name, tags) = ( model.Name, model.Tags );
         var user = await _userManager.GetUserAsync(User);
         await using var stream = model.Content.OpenReadStream();
         try
         {
-            await _imageManager.Create(user.Id, name, tags, stream, extension, address);
+            await _imageManager.Create(user.Id, address, name, tags, stream, extension);
             return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)
