@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
-using CollectIt.MVC.View.DTO;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
