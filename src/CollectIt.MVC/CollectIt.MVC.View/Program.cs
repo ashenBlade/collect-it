@@ -45,8 +45,10 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 
-var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Videos");
-var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Musics");
+var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Videos");
+var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Musics");
+var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
+Directory.CreateDirectory(imagePath);
 services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
 services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
 Console.WriteLine(videoPath);

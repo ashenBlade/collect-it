@@ -3,6 +3,7 @@ using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.MVC.View.ViewModels;
+using CollectIt.MVC.View.Views.Shared.Components.MusicCards;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,6 @@ public class MusicsController : Controller
         _musicManager = musicManager;
         _userManager = userManager;
     }
-    
-    public IActionResult Musics() => View();
     
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Music(int id)
@@ -53,12 +52,27 @@ public class MusicsController : Controller
                                                       int pageNumber,
                                                       [Range(1, int.MaxValue)]
                                                       [FromQuery(Name = "page_size")]
-                                                      int pageSize)
+                                                      int pageSize,
+                                                      string? redirectUrl = null)
     {
-        return View("Error", new ErrorViewModel()
-                             {
-                                 Message = "Videos page is not implemented yet"
-                             });
+        if (!ModelState.IsValid)
+        {
+            return redirectUrl is null
+                       ? RedirectToAction("Index", "Home")
+                       : Redirect(redirectUrl);
+        }
+        var musics = await _musicManager.QueryAsync(query, pageNumber, pageSize);
+        return View("Musics", new MusicCardsViewModel()
+                              {
+                                  Musics = musics.Result.Select(m => new MusicViewModel()
+                                                                     {
+                                                                         Address = "",
+                                                                         Name = m.Name
+                                                                     }).ToList(),
+                                  Query = query,
+                                  PageNumber = pageNumber,
+                                  MaxMusicsCount = musics.TotalCount
+                              });
     }
 
     [HttpGet("upload")]
@@ -127,7 +141,7 @@ public class MusicsController : Controller
         if (await _musicManager.IsAcquiredBy(id, userId))
         {
             var stream = await _musicManager.GetContentAsync(id);
-            return File(stream, "music/*");
+            return File(stream, "audio/*");
         }
 
         return BadRequest();

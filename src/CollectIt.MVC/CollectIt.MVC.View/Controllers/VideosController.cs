@@ -26,8 +26,6 @@ public class VideosController : Controller
         _logger = logger;
     }
     
-    public IActionResult Videos() => View();
-
     [HttpGet("")]
     public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] string query, 
                                                       [Range(1, int.MaxValue)]
@@ -37,10 +35,12 @@ public class VideosController : Controller
                                                       [FromQuery(Name = "page_size")]
                                                       int pageSize)
     {
-        return View("Error", new ErrorViewModel()
-                             {
-                                 Message = "Videos page is not implemented yet"
-                             });
+        if (!ModelState.IsValid)
+        {
+            return View("Error", new ErrorViewModel() {Message = "Invalid input for videos page"});
+        }
+        var videos = await _videoManager.QueryAsync(query, pageNumber, pageSize);
+        return View("Videos");
     }
 
     [HttpGet("{id:int}")]

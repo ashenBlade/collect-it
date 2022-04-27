@@ -17,4 +17,5 @@ public interface IResourceManager<TItem>
     
     IAsyncEnumerable<TItem> GetAllByName(string name);
     IAsyncEnumerable<TItem> GetAllByTag(string tag);
+    
 }

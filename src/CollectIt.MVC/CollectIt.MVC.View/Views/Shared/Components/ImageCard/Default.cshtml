@@ -1,9 +1,7 @@
 ﻿@model CollectIt.MVC.View.ViewModels.ImageViewModel
-@{
-    double size = 0;
-}
+
 <div class="resource-box rounded mb-3 me-2 p-0 @Model.ImageId">
-    <a asp-controller="Images" asp-action="Image" asp-route-id="@Model.ImageId" class="ls"></a>
+    <a asp-controller="Images" asp-action="Image" asp-route-imageId="@Model.ImageId" class="ls"></a>
     <div class="toolbar-1">
         <div class="top-box rounded-top"></div>
         <div class="toolbar-2">
@@ -23,10 +21,4 @@
     <div class="image">
         <img id="@Model.ImageId" src="@Model.Address" class="rounded s-2" alt=""/>
     </div>
-        
-    <script>
-         const width = img.width;
-         const height = img.height;
-         $(".@Model.ImageId").append("<div style='padding-bottom:" + height / width * 100 + "%'></div>")
-    </script>
 </div> 

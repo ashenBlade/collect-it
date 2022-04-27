@@ -35,8 +35,11 @@ public class ImagesController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] [Required] string query,
-                                                     [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] 
+                                                     [Required] 
+                                                     string query,
+                                                     [FromQuery(Name = "p")] 
+                                                     [Range(1, int.MaxValue)]
                                                      int pageNumber = 1)
     {
         var images = new List<Image>();
@@ -50,7 +53,7 @@ public class ImagesController : Controller
                     {
                         Images = images.Select(i => new ImageViewModel()
                                                     {
-                                                        Address = $"/imagesFromDb/{i.FileName}",
+                                                        Address = Url.Action("DownloadImage", new {id = i.Id})!,
                                                         Name = i.Name,
                                                         ImageId = i.Id,
                                                         Comments = Array.Empty<CommentViewModel>(),
@@ -66,10 +69,10 @@ public class ImagesController : Controller
                     });
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> Image(int id)
+    [HttpGet("{imageId:int}")]
+    public async Task<IActionResult> Image(int imageId)
     {
-        var source = await _imageManager.FindByIdAsync(id);
+        var source = await _imageManager.FindByIdAsync(imageId);
         if (source == null)
         {
             return View("Error");
@@ -79,7 +82,7 @@ public class ImagesController : Controller
 
         var model = new ImageViewModel()
                     {
-                        ImageId = id,
+                        ImageId = imageId,
                         Comments = comments.Select(c => new CommentViewModel()
                                                         {
                                                             Author = c.Owner.UserName,
@@ -89,9 +92,9 @@ public class ImagesController : Controller
                         Name = source.Name,
                         OwnerName = source.Owner.UserName,
                         UploadDate = source.UploadDate,
-                        Address = $"/imagesFromDb/{source.FileName}",
+                        Address = Url.Action("DownloadImage", new {id = imageId})!,
                         Tags = source.Tags,
-                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, id)
+                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, imageId)
                     };
         return View(model);
     }
@@ -120,7 +123,7 @@ public class ImagesController : Controller
         await using var stream = model.Content.OpenReadStream();
         try
         {
-            await _imageManager.Create(user.Id, address, name, tags, stream, extension);
+            await _imageManager.Create(user.Id, address, name, tags, stream, extension!);
             return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)
@@ -152,7 +155,9 @@ public class ImagesController : Controller
         return SupportedImageExtensions.Contains(extension);
     }
 
-    [Route("download/{id:int}")]
+
+    [HttpGet("download/{id:int}")]
+    [Authorize]
     public async Task<IActionResult> DownloadImage(int id)
     {
         var source = await _imageManager.FindByIdAsync(id);
@@ -162,7 +167,7 @@ public class ImagesController : Controller
         }
 
         var file = new FileInfo(Path.Combine(address, source.FileName));
-
+        _logger.LogInformation("Sending dick picks from {Path}", file.FullName);
         return file.Exists
                    ? PhysicalFile(file.FullName, $"image/jpg")
                    : BadRequest(new {Message = "File not found"});
@@ -176,8 +181,6 @@ public class ImagesController : Controller
         var user = await _userManager.GetUserAsync(User);
         var imageId = model.ImageId;
         var comment = await _commentManager.CreateComment(imageId, user.Id, model.Content);
-        if (comment is null)
-            return BadRequest($"This feature is not implemented yet\nImage Id: {imageId}\nComment: {model.Content}");
         return RedirectToAction("Image", new { id = model.ImageId });
     }
 }
