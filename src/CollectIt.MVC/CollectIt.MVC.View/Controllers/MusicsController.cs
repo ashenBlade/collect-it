@@ -61,21 +61,6 @@ public class MusicsController : Controller
                              });
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetMusicsPageAsync(int id)
-    {
-        var image = await _musicManager.FindByIdAsync(id);
-        if (image is null)
-        {
-            return NotFound();
-        }
-
-        return View("Error", new ErrorViewModel()
-                             {
-                                 Message = "Videos page is not implemented yet"
-                             });
-    }
-
     [HttpGet("upload")]
     [Authorize]
     public async Task<IActionResult> UploadMusic()
@@ -86,7 +71,7 @@ public class MusicsController : Controller
     [HttpPost("upload")]
     [Authorize]
     public async Task<IActionResult> UploadMusic(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
+        [FromForm]
         [Required] 
         UploadMusicViewModel model)
     {
@@ -107,7 +92,7 @@ public class MusicsController : Controller
             var music = await _musicManager.CreateAsync(model.Name, userId, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries), stream, extension,
                                                         model.Duration);
 
-            return CreatedAtAction("GetMusicsPage", new {id = music.Id}, new { });
+            return CreatedAtAction("Music", new {id = music.Id}, new { });
         }
         catch (Exception ex)
         {
