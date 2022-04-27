@@ -5,6 +5,7 @@ using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
+using CollectIt.Database.Infrastructure.Resources.Managers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Abstractions.TechSupport;
 using CollectIt.MVC.Infrastructure.Account;
@@ -52,7 +53,6 @@ Console.WriteLine(videoPath);
 Console.WriteLine(musicPath);
 Directory.CreateDirectory(videoPath);
 Directory.CreateDirectory(musicPath);
-services.AddScoped<IVideoManager, PostgresqlVideoManager>();
 
 services.AddSignalR();
 services.AddIdentity<User, Role>(config =>
@@ -83,6 +83,9 @@ services.AddIdentity<User, Role>(config =>
         .AddErrorDescriber<RussianLanguageIdentityErrorDescriber>();
 
 services.AddScoped<IImageManager, PostgresqlImageManager>();
+services.AddScoped<IMusicManager, PostgresqlMusicManager>();
+services.AddScoped<IVideoManager, PostgresqlVideoManager>();
+
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
 services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();
