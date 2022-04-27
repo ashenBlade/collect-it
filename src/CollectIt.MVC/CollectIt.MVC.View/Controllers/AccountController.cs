@@ -203,7 +203,7 @@ public class AccountController : Controller
         return View("Profile", accountModel);
     }
 
-    [HttpPost]
+    [HttpPost]  
     [Authorize]
     [Route("upload")]
     public void UploadImage(ImageViewModel model)

@@ -1,4 +1,4 @@
-﻿@model CollectIt.MVC.View.ViewModels.UploadVideoViewModel
+﻿@model CollectIt.MVC.View.ViewModels.UploadMusicViewModel
 @{
     Layout = null;
 }
@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Загрузить видео</title>
+    <title>Загрузить музыку</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
@@ -18,14 +18,14 @@
 <body>
 <main class="w-100 d-flex justify-content-center align-items-center subs-center" style="">
     <div class="w-50 p-3 bg-white shadow rounded">
-        <h2 class = "text-center my-5" >Загрузка видео</h2>
-        <form asp-controller="Upload" method="post" asp-action="UploadVideo" enctype="multipart/form-data" class="w-75 text-start mx-auto">
+        <h2 class = "text-center my-5" >Загрузка музыки</h2>
+        <form asp-controller="Musics" method="post" asp-action="UploadMusic" enctype="multipart/form-data" class="w-75 text-start mx-auto">
             <div class="preview mb-3"></div>
             <input type="file" class="form-control mb-3" id="file">
-            <input type="text" class="form-control mb-3" placeholder="Введите название видео" id="name">
+            <input type="text" class="form-control mb-3" placeholder="Введите название музыки" id="name">
             <input type="text" class="form-control mb-3" placeholder="Введите тэги через пробел" id="tags">
             <input type="text" class="form-control mb-3" placeholder="Введите длительность" id="duration">
-            <input class="btn mx-auto btn-primary mb-5" value="Добавить Видео" type="submit"/>
+            <input class="btn mx-auto btn-primary mb-5" value="Добавить музыку" type="submit"/>
         </form>
     </div>
 </main>
