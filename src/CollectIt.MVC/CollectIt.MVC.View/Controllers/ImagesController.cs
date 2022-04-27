@@ -15,27 +15,28 @@ public class ImagesController : Controller
 {
     private readonly IImageManager _imageManager;
     private readonly ICommentManager _commentManager;
+    private readonly ILogger<ImagesController> _logger;
     private readonly UserManager _userManager;
 
     private readonly string address;
 
     private static readonly int MaxPageSize = 5;
 
-    public ImagesController(IImageManager imageManager, IWebHostEnvironment appEnvironment, UserManager userManager,
-                            ICommentManager commentManager)
+    public ImagesController(IImageManager imageManager,
+                            UserManager userManager,
+                            ICommentManager commentManager,
+                            ILogger<ImagesController> logger)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
+        _logger = logger;
         _userManager = userManager;
         address = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")]
-                                                     [Required] 
-                                                     string query, 
-                                                     [FromQuery(Name = "p")]
-                                                     [Range(1, int.MaxValue)]
+    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] [Required] string query,
+                                                     [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
                                                      int pageNumber = 1)
     {
         var images = new List<Image>();
@@ -44,22 +45,25 @@ public class ImagesController : Controller
             images.Add(image);
         }
 
-        return View("Images", new ImageCardsViewModel() 
-                              { 
-                                  Images = images.Select(i => new ImageViewModel(){
-                                                                                      Address = $"/imagesFromDb/{i.FileName}",
-                                                                                      Name = i.Name,
-                                                                                      ImageId = i.Id,
-                                                                                      Comments = Array.Empty<CommentViewModel>(),
-                                                                                      Tags = i.Tags,
-                                                                                      OwnerName = i.Owner.UserName,
-                                                                                      UploadDate = i.UploadDate,
-                                                                                      IsAcquired = false
-                                                                                  }).ToList(), 
-                                  PageNumber = pageNumber,
-                                  MaxImagesCount = MaxPageSize,
-                                  Query = query
-                              });
+        return View("Images",
+                    new ImageCardsViewModel()
+                    {
+                        Images = images.Select(i => new ImageViewModel()
+                                                    {
+                                                        Address = $"/imagesFromDb/{i.FileName}",
+                                                        Name = i.Name,
+                                                        ImageId = i.Id,
+                                                        Comments = Array.Empty<CommentViewModel>(),
+                                                        Tags = i.Tags,
+                                                        OwnerName = i.Owner.UserName,
+                                                        UploadDate = i.UploadDate,
+                                                        IsAcquired = false
+                                                    })
+                                       .ToList(),
+                        PageNumber = pageNumber,
+                        MaxImagesCount = MaxPageSize,
+                        Query = query
+                    });
     }
 
     [HttpGet("{id:int}")]
@@ -77,7 +81,11 @@ public class ImagesController : Controller
                     {
                         ImageId = id,
                         Comments = comments.Select(c => new CommentViewModel()
-                                                        { Author = c.Owner.UserName, PostTime = c.UploadDate, Comment = c.Content }),
+                                                        {
+                                                            Author = c.Owner.UserName,
+                                                            PostTime = c.UploadDate,
+                                                            Comment = c.Content
+                                                        }),
                         Name = source.Name,
                         OwnerName = source.Owner.UserName,
                         UploadDate = source.UploadDate,
@@ -88,26 +96,60 @@ public class ImagesController : Controller
         return View(model);
     }
 
-    [HttpGet("postView")]
-    public IActionResult GetPostView()
+    [HttpGet("upload")]
+    public IActionResult UploadImage()
     {
-        return View("ImagePostPage");
+        return View();
     }
 
-    [HttpPost("post")]
-    public async Task<IActionResult> PostImage(string tags, string name, IFormFile uploadedFile)
+    [HttpPost("upload")]
+    [Authorize]
+    public async Task<IActionResult> UploadImage([Required] 
+                                                 [FromForm]
+                                                 UploadImageViewModel model)
     {
-        var ext = _imageManager.GetExtension(uploadedFile.FileName);
-        if (ext is null)
-            return View("Error");
+        if (!TryGetExtension(model.Content.FileName, out var extension))
+        {
+            ModelState.AddModelError("Content", $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}");
+            return View(model);
+        }
+
+        var (name, tags) = ( model.Name, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries) );
         var user = await _userManager.GetUserAsync(User);
-        if (user is null)
-            return RedirectToAction("Login", "Account");
-        await using var stream = uploadedFile.OpenReadStream();
-        await _imageManager.Create(user.Id, address, name, tags, stream, ext);
-        return View("ImagePostPage");
+        await using var stream = model.Content.OpenReadStream();
+        try
+        {
+            await _imageManager.Create(user.Id, name, tags, stream, extension, address);
+            return RedirectToAction("Profile", "Account");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while saving image");
+            ModelState.AddModelError("", "Error while uploading image");
+            return View(model);
+        }
     }
+
+    private static readonly HashSet<string> SupportedImageExtensions = new HashSet<string>() {"png", "jpeg", "jpg", "webp", "bmp"};
+
     
+    private static bool TryGetExtension(string filename, out string? extension)
+    {
+        if (filename is null)
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+        
+        extension = null;
+        var array = filename.Split('.');
+        if (array.Length < 2)
+        {
+            return false;
+        }
+
+        extension = array[^1].ToLower();
+        return SupportedImageExtensions.Contains(extension);
+    }
 
     [Route("download/{id:int}")]
     public async Task<IActionResult> DownloadImage(int id)

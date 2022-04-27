@@ -16,18 +16,17 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension)
+    public async Task Create(int ownerId, string name, string[] tags, Stream uploadedFile, string extension, string address)
     {
-        var tagsArray = tags.Split(" ");
-        var fileName = RenamePostedImage(name) + $".{extension}";
-        await using (var fileStream = new FileStream(Path.Combine(address,fileName), FileMode.Create))
+        var fileName = $"{Guid.NewGuid()}.{extension}";
+        await using (var fileStream = new FileStream(Path.Combine(address, fileName), FileMode.Create))
         {
             await uploadedFile.CopyToAsync(fileStream);
         }
 
         var image = new Image()
         {
-            Tags = tagsArray,
+            Tags = tags,
             Name = name,
             FileName = fileName,
             UploadDate = DateTime.UtcNow,

@@ -1,11 +1,12 @@
-﻿
+﻿@model CollectIt.MVC.View.ViewModels.UploadImageViewModel
+
 @{
     ViewData["Title"] = "Image Post Page";
     Layout = "_Layout";
 }
 
 
-<form method="post" enctype="multipart/form-data" asp-controller="Images" asp-action="PostImage">
+<form method="post" enctype="multipart/form-data" asp-controller="Images" asp-action="UploadImage">
     
     <label>Тэги через пробел:</label><br/>
     <input type="text" name="tags"/><br/>

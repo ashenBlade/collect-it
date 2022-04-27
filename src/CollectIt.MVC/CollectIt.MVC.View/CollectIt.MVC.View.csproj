@@ -61,4 +61,8 @@
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Content\Videos" />
+    </ItemGroup>
+
 </Project>
