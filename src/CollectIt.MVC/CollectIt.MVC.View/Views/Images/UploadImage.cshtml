@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
-    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">;
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
 <main class="w-100 d-flex justify-content-center align-items-center subs-center" style="">
-    <div class="w-50 p-3 bg-white shadow rounded">
+    <div class="w-50 p-3 bg-white shadow rounded position-relative">
         <h2 class = "text-center my-5" >Загрузка изображения</h2>
         <form asp-controller="Images" method="post" asp-action="UploadImage" enctype="multipart/form-data" class="w-75 text-start mx-auto">
             <div class="preview mb-3"></div>
@@ -26,6 +27,25 @@
             <input type="text" class="form-control mb-3" placeholder="Введите тэги через пробел" id="tags">
             <input class="btn mx-auto btn-primary mb-5" value="Добавить изображение" type="submit"/>
         </form>
+        <script>
+                $('#file').change(function (e){
+                    e.preventDefault();
+                    const inp = document.getElementById('file');
+                    const prev = document.querySelector('.preview');
+                    $('.preview').empty();
+                    const file = Array.from(e.target.files)[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = ev =>{
+                        const src = ev.target.result
+                        prev.insertAdjacentHTML('afterbegin', `
+                        <img src="${src}" alt="${file.name}" class="d-block m-auto" style="max-width: 100%; max-height: 400px"/>
+                        `)
+                    }
+                            
+                    reader.readAsDataURL(file);
+                })
+        </script>
     </div>
 </main>
 </body>
