@@ -39,7 +39,9 @@ public class Program
                 policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
             });
         });
-
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        
         builder.Services
                .AddAuthentication(config =>
                 {
@@ -110,7 +112,11 @@ public class Program
         var app = builder.Build();
 
         app.UseHttpsRedirection();
-
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
         app.UseAuthentication();
         app.UseAuthorization();
 
