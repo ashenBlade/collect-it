@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.MVC.View.DTO;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

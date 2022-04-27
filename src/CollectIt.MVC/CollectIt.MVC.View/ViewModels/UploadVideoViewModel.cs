@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CollectIt.MVC.View.DTO;
+namespace CollectIt.MVC.View.ViewModels;
 
 public class UploadVideoViewModel
 {
