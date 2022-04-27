@@ -97,6 +97,7 @@ public class ImagesController : Controller
     }
 
     [HttpGet("upload")]
+    [Authorize]
     public IActionResult UploadImage()
     {
         return View();

@@ -57,9 +57,16 @@ public class VideosController : Controller
                              });
     }
 
-    [HttpPost("")]
+    [HttpGet("upload")]
     [Authorize]
-    public async Task<IActionResult> UploadNewVideo(
+    public async Task<IActionResult> UploadView()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("upload")]
+    [Authorize]
+    public async Task<IActionResult> UploadVideo(
         [FromForm]
         [Required] 
         UploadVideoViewModel viewModel)

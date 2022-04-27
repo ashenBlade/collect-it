@@ -53,9 +53,16 @@ public class MusicsController : Controller
                              });
     }
 
-    [HttpPost("")]
+    [HttpGet("upload")]
     [Authorize]
-    public async Task<IActionResult> UploadNewMusic(
+    public async Task<IActionResult> UploadMusic()
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPost("upload")]
+    [Authorize]
+    public async Task<IActionResult> UploadMusic(
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
         [Required] 
         UploadMusicViewModel model)
