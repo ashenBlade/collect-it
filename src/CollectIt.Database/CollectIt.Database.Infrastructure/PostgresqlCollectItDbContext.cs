@@ -336,7 +336,85 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         var ownerId = DefaultUsers[0].Id;
         builder.Entity<Image>()
                .HasData(DefaultImages);
+        builder.Entity<Music>()
+            .HasData(DefaultMusics);
+        builder.Entity<Video>()
+            .HasData(defaultVideos);
     }
+
+    internal static Video[] defaultVideos => new[]
+    {
+        new Video()
+        {
+            Id = 20,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Диско лицо",
+            Extension = "webm",
+            FileName = "diman.webm",
+            Tags = new[] { "Брекоткин", "диско лицо", "диско" },
+            Duration = 60
+        },
+        new Video()
+        {
+            Id = 21,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Сильный монолог на фоне церковных песнопений и красивой картинки",
+            Extension = "webm",
+            FileName = "strong_monolog.webm",
+            Tags = new[] { "аниме", "церковь", "2д","монолог" },
+            Duration = 60
+        }
+    };
+    
+    internal static Music[] DefaultMusics => new[]
+    {
+        new Music()
+        {
+            Id = 16,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Тектоник - Басы",
+            Extension = "mp3",
+            FileName = "тектоник-басы.mp3",
+            Tags = new[] { "качает", "2007" },
+            Duration = 69
+        },
+        new Music()
+        {
+            Id = 17,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "OG BUDA, MORGENSHTERN, Mayot, blago white, SODA LUV - Cristal & МОЁТ (Remix)",
+            Extension = "mp3",
+            FileName = "MORGENSHTERN_JESTKO_VALIT.mp3",
+            Tags = new[] { "качает", "морген","сода лув","ог буда" },
+            Duration = 219
+        },
+        new Music()
+        {
+            Id = 18,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "OST Naruto shippuden Ikimono-gakari - Blue Bird OP3",
+            Extension = "mp3",
+            FileName = "naruto_bluebird.mp3",
+            Tags = new[] { "аниме", "наруто","афган" },
+            Duration = 218
+        },
+        new Music()
+        {
+            Id = 19,
+            OwnerId = AdminUserId,
+            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "минин - Зелёный глаз",
+            Extension = "mp3",
+            FileName = "minin_zeleniy_glaz.mp3",
+            Tags = new[] { "грусть", "тикток","рэп про тёлку" },
+            Duration = 114
+        }
+    };
     
     internal static Image[] DefaultImages => new[]
                                              {

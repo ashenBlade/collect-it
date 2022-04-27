@@ -1081,6 +1081,52 @@ namespace CollectIt.MVC.View.Migrations
                         .HasColumnType("integer");
 
                     b.ToTable("Musics");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 16,
+                            Extension = "mp3",
+                            FileName = "тектоник-басы.mp3",
+                            Name = "Тектоник - Басы",
+                            OwnerId = 1,
+                            Tags = new[] { "качает", "2007" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 69
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Extension = "mp3",
+                            FileName = "MORGENSHTERN_JESTKO_VALIT.mp3",
+                            Name = "OG BUDA, MORGENSHTERN, Mayot, blago white, SODA LUV - Cristal & МОЁТ (Remix)",
+                            OwnerId = 1,
+                            Tags = new[] { "качает", "морген", "сода лув", "ог буда" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 219
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Extension = "mp3",
+                            FileName = "naruto_bluebird.mp3",
+                            Name = "OST Naruto shippuden Ikimono-gakari - Blue Bird OP3",
+                            OwnerId = 1,
+                            Tags = new[] { "аниме", "наруто", "афган" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 218
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Extension = "mp3",
+                            FileName = "minin_zeleniy_glaz.mp3",
+                            Name = "минин - Зелёный глаз",
+                            OwnerId = 1,
+                            Tags = new[] { "грусть", "тикток", "рэп про тёлку" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 114
+                        });
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Resources.Video", b =>
@@ -1091,6 +1137,30 @@ namespace CollectIt.MVC.View.Migrations
                         .HasColumnType("integer");
 
                     b.ToTable("Videos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 20,
+                            Extension = "webm",
+                            FileName = "diman.webm",
+                            Name = "Диско лицо",
+                            OwnerId = 1,
+                            Tags = new[] { "Брекоткин", "диско лицо", "диско" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 60
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Extension = "webm",
+                            FileName = "strong_monolog.webm",
+                            Name = "Сильный монолог на фоне церковных песнопений и красивой картинки",
+                            OwnerId = 1,
+                            Tags = new[] { "аниме", "церковь", "2д", "монолог" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 60
+                        });
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Account.AcquiredUserResource", b =>

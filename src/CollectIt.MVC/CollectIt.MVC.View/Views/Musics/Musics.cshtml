@@ -18,14 +18,14 @@
                     <li class="page-item">
                         <button class="page-link" type="button" @(Model.PageNumber == 1 
                                                                     ? "disabled" 
-                                                                    : $"onclick=location.href='{Url.Action("GetMusicsPage", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
+                                                                    : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
                             previous
                         </button>
                     </li>
                     <li class="page-item">
                         <button class="page-link" type="button" @(Model.Musics.Count < Model.MaxMusicsCount
                                                                     ? "disabled"
-                                                                    : $"onclick=location.href='{Url.Action("GetMusicsPage", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
+                                                                    : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
                             next
                         </button>
                     </li>
