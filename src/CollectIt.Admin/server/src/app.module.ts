@@ -39,6 +39,4 @@ import {Image} from "./resources/images/images.model";
       ResourcesModule
   ],
 })
-export class AppModule {
-
-}
+export class AppModule {  }

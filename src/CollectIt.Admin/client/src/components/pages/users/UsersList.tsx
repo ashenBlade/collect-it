@@ -1,21 +1,22 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import '../../UI/NavBar/NavbarStyle.css'
 import User from "../../entities/user";
 import Pagination from "../../UI/pagination/Pagination";
+import {UsersService} from "../../../services/UsersService";
 
 const UsersList = () => {
+    const pageSize = 15;
+    const [page, setPage] = useState(1);
     const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
     const [enteredText, setEnteredText] = useState("");
-    const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.code === "Enter") {
-            window.location.href=(`../images/${enteredText}`);
-        }
-    };
+    useEffect(() => {
+        UsersService.getUsersPagedAsync(page, pageSize).then(x => {
+            setUsers(x.users);
+        })
+    }, [])
     return (
         <div>
             <div className='w-75 mt-5 mx-auto'>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter login/e-mail'/>
-                <input type='text' onKeyDown={keyDownHandler} value={enteredText} onChange={(e) => setEnteredText(e.target.value)} id='email' className='form-control my-2'  placeholder='Enter id'/>
                 <tbody className='usersTable mx-auto mt-5'>
                 <tr className="usersRow firstRow">
                     <td className='idCell color-purple'>ID</td>
