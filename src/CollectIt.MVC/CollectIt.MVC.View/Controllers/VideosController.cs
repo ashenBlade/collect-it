@@ -58,9 +58,9 @@ public class VideosController : Controller
 
     [HttpGet("upload")]
     [Authorize]
-    public async Task<IActionResult> UploadView()
+    public async Task<IActionResult> UploadVideo()
     {
-        throw new NotImplementedException();
+        return View();
     }
 
     [HttpPost("upload")]

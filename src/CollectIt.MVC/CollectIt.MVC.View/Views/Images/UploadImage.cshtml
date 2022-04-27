@@ -1,24 +1,32 @@
 ﻿@model CollectIt.MVC.View.ViewModels.UploadImageViewModel
-
 @{
-    ViewData["Title"] = "Image Post Page";
-    Layout = "_Layout";
+    Layout = null;
 }
-
-
-<form method="post" enctype="multipart/form-data" asp-controller="Images" asp-action="UploadImage">
-    
-    <label>Тэги через пробел:</label><br/>
-    <input type="text" name="tags"/><br/>
-    
-    <label>Название:</label><br/>
-    <input type="text" name="name"/><br/>
-    
-    
-    <div class="mb-4">
-        <label class="h5">Загрузите фото</label><br/>
-        <input type="file" name="uploadedFile" accept="image/*">
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Загрузить изображение</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/View.styles.css" asp-append-version="true"/>
+    <link href="~/lib/fontawesome-free-6.0.0-web/css/all.css" rel="stylesheet">;
+</head>
+<body>
+<main class="w-100 d-flex justify-content-center align-items-center subs-center" style="">
+    <div class="w-50 p-3 bg-white shadow rounded">
+        <h2 class = "text-center my-5" >Загрузка изображения</h2>
+        <form asp-controller="Images" method="post" asp-action="UploadImage" enctype="multipart/form-data" class="w-75 text-start mx-auto">
+            <div class="preview mb-3"></div>
+            <input type="file" class="form-control mb-3" id="file">
+            <input type="text" class="form-control mb-3" placeholder="Введите название изображения" id="name">
+            <input type="text" class="form-control mb-3" placeholder="Введите тэги через пробел" id="tags">
+            <input class="btn mx-auto btn-primary mb-5" value="Добавить изображение" type="submit"/>
+        </form>
     </div>
-    
-    <input type="submit" value="Отправить"/>
-</form>
+</main>
+</body>
+</html>

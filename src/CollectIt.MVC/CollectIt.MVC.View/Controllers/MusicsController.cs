@@ -56,7 +56,7 @@ public class MusicsController : Controller
     [Authorize]
     public async Task<IActionResult> UploadMusic()
     {
-        throw new NotImplementedException();
+        return View();
     }
 
     [HttpPost("upload")]
