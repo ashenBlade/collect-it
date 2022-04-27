@@ -21,6 +21,30 @@ public class MusicsController : Controller
         _musicManager = musicManager;
         _userManager = userManager;
     }
+    
+    public IActionResult Musics() => View();
+    
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> Music(int id)
+    {
+        var source = await _musicManager.FindByIdAsync(id);
+        if (source == null)
+        {
+            return View("Error");
+        }
+
+        var model = new MusicViewModel()
+        {
+            MusicId = id,
+            Name = source.Name,
+            OwnerName = source.Owner.UserName,
+            UploadDate = source.UploadDate,
+            Address = $"/imagesFromDb/{source.FileName}",
+            Tags = source.Tags,
+            IsAcquired = await _musicManager.IsAcquiredBy(source.OwnerId, id)
+        };
+        return View(model);
+    }
 
     [HttpGet("")]
     public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] string query, 

@@ -1,0 +1,36 @@
+﻿@model CollectIt.MVC.View.Views.Shared.Components.MusicCards.MusicCardsViewModel
+@{
+    Layout = "_ImagesLayout";
+    ViewData["Title"] = "Музыка";
+}
+
+<div class="h-100">
+    <div class="w-100 my-6 h-25 justify-content-center align-items-center d-flex mb-3 mt-4">
+        <vc:search-bar/>
+    </div>
+    <div class="d-flex flex-column mb-0 d-block">
+        <div class="w-100 h-100 bg-light rounded">
+            <div class="p-3 mih-1">
+                <vc:music-cards musics="@Model.Musics"/>
+            </div>
+            <div class="d-flex justify-content-center mh-100">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.PageNumber == 1 
+                                                                    ? "disabled" 
+                                                                    : $"onclick=location.href='{Url.Action("GetMusicsPage", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
+                            previous
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.Musics.Count < Model.MaxMusicsCount
+                                                                    ? "disabled"
+                                                                    : $"onclick=location.href='{Url.Action("GetMusicsPage", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
+                            next
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

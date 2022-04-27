@@ -25,6 +25,8 @@ public class VideosController : Controller
         _userManager = userManager;
         _logger = logger;
     }
+    
+    public IActionResult Videos() => View();
 
     [HttpGet("")]
     public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] string query, 
