@@ -21,10 +21,20 @@
         <h2 class = "text-center my-5" >Загрузка видео</h2>
         <form asp-controller="Videos" method="post" asp-action="UploadVideo" enctype="multipart/form-data" class="w-75 text-start mx-auto">
             <div class="preview mb-3"></div>
-            <input type="file" class="form-control mb-3" id="file">
-            <input type="text" class="form-control mb-3" placeholder="Введите название видео" id="name">
-            <input type="text" class="form-control mb-3" placeholder="Введите тэги через пробел" id="tags">
-            <input type="text" class="form-control mb-3" placeholder="Введите длительность" id="duration">
+                @Html.EditorFor(x => x.Content, new { htmlAttributes = new { @class = "form-control mb-3", id="file" } })
+                @Html.ValidationMessageFor(x => x.Content, null, new { @class = "text-danger text-center" })
+            <div class="form-group">
+                @Html.EditorFor(x => x.Name, new { htmlAttributes = new { @class = "form-control mb-3",id="name", placeholder = "Введите название видео" } })
+                @Html.ValidationMessageFor(x => x.Name, null, new { @class = "text-danger text-center" })
+            </div>
+            <div class="form-group">
+                @Html.EditorFor(x => x.Tags, new { htmlAttributes = new { @class = "form-control mb-3", id="tags", placeholder = "Введите тэги через пробел" } })
+                @Html.ValidationMessageFor(x => x.Tags, null, new { @class = "text-danger text-center" })
+            </div>
+            <div class="form-group">
+                @Html.EditorFor(x => x.Duration, new { htmlAttributes = new { @class = "form-control mb-3",id="duration", placeholder = "Введите длительность" } })
+                @Html.ValidationMessageFor(x => x.Duration, null, new { @class = "text-danger text-center" })
+            </div>
             <input class="btn mx-auto btn-primary mb-5" value="Добавить видео" type="submit"/>
         </form>
     </div>
