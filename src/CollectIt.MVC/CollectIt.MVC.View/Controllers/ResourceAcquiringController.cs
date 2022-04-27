@@ -49,4 +49,29 @@ public class ResourceAcquiringController : Controller
             return NotFound("Image with provided id not found");
         }
     }
+    
+    [HttpPost("music/{musicId:int}")]
+    public async Task<IActionResult> BuyMusic([Required]int musicId)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        _logger.LogInformation("User with id = {UserId} wants to acquire image with id = {ImageId}", userId, musicId);
+        try
+        {
+            var acquired = await _resourceAcquisitionService.AcquireMusicAsync(userId, musicId);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {musicId})", userId, musicId);
+            return RedirectToAction("Image", "Images", new {id = musicId});
+        }
+        catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
+        {
+            return BadRequest("User already acquired this image");
+        }
+        catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
+        {
+            return BadRequest("No suitable subscriptions found to acquire image");
+        }
+        catch (ResourceNotFoundException resourceNotFoundException)
+        {
+            return NotFound("Image with provided id not found");
+        }
+    }
 }
