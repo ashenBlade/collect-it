@@ -58,14 +58,24 @@ public class MusicsController : Controller
     public async Task<IActionResult> UploadNewMusic(
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
         [Required] 
-        CreateMusicDTO dto)
+        UploadMusicViewModel model)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
+        if (!TryGetExtension(model.Content.FileName, out var extension))
+        {
+            // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения музыки: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
+            return View("Error",
+                        new ErrorViewModel()
+                        {
+                            Message =
+                                $"Поддерживаемые расширения видео: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}"
+                        });
+        }
         try
         {
-            await using var stream = dto.FormFile.OpenReadStream();
-            var music = await _musicManager.CreateAsync(dto.Name, userId, dto.Tags, stream, dto.Extension,
-                                                        dto.Duration);
+            await using var stream = model.Content.OpenReadStream();
+            var music = await _musicManager.CreateAsync(model.Name, userId, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries), stream, extension,
+                                                        model.Duration);
 
             return CreatedAtAction("GetMusicsPage", new {id = music.Id}, new { });
         }
@@ -74,7 +84,26 @@ public class MusicsController : Controller
             return BadRequest();
         }
     }
-    
+
+    private bool TryGetExtension(string filename, out string extension)
+    {
+        extension = null!;
+        if (filename is null)
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+
+        var array = filename.Split('.');
+        if (array.Length < 2)
+        {
+            return false;
+        }
+
+        return SupportedMusicExtensions.Contains(extension = array[^1].ToLower());
+    }
+
+    private static HashSet<string> SupportedMusicExtensions = new HashSet<string>() {"mp3", "ogg", "wav"};
+
     [HttpGet("download/{id:int}")]
     [Authorize]
     public async Task<IActionResult> DownloadMusicContent(int id)

@@ -2,22 +2,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CollectIt.MVC.View.DTO;
 
-public class CreateVideoDTO
+public class UploadVideoViewModel
 {
     [Required]
     [MinLength(6)]
     public string Name { get; set; }
     
     [Required]
-    public string[] Tags { get; set; }
+    [DataType(DataType.Text)]
+    public string Tags { get; set; }
     
+    [Required]
     [Range(1, int.MaxValue)]
-    [Required]
     public int Duration { get; set; }
-
+    
     [Required]
-    public IFormFile FormFile { get; set; }
+    public IFormFile Content { get; set; }
 
-    [Required]
-    public string Extension { get; set; }
 }

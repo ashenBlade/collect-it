@@ -49,7 +49,7 @@ public class PostgresqlVideoManager : IVideoManager
             throw new ArgumentOutOfRangeException(nameof(duration), "Video duration must be positive");
         }
 
-        var filename = $"{new Guid()}.{extension}";
+        var filename = $"{Guid.NewGuid()}.{extension}";
         var video = new Video()
                     {
                         Duration = duration,

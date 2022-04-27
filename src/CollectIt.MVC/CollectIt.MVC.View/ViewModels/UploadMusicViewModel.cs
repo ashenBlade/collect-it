@@ -2,22 +2,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CollectIt.MVC.View.DTO;
 
-public class CreateMusicDTO
+public class UploadMusicViewModel
 {
     [Required]
     [MinLength(6)]
     public string Name { get; set; }
     
     [Required]
-    public string[] Tags { get; set; }
+    [DataType(DataType.Text)]
+    public string Tags { get; set; }
     
-    [Range(1, int.MaxValue)]
     [Required]
+    [Range(1, int.MaxValue)]
     public int Duration { get; set; }
 
     [Required]
-    public IFormFile FormFile { get; set; }
-
-    [Required]
-    public string Extension { get; set; }
+    public IFormFile Content { get; set; }
 }

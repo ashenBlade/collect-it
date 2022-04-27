@@ -16,11 +16,15 @@ public class VideosController : Controller
 {
     private readonly IVideoManager _videoManager;
     private readonly UserManager _userManager;
+    private readonly ILogger<VideosController> _logger;
 
-    public VideosController(IVideoManager videoManager, UserManager userManager)
+    public VideosController(IVideoManager videoManager, 
+                            UserManager userManager,
+                            ILogger<VideosController> logger)
     {
         _videoManager = videoManager;
         _userManager = userManager;
+        _logger = logger;
     }
 
     [HttpGet("")]
@@ -56,23 +60,62 @@ public class VideosController : Controller
     [HttpPost("")]
     [Authorize]
     public async Task<IActionResult> UploadNewVideo(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)]
+        [FromForm]
         [Required] 
-        CreateVideoDTO dto)
+        UploadVideoViewModel viewModel)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
+        if (!TryGetExtension(viewModel.Content.FileName, out var extension))
+        {
+            // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
+            return View("Error",
+                        new ErrorViewModel()
+                        {
+                            Message =
+                                $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}"
+                        });
+        }
         try
         {
-            await using var stream = dto.FormFile.OpenReadStream();
-            var video = await _videoManager.CreateAsync(dto.Name, userId, dto.Tags, stream, dto.Extension,
-                                                        dto.Duration);
+            await using var stream = viewModel.Content.OpenReadStream();
+            var video = await _videoManager.CreateAsync(viewModel.Name, userId, 
+                                                        viewModel.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries), 
+                                                        stream, 
+                                                        extension!,
+                                                        viewModel.Duration);
 
-            return CreatedAtAction("GetVideoPage", new {id = video.Id}, new { });
+            _logger.LogInformation("Video (VideoId = {VideoId}) was created by user (UserId = {UserId})", userId, video.Id);
+            return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)
         {
-            return BadRequest();
+            _logger.LogError(ex, "Error while saving video");
+            ModelState.AddModelError("", "Error while saving video on server side");
+            return View("Error", new ErrorViewModel()
+                                 {
+                                     Message = "Error while saving video on server"
+                                 });
         }
+    }
+
+    private static readonly HashSet<string> SupportedVideoFormats = new(){"mpeg", "mpg", "avi", "mkv", "webm"};
+
+    private static bool TryGetExtension(string filename, out string? extension)
+    {
+        if (filename is null)
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+        
+        extension = null;
+        var array = filename.Split('.');
+        if (array.Length < 2)
+        {
+            return false;
+        }
+
+        extension = array[^1].ToLower();
+        return SupportedVideoFormats.Contains(extension);
     }
     
     [HttpGet("download/{id:int}")]
