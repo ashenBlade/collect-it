@@ -9,10 +9,9 @@
 }
 
 .usersTable{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    table-layout: fixed;
     width: 100%;
+    white-space: nowrap;
 }
 
 .usersRow{
@@ -31,31 +30,30 @@
     cursor: pointer;
 }
 
-
-.idCell{
+.Cell{
+    word-wrap: break-word;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-start;
-    text-align: center;
-    padding: 10px;
     position: relative;
-    width: 10%;
     height: 40px;
+    width: 22.5%;
     background: #FFFFFF;
 }
 
-.usersCell{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: flex-start;
-    text-align: center;
-    padding: 10px;
-    position: relative;
-    width: 22.5%;
-    height: 40px;
-    background: #FFFFFF;
+.idCell {
+    width: 10%;
+}
+
+.nameCell {
+    width: 35%;
+}
+
+.bigtext{
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .color-purple{
