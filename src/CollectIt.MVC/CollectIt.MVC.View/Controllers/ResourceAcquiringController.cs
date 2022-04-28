@@ -34,7 +34,7 @@ public class ResourceAcquiringController : Controller
         {
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
             _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId})", userId, imageId);
-            return RedirectToAction("Image", "Images", new {id = imageId});
+            return RedirectToAction("Image", "Images", new {imageId = imageId});
         }
         catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
         {
@@ -58,7 +58,7 @@ public class ResourceAcquiringController : Controller
         try
         {
             var acquired = await _resourceAcquisitionService.AcquireMusicAsync(userId, musicId);
-            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {musicId})", userId, musicId);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {MusicId})", userId, musicId);
             return RedirectToAction("Image", "Images", new {id = musicId});
         }
         catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
