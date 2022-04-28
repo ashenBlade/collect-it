@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using CollectIt.API.WebAPI;
 using CollectIt.Database.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Http.Logging;
@@ -30,6 +32,10 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
                 opts.SingleLine = false;
             });
         });
+        builder.ConfigureAppConfiguration(config =>
+        {
+            config.AddUserSecrets(Assembly.GetExecutingAssembly());
+        });
         builder.ConfigureServices((ctx, services) =>
         {
             services.RemoveAll<DbContextOptions<PostgresqlCollectItDbContext>>();
@@ -39,7 +45,12 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
                 // I don't know how to provide connection string in user-secrets
                 // So, put it directly here
                 // Or find out how to do it 
-                config.UseNpgsql("Server=localhost;Database=collect_it_integration_tests;User Id=ashblade;Password=12345678;Port=5432", options =>
+                var connectionString = ctx.Configuration["ConnectionStrings:Postgresql:Testing"];
+                if (connectionString is null)
+                {
+                    throw new ArgumentNullException(nameof(connectionString), "Connection string is still null");
+                }
+                config.UseNpgsql(connectionString, options =>
                 {
                     options.UseNodaTime();
                     options.MigrationsAssembly("CollectIt.Database.Infrastructure");

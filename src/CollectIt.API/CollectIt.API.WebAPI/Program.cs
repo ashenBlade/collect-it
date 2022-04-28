@@ -1,3 +1,4 @@
+using System.Reflection;
 using CollectIt.API.WebAPI.ModelBinders;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
@@ -39,7 +41,15 @@ public class Program
                 policyBuilder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
             });
         });
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(gen =>
+        {
 
+            var file = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var path = Path.Combine(AppContext.BaseDirectory, file);
+            gen.IncludeXmlComments(path);
+        });
+        
         builder.Services
                .AddAuthentication(config =>
                 {
@@ -110,7 +120,11 @@ public class Program
         var app = builder.Build();
 
         app.UseHttpsRedirection();
-
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
         app.UseAuthentication();
         app.UseAuthorization();
 

@@ -42,9 +42,13 @@ public class UserManager: UserManager<User>
         return GetSubscriptionsForUserByIdAsync(user.Id);
     }
 
-    public Task<List<UserSubscription>> GetSubscriptionsForUserByIdAsync(int userId)
+    public async Task<List<UserSubscription>> GetSubscriptionsForUserByIdAsync(int userId)
     {
-        return _context.UsersSubscriptions
+        if (!await _context.Users.AnyAsync(u => u.Id == userId))
+        {
+            throw new UserNotFoundException(userId);
+        }
+        return await _context.UsersSubscriptions
                        .Where(us => us.UserId == userId)
                        .Include(us => us.Subscription)
                        .Include(us => us.User)
