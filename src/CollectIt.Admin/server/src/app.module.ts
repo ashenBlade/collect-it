@@ -16,10 +16,6 @@ import {Resource} from "./resources/resources.model";
 import {Video} from "./resources/videos/videos.model";
 import {Image} from "./resources/images/images.model";
 
-import * as dotenv from "dotenv";
-
-dotenv.config({ path: `${__dirname}/../development.env` });
-
 @Module({
   controllers: [],
   providers: [],
