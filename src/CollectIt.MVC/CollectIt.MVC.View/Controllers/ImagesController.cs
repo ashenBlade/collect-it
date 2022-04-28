@@ -134,7 +134,7 @@ public class ImagesController : Controller
         }
     }
 
-    private static readonly HashSet<string> SupportedImageExtensions = new HashSet<string>() {"png", "jpeg", "jpg", "webp", "bmp"};
+    private static readonly HashSet<string> SupportedImageExtensions = new() {"png", "jpeg", "jpg", "webp", "bmp"};
 
     
     private static bool TryGetExtension(string filename, out string? extension)
@@ -167,9 +167,8 @@ public class ImagesController : Controller
         }
 
         var file = new FileInfo(Path.Combine(address, source.FileName));
-        _logger.LogInformation("Sending dick picks from {Path}", file.FullName);
         return file.Exists
-                   ? PhysicalFile(file.FullName, $"image/jpg")
+                   ? PhysicalFile(file.FullName, $"image/{source.Extension}", source.FileName)
                    : BadRequest(new {Message = "File not found"});
     }
 

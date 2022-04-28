@@ -16,7 +16,7 @@ public class MusicsController : Controller
 {
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
-
+    private const int DefaultPageSize = 15;
     public MusicsController(IMusicManager musicManager, UserManager userManager)
     {
         _musicManager = musicManager;
@@ -46,28 +46,21 @@ public class MusicsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] string query, 
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] 
+                                                      [Required]
+                                                      string query, 
                                                       [Range(1, int.MaxValue)]
                                                       [FromQuery(Name = "page_number")]
-                                                      int pageNumber,
-                                                      [Range(1, int.MaxValue)]
-                                                      [FromQuery(Name = "page_size")]
-                                                      int pageSize,
+                                                      int pageNumber = 1,
                                                       string? redirectUrl = null)
     {
-        if (!ModelState.IsValid)
-        {
-            return redirectUrl is null
-                       ? RedirectToAction("Index", "Home")
-                       : Redirect(redirectUrl);
-        }
-        var musics = await _musicManager.QueryAsync(query, pageNumber, pageSize);
+        var musics = await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Musics", new MusicCardsViewModel()
                               {
                                   Musics = musics.Result.Select(m => new MusicViewModel()
                                                                      {
-                                                                         Address = "",
-                                                                         Name = m.Name
+                                                                         Address = Url.Action("GetMusicBlob", new {id = m.Id})!,
+                                                                         Name = m.Name,
                                                                      }).ToList(),
                                   Query = query,
                                   PageNumber = pageNumber,
@@ -106,7 +99,7 @@ public class MusicsController : Controller
             var music = await _musicManager.CreateAsync(model.Name, userId, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries), stream, extension,
                                                         model.Duration);
 
-            return CreatedAtAction("Music", new {id = music.Id}, new { });
+            return RedirectToAction("GetQueriedMusics", new {q = ""});
         }
         catch (Exception ex)
         {
@@ -131,17 +124,30 @@ public class MusicsController : Controller
         return SupportedMusicExtensions.Contains(extension = array[^1].ToLower());
     }
 
-    private static HashSet<string> SupportedMusicExtensions = new HashSet<string>() {"mp3", "ogg", "wav"};
+    private static readonly HashSet<string> SupportedMusicExtensions = new() {"mp3", "ogg", "wav"};
 
-    [HttpGet("download/{id:int}")]
+    [HttpGet("{id:int}/blob")]
+    public async Task<IActionResult> GetMusicBlob(int id)
+    {
+        var music = await _musicManager.FindByIdAsync(id);
+        if (music is null)
+        {
+            return View("Error", new ErrorViewModel() {Message = "Music not found"});
+        }
+        var stream = await _musicManager.GetContentAsync(id);
+        return File(stream, $"audio/{music!.Extension}", $"{music.Name}.{music.Extension}");
+    }
+
+    [HttpGet("{id:int}/download")]
     [Authorize]
     public async Task<IActionResult> DownloadMusicContent(int id)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
         if (await _musicManager.IsAcquiredBy(id, userId))
         {
+            var image = await _musicManager.FindByIdAsync(id);
             var stream = await _musicManager.GetContentAsync(id);
-            return File(stream, "audio/*");
+            return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
         }
 
         return BadRequest();

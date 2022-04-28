@@ -135,7 +135,6 @@
 
     <ItemGroup>
       <Folder Include="Content\Videos" />
-      <Folder Include="wwwroot\imagesFromDb" />
     </ItemGroup>
 
 </Project>

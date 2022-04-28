@@ -21,13 +21,13 @@
         @if (Model.Success)
         {
             <h2 class="mb-3 mt-2 text-center">Операция завершена успешно</h2>
-            <img width="150" height="150" class="mb-lg-4 mx-auto d-block" alt="Успешное оформление" src="img/accept.jpg"/>
+            <img width="150" height="150" class="mb-lg-4 mx-auto d-block" alt="Успешное оформление" src="~/img/accept.jpg"/>
         }
         else
         {
             <h2 class="mt-2 text-center">Операция не совершена</h2>
             <h5 class="mb-3 mt-3 text-center">Причина: <mark>@Model.ErrorMessage</mark></h5>
-            <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src="img/decline.jpg" alt="Подписка не оформлена"/>
+            <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src="~/img/decline.jpg" alt="Ошибка"/>
         }
         <div class="mb-3 text-center"> Через 5 секунд вы будете перенаправлены на страницу ресурса</div>
     </div>
@@ -36,6 +36,6 @@
 <script>
   document.addEventListener('DOMContentLoaded',setTimeout(() => {    
    window.history.back();
-  },5000));
+  }, 5000));
 </script>
 </html>
