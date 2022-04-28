@@ -10,30 +10,33 @@ const Price = ['200','350','500','0']
 
 const SubscriptionsList = () => {
     return (
-        <div>
-            <div className='w-75 mt-5 mx-auto'>
+            <div className={'container mt-5'}>
                 <input id='email' className='form-control my-2' type='text' placeholder='Enter subscription`s name'/>
                 <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
-                <tbody className='usersTable mx-auto mt-5'>
-                <tr className="usersRow firstRow">
-                    <td className='idCell color-purple'>ID</td>
-                    <td className='usersCell color-purple'>Name</td>
-                    <td className='usersCell color-purple'>Description</td>
-                    <td className='usersCell color-purple'>Duration</td>
-                    <td className='usersCell color-purple'>Downloads</td>
-                    <td className='usersCell color-purple'>Price</td>
-                </tr>
-                {iterations.map(i => (
-                    <tr className="usersRow">
-                        <td className='idCell'>{i}</td>
-                        <td className='usersCell'>{Names[+i-1]}</td>
-                        <td className='usersCell'>{Descriptions[+i-1]}</td>
-                        <td className='usersCell'>{Duration[+i-1]}</td>
-                        <td className='usersCell'>{Downloads[+i-1]}</td>
-                        <td className='usersCell'>{Price[+i-1]}</td>
-                    </tr>
-                ))}
-                </tbody>
+                <div className='mt-5 mx-auto'>
+                    <table className={'table table-borderless table-light'}>
+                        <thead className='mx-auto mt-5 table-hover'>
+                        <th className='firstRow usersRow'>
+                            <td className ='Cell idCell color-purple '>ID</td>
+                            <td className= 'Cell nameCell color-purple'>Name</td>
+                            <td className= 'Cell idCell color-purple'>OwnerID</td>
+                            <td className= 'Cell color-purple'>Filename</td>
+                            <td className= 'Cell color-purple'>Upload time</td>
+                        </th>
+                        </thead>
+                        <tbody className='mx-auto mt-5 table-hover'>
+                        {iterations.map(i => (
+                            <tr className="usersRow">
+                                <td className='idCell Cell'>{i}</td>
+                                <td className='nameCell Cell'>{Names[+i-1]}</td>
+                                <td className='Cell'>{Descriptions[+i-1]}</td>
+                                <td className='Cell'>{Duration[+i-1]}</td>
+                                <td className='Cell'>{Downloads[+i-1]}</td>
+                                <td className='Cell'>{Price[+i-1]}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 <ul className="pagination">
                     <li className="page-item">
                         <button className="page-link" type="button">1</button>
