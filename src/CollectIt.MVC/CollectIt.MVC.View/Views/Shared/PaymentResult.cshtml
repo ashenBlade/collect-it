@@ -29,13 +29,13 @@
             <h5 class="mb-3 mt-3 text-center">Причина: <mark>@Model.ErrorMessage</mark></h5>
             <img width="150" height="150" class="mb-lg-4 mx-auto d-block"src="img/decline.jpg" alt="Подписка не оформлена"/>
         }
-        <div class="mb-3 text-center"> Через 5 секунд вы будете перенаправлены на главную страницу</div>
+        <div class="mb-3 text-center"> Через 5 секунд вы будете перенаправлены на страницу ресурса</div>
     </div>
 </main>
 </body>
 <script>
   document.addEventListener('DOMContentLoaded',setTimeout(() => {    
-    window.location = '/';    
+   window.history.back();
   },5000));
 </script>
 </html>

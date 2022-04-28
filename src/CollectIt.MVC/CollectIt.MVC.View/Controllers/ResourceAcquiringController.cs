@@ -76,15 +76,27 @@ public class ResourceAcquiringController : Controller
         }
         catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
         {
-            return BadRequest("User already acquired this image");
+            return View("PaymentResult",
+                new PaymentResultViewModel()
+                {
+                    ErrorMessage = "Вы уже приобрели данный ресурс"
+                });
         }
         catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
         {
-            return BadRequest("No suitable subscriptions found to acquire image");
+            return View("PaymentResult",
+                new PaymentResultViewModel()
+                {
+                    ErrorMessage = "Нет подходящей подписки для покупки"
+                });
         }
         catch (ResourceNotFoundException resourceNotFoundException)
         {
-            return NotFound("Image with provided id not found");
+            return View("PaymentResult",
+                new PaymentResultViewModel()
+                {
+                    ErrorMessage = "Запрашиваемый ресурс не найден"
+                });
         }
     }
 }
