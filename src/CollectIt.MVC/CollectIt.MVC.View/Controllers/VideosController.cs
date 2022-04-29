@@ -16,7 +16,7 @@ public class VideosController : Controller
     private readonly IVideoManager _videoManager;
     private readonly UserManager _userManager;
     private readonly ILogger<VideosController> _logger;
-
+    private readonly int DefaultPageSize = 15;
     public VideosController(IVideoManager videoManager, 
                             UserManager userManager,
                             ILogger<VideosController> logger)
@@ -27,19 +27,17 @@ public class VideosController : Controller
     }
     
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] string query, 
+    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] 
+                                                      string query, 
+                                                      [FromQuery(Name = "p")]
                                                       [Range(1, int.MaxValue)]
-                                                      [FromQuery(Name = "page_number")]
-                                                      int pageNumber,
-                                                      [Range(1, int.MaxValue)]
-                                                      [FromQuery(Name = "page_size")]
-                                                      int pageSize)
+                                                      int pageNumber = 1)
     {
         if (!ModelState.IsValid)
         {
             return View("Error", new ErrorViewModel() {Message = "Invalid input for videos page"});
         }
-        var videos = await _videoManager.QueryAsync(query, pageNumber, pageSize);
+        // var videos = await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Videos");
     }
 

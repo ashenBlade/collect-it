@@ -31,14 +31,15 @@ public class HomeController : Controller
     [IgnoreAntiforgeryToken]
     public IActionResult Index(IndexViewModel model)
     {
-        if (model.ResourceType == ResourceType.Image)
-        {
-            return RedirectToAction("GetImagesByQuery", "Images", new {q = model.Query});
-        }
-
-        model.Query = "Данный тип пока не поддерживается";
-        _logger.LogTrace("Queried unsupported resource type: {ResourceType}", model.ResourceType);
-        return View(model);
+        return model.ResourceType switch
+               {
+                   ResourceType.Image => RedirectToAction("GetImagesByQuery", "Images", new {q = model.Query}),
+                   ResourceType.Music => RedirectToAction("GetQueriedMusics", "Musics", new {q = model.Query}),
+                   _ => View(new IndexViewModel()
+                             {
+                                 Query = "Данный тип пока не поддерживается", ResourceType = ResourceType.Image
+                             })
+               };
     }
     
     [HttpGet]

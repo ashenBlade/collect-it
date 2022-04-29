@@ -6,14 +6,30 @@
       method="post" 
       asp-antiforgery="false" 
       class="input-group rounded-pill px-6 row">
-    <select asp-for="ResourceType" 
+    <select id="resource-type-select" 
+            asp-for="ResourceType" 
             class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
         <option value="@(( int ) ResourceType.Image)" selected="@(Model.ResourceType == ResourceType.Image)">Изображения</option>
         <option value="@(( int ) ResourceType.Video)" selected="@(Model.ResourceType == ResourceType.Video)">Видео</option>
         <option value="@(( int ) ResourceType.Music)" selected="@(Model.ResourceType == ResourceType.Music)">Музыка</option>
     </select>
-    <input asp-for="Query" 
+    <input id="search-bar-query" 
+        asp-for="Query" 
            placeholder="Название, тэг, гэг..." 
            class="form-control col-6 rounded-start-0 rounded-end-0"/>
-    <button type="submit" class="btn bg-light border rounded-end-1 rounded-start-0 col-2">Найти</button>
+    <button type="button" id="search-bar-button" class="btn bg-light border rounded-end-1 rounded-start-0 col-2">Найти</button>
 </form>
+<script>
+const searchBarButton = $('#search-bar-button');
+searchBarButton.on('click', e => {
+    e.preventDefault();
+    const selected = $('#resource-type-select');
+    const path = selected.val() === '@(( int ) ResourceType.Image)' ? 'images'
+        : selected.val() === '@(( int ) ResourceType.Music)' ? 'musics' 
+        : selected.val() === '@(( int ) ResourceType.Video)' ? 'videos'
+        : '';
+    const query = $('#search-bar-query').val();
+    const url = `https://localhost:7251/${encodeURIComponent(path)}?q=${encodeURIComponent(query)}`;
+    window.location.href = url;
+})
+</script>

@@ -5,9 +5,9 @@
 <!-- m-0 p-0 mb-2 -->
 <div class="d-flex">
     <div class="resources-box">
-        @foreach (var music in @Model.Musics)
+        @foreach (var music in Model.Musics)
         {
-                <vc:music-card music="@music"/>
+            <vc:music-card music="@music"/>
         }
     </div>
 </div>

@@ -32,15 +32,16 @@ public class MusicsController : Controller
             return View("Error");
         }
 
+        var user = await _userManager.GetUserAsync(User);
         var model = new MusicViewModel()
         {
             MusicId = id,
             Name = source.Name,
             OwnerName = source.Owner.UserName,
             UploadDate = source.UploadDate,
-            Address = $"/imagesFromDb/{source.FileName}",
+            Address = Url.Action("DownloadMusicContent", new {musicId = id})!,
             Tags = source.Tags,
-            IsAcquired = await _musicManager.IsAcquiredBy(source.OwnerId, id)
+            IsAcquired = user is not null && await _musicManager.IsAcquiredBy(source.OwnerId, id)
         };
         return View(model);
     }
@@ -50,9 +51,8 @@ public class MusicsController : Controller
                                                       [Required]
                                                       string query, 
                                                       [Range(1, int.MaxValue)]
-                                                      [FromQuery(Name = "page_number")]
-                                                      int pageNumber = 1,
-                                                      string? redirectUrl = null)
+                                                      [FromQuery(Name = "p")]
+                                                      int pageNumber = 1)
     {
         var musics = await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Musics", new MusicCardsViewModel()
