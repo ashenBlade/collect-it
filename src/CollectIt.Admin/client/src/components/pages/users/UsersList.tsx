@@ -1,40 +1,60 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import '../../UI/NavBar/NavbarStyle.css'
 import User from "../../entities/user";
 import Pagination from "../../UI/pagination/Pagination";
 import {UsersService} from "../../../services/UsersService";
+import {useNavigate} from "react-router";
+import SearchPanel from "../../UI/SearchPanel/SearchPanel";
+
 
 const UsersList = () => {
-    const pageSize = 15;
-    const [page, setPage] = useState(1);
-    const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
-    const [enteredText, setEnteredText] = useState("");
+    let pageSize = 10;
+    let pageNumber = 1;
+    const [users, setUsers] = useState<User[]>([]);
     useEffect(() => {
-        UsersService.getUsersPagedAsync(page, pageSize).then(x => {
+        UsersService.getUsersPagedAsync({pageSize, pageNumber}).then(x => {
             setUsers(x.users);
         })
     }, [])
+    const downloadPageNumber = (pageNumber: number) => {
+       UsersService.getUsersPagedAsync({pageSize, pageNumber}).then(x => {setUsers(x.users)})
+    }
+    const nav = useNavigate();
+    const toEditUserPage = (id: number) => nav(`/users/${id}`);
+    const onSearch = (q: string) => {
+        const id = Number(q);
+        if (!Number.isInteger(id)) {
+            alert('Id must be an integer');
+            return;
+        }
+        toEditUserPage(id);
+    }
     return (
-        <div>
-            <div className='w-75 mt-5 mx-auto'>
-                <tbody className='usersTable mx-auto mt-5'>
-                <tr className="usersRow firstRow">
-                    <td className='idCell color-purple'>ID</td>
-                    <td className='usersCell color-purple'>Login</td>
-                    <td className='usersCell color-purple'>E-mail</td>
-                    <td className='usersCell color-purple'>Role</td>
-                    <td className='usersCell color-purple'>Subscriptions</td>
-                </tr>
-                {users.map((u, i) => (
-                    <tr className="usersRow">
-                        <td className='idCell'>{i}</td>
-                        <td className='usersCell'>{u.username}</td>
-                        <td className='usersCell'>{u.email}</td>
-                        <td className='usersCell'>{u.roles?.join(', ') ?? ''}</td>
-                        <td className='usersCell'>{u.subscriptions?.length ?? 0}</td>
-                    </tr>
-                ))}
-                </tbody>
+        <div className={'container mt-5'}>
+            <SearchPanel onSearch={onSearch} placeholder={'Enter User id'}/>
+            <div className='mt-5 mx-auto'>
+                <table className={'usersTable table table-borderless table-light'}>
+                    <thead>
+                    <th className='firstRow usersRow'>
+                        <td className='Cell idCell'>ID</td>
+                        <td className='Cell nameCell'>Username</td>
+                        <td className='Cell nameCell'>E-mail</td>
+                        <td className='Cell'>Roles</td>
+                        <td className='Cell'>Subscriptions</td>
+                    </th>
+                    </thead>
+                    <tbody className='mx-auto mt-5 table-hover'>
+                    {users?.map(i =>
+                        <tr onClick={() => toEditUserPage(i.id)} className='usersRow'>
+                            <td className='Cell idCell'>{i.id}</td>
+                            <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
+                            <td className='Cell nameCell'>{i.email}</td>
+                            <td className='Cell'>{i.roles}</td>
+                            <td className='Cell'>{i.subscriptions}</td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
