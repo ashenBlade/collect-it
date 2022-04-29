@@ -23,10 +23,10 @@ const ImageList = () => {
         setLoading(true);
         ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
             setImages(x.images);
-            setPageNumber(pageNumber + 1);
-            setLoading(false)
+            setLoading(false);
         }).catch(_ => setLoading(false))
     }
+
     const nav = useNavigate();
     const toEditImagePage = (id: number) => nav(`/images/${id}`);
 
@@ -38,6 +38,7 @@ const ImageList = () => {
         }
         toEditImagePage(id);
     }
+
     return (
         <div className={'container mt-5'}>
             <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>

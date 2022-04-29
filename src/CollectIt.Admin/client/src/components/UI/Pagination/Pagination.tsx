@@ -44,6 +44,7 @@ const Pagination: FC<PaginationInterface> = ({initialPage: i,
 
     const getLeftBorderButtons = () => (
         <>
+            {getPageButton({pageNumber: 1})}
             {getPageButton({pageNumber: 2})}
             {getDotsButton()}
         </>
@@ -52,6 +53,7 @@ const Pagination: FC<PaginationInterface> = ({initialPage: i,
     const getRightBorderButtons = () => (
         <>
             {getDotsButton()}
+            {getPageButton({pageNumber: maxPagesCount - 1})}
             {getPageButton({pageNumber: maxPagesCount})}
         </>
     )
@@ -76,16 +78,14 @@ const Pagination: FC<PaginationInterface> = ({initialPage: i,
                     <span aria-hidden={true}>&laquo;</span>
                 </a>
             </li>
-            {getPageButton({pageNumber: 1})}
             {maxPagesCount <= maxVisibleButtonsCount
-                ? (new Array(maxPagesCount - 2)).fill(null).map((_, i) => getPageButton({pageNumber: i + 2}))
+                ? (new Array(maxPagesCount).fill(null).map((_, i) => getPageButton({pageNumber: i + 1})))
                 : page <= 2
                     ? getLeftBorderButtons()
                     : page >= maxPagesCount - 1
                         ? getRightBorderButtons()
                         : getMiddleButtons(page)}
 
-            {getPageButton({pageNumber: maxPagesCount})}
             <li className={'page-item cursor-pointer'} onClick={e => {
                 e.preventDefault();
                 if (page < maxPagesCount) onPageChangeInternal(page + 1);
