@@ -8,9 +8,9 @@
       class="input-group rounded-pill px-6 row">
     <select asp-for="ResourceType" 
             class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
-        <option value="@(( int ) ResourceType.Image)" selected="selected">Изображения</option>
-        <option value="@(( int ) ResourceType.Video)">Видео</option>
-        <option value="@(( int ) ResourceType.Music)">Музыка</option>
+        <option value="@(( int ) ResourceType.Image)" selected="@(Model.ResourceType == ResourceType.Image)">Изображения</option>
+        <option value="@(( int ) ResourceType.Video)" selected="@(Model.ResourceType == ResourceType.Video)">Видео</option>
+        <option value="@(( int ) ResourceType.Music)" selected="@(Model.ResourceType == ResourceType.Music)">Музыка</option>
     </select>
     <input asp-for="Query" 
            placeholder="Название, тэг, гэг..." 

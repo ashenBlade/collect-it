@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
@@ -78,6 +79,7 @@ public class ImagesController : Controller
             return View("Error");
         }
 
+        var user = await _userManager.GetUserAsync(User);
         var comments = await _commentManager.GetResourcesComments(source.Id);
 
         var model = new ImageViewModel()
@@ -94,7 +96,8 @@ public class ImagesController : Controller
                         UploadDate = source.UploadDate,
                         Address = Url.Action("DownloadImage", new {id = imageId})!,
                         Tags = source.Tags,
-                        IsAcquired = await _imageManager.IsAcquiredBy(source.OwnerId, imageId)
+                        IsAcquired = user is not null && await _imageManager.IsAcquiredBy(source.OwnerId, imageId)
+                                         
                     };
         return View(model);
     }
