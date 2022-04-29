@@ -65,7 +65,7 @@ public class ImagesController : Controller
                                                     })
                                        .ToList(),
                         PageNumber = pageNumber,
-                        MaxImagesCount = MaxPageSize,
+                        MaxPagesCount = (int) Math.Ceiling((double) images.Count / MaxPageSize ),
                         Query = query
                     });
     }

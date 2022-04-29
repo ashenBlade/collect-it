@@ -24,14 +24,14 @@
                         <button class="page-link" type="button" @(Model.PageNumber == 1 
                                                                       ? "disabled" 
                                                                       : $"onclick=location.href='{Url.Action("GetImagesByQuery", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
-                            previous
+                            &raquo;
                         </button>
                     </li>
                     <li class="page-item">
-                        <button class="page-link" type="button" @(Model.Images.Count < Model.MaxImagesCount
+                        <button class="page-link" type="button" @(Model.MaxPagesCount <= Model.PageNumber
                                                                       ? "disabled"
                                                                       : $"onclick=location.href='{Url.Action("GetImagesByQuery", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
-                            next
+                            &laquo;
                         </button>
                     </li>
                 </ul>

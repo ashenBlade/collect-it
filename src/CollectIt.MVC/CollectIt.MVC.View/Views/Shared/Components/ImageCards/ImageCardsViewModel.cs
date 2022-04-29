@@ -7,6 +7,6 @@ public class ImageCardsViewModel
 {
     public IReadOnlyList<ImageViewModel> Images { get; set; }
     public int PageNumber { get; set; }
-    public int MaxImagesCount { get; set; }
+    public int MaxPagesCount { get; set; }
     public string Query { get; set; }
 }
