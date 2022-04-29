@@ -33,7 +33,7 @@ public class HomeController : Controller
     {
         if (model.ResourceType == ResourceType.Image)
         {
-            return RedirectToAction("GetImagesByName", "Images", new {q = model.Query});
+            return RedirectToAction("GetImagesByQuery", "Images", new {q = model.Query});
         }
 
         model.Query = "Данный тип пока не поддерживается";

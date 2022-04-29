@@ -35,7 +35,7 @@ public class ImagesController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetImagesByName([FromQuery(Name = "q")] 
+    public async Task<IActionResult> GetImagesByQuery([FromQuery(Name = "q")] 
                                                      [Required] 
                                                      string query,
                                                      [FromQuery(Name = "p")] 

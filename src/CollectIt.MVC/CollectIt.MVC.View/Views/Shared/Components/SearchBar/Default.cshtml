@@ -1,15 +1,19 @@
 @using CollectIt.Database.Entities.Account
+@model CollectIt.MVC.View.ViewModels.SearchBarViewModel
 
-<form asp-controller="Home" 
-      asp-action="Index" 
+<form asp-controller="@Model.Controller" 
+      asp-action="@Model.Action" 
       method="post" 
       asp-antiforgery="false" 
       class="input-group rounded-pill px-6 row">
-    <select name="ResourceType" class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
+    <select asp-for="ResourceType" 
+            class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
         <option value="@(( int ) ResourceType.Image)" selected="selected">Изображения</option>
         <option value="@(( int ) ResourceType.Video)">Видео</option>
         <option value="@(( int ) ResourceType.Music)">Музыка</option>
     </select>
-    <input name="Query" type="text" placeholder="Название, тэг, гэг..." class="form-control col-6 rounded-start-0 rounded-end-0"/>
+    <input asp-for="Query" 
+           placeholder="Название, тэг, гэг..." 
+           class="form-control col-6 rounded-start-0 rounded-end-0"/>
     <button type="submit" class="btn bg-light border rounded-end-1 rounded-start-0 col-2">Найти</button>
 </form>
