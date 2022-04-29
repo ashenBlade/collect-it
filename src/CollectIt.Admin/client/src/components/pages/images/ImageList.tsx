@@ -1,25 +1,35 @@
 import React, {useEffect, useState} from 'react';
 import Image from "../../entities/image";
-import Pagination from "../../UI/pagination/Pagination";
+import Pagination from "../../UI/Pagination/Pagination";
 import ImagesService from "../../../services/ImagesService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 
 
 const ImageList = () => {
-    let pageSize = 10;
-    let pageNumber = 1;
+    const pageSize = 10;
+    const [pageNumber, setPageNumber] = useState(1);
     const [images, setImages] = useState<Image[]>([]);
+    const [maxPages, setMaxPages] = useState(0);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
             setImages(x.images);
-        })
+            setMaxPages(Math.ceil(x.totalCount / pageSize));
+            setLoading(false);
+        }).catch(_ => setLoading(false))
     }, [])
     const downloadPageNumber = (pageNumber: number) => {
-        ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {setImages(x.images)})
+        setLoading(true);
+        ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
+            setImages(x.images);
+            setPageNumber(pageNumber + 1);
+            setLoading(false)
+        }).catch(_ => setLoading(false))
     }
     const nav = useNavigate();
     const toEditImagePage = (id: number) => nav(`/images/${id}`);
+
     const onSearch = (q: string) => {
         const id = Number(q);
         if (!Number.isInteger(id)) {
@@ -31,7 +41,9 @@ const ImageList = () => {
     return (
         <div className={'container mt-5'}>
             <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
-            <div className='mt-5 mx-auto'>
+            {loading
+                ? <>Loading...</>
+                : <div className='mt-5 mx-auto'>
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
                     <th className='firstRow usersRow'>
@@ -46,7 +58,9 @@ const ImageList = () => {
                     {images?.map(i =>
                         <tr onClick={() => toEditImagePage(i.id)} className='usersRow'>
                             <td className='Cell idCell'>{i.id}</td>
-                            <td className='Cell nameCell'><div className={'bigtext'}> {i.name}</div></td>
+                            <td className='Cell nameCell'>
+                                <div className={'bigtext'}> {i.name}</div>
+                            </td>
                             <td className='Cell idCell'>{i.ownerId}</td>
                             <td className='Cell'>{i.filename}</td>
                             <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
@@ -54,8 +68,9 @@ const ImageList = () => {
                     )}
                     </tbody>
                 </table>
-                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
-            </div>
+                <Pagination maxVisibleButtonsCount={10} initialPage={1} totalPagesCount={maxPages}
+                            onPageChange={downloadPageNumber}/>
+            </div> }
         </div>
     );
 };

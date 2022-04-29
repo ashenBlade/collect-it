@@ -1,14 +1,12 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../UI/NavBar/NavbarStyle.css'
 import User from "../../entities/user";
-import Pagination from "../../UI/pagination/Pagination";
 import {UsersService} from "../../../services/UsersService";
 
 const UsersList = () => {
     const pageSize = 15;
     const [page, setPage] = useState(1);
-    const [users, setUsers] = useState<User[]>([{id: 1, username: 'Test name', email: 'testemail@mail.cum', roles: ['Admin'], authorOf: [], subscriptions: []}]);
-    const [enteredText, setEnteredText] = useState("");
+    const [users, setUsers] = useState<User[]>([]);
     useEffect(() => {
         UsersService.getUsersPagedAsync(page, pageSize).then(x => {
             setUsers(x.users);

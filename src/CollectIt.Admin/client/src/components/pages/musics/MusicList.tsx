@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import MusicsService from '../../../services/MusicsService'
 import Music from "../../entities/music";
-import Pagination from "../../UI/pagination/Pagination";
+import Pagination from "../../UI/Pagination/Pagination";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 
@@ -53,7 +53,7 @@ const MusicList = () => {
                     )}
                     </tbody>
                 </table>
-                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
+                <Pagination initialPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
