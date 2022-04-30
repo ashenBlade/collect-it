@@ -3,7 +3,7 @@
 
 <form asp-controller="@Model.Controller" 
       asp-action="@Model.Action" 
-      method="post" 
+      method="get" 
       asp-antiforgery="false" 
       class="input-group rounded-pill px-6 row">
     <select id="resource-type-select" 
@@ -13,7 +13,7 @@
         <option value="@(( int ) ResourceType.Video)" selected="@(Model.ResourceType == ResourceType.Video)">Видео</option>
         <option value="@(( int ) ResourceType.Music)" selected="@(Model.ResourceType == ResourceType.Music)">Музыка</option>
     </select>
-    <input id="search-bar-query" 
+    <input id="search-bar-query" name="q"
         asp-for="Query" 
            placeholder="Название, тэг, гэг..." 
            class="form-control col-6 rounded-start-0 rounded-end-0"/>
@@ -29,6 +29,7 @@ searchBarButton.on('click', e => {
         : selected.val() === '@(( int ) ResourceType.Video)' ? 'videos'
         : '';
     const query = $('#search-bar-query').val();
+    console.log(query);
     const url = `https://localhost:7251/${encodeURIComponent(path)}?q=${encodeURIComponent(query)}`;
     window.location.href = url;
 })
