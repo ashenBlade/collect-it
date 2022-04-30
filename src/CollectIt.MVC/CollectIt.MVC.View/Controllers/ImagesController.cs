@@ -96,7 +96,7 @@ public class ImagesController : Controller
                         UploadDate = source.UploadDate,
                         Address = Url.Action("DownloadImage", new {id = imageId})!,
                         Tags = source.Tags,
-                        IsAcquired = user is not null && await _imageManager.IsAcquiredBy(source.OwnerId, imageId)
+                        IsAcquired = user is not null && await _imageManager.IsAcquiredBy(user.Id, imageId)
                                          
                     };
         return View(model);
@@ -160,7 +160,7 @@ public class ImagesController : Controller
 
 
     [HttpGet("download/{id:int}")]
-    [Authorize]
+  /*  [Authorize]*/
     public async Task<IActionResult> DownloadImage(int id)
     {
         var source = await _imageManager.FindByIdAsync(id);
