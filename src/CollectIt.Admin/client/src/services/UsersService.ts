@@ -8,16 +8,22 @@ const baseApiPath = `${serverAddress}/api/v1/users`;
 
 export class UsersService {
     private static readonly fetch = authorizedFetch();
-    static async getUsersPagedAsync(pageNumber: number, pageSize: number) {
-        const result = await UsersService.fetch(`${baseApiPath}?page_number=${pageNumber}&page_size=${pageSize}`, {
+    static async getUsersPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number}) {
+        if (pageSize < 1 || pageNumber < 1) {
+            throw new Error('Page size and page number must be positive');
+        }
+        const response = await UsersService.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
             method: 'GET'
         });
-        const json = await result.json();
+        if (!response.ok) {
+            throw new Error('Could not get users from server');
+        }
+        const json = await response.json();
         const users: User[] = json.users;
         const totalCount = Number(json.totalCount);
         return {
-            totalCount,
-            users
+            totalCount: totalCount,
+            users: users
         };
     }
 

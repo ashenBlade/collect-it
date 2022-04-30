@@ -19,7 +19,6 @@ export default class MusicsService {
             throw new Error('Could not get musics from server');
         }
         const json = await response.json();
-
         const musics: Music[] = json.musics;
         const totalCount: Number = Number(json.totalCount);
         return {

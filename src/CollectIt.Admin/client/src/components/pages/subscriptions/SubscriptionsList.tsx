@@ -1,59 +1,59 @@
-import React from 'react';
-import '../../UI/NavBar/NavbarStyle.css'
-
-const iterations = ['1','2','3','4'];
-const Names = ['Бронзовая','Серебряная','Обычная','Кардбланш']
-const Descriptions = ['Обычная подписка','Подписка для любителей качать','Не для пиратов','Скачивай, что хочешь']
-const Duration = ['1','1','1','0']
-const Downloads = ['50','100','200','0']
-const Price = ['200','350','500','0']
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from "react-router";
+import subscription from "../../entities/subscription";
+import SearchPanel from "../../UI/SearchPanel/SearchPanel";
+import Pagination from "../../UI/pagination/Pagination";
+import SubscriptionsService from "../../../services/SubscriptionsService";
 
 const SubscriptionsList = () => {
+    let pageSize = 10;
+    let pageNumber = 1;
+    const [subs, setSubs] = useState<subscription[]>([]);
+    useEffect(() => {
+        SubscriptionsService.getSubscriptionsPagedAsync({pageSize, pageNumber}).then(x => {
+            setSubs(x.subscriptions);
+        })
+    }, [])
+    const downloadPageNumber = (pageNumber: number) => {
+        SubscriptionsService.getSubscriptionsPagedAsync({pageSize, pageNumber}).then(x => {setSubs(x.subscriptions);})
+    }
+    const nav = useNavigate();
+    const toEditSubscriptionPage = (id: number) => nav(`/subscription/${id}`);
+    const onSearch = (q: string) => {
+        const id = Number(q);
+        if (!Number.isInteger(id)) {
+            alert('Id must be an integer');
+            return;
+        }
+        toEditSubscriptionPage(id);
+    }
     return (
-            <div className={'container mt-5'}>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter subscription`s name'/>
-                <input id='email' className='form-control my-2' type='text' placeholder='Enter id'/>
-                <div className='mt-5 mx-auto'>
-                    <table className={'table table-borderless table-light'}>
-                        <thead className='mx-auto mt-5 table-hover'>
-                        <th className='firstRow usersRow'>
-                            <td className ='Cell idCell color-purple '>ID</td>
-                            <td className= 'Cell nameCell color-purple'>Name</td>
-                            <td className= 'Cell idCell color-purple'>OwnerID</td>
-                            <td className= 'Cell color-purple'>Filename</td>
-                            <td className= 'Cell color-purple'>Upload time</td>
-                        </th>
-                        </thead>
-                        <tbody className='mx-auto mt-5 table-hover'>
-                        {iterations.map(i => (
-                            <tr className="usersRow">
-                                <td className='idCell Cell'>{i}</td>
-                                <td className='nameCell Cell'>{Names[+i-1]}</td>
-                                <td className='Cell'>{Descriptions[+i-1]}</td>
-                                <td className='Cell'>{Duration[+i-1]}</td>
-                                <td className='Cell'>{Downloads[+i-1]}</td>
-                                <td className='Cell'>{Price[+i-1]}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                <ul className="pagination">
-                    <li className="page-item">
-                        <button className="page-link" type="button">1</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">2</button>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">3</button>
-                    </li>
-                    <li>
-                        <h2 className='text-center mx-1 mb-0'>...</h2>
-                    </li>
-                    <li className="page-item">
-                        <button className="page-link" type="button">9</button>
-                    </li>
-                </ul>
+        <div className={'container mt-5'}>
+            <SearchPanel onSearch={onSearch} placeholder={'Enter subscription id'}/>
+            <div className='mt-5 mx-auto'>
+                <table className={'usersTable table table-borderless table-light'}>
+                    <thead>
+                    <th className='firstRow usersRow'>
+                        <td className='Cell idCell color-purple'>ID</td>
+                        <td className='Cell nameCell color-purple'>Name</td>
+                        <td className='Cell idCell color-purple'>Description</td>
+                        <td className='Cell color-purple'>Duration</td>
+                        <td className='Cell color-purple'>Price</td>
+                    </th>
+                    </thead>
+                    <tbody className='mx-auto mt-5 table-hover'>
+                    {subs?.map(i =>
+                        <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
+                            <td className='Cell idCell'>{i.id}</td>
+                            <td className='Cell nameCell'>{i.name}</td>
+                            <td className='Cell idCell'><div className={'bigtext'}></div>{i.description}</td>
+                            <td className='Cell'>{i.monthDuration}</td>
+                            <td className='Cell'>{i.price}</td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
+                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
