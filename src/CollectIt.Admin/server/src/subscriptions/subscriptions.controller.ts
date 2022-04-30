@@ -73,7 +73,7 @@ export class SubscriptionsController {
     @Get('')
     async getSubscriptionsList(@Query('page_number', new ParseIntPipe())pageNumber: number,
                                @Query('page_size', new ParseIntPipe())pageSize: number,
-                               @Query('type', new ParseResourceTypePipe())resourceType: ResourceType) {
+                               @Query('type', new ParseResourceTypePipe()) resourceType: ResourceType) {
         try {
             const paged = await this.subscriptionsService.getSubscriptionsByResourceType(resourceType, pageNumber, pageSize);
             return {

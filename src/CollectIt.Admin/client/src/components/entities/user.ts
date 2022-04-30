@@ -8,4 +8,6 @@ export default interface User {
     readonly roles: string[];
     readonly subscriptions: Subscription[];
     readonly authorOf: Resource[];
+    readonly lockout: boolean;
+    readonly lockoutEnd: Date;
 }

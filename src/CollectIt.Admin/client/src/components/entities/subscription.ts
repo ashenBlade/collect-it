@@ -10,4 +10,5 @@ export default interface Subscription {
     readonly price: number;
     readonly restriction: Restriction | null;
     readonly active: boolean;
+    readonly maxDownloadCount: number;
 }

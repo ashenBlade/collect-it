@@ -1,18 +1,20 @@
 import authorizedFetch from "./AuthorizedFetch";
 import {serverAddress as server} from "../constants";
-import {Role} from "../components/entities/role";
 import Subscription from "../components/entities/subscription";
+import {ResourceType} from "../components/entities/resource-type";
 
 const baseApiPath = `${server}/api/v1/subscriptions`;
 
 export default class SubscriptionsService {
     private static readonly fetch = authorizedFetch();
 
-    static async getSubscriptionsPagedAsync({pageSize, pageNumber}: {pageSize: number, pageNumber: number}) {
+    static async getSubscriptionsPagedAsync({pageSize, pageNumber, type}: {pageSize: number, pageNumber: number, type: ResourceType}) {
         if (pageSize < 1 || pageNumber < 1) {
             throw new Error('Page size and page number must be positive');
         }
-        const response = await SubscriptionsService.fetch(`${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}`, {
+        const s = `${baseApiPath}?page_size=${pageSize}&page_number=${pageNumber}&type=${type}`;
+        console.log(`Sending request to : ${s}`);
+        const response = await SubscriptionsService.fetch(s, {
             method: 'GET'
         });
         if (!response.ok) {

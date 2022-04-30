@@ -40,15 +40,13 @@ function App() {
                             <Route path='/subscriptions'>
                                 <Route path='' element={<SubscriptionsList/>}/>
                                 <Route path=':subscriptionId' element={<EditSubscription/>}/>
+                                <Route path='/create' element={<CreateSubscription/>}/>
                             </Route>
                             <Route path='/users'>
                                 <Route path='' element={<UsersList/>}/>
                                 <Route path=':userId' element={<EditUser/>}/>
                             </Route>
-                            <Route path='/create'>
-                                <Route path='' element={<CreateSubscription/>}/>
-                            </Route>
-                            { /* Fallback */}
+                            { /* Fallback */}1
                             <Route path='*' element={<UsersList/>}/>
                             <Route path='/login' element={<Login/>}/>
                         </Routes>

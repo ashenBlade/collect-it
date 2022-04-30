@@ -4,6 +4,7 @@ import subscription from "../../entities/subscription";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
+import {ResourceType} from "../../entities/resource-type";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
