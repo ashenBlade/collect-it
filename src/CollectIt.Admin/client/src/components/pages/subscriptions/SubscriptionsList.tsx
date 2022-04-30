@@ -51,20 +51,20 @@ const SubscriptionsList = () => {
                         <table className={'usersTable table table-borderless table-light'}>
                             <thead>
                             <th className='firstRow usersRow'>
-                                <td className='Cell idCell color-purple'>ID</td>
-                                <td className='Cell nameCell color-purple'>Name</td>
-                                <td className='Cell idCell color-purple'>Description</td>
-                                <td className='Cell color-purple'>Duration</td>
-                                <td className='Cell color-purple'>Price</td>
+                                <td className='Cell idCell'>ID</td>
+                                <td className='Cell'>Name</td>
+                                <td className='Cell nameCell'>Description</td>
+                                <td className='Cell idCell'>Duration</td>
+                                <td className='Cell'>Price</td>
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
                             {subs?.map(i =>
                                 <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
                                     <td className='Cell idCell'>{i.id}</td>
-                                    <td className='Cell nameCell'>{i.name}</td>
-                                    <td className='Cell idCell'><div className={'bigtext'}></div>{i.description}</td>
-                                    <td className='Cell'>{i.monthDuration}</td>
+                                    <td className='Cell'>{i.name}</td>
+                                    <td className='Cell nameCell'><div className={'bigtext'}></div>{i.description}</td>
+                                    <td className='Cell idCell'>{i.monthDuration}</td>
                                     <td className='Cell'>{i.price}</td>
                                 </tr>
                             )}
