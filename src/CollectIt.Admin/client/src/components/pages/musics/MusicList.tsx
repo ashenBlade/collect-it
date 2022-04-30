@@ -4,30 +4,33 @@ import Music from "../../entities/music";
 import Pagination from "../../UI/Pagination/Pagination";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
-import {Simulate} from "react-dom/test-utils";
 
 const MusicList = () => {
     const pageSize = 10;
-    let pageNumber = 1;
+
+    const [musics, setMusics] = useState<Music[]>([]);
     const [maxPages, setMaxPages] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [musics, setMusics] = useState<Music[]>([]);
+
     useEffect(() => {
-        MusicsService.getMusicsPagedAsync({pageSize,pageNumber}).then(x => {
+        MusicsService.getMusicsPagedAsync({pageSize,pageNumber:1}).then(x => {
             setMusics(x.musics);
             setMaxPages(Math.ceil(x.totalCount / pageSize));
             setLoading(false)
-        }).catch(x => alert(x.message));
-    }, []);
+        }).catch(_ => setLoading(false))
+    }, [])
+
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true)
         MusicsService.getMusicsPagedAsync({pageSize, pageNumber}).then(x => {
             setMusics(x.musics);
             setLoading(false);
-        }).catch(e => console.error(e));
+        }).catch(_ => setLoading(false))
     }
+
     const nav = useNavigate();
     const toEditMusicPage = (id: number) => nav(`/musics/${id}`);
+
     const onSearch = (q: string) => {
         const id = Number(q);
         if (!Number.isInteger(id)) {
@@ -36,6 +39,7 @@ const MusicList = () => {
         }
         toEditMusicPage(id);
     }
+
     return (
         <div className={'container mt-5'}>
             {loading
@@ -67,12 +71,12 @@ const MusicList = () => {
                             )}
                             </tbody>
                         </table>
-                        <Pagination initialPage={1}
-                                    totalPagesCount={maxPages}
-                                    maxVisibleButtonsCount={10}
-                                    onPageChange={downloadPageNumber}/>
                     </div>
-                </>}
+                    <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
+                        <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
+                    </footer>
+                </>
+            }
         </div>
     );
 };
