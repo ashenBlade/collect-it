@@ -102,4 +102,5 @@ const EditImage = () => {
     );
 };
 
+// @ts-ignore
 export default EditImage;
