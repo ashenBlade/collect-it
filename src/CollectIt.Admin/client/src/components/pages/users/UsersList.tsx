@@ -1,6 +1,6 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import User from "../../entities/user";
-import Pagination from "../../UI/pagination/Pagination";
+import Pagination from "../../UI/Pagination/Pagination";
 import {UsersService} from "../../../services/UsersService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
@@ -54,7 +54,7 @@ const UsersList = () => {
                     )}
                     </tbody>
                 </table>
-                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
+                <Pagination totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
