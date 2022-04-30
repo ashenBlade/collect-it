@@ -20,7 +20,7 @@ export default class VideosService {
         }
         const result = await response.json();
         const videos: Video[] = result.videos;
-        const totalCount = Number(result.totalCount);
+        const totalCount: number = Number(result.totalCount);
         return { videos, totalCount };
     }
 
