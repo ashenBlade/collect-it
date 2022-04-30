@@ -7,6 +7,7 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
@@ -73,6 +74,19 @@ public class PostgresqlVideoManager : IVideoManager
             _context.Videos.Remove(video);
             await _context.SaveChangesAsync();
             throw;
+        }
+        catch (DbException db)
+        {
+            throw db.InnerException switch
+                  {
+                      PostgresException p => p.ConstraintName switch
+                                             {
+                                                 "FK_Resources_AspNetUsers_OwnerId" =>
+                                                     new UserNotFoundException(video.OwnerId),
+                                                 _ => p
+                                             },
+                      _ => db
+                  };
         }
     }
 

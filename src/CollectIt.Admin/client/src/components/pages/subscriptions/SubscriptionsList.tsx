@@ -23,10 +23,11 @@ const SubscriptionsList = () => {
 
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true);
-        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image}).then(x => {
-            setSubs(x.subscriptions);
-            setLoading(false);
-        }).catch(_ => setLoading(false))
+        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image})
+            .then(x => {
+                setSubs(x.subscriptions);
+                setLoading(false);
+            }).catch(_ => setLoading(false))
     }
 
     const nav = useNavigate();
