@@ -42,23 +42,23 @@ const ImageList = () => {
 
     return (
         <div className={'container mt-5'}>
+            {loading
+                ? <>Loading...</>
+                : <>
             <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
-
             <div className='mt-5 mx-auto'>
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
                     <th className='firstRow usersRow'>
-                        <td className='Cell idCell color-purple'>ID</td>
-                        <td className='Cell nameCell color-purple'>Name</td>
-                        <td className='Cell idCell color-purple'>OwnerID</td>
-                        <td className='Cell color-purple'>Filename</td>
-                        <td className='Cell color-purple'>Upload time</td>
+                        <td className='Cell idCell'>ID</td>
+                        <td className='Cell nameCell'>Name</td>
+                        <td className='Cell idCell'>OwnerID</td>
+                        <td className='Cell'>Filename</td>
+                        <td className='Cell'>Upload time</td>
                     </th>
                     </thead>
                     <tbody className='mx-auto mt-5 table-hover'>
-                    {loading
-                        ? <>Loading...</>
-                        : images.map(i =>
+                    {images.map(i =>
                         <tr onClick={() => toEditImagePage(i.id)} className='usersRow'>
                             <td className='Cell idCell'>{i.id}</td>
                             <td className='Cell nameCell'>
@@ -73,9 +73,10 @@ const ImageList = () => {
                 </table>
             </div>
             <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
-                <Pagination maxVisibleButtonsCount={10} initialPage={1} totalPagesCount={maxPages}
-                            onPageChange={downloadPageNumber}/>
+                <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
             </footer>
+                </>
+            }
         </div>
     );
 };
