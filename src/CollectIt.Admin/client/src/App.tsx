@@ -40,7 +40,7 @@ function App() {
                             <Route path='/subscriptions'>
                                 <Route path='' element={<SubscriptionsList/>}/>
                                 <Route path=':subscriptionId' element={<EditSubscription/>}/>
-                                <Route path='/create' element={<CreateSubscription/>}/>
+                                <Route path='create' element={<CreateSubscription/>}/>
                             </Route>
                             <Route path='/users'>
                                 <Route path='' element={<UsersList/>}/>
