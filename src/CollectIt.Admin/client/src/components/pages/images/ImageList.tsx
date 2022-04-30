@@ -5,20 +5,21 @@ import ImagesService from "../../../services/ImagesService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 
-
 const ImageList = () => {
     const pageSize = 10;
-    const [pageNumber, setPageNumber] = useState(1);
+
     const [images, setImages] = useState<Image[]>([]);
     const [maxPages, setMaxPages] = useState(0);
     const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
+        ImagesService.getImagesPagedAsync({pageSize, pageNumber: 1}).then(x => {
             setImages(x.images);
             setMaxPages(Math.ceil(x.totalCount / pageSize));
             setLoading(false);
         }).catch(_ => setLoading(false))
     }, [])
+
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true);
         ImagesService.getImagesPagedAsync({pageSize, pageNumber}).then(x => {
@@ -42,9 +43,8 @@ const ImageList = () => {
     return (
         <div className={'container mt-5'}>
             <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
-            {loading
-                ? <>Loading...</>
-                : <div className='mt-5 mx-auto'>
+
+            <div className='mt-5 mx-auto'>
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
                     <th className='firstRow usersRow'>
@@ -56,7 +56,9 @@ const ImageList = () => {
                     </th>
                     </thead>
                     <tbody className='mx-auto mt-5 table-hover'>
-                    {images?.map(i =>
+                    {loading
+                        ? <>Loading...</>
+                        : images.map(i =>
                         <tr onClick={() => toEditImagePage(i.id)} className='usersRow'>
                             <td className='Cell idCell'>{i.id}</td>
                             <td className='Cell nameCell'>
@@ -69,9 +71,11 @@ const ImageList = () => {
                     )}
                     </tbody>
                 </table>
+            </div>
+            <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
                 <Pagination maxVisibleButtonsCount={10} initialPage={1} totalPagesCount={maxPages}
                             onPageChange={downloadPageNumber}/>
-            </div> }
+            </footer>
         </div>
     );
 };
