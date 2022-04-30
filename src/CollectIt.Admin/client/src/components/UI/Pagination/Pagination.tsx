@@ -49,7 +49,7 @@ const Pagination: FC<PaginationInterface> = ({totalPagesCount,
 
                 <li className={'page-item cursor-pointer'} onClick={e => {
                     e.preventDefault();
-                    if (currentPage < maxPagesCount) setCurrentPage(currentPage + 1);
+                    if (currentPage < maxPagesCount) onPageButtonClick(currentPage + 1);
                 }}>
                     <a className={'page-link'}>
                         <span aria-hidden={true}>&raquo;</span>

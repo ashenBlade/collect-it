@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from "react-router";
 import subscription from "../../entities/subscription";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
-import Pagination from "../../UI/pagination/Pagination";
+import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
 
 const SubscriptionsList = () => {
@@ -53,7 +53,7 @@ const SubscriptionsList = () => {
                     )}
                     </tbody>
                 </table>
-                <Pagination currentPage={1} totalPagesCount={10} onPageChange={downloadPageNumber}/>
+                <Pagination totalPagesCount={10} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );

@@ -7,17 +7,28 @@ import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 
 
 const UsersList = () => {
-    let pageSize = 10;
-    let pageNumber = 1;
+    const pageSize = 10;
     const [users, setUsers] = useState<User[]>([]);
+    const [maxPages, setMaxPages] = useState(0);
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        UsersService.getUsersPagedAsync({pageSize, pageNumber}).then(x => {
-            setUsers(x.users);
-        })
+        UsersService.getUsersPagedAsync({pageSize, pageNumber: 1})
+            .then(x => {
+                setUsers(x.users);
+                setMaxPages(Math.ceil(x.totalCount / pageSize));
+                setLoading(false);
+            })
     }, [])
+
     const downloadPageNumber = (pageNumber: number) => {
-       UsersService.getUsersPagedAsync({pageSize, pageNumber}).then(x => {setUsers(x.users)})
+        setLoading(true);
+        UsersService.getUsersPagedAsync({pageSize, pageNumber})
+            .then(x => {
+                setUsers(x.users);
+                setLoading(false)
+            });
     }
+
     const nav = useNavigate();
     const toEditUserPage = (id: number) => nav(`/users/${id}`);
     const onSearch = (q: string) => {
@@ -43,18 +54,20 @@ const UsersList = () => {
                     </th>
                     </thead>
                     <tbody className='mx-auto mt-5 table-hover'>
-                    {users?.map(i =>
-                        <tr onClick={() => toEditUserPage(i.id)} className='usersRow'>
-                            <td className='Cell idCell'>{i.id}</td>
-                            <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
-                            <td className='Cell nameCell'>{i.email}</td>
-                            <td className='Cell'>{i.roles}</td>
-                            <td className='Cell'>{i.subscriptions}</td>
-                        </tr>
-                    )}
+                    {loading
+                        ? <>Loading...</>
+                        : users?.map(i =>
+                            <tr onClick={() => toEditUserPage(i.id)} className='usersRow'>
+                                <td className='Cell idCell'>{i.id}</td>
+                                <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
+                                <td className='Cell nameCell'>{i.email}</td>
+                                <td className='Cell'>{i.roles}</td>
+                                <td className='Cell'>{i.subscriptions}</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
-                <Pagination totalPagesCount={10} onPageChange={downloadPageNumber}/>
+                <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
             </div>
         </div>
     );
