@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using CollectIt.API.Tests.Integration.Mocks;
 using CollectIt.API.WebAPI;
 using CollectIt.Database.Infrastructure;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -57,6 +59,9 @@ public class CollectItWebApplicationFactory : WebApplicationFactory<Program>
                 });
                 config.UseOpenIddict<int>();
             });
+
+            services.RemoveAll<IVideoFileManager>();
+            services.AddTransient<IVideoFileManager, StubVideoFileManager>();
             
             var sp = services.BuildServiceProvider();
 

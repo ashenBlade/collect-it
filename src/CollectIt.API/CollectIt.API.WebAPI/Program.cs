@@ -6,7 +6,9 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
+using CollectIt.MVC.Infrastructure.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +107,13 @@ public class Program
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
         builder.Services.AddScoped<IImageManager, PostgresqlImageManager>();
+        builder.Services.AddScoped<IVideoManager, PostgresqlVideoManager>();
+        builder.Services.AddScoped<IVideoFileManager>(_ =>
+                                                          new
+                                                              GenericPhysicalFileManager(Path
+                                                                                            .Combine(Directory.GetCurrentDirectory(),
+                                                                                                     "Content",
+                                                                                                     "Videos")));
         builder.Services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {

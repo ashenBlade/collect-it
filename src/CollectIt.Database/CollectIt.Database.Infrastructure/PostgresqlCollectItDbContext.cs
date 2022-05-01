@@ -316,6 +316,34 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         builder.Entity<Resource>()
                .HasOne(r => r.Owner)
                .WithMany(u => u.ResourcesAuthorOf);
+        var aurId = 1;
+        builder.Entity<AcquiredUserResource>()
+               .HasData(DefaultVideos.Select(v => new AcquiredUserResource()
+                                                  {
+                                                      Id = aurId++,
+                                                      UserId = AdminUserId,
+                                                      AcquiredDate =
+                                                          new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                      ResourceId = v.Id
+                                                  }));
+        builder.Entity<AcquiredUserResource>()
+               .HasData(DefaultMusics.Select(m => new AcquiredUserResource()
+                                                  {
+                                                      Id = aurId++,
+                                                      UserId = AdminUserId,
+                                                      AcquiredDate =
+                                                          new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                      ResourceId = m.Id
+                                                  }));
+        builder.Entity<AcquiredUserResource>()
+               .HasData(DefaultImages.Select(i => new AcquiredUserResource()
+                                                  {
+                                                      Id = aurId++,
+                                                      UserId = AdminUserId,
+                                                      AcquiredDate =
+                                                          new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                      ResourceId = i.Id
+                                                  }));
         builder.Entity<AcquiredUserResource>()
                .HasAlternateKey(aur => new {aur.UserId, aur.ResourceId});
         builder.Entity<AcquiredUserResource>()
@@ -337,236 +365,236 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         builder.Entity<Image>()
                .HasData(DefaultImages);
         builder.Entity<Music>()
-            .HasData(DefaultMusics);
+               .HasData(DefaultMusics);
         builder.Entity<Video>()
-            .HasData(defaultVideos);
+               .HasData(DefaultVideos);
     }
 
-    internal static Video[] defaultVideos => new[]
-    {
-        new Video()
-        {
-            Id = 20,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Диско лицо",
-            Extension = "webm",
-            FileName = "diman.webm",
-            Tags = new[] { "Брекоткин", "диско лицо", "диско" },
-            Duration = 60
-        },
-        new Video()
-        {
-            Id = 21,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Сильный монолог на фоне церковных песнопений и красивой картинки",
-            Extension = "webm",
-            FileName = "strong_monolog.webm",
-            Tags = new[] { "аниме", "церковь", "2д","монолог" },
-            Duration = 60
-        }
-    };
+    internal static Video[] DefaultVideos => new[]
+                                             {
+                                                 new Video()
+                                                 {
+                                                     Id = 20,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Диско лицо",
+                                                     Extension = "webm",
+                                                     FileName = "diman.webm",
+                                                     Tags = new[] { "Брекоткин", "диско лицо", "диско" },
+                                                     Duration = 60
+                                                 },
+                                                 new Video()
+                                                 {
+                                                     Id = 21,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Сильный монолог на фоне церковных песнопений и красивой картинки",
+                                                     Extension = "webm",
+                                                     FileName = "strong_monolog.webm",
+                                                     Tags = new[] { "аниме", "церковь", "2д","монолог" },
+                                                     Duration = 60
+                                                 }
+                                             };
     
     internal static Music[] DefaultMusics => new[]
-    {
-        new Music()
-        {
-            Id = 16,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Тектоник - Басы",
-            Extension = "mp3",
-            FileName = "тектоник-басы.mp3",
-            Tags = new[] { "качает", "2007" },
-            Duration = 69
-        },
-        new Music()
-        {
-            Id = 17,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "OG BUDA, MORGENSHTERN, Mayot, blago white, SODA LUV - Cristal & МОЁТ (Remix)",
-            Extension = "mp3",
-            FileName = "MORGENSHTERN_JESTKO_VALIT.mp3",
-            Tags = new[] { "качает", "морген","сода лув","ог буда" },
-            Duration = 219
-        },
-        new Music()
-        {
-            Id = 18,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "OST Naruto shippuden Ikimono-gakari - Blue Bird OP3",
-            Extension = "mp3",
-            FileName = "naruto_bluebird.mp3",
-            Tags = new[] { "аниме", "наруто","афган" },
-            Duration = 218
-        },
-        new Music()
-        {
-            Id = 19,
-            OwnerId = AdminUserId,
-            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "минин - Зелёный глаз",
-            Extension = "mp3",
-            FileName = "minin_zeleniy_glaz.mp3",
-            Tags = new[] { "грусть", "тикток","рэп про тёлку" },
-            Duration = 114
-        }
-    };
+                                             {
+                                                 new Music()
+                                                 {
+                                                     Id = 16,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Тектоник - Басы",
+                                                     Extension = "mp3",
+                                                     FileName = "тектоник-басы.mp3",
+                                                     Tags = new[] { "качает", "2007" },
+                                                     Duration = 69
+                                                 },
+                                                 new Music()
+                                                 {
+                                                     Id = 17,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "OG BUDA, MORGENSHTERN, Mayot, blago white, SODA LUV - Cristal & МОЁТ (Remix)",
+                                                     Extension = "mp3",
+                                                     FileName = "MORGENSHTERN_JESTKO_VALIT.mp3",
+                                                     Tags = new[] { "качает", "морген","сода лув","ог буда" },
+                                                     Duration = 219
+                                                 },
+                                                 new Music()
+                                                 {
+                                                     Id = 18,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "OST Naruto shippuden Ikimono-gakari - Blue Bird OP3",
+                                                     Extension = "mp3",
+                                                     FileName = "naruto_bluebird.mp3",
+                                                     Tags = new[] { "аниме", "наруто","афган" },
+                                                     Duration = 218
+                                                 },
+                                                 new Music()
+                                                 {
+                                                     Id = 19,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "минин - Зелёный глаз",
+                                                     Extension = "mp3",
+                                                     FileName = "minin_zeleniy_glaz.mp3",
+                                                     Tags = new[] { "грусть", "тикток","рэп про тёлку" },
+                                                     Duration = 114
+                                                 }
+                                             };
     
     internal static Image[] DefaultImages => new[]
                                              {
                                                  new Image
-                        {
-                            Id = 1,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Мониторы с аниме",
-                            Extension = "jpg",
-                            FileName = "abstract-img.jpg",
-                            Tags = new []{"аниме","фоллаут"}
-                        },
-                        new Image
-                        {
-                            Id = 2,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Птица зимородок",
-                            Extension = "jpg",
-                            FileName = "bird-img.jpg",
-                            Tags = new []{"птица","природа"}
-                        },
-                        new Image
-                        {
-                            Id = 3,
-                            OwnerId = TechSupportUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Машина на дороге",
-                            Extension = "jpg",
-                            FileName = "car-img.jpg",
-                            Tags = new []{"машина"}
-                        },
-                        new Image
-                        {
-                            Id = 4,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Котенок на одеяле",
-                            Extension = "jpg",
-                            FileName = "cat-img.jpg",
-                            Tags = new []{"кот","животное","питомец"}
-                        },
-                        new Image
-                        {
-                            Id = 5,
-                            OwnerId = TechSupportUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Стандартный американский дом",
-                            Extension = "jpg",
-                            FileName = "house-img.jpg",
-                            Tags = new []{"дом"}
-                        },
-                        new Image
-                        {
-                            Id = 6,
-                            OwnerId = DefaultUserTwoId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Осенний лес в природе",
-                            Extension = "jpg",
-                            FileName = "nature-img.jpg",
-                            Tags = new []{"природа"}
-                        },
-                        new Image
-                        {
-                            Id = 7,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Дети за партами в школе перед учителем",
-                            Extension = "jpg",
-                            FileName = "school-img.jpg",
-                            Tags = new []{"школа","дети"}
-                        },
-                        new Image
-                        {
-                            Id = 8,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Кот смотрит в камеру на зеленом фоне",
-                            Extension = "jpg",
-                            FileName = "cat-img-2.jpg",
-                            Tags = new []{"кот","питомец","животное"}
-                        },
-                        new Image
-                        {
-                            Id = 9,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Крутой кот в очках",
-                            Extension = "jpg",
-                            FileName = "cat-img-3.jpg",
-                            Tags = new []{"кот","питомец","животное","очки"}
-                        },
-                        new Image
-                        {
-                            Id = 10,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Белоснежный кот застыл в мяукающей позе",
-                            Extension = "jpg",
-                            FileName = "cat-img-4.jpg",
-                            Tags = new []{"кот","питомец","животное"}
-                        },
-                        new Image
-                        {
-                            Id = 11,
-                            OwnerId = DefaultUserTwoId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Рыжий кот заснул на полу",
-                            Extension = "jpg",
-                            FileName = "cat-img-5.jpg",
-                            Tags = new []{"кот","питомец","животное"}
-                        },
-                        new Image
-                        {
-                            Id = 12,
-                            OwnerId = DefaultUserOneId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Спящий кот прикрывается лапой от солнца",
-                            Extension = "jpg",
-                            FileName = "cat-img-6.jpg",
-                            Tags = new []{"кот","питомец","животное"}
-                        },
-                        new Image
-                        {
-                            Id = 13,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "На стуле лежит кот",
-                            Extension = "jpg",
-                            FileName = "cat-img-7.jpg",
-                            Tags = new []{"кот","питомец","животное","стул","мебель"}
-                        },
-                        new Image
-                        {
-                            Id = 14,
-                            OwnerId = AdminUserId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Идущий по забору кот у причала",
-                            Extension = "jpg",
-                            FileName = "cat-img-8.jpg",
-                            Tags = new []{"кот","питомец","животное","яхта","море"}
-                        }, 
-                        new Image
-                        {
-                            Id = 15,
-                            OwnerId = DefaultUserOneId,
-                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            Name = "Кот у елки сморит на лес",
-                            Extension = "jpg",
-                            FileName = "cat-img-9.jpg",
-                            Tags = new []{"кот","питомец","животное","природа"}
-                        }
+                                                 {
+                                                     Id = 1,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Мониторы с аниме",
+                                                     Extension = "jpg",
+                                                     FileName = "abstract-img.jpg",
+                                                     Tags = new []{"аниме","фоллаут"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 2,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Птица зимородок",
+                                                     Extension = "jpg",
+                                                     FileName = "bird-img.jpg",
+                                                     Tags = new []{"птица","природа"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 3,
+                                                     OwnerId = TechSupportUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Машина на дороге",
+                                                     Extension = "jpg",
+                                                     FileName = "car-img.jpg",
+                                                     Tags = new []{"машина"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 4,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Котенок на одеяле",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img.jpg",
+                                                     Tags = new []{"кот","животное","питомец"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 5,
+                                                     OwnerId = TechSupportUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Стандартный американский дом",
+                                                     Extension = "jpg",
+                                                     FileName = "house-img.jpg",
+                                                     Tags = new []{"дом"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 6,
+                                                     OwnerId = DefaultUserTwoId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Осенний лес в природе",
+                                                     Extension = "jpg",
+                                                     FileName = "nature-img.jpg",
+                                                     Tags = new []{"природа"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 7,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Дети за партами в школе перед учителем",
+                                                     Extension = "jpg",
+                                                     FileName = "school-img.jpg",
+                                                     Tags = new []{"школа","дети"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 8,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Кот смотрит в камеру на зеленом фоне",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-2.jpg",
+                                                     Tags = new []{"кот","питомец","животное"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 9,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Крутой кот в очках",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-3.jpg",
+                                                     Tags = new []{"кот","питомец","животное","очки"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 10,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Белоснежный кот застыл в мяукающей позе",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-4.jpg",
+                                                     Tags = new []{"кот","питомец","животное"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 11,
+                                                     OwnerId = DefaultUserTwoId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Рыжий кот заснул на полу",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-5.jpg",
+                                                     Tags = new []{"кот","питомец","животное"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 12,
+                                                     OwnerId = DefaultUserOneId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Спящий кот прикрывается лапой от солнца",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-6.jpg",
+                                                     Tags = new []{"кот","питомец","животное"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 13,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "На стуле лежит кот",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-7.jpg",
+                                                     Tags = new []{"кот","питомец","животное","стул","мебель"}
+                                                 },
+                                                 new Image
+                                                 {
+                                                     Id = 14,
+                                                     OwnerId = AdminUserId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Идущий по забору кот у причала",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-8.jpg",
+                                                     Tags = new []{"кот","питомец","животное","яхта","море"}
+                                                 }, 
+                                                 new Image
+                                                 {
+                                                     Id = 15,
+                                                     OwnerId = DefaultUserOneId,
+                                                     UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                                                     Name = "Кот у елки сморит на лес",
+                                                     Extension = "jpg",
+                                                     FileName = "cat-img-9.jpg",
+                                                     Tags = new []{"кот","питомец","животное","природа"}
+                                                 }
                                              };
 }
