@@ -66,7 +66,7 @@ public class VideosControllerTests: IClassFixture<CollectItWebApplicationFactory
     public async Task GetVideoById_WithValidId_ShouldReturnVideo()
     {
         var (client, bearer) = await Initialize();
-        var video = DefaultVideos.First();
+        var video = DefaultVideos.Last();
         var actual = await TestsHelpers.GetResultParsedFromJson<ResourcesDTO.ReadVideoDTO>(client,
                                                                                            $"api/v1/videos/{video.Id}",
                                                                                            bearer,
@@ -157,15 +157,15 @@ public class VideosControllerTests: IClassFixture<CollectItWebApplicationFactory
     public async Task CreateNewVideo_WithValidInput_ShouldReturnCreatedVideo()
     {
         var dto = new ResourcesDTO.CreateVideoDTO()
-                        {
-                            Content = new FormFile(Stream.Null, 0, 0, "SomeName", "FileName"),
-                            Duration = 10,
-                            Extension = "webp",
-                            Name = "Some video name",
-                            Tags = new[] {"hello", "best", "dog"},
-                            OwnerId = 1,
-                            UploadDate = DateTime.UtcNow
-                        };
+                  {
+                      Content = new FormFile(Stream.Null, 0, 0, "SomeName", "FileName"),
+                      Duration = 10,
+                      Extension = "webp",
+                      Name = "Some video name",
+                      Tags = new[] {"hello", "best", "dog"},
+                      OwnerId = 1,
+                      UploadDate = DateTime.UtcNow
+                  };
         var (client, bearer) = await Initialize();
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(dto.Name), "Name");
@@ -178,11 +178,11 @@ public class VideosControllerTests: IClassFixture<CollectItWebApplicationFactory
         byteContent.Headers.ContentType = new MediaTypeHeaderValue($"video/{dto.Extension}");
         content.Add(byteContent, "Content", "SomeFileName.webp");
         var actual = await TestsHelpers.GetResultParsedFromJson<ResourcesDTO.ReadVideoDTO>(client,
-                                                                                            "api/v1/videos",
-                                                                                            bearer,
-                                                                                            HttpMethod.Post,
-                                                                                            _outputHelper,
-                                                                                            content);
+                                                                                           "api/v1/videos",
+                                                                                           bearer,
+                                                                                           HttpMethod.Post,
+                                                                                           _outputHelper,
+                                                                                           content);
         Assert.Equal(dto.Name, actual.Name);
         Assert.Equal(dto.Duration, actual.Duration);
         Assert.Equal(dto.Extension, actual.Extension);
@@ -195,15 +195,15 @@ public class VideosControllerTests: IClassFixture<CollectItWebApplicationFactory
     public async Task CreateNewVideo_WithNonexistentUser_ShouldReturnBadRequest()
     {
         var dto = new ResourcesDTO.CreateVideoDTO()
-                        {
-                            Content = new FormFile(Stream.Null, 0, 0, "SomeName", "FileName"),
-                            Duration = 10,
-                            Extension = "webp",
-                            Name = "Some video name",
-                            Tags = new[] {"hello", "best", "dog"},
-                            OwnerId = PostgresqlCollectItDbContext.DefaultUsers.Max(u => u.Id) + 1,
-                            UploadDate = DateTime.UtcNow
-                        };
+                  {
+                      Content = new FormFile(Stream.Null, 0, 0, "SomeName", "FileName"),
+                      Duration = 10,
+                      Extension = "webp",
+                      Name = "Some video name",
+                      Tags = new[] {"hello", "best", "dog"},
+                      OwnerId = PostgresqlCollectItDbContext.DefaultUsers.Max(u => u.Id) + 1,
+                      UploadDate = DateTime.UtcNow
+                  };
         var (client, bearer) = await Initialize();
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(dto.Name), "Name");
@@ -215,16 +215,12 @@ public class VideosControllerTests: IClassFixture<CollectItWebApplicationFactory
         var byteContent = new ByteArrayContent(Array.Empty<byte>());
         byteContent.Headers.ContentType = new MediaTypeHeaderValue($"video/{dto.Extension}");
         content.Add(byteContent, "Content", "SomeFileName.webp");
-        var actual = await TestsHelpers.GetResultParsedFromJson<ResourcesDTO.ReadVideoDTO>(client,
-                                                                                            "api/v1/videos",
-                                                                                            bearer,
-                                                                                            HttpMethod.Post,
-                                                                                            _outputHelper,
-                                                                                            content);
-        Assert.Equal(dto.Name, actual.Name);
-        Assert.Equal(dto.Duration, actual.Duration);
-        Assert.Equal(dto.Extension, actual.Extension);
-        Assert.Equal(dto.Tags, actual.Tags);
+        await TestsHelpers.AssertStatusCodeAsync(client,
+                                                 "api/v1/videos", 
+                                                 HttpStatusCode.NotFound, 
+                                                 HttpMethod.Post,
+                                                 bearer,
+                                                 content);
         client.Dispose();
     }
 

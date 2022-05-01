@@ -75,7 +75,7 @@ public class PostgresqlVideoManager : IVideoManager
             await _context.SaveChangesAsync();
             throw;
         }
-        catch (DbException db)
+        catch (DbUpdateException db)
         {
             throw db.InnerException switch
                   {
