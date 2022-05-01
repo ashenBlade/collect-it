@@ -5,6 +5,7 @@ import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
 import {ResourceType} from "../../entities/resource-type";
+import {Link} from "react-router-dom";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -71,6 +72,9 @@ const SubscriptionsList = () => {
                             )}
                             </tbody>
                         </table>
+                        <Link to='/subscriptions/create'>
+                            <button className='btn btn-primary mx-auto justify-content-center'>Create subscription</button>
+                        </Link>
                     </div>
                     <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
                         <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
