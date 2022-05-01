@@ -34,9 +34,6 @@ const NavigationPanel = () => {
                         <li className='nav-item px-5'>
                             <Link to='/videos' className={page === 5 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(5)}>Videos</Link>
                         </li>
-                        <li className='nav-item px-5'>
-                            <Link to='/create' className={page === 6 ? 'nav-link active' : 'nav-link'} onClick={() => setPage(6)}>Create Subscription</Link>
-                        </li>
                     </ul>
                     <span>
                         <a className='btn btn-danger justify-content-end' onClick={logout}>Logout</a>
