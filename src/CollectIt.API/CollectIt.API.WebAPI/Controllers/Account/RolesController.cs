@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
+/// <summary>
+/// Manage roles in system
+/// </summary>
 [ApiController]
 [Route("api/v1/roles")]
 public class RolesController : ControllerBase
@@ -18,6 +21,11 @@ public class RolesController : ControllerBase
         _logger = logger;
     }
 
+    
+    /// <summary>
+    /// Get roles list 
+    /// </summary>
+    /// <response code="200">Array of roles</response>
     [HttpGet("")]
     public async Task<IActionResult> GetAllRoles()
     {
@@ -26,6 +34,11 @@ public class RolesController : ControllerBase
                        .ToArray());
     }
 
+    /// <summary>
+    /// Find role by id
+    /// </summary>
+    /// <response code="404">role not found</response>
+    /// <response code="200">role found</response>
     [HttpGet("{roleId:int}")]
     public async Task<IActionResult> GetRoleById(int roleId)
     {

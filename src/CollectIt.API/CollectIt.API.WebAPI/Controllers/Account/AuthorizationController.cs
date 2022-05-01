@@ -122,6 +122,11 @@ public class AuthorizationController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Register user
+    /// </summary>
+    /// <response code="400">Something went wrong</response>
+    /// <response code="204">User registered</response>
     [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromForm]RegisterDTO dto)
     {

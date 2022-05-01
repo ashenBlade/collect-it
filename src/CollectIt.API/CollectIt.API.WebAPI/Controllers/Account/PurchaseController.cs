@@ -14,6 +14,9 @@ using OpenIddict.Validation.AspNetCore;
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
 
+/// <summary>
+/// Manage purchase
+/// </summary>
 [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
 [Route("api/v1/purchase")]
 [ApiController]
@@ -35,6 +38,12 @@ public class PurchaseController : ControllerBase
         _resourceAcquisitionService = resourceAcquisitionService;
     }
     
+    /// <summary>
+    /// Subscribe User
+    /// </summary>
+    /// <response code="404">Subscription with id =  <paramref name="subscriptionId"/> not found</response>
+    /// <response code="400">User already has such subscription active</response>
+    /// <response code="200">User Subscribed</response>
     [HttpPost("subscription/{subscriptionId:int}")]
     public async Task<IActionResult> SubscribeUser(int subscriptionId)
     {
@@ -55,6 +64,12 @@ public class PurchaseController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Acquire Image
+    /// </summary>
+    /// <response code="404">Image with id = <paramref name="imageId"/> not found</response>
+    /// <response code="400">No suitable subscriptions found to acquire image or user already acquired this image</response>
+    /// <response code="204">Image acquired</response>
     [HttpPost("image/{imageId:int}")]
     public async Task<IActionResult> AcquireImage(int imageId)
     {
