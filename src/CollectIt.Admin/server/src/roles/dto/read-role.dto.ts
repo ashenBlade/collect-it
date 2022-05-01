@@ -1,4 +1,4 @@
 export class ReadRoleDto {
-    readonly id: number;
-    readonly name: string;
+  readonly id: number;
+  readonly name: string;
 }

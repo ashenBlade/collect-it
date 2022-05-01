@@ -1,5 +1,5 @@
-import {ReadRestrictionDto} from "./read-restriction.dto";
+import { ReadRestrictionDto } from './read-restriction.dto';
 
 export class ReadSizeRestrictionDto extends ReadRestrictionDto {
-    readonly size: number;
+  readonly size: number;
 }

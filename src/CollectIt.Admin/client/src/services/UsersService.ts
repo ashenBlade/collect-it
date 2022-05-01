@@ -90,8 +90,7 @@ export class UsersService {
                 'Content-Type': 'application/json'
             }
         });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.message);
+        if (!response.ok) throw new Error((await response.json()).message);
     }
 
     static async changeEmailAsync(id: number, email: string) {
@@ -107,8 +106,11 @@ export class UsersService {
                 'Content-Type': 'application/json'
             }
         });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.message);
+        if (!response.ok) {
+            console.error(`Invalid email change`);
+            console.error(response);
+            throw new Error((await response.json()).message)
+        }
     }
 
     static async addUserToRoleAsync(id: number, role: Role) {

@@ -1,5 +1,5 @@
-import {ReadRestrictionDto} from "./read-restriction.dto";
+import { ReadRestrictionDto } from './read-restriction.dto';
 
 export class ReadTagsRestrictionDto extends ReadRestrictionDto {
-    readonly tags: string[];
+  readonly tags: string[];
 }
