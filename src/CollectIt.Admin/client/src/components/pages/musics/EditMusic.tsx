@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import Music from "../../entities/music";
-import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import DeleteButton from "../../UI/DeleteButton/DeleteButton";
+import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import {useNavigate, useParams} from "react-router";
 import MusicsService from "../../../services/MusicsService";
-
 
 const EditMusic = () => {
     const params = useParams();
@@ -31,8 +30,8 @@ const EditMusic = () => {
     }, []);
 
     const saveName = (newName: string) => {
-            console.log('New name', newName);
-            if (!music) return;
+        console.log('New name', newName);
+        if (!music) return;
         MusicsService.changeMusicNameAsync(musicId, newName).then(_ => {
             setName(newName);
             setDisplayName(newName);
@@ -99,7 +98,7 @@ const EditMusic = () => {
 
                         <DeleteButton onDeleteClick={deleteMusic}/>
                     </div>
-                : <p>Loading...</p>
+                    : <p>Loading...</p>
             }
         </div>
     );

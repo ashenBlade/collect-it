@@ -81,4 +81,5 @@ const ImageList = () => {
     );
 };
 
+// @ts-ignore
 export default ImageList;
