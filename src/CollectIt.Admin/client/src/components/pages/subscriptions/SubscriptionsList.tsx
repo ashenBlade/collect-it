@@ -48,6 +48,9 @@ const SubscriptionsList = () => {
             {loading
                 ? <>Loading...</>
                 : <>
+                    <div className='ms-2 mb-3'><Link to='/subscriptions/create'>
+                        <button className='btn btn-primary'>Create subscription</button>
+                    </Link></div>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter subscription id'}/>
                     <div className='mt-5 mx-auto'>
                         <table className={'usersTable table table-borderless table-light'}>
@@ -72,9 +75,6 @@ const SubscriptionsList = () => {
                             )}
                             </tbody>
                         </table>
-                        <Link to='/subscriptions/create'>
-                            <button className='btn btn-primary mx-auto justify-content-center'>Create subscription</button>
-                        </Link>
                     </div>
                     <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
                         <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
