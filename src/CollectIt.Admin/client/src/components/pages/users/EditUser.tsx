@@ -5,49 +5,23 @@ import {UsersService} from "../../../services/UsersService";
 import User from "../../entities/user";
 import {Role} from "../../entities/role";
 import {Multiselect} from "multiselect-react-dropdown";
-import SaveButton from "../../UI/SaveButton/SaveButton";
 
 const EditUser = () => {
     const params = useParams();
     const userId = Number(params.userId?.trim());
     const nav = useNavigate();
-    if (!Number.isInteger(userId)) {
-        alert('Invalid id')
+    if (!Number.isInteger(userId))
         nav('/users');
-    }
-
     const [user, setUser] = useState<User | null>(null);
     const [displayName, setDisplayName] = useState('');
-    const [username, setUsername] = useState('');
-    const [usernameError, setUsernameError] = useState('');
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [emailError, setEmailError] = useState('');
     const [loaded, setLoaded] = useState(false);
-    const [roles, setRoles] = useState<string[]>([]);
-
-    const roleNames = [Role.Admin, Role.TechSupport]
-
-    const addRole = (role: Role) => {
-        UsersService.addUserToRoleAsync(userId, role).then(() => {
-            setRoles([...roles.filter(r => r !== role), role]);
-        }).catch(err => {
-            console.error(err);
-            alert('Could not assign role. Try later');
-        })
-    }
-
-    const removeRole = (role: Role) => {
-        UsersService.removeUserFromRoleAsync(userId, role).then(() => {
-            setRoles([...roles.filter(r => r !== role)]);
-        }).catch(err => {
-            console.error(err);
-            alert('Could not remove role. Try later');
-        })
-    }
+    const options = [Role.User, Role.Admin, Role.TechSupport]
 
     useEffect(() => {
         UsersService.findUserByIdAsync(userId).then(i => {
-            setUsername(i.username);
+            setName(i.username);
             setEmail(i.email);
             setDisplayName(i.username);
             setUser(i);
@@ -57,42 +31,50 @@ const EditUser = () => {
         })
     }, []);
 
+    let resIds = "";
+    let subIds = "";
+
+    if ( user?.authorOf != undefined && user?.authorOf.length > 0){
+        for (let i = 0; i < user?.authorOf.length; i++){
+            resIds += user?.authorOf[i].id + ", "
+        }
+    }
+    else {
+        resIds = "There aren't any resource added by that user"
+    }
+
+    if ( user?.subscriptions != undefined && user?.subscriptions.length > 0){
+        for (let i = 0; i < user?.subscriptions.length; i++){
+            subIds += user?.subscriptions[i].id + ", "
+        }
+    }
+    else {
+        subIds = "There aren't any subscription"
+    }
 
 
     const saveName = (newName: string) => {
-        console.log('Setting new username', newName);
-        newName = newName.trim();
-        if (newName?.length < 6) {
-            setUsernameError('Length of name must be greater than 6');
-            return;
-        } else if (newName.indexOf(' ') !== -1) {
-            setUsernameError('Username must not contain whitespaces');
-            return;
-        }
+        console.log('New name', newName);
+        if (!user) return;
         UsersService.changeUsernameAsync(userId, newName).then(_ => {
-            setUsername(newName);
+            setName(newName);
             setDisplayName(newName)
-        }).catch(x => {
-            console.error(x)
-            alert(`Could not change user username. Try later.`);
+        }).catch(_ => {
+            alert('Could not change user name. Try later.')
         })
     }
 
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     const saveEmail = (newEmail: string) => {
         console.log('New email', newEmail);
-        if (!emailRegex.test(newEmail)) {
-            setEmailError('Email is not in valid form');
-            return;
-        }
+        if (!user) return;
         UsersService.changeEmailAsync(userId, newEmail).then(_ => {
             setEmail(newEmail);
-        }).catch(x => {
-            console.error(x)
-            alert('Could not change image username. Try later.')
+        }).catch(_ => {
+            alert('Could not change image name. Try later.')
         })
     }
 
+    // @ts-ignore
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             {
@@ -104,15 +86,27 @@ const EditUser = () => {
                             <div className='h6 d-block'>
                                 ID: {user?.id}
                             </div>
+                            <div className='h6 d-block'>
+                                Uploaded resources count: {user?.authorOf.length}
+                            </div>
+                            <div className='h6 d-block'>
+                                Total subscriptions count: {user?.subscriptions.length}
+                            </div>
                             <div className={'h6 d-block'}>
                                 Banned: {user?.lockout ? 'True' : 'False'}
                             </div>
+                            { user?.lockout ?
+                                <div className='h6 d-block'>
+                                    Lock out end date: {user?.lockoutEnd}
+                                </div>
+                                : <span></span>
+                            }
                         </div>
 
                         <InputBlock id={userId}
                                     fieldName={'Name'}
-                                    placeholder={"User username"}
-                                    initial={username}
+                                    placeholder={"User name"}
+                                    initial={name}
                                     onSave={e => saveName(e)}/>
                         <InputBlock id={userId}
                                     fieldName={'Email'}
@@ -123,19 +117,29 @@ const EditUser = () => {
                             <label className='ms-3'>Roles: </label>
                             <Multiselect isObject={false}
                                          onSelect={(selectedList, selectedItem) => {
-                                             const role = selectedItem === Role.Admin ? Role.Admin : selectedItem === Role.TechSupport ? Role.TechSupport : undefined;
-                                             if (!role) return;
-                                             addRole(role);
+                                             UsersService.addUserToRoleAsync(userId, selectedItem as Role).then(_ => {})
+                                                 .catch(_ => {
+                                                        alert('Could not change image name. Try later.')
+                                                 })
                                          }}
                                          onRemove={(selectedList, selectedItem) => {
-                                            const role = selectedItem === Role.Admin ? Role.Admin : selectedItem === Role.TechSupport ? Role.TechSupport : undefined;
-                                            if (!role) return;
-                                             removeRole(role);
+                                             UsersService.removeUserFromRoleAsync(userId, selectedItem as Role).then(_ => {})
+                                                 .catch(_ => {
+                                                     alert('Could not change image name. Try later.')
+                                                 })
                                          }}
-                                         options={roleNames}
+                                         options={options}
                                          selectedValues={user?.roles as Role[]}/>
                         </div>
-
+                        {user?.lockout ?
+                            <button className='btn btn-danger rounded my-2' onClick={e => {
+                                e.preventDefault();
+                                }}>Lock</button>
+                            :
+                            <button className='btn btn-primary rounded my-2' onClick={e => {
+                                e.preventDefault();
+                                }}>Unlock</button>
+                        }
                     </div>
                     : <p>Loading...</p>
             }
