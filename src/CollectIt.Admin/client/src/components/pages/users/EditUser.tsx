@@ -17,7 +17,7 @@ const EditUser = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [loaded, setLoaded] = useState(false);
-    const options = [Role.User, Role.Admin, Role.TechSupport]
+    const options = [Role.Admin, Role.TechSupport]
 
     useEffect(() => {
         UsersService.findUserByIdAsync(userId).then(i => {
@@ -30,28 +30,6 @@ const EditUser = () => {
             alert(err.toString())
         })
     }, []);
-
-    let resIds = "";
-    let subIds = "";
-
-    if ( user?.authorOf != undefined && user?.authorOf.length > 0){
-        for (let i = 0; i < user?.authorOf.length; i++){
-            resIds += user?.authorOf[i].id + ", "
-        }
-    }
-    else {
-        resIds = "There aren't any resource added by that user"
-    }
-
-    if ( user?.subscriptions != undefined && user?.subscriptions.length > 0){
-        for (let i = 0; i < user?.subscriptions.length; i++){
-            subIds += user?.subscriptions[i].id + ", "
-        }
-    }
-    else {
-        subIds = "There aren't any subscription"
-    }
-
 
     const saveName = (newName: string) => {
         console.log('New name', newName);
