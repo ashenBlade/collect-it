@@ -244,8 +244,10 @@ public class AccountController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-        var user = new User() {Email = email, UserName = email};
+        var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
+        var user = new User() {Email = email, UserName = username};
         var identityResult = await _userManager.CreateAsync(user);
         if (identityResult.Succeeded && ( await _userManager.AddLoginAsync(user, info) ).Succeeded)
         {
