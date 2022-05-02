@@ -31,7 +31,30 @@ const UsersList = () => {
     const nav = useNavigate();
     const toEditUserPage = (id: number) => nav(`/users/${id}`);
 
-    const onSearch = (q: string) => {
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+
+    const onSearchEmail = (email: string) => {
+        if (!emailRegex.test(email)) {
+            return;
+        }
+        UsersService.findUserByEmailAsync(email).then(u => {
+            console.log(u);
+            toEditUserPage(u.id);
+        }).catch(err => {
+            console.error(err);
+        });
+    }
+
+    const onSearchUsername = (username: string) => {
+        UsersService.findUserByUsernameAsync(username).then(u => {
+            console.log(u);
+            toEditUserPage(u.id);
+        }).catch(err => {
+            console.error(err);
+        })
+    }
+
+    const onSearchId = (q: string) => {
         const id = Number(q);
         if (!Number.isInteger(id)) {
             alert('Id must be an integer');
@@ -45,7 +68,10 @@ const UsersList = () => {
             {loading
                 ? <>Loading...</>
                 : <>
-            <SearchPanel onSearch={onSearch} placeholder={'Enter User id'}/>
+            <SearchPanel onSearch={onSearchId} placeholder={'Enter id'}/>
+            <SearchPanel onSearch={onSearchEmail} placeholder={'Enter email'}/>
+            <SearchPanel onSearch={onSearchUsername} placeholder={'Enter username'}/>
+
             <div className='mt-5 mx-auto'>
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
