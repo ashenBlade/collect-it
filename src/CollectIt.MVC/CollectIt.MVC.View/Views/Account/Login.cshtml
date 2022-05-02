@@ -32,6 +32,12 @@
         <div class="form-group">
             <button class="create-account" type="submit">Войти</button>
         </div>
+        <div class="mb-4 w-100 btn btn-primary google-btn">
+            <img alt="google icon" class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+            <a class="btn-text text-white text-decoration-none" asp-action="GoogleLogin">
+                <b>Sign in with google</b>
+            </a>
+        </div>
         <div class="text-center">
             <p>
                 Нет аккаунта?
@@ -40,14 +46,7 @@
                 </a>
             </p>
         </div>
-        <div class="google-btn">
-            <div class="google-icon-wrapper">
-                <img alt="google icon" class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
-            </div>
-            <a class="btn-text text-decoration-none" asp-action="GoogleLogin">
-                <b>Sign in with google</b>
-            </a>
-        </div>
+        
         @* <a asp-action="GoogleLogin" class="btn btn-primary">Google enter</a> *@
     </form>
 </div>
