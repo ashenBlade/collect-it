@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/main.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true"/>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans"/>
 }
 
 <div class="registration">
@@ -39,6 +40,14 @@
                 </a>
             </p>
         </div>
+        <div class="google-btn">
+            <div class="google-icon-wrapper">
+                <img alt="google icon" class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"/>
+            </div>
+            <a class="btn-text text-decoration-none" asp-action="GoogleLogin">
+                <b>Sign in with google</b>
+            </a>
+        </div>
+        @* <a asp-action="GoogleLogin" class="btn btn-primary">Google enter</a> *@
     </form>
-    <a asp-action="GoogleLogin" class="btn btn-primary">Google enter</a>
 </div>
