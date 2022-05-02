@@ -87,10 +87,10 @@ const EditUser = () => {
                                 ID: {user?.id}
                             </div>
                             <div className='h6 d-block'>
-                                Author of: {resIds}
+                                Uploaded resources count: {user?.authorOf.length}
                             </div>
                             <div className='h6 d-block'>
-                                Subscriptions: {subIds}
+                                Total subscriptions count: {user?.subscriptions.length}
                             </div>
                             { user?.lockout ?
                                 <div className='h6 d-block'>
@@ -137,7 +137,15 @@ const EditUser = () => {
                                          options={options}
                                          selectedValues={user?.roles as Role[]}/>
                         </div>
-
+                        {user?.lockout ?
+                            <button className='btn btn-danger rounded my-2' onClick={e => {
+                                e.preventDefault();
+                                }}>Lock</button>
+                            :
+                            <button className='btn btn-primary rounded my-2' onClick={e => {
+                                e.preventDefault();
+                                }}>Unlock</button>
+                        }
                     </div>
                     : <p>Loading...</p>
             }
