@@ -92,15 +92,9 @@ const EditUser = () => {
                             <div className='h6 d-block'>
                                 Total subscriptions count: {user?.subscriptions.length}
                             </div>
-                            { user?.lockout ?
-                                <div className='h6 d-block'>
-                                    Lock out: Locked
-                                </div>
-                                :
-                                <div className='h6 d-block'>
-                                    Lock out: Unlocked
-                                </div>
-                            }
+                            <div className={'h6 d-block'}>
+                                Banned: {user?.lockout ? 'True' : 'False'}
+                            </div>
                             { user?.lockout ?
                                 <div className='h6 d-block'>
                                     Lock out end date: {user?.lockoutEnd}
