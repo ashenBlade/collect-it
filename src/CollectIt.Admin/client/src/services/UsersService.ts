@@ -141,4 +141,26 @@ export class UsersService {
             throw new Error(json.message);
         }
     }
+
+    static async lockoutUserAsync(userId: number) {
+        if (!Number.isInteger(userId)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${userId}/deactivate`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
+    }
+
+    static async activateUserAsync(userId: number) {
+        if (!Number.isInteger(userId)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${userId}/activate`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
+    }
 }

@@ -9,6 +9,7 @@ import { User } from './users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from '../roles/roles.service';
 import { Role } from '../roles/roles.model';
+import { NotFoundError } from "rxjs";
 
 const emailRegex =
   /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
@@ -113,5 +114,29 @@ export class UsersService {
         },
       },
     );
+  }
+
+  async activateUserAsync(userId: number) {
+    if (!Number.isInteger(userId)) throw new Error('User id must be integer');
+    const affected = await this.usersRepository.update({
+      lockoutEnable: false
+    }, {
+      where: {
+        id: userId
+      }
+    });
+    if (affected[0] === 0) throw new NotFoundError('User not found');
+  }
+
+  async deactivateUserAsync(userId: number) {
+    if (!Number.isInteger(userId)) throw new Error('User id must be integer');
+    const affected = await this.usersRepository.update({
+      lockoutEnable: true
+    }, {
+      where: {
+        id: userId
+      }
+    });
+    if (affected[0] === 0) throw new NotFoundError('User not found');
   }
 }

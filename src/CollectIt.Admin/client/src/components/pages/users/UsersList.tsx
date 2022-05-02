@@ -80,7 +80,7 @@ const UsersList = () => {
                         <td className='Cell nameCell'>Username</td>
                         <td className='Cell nameCell'>E-mail</td>
                         <td className='Cell'>Roles</td>
-                        <td className='Cell'>Subscriptions</td>
+                        <td className='Cell'>Banned</td>
                     </th>
                     </thead>
                     <tbody className='mx-auto mt-5 table-hover'>
@@ -90,7 +90,7 @@ const UsersList = () => {
                                 <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
                                 <td className='Cell nameCell'>{i.email}</td>
                                 <td className='Cell'>{i.roles}</td>
-                                <td className='Cell'>{i.subscriptions}</td>
+                                <td className='Cell'>{i.lockout ? '+' : '' }</td>
                             </tr>
                         )}
                     </tbody>

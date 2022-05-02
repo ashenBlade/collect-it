@@ -16,65 +16,64 @@ const EditUser = () => {
     const [displayName, setDisplayName] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [banned, setBanned] = useState(false);
     const [loaded, setLoaded] = useState(false);
-    const options = [Role.User, Role.Admin, Role.TechSupport]
+    const options = [Role.Admin, Role.TechSupport]
 
     useEffect(() => {
-        UsersService.findUserByIdAsync(userId).then(i => {
-            setName(i.username);
-            setEmail(i.email);
-            setDisplayName(i.username);
-            setUser(i);
+        UsersService.findUserByIdAsync(userId).then(u => {
+            setName(u.username);
+            setEmail(u.email);
+            setDisplayName(u.username);
+            setUser(u);
+            setBanned(u.lockout)
             setLoaded(true);
         }).catch(err => {
-            alert(err.toString())
+            console.error(err)
+            alert('Could not load user')
+            nav('/users')
         })
     }, []);
 
-    let resIds = "";
-    let subIds = "";
-
-    if ( user?.authorOf != undefined && user?.authorOf.length > 0){
-        for (let i = 0; i < user?.authorOf.length; i++){
-            resIds += user?.authorOf[i].id + ", "
-        }
-    }
-    else {
-        resIds = "There aren't any resource added by that user"
-    }
-
-    if ( user?.subscriptions != undefined && user?.subscriptions.length > 0){
-        for (let i = 0; i < user?.subscriptions.length; i++){
-            subIds += user?.subscriptions[i].id + ", "
-        }
-    }
-    else {
-        subIds = "There aren't any subscription"
-    }
-
-
     const saveName = (newName: string) => {
-        console.log('New name', newName);
         if (!user) return;
         UsersService.changeUsernameAsync(userId, newName).then(_ => {
             setName(newName);
-            setDisplayName(newName)
-        }).catch(_ => {
+            setDisplayName(newName);
+        }).catch(err => {
+            console.error(err)
             alert('Could not change user name. Try later.')
         })
     }
 
-    const saveEmail = (newEmail: string) => {
-        console.log('New email', newEmail);
-        if (!user) return;
-        UsersService.changeEmailAsync(userId, newEmail).then(_ => {
-            setEmail(newEmail);
-        }).catch(_ => {
-            alert('Could not change image name. Try later.')
+    const banUser = () => {
+        UsersService.lockoutUserAsync(userId).then(() => {
+            setBanned(true);
+        }).catch(err => {
+            console.error(err)
+            alert('Could not ban user')
         })
     }
 
-    // @ts-ignore
+    const unbanUser = () => {
+        UsersService.activateUserAsync(userId).then(() => {
+            setBanned(false);
+        }).catch(err => {
+            console.error(err)
+            alert('Could not unban user')
+        })
+    }
+
+    const saveEmail = (newEmail: string) => {
+        if (!user) return;
+        UsersService.changeEmailAsync(userId, newEmail).then(_ => {
+            setEmail(newEmail);
+        }).catch(err => {
+            console.error(err)
+            alert('Could not change user email. Try later.')
+        })
+    }
+
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             {
@@ -86,21 +85,9 @@ const EditUser = () => {
                             <div className='h6 d-block'>
                                 ID: {user?.id}
                             </div>
-                            <div className='h6 d-block'>
-                                Uploaded resources count: {user?.authorOf.length}
-                            </div>
-                            <div className='h6 d-block'>
-                                Total subscriptions count: {user?.subscriptions.length}
-                            </div>
                             <div className={'h6 d-block'}>
-                                Banned: {user?.lockout ? 'True' : 'False'}
+                                Banned: {banned ? 'True' : 'False'}
                             </div>
-                            { user?.lockout ?
-                                <div className='h6 d-block'>
-                                    Lock out end date: {user?.lockoutEnd}
-                                </div>
-                                : <span></span>
-                            }
                         </div>
 
                         <InputBlock id={userId}
@@ -117,28 +104,33 @@ const EditUser = () => {
                             <label className='ms-3'>Roles: </label>
                             <Multiselect isObject={false}
                                          onSelect={(selectedList, selectedItem) => {
-                                             UsersService.addUserToRoleAsync(userId, selectedItem as Role).then(_ => {})
+                                             UsersService.addUserToRoleAsync(userId, selectedItem as Role).then(_ => {
+                                                 console.log('Role added')
+                                             })
                                                  .catch(_ => {
-                                                        alert('Could not change image name. Try later.')
+                                                        alert('Could not assign role. Try later.')
                                                  })
                                          }}
                                          onRemove={(selectedList, selectedItem) => {
                                              UsersService.removeUserFromRoleAsync(userId, selectedItem as Role).then(_ => {})
                                                  .catch(_ => {
-                                                     alert('Could not change image name. Try later.')
+                                                     alert('Could not remove role. Try later.')
                                                  })
                                          }}
                                          options={options}
                                          selectedValues={user?.roles as Role[]}/>
                         </div>
-                        {user?.lockout ?
+                        {banned ?
+                            <button className='btn btn-success rounded my-2' onClick={e => {
+                                e.preventDefault();
+                                unbanUser();
+                            }}>Unban</button>
+                            :
                             <button className='btn btn-danger rounded my-2' onClick={e => {
                                 e.preventDefault();
-                                }}>Lock</button>
-                            :
-                            <button className='btn btn-primary rounded my-2' onClick={e => {
-                                e.preventDefault();
-                                }}>Unlock</button>
+                                banUser()
+                                }}>Ban</button>
+
                         }
                     </div>
                     : <p>Loading...</p>
