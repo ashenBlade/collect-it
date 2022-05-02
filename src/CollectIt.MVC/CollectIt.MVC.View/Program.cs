@@ -34,6 +34,7 @@ services.AddAuthentication(options =>
          {
              g.ClientId = builder.Configuration["Google:ClientId"];
              g.ClientSecret = builder.Configuration["Google:ClientSecret"];
+             g.SignInScheme = IdentityConstants.ExternalScheme;
          });
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
