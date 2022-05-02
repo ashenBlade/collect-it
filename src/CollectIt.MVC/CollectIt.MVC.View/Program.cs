@@ -21,15 +21,21 @@ var services = builder.Services;
 
 services.AddControllersWithViews();
 services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = "/account/login";
-    options.DefaultSignOutScheme = "/account/logout";
-}).AddCookie(options =>
-{
-    options.Cookie.Name = "Cookie";
-});
-services.AddAuthorization();
+         {
+             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+             options.DefaultSignInScheme = "/account/login";
+             options.DefaultSignOutScheme = "/account/logout";
+         })
+        .AddCookie(options =>
+         {
+             options.Cookie.Name = "Cookie";
+         })
+        .AddGoogle(g =>
+         {
+             g.ClientId = builder.Configuration["Google:ClientId"];
+             g.ClientSecret = builder.Configuration["Google:ClientSecret"];
+             g.SignInScheme = IdentityConstants.ExternalScheme;
+         });
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 {
@@ -59,10 +65,7 @@ Directory.CreateDirectory(musicPath);
 services.AddSignalR();
 services.AddIdentity<User, Role>(config =>
          {
-             config.User = new UserOptions
-                           {
-                               RequireUniqueEmail = true,
-                           };
+             config.User = new UserOptions {RequireUniqueEmail = true,};
              config.Password = new PasswordOptions
                                {
                                    RequireDigit = true,

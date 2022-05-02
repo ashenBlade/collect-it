@@ -5,6 +5,7 @@ import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
 import {ResourceType} from "../../entities/resource-type";
+import {Link} from "react-router-dom";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -23,10 +24,11 @@ const SubscriptionsList = () => {
 
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true);
-        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image}).then(x => {
-            setSubs(x.subscriptions);
-            setLoading(false);
-        }).catch(_ => setLoading(false))
+        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image})
+            .then(x => {
+                setSubs(x.subscriptions);
+                setLoading(false);
+            }).catch(_ => setLoading(false))
     }
 
     const nav = useNavigate();
@@ -46,6 +48,9 @@ const SubscriptionsList = () => {
             {loading
                 ? <>Loading...</>
                 : <>
+                    <div className='ms-2 mb-3'><Link to='/subscriptions/create'>
+                        <button className='btn btn-primary'>Create subscription</button>
+                    </Link></div>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter subscription id'}/>
                     <div className='mt-5 mx-auto'>
                         <table className={'usersTable table table-borderless table-light'}>

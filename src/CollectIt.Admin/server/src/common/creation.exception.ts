@@ -1,8 +1,8 @@
 export default class CreationException extends Error {
-    errors: string[];
+  errors: string[];
 
-    constructor(message: string | null, errors: string[] | null) {
-        super(message);
-        this.errors = errors ?? [];
-    }
+  constructor(message: string | null, errors: string[] | null) {
+    super(message);
+    this.errors = errors ?? [];
+  }
 }

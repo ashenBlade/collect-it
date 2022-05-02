@@ -1,5 +1,5 @@
-import {RestrictionType} from "../restriction-type";
+import { RestrictionType } from '../restriction-type';
 
 export abstract class ReadRestrictionDto {
-    readonly restrictionType: RestrictionType;
+  readonly restrictionType: RestrictionType;
 }

@@ -103,13 +103,6 @@ public class PurchaseControllerTests: IClassFixture<CollectItWebApplicationFacto
         var user = PostgresqlCollectItDbContext.AdminUser;
         var image = PostgresqlCollectItDbContext.DefaultImages.First();
         var (client, bearer) = await Initialize(user.UserName, "12345678");
-        await TestsHelpers.SendAsync(client,
-                                     $"api/v1/purchase/image/{image.Id}", 
-                                     bearer, 
-                                     null, 
-                                     _outputHelper, 
-                                     true, 
-                                     HttpMethod.Post);
         await TestsHelpers.AssertStatusCodeAsync(client,
                                                  $"api/v1/purchase/image/{image.Id}",
                                                  HttpStatusCode.BadRequest,

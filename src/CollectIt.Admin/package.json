@@ -5,11 +5,12 @@
   "main": "index.ts",
   "scripts": {
     "build": "concurrently \"npm run --prefix client build\" \"npm run --prefix server build\"",
-    "run": "concurrently \"npm run --prefix client start\" \"npm run --prefix server start:dev\""
+    "run": "concurrently \"npm run --prefix server start:dev\" \"npm run --prefix client start\""
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nestjs/config": "^2.0.0",
     "concurrently": "^7.0.0"
   },
   "devDependencies": {

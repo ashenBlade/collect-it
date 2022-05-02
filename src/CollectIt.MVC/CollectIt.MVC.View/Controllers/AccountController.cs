@@ -3,13 +3,10 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Entities.Account;
 using CollectIt.MVC.View.ViewModels;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using NodaTime;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -17,8 +14,8 @@ namespace CollectIt.MVC.View.Controllers;
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
-    private readonly UserManager _userManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly UserManager _userManager;
 
     public AccountController(ILogger<AccountController> logger,
                              UserManager userManager,
@@ -28,7 +25,7 @@ public class AccountController : Controller
         _userManager = userManager;
         _signInManager = signInManager;
     }
-    
+
     [Authorize]
     [HttpGet]
     [Route("")]
@@ -37,36 +34,38 @@ public class AccountController : Controller
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(userId) )
-            .Select(subscription =>
-                new AccountUserSubscription()
-                {
-                    From = subscription.During.Start.ToDateTimeUnspecified(),
-                    To = subscription.During.End.ToDateTimeUnspecified(),
-                    LeftResourcesCount = subscription.LeftResourcesCount,
-                    Name = subscription.Subscription.Name,
-                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое"
-                });
-        var resources = (await _userManager.GetAcquiredResourcesForUserByIdAsync(userId))
-            .Select(resource =>
-                new AccountUserResource()
-                {
-                    Id = resource.ResourceId,
-                    FileName = resource.Resource.Name,
-                   // Address = resource.Resource.Address,
-                    Extension = resource.Resource.Extension,
-                    Date = resource.AcquiredDate
-                });
-        var myResources = (await _userManager.GetUsersResourcesForUserByIdAsync(userId))
-            .Select(resource =>
-                new AccountUserResource()
-                {
-                    Id = resource.Id,
-                    FileName = resource.Name,
-                    //Address = resource.Address,
-                    Extension = resource.Extension,
-                    Date = resource.UploadDate
-                });
-       var model = new AccountViewModel()
+           .Select(subscription =>
+                       new AccountUserSubscription()
+                       {
+                           From = subscription.During.Start.ToDateTimeUnspecified(),
+                           To = subscription.During.End.ToDateTimeUnspecified(),
+                           LeftResourcesCount = subscription.LeftResourcesCount,
+                           Name = subscription.Subscription.Name,
+                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
+                                              ? "Изображение"
+                                              : "Другое"
+                       });
+        var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(userId) )
+           .Select(resource =>
+                       new AccountUserResource()
+                       {
+                           Id = resource.ResourceId,
+                           FileName = resource.Resource.Name,
+                           // Address = resource.Resource.Address,
+                           Extension = resource.Resource.Extension,
+                           Date = resource.AcquiredDate
+                       });
+        var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(userId) )
+           .Select(resource =>
+                       new AccountUserResource()
+                       {
+                           Id = resource.Id,
+                           FileName = resource.Name,
+                           //Address = resource.Address,
+                           Extension = resource.Extension,
+                           Date = resource.UploadDate
+                       });
+        var model = new AccountViewModel()
                     {
                         UserName = User.FindFirstValue(ClaimTypes.Name),
                         Email = User.FindFirstValue(ClaimTypes.Email),
@@ -77,14 +76,14 @@ public class AccountController : Controller
                     };
         return View(model);
     }
-    
+
     [HttpGet]
     [Route("login")]
     public IActionResult Login()
     {
         return View();
     }
-    
+
     [HttpGet]
     [Route("register")]
     public IActionResult Register()
@@ -127,7 +126,7 @@ public class AccountController : Controller
         {
             return View(model);
         }
-        
+
         _logger.LogInformation("User with email: {Email} wants to login", model.Email);
 
         var user = await _userManager.FindByEmailAsync(model.Email);
@@ -146,7 +145,7 @@ public class AccountController : Controller
         await _signInManager.SignInAsync(user, model.RememberMe);
         return RedirectToAction("Index", "Home");
     }
-    
+
     [HttpGet]
     [Route("logout")]
     public async Task<IActionResult> LogOut()
@@ -175,16 +174,20 @@ public class AccountController : Controller
         var result = await _userManager.UpdateAsync(user);
         var subs = await _userManager.GetSubscriptionsForUserByIdAsync(user.Id);
 
-       var accountModel = new AccountViewModel()
+        var accountModel = new AccountViewModel()
                            {
-                               Email = user.UserName, 
-                               UserName = user.UserName, 
+                               Email = user.UserName,
+                               UserName = user.UserName,
                                Subscriptions = subs.Select(s => new AccountUserSubscription()
                                                                 {
                                                                     From = s.During.Start.ToDateTimeUnspecified(),
                                                                     To = s.During.End.ToDateTimeUnspecified(),
                                                                     Name = s.Subscription.Name,
-                                                                    ResourceType = s.Subscription.AppliedResourceType == ResourceType.Image ? "Изображение" : "Другое",
+                                                                    ResourceType =
+                                                                        s.Subscription.AppliedResourceType
+                                                                     == ResourceType.Image
+                                                                            ? "Изображение"
+                                                                            : "Другое",
                                                                     LeftResourcesCount = s.LeftResourcesCount
                                                                 })
                                                    .ToList()
@@ -203,11 +206,56 @@ public class AccountController : Controller
         return View("Profile", accountModel);
     }
 
-    [HttpPost]  
-    [Authorize]
-    [Route("upload")]
-    public void UploadImage(ImageViewModel model)
+
+    [HttpGet("external")]
+    public async Task<IActionResult> GetExternalLogins()
     {
-        
+        var logins = await _signInManager.GetExternalAuthenticationSchemesAsync();
+        return Ok(logins.Select(l => new {l.Name, l.DisplayName}));
+    }
+
+    [Route("google-login")]
+    public IActionResult GoogleLogin()
+    {
+        // var properties = new AuthenticationProperties() {RedirectUri = Url.Action("GoogleResponse")};
+        // return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        var properties =
+            _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme,
+                                                                     Url.Action("GoogleResponse"));
+        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+    }
+
+    [Route("google-response")]
+    public async Task<IActionResult> GoogleResponse()
+    {
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info is null)
+        {
+            _logger.LogError("Could not get google external login info");
+            return View("Error", new ErrorViewModel() {Message = "User claims were not provided"});
+        }
+
+        var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
+                                                                   info.ProviderKey,
+                                                                   true);
+        if (result.Succeeded)
+        {
+            _logger.LogTrace("User with existing account logged in using google");
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
+        var user = new User() {Email = email, UserName = username};
+        var identityResult = await _userManager.CreateAsync(user);
+        if (identityResult.Succeeded && ( await _userManager.AddLoginAsync(user, info) ).Succeeded)
+        {
+            await _signInManager.SignInAsync(user, false);
+            return RedirectToAction("Profile");
+        }
+
+        return View("Error",
+                    new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
     }
 }

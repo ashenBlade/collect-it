@@ -1,5 +1,5 @@
-import {ReadRestrictionDto} from "./read-restriction.dto";
+import { ReadRestrictionDto } from './read-restriction.dto';
 
 export class ReadDaysToRestrictionDto extends ReadRestrictionDto {
-    readonly daysTo: number;
+  readonly daysTo: number;
 }

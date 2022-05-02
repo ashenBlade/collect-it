@@ -13,6 +13,9 @@ using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
 
+/// <summary>
+/// Manage subscriptions in system
+/// </summary>
 [ApiController]
 [Route("api/v1/subscriptions")]
 public class SubscriptionsController : ControllerBase
@@ -27,6 +30,10 @@ public class SubscriptionsController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Get subscriptions list 
+    /// </summary>
+    /// <response code="200">Array of subscriptions ordered by id with max size of <paramref name="pageSize"/> </response>
     [HttpGet("")]
     public async Task<IActionResult> GetSubscriptionsPaged([FromQuery(Name = "page_number")] 
                                                            [Range(1, int.MaxValue)]
@@ -48,6 +55,10 @@ public class SubscriptionsController : ControllerBase
     }
 
 
+    /// <summary>
+    /// Get active subscriptions list 
+    /// </summary>
+    /// <response code="200">Array of active subscriptions</response>
     [HttpGet("active")]
     public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")][Required] ResourceType type,
                                                             [FromQuery(Name = "page_size")][Required]int pageSize,
@@ -58,6 +69,11 @@ public class SubscriptionsController : ControllerBase
                                .ToArray());
     }
 
+    /// <summary>
+    /// Find subscription by id
+    /// </summary>
+    /// <response code="404">Subscription not found</response>
+    /// <response code="200">Subscription found</response>
     [HttpGet("{subscriptionId:int}")]
     public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
     {
@@ -67,6 +83,10 @@ public class SubscriptionsController : ControllerBase
                    : Ok(AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 
+    /// <summary>
+    /// Create Subscription
+    /// </summary>
+    /// <response code="201">Subscription created</response>
     [HttpPost("")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateSubscription([FromForm]
@@ -90,6 +110,12 @@ public class SubscriptionsController : ControllerBase
                                AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 
+    
+    /// <summary>
+    /// Change name for subscription
+    /// </summary>
+    /// <response code="400">Something went wrong</response>
+    /// <response code="204">Name changed</response>
     [HttpPost("{subscriptionId:int}/name")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId, 
@@ -103,6 +129,11 @@ public class SubscriptionsController : ControllerBase
                    : BadRequest();
     }
     
+    /// <summary>
+    /// Change name for subscription
+    /// </summary>
+    /// <response code="400">Something went wrong</response>
+    /// <response code="204">Description changed</response>
     [HttpPost("{subscriptionId:int}/description")]
     [Authorize(Roles = "Admin",  AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId,[FromForm(Name = "description")][Required] string description)
@@ -113,6 +144,11 @@ public class SubscriptionsController : ControllerBase
                    : BadRequest();
     }
 
+    /// <summary>
+    /// Change name for subscription
+    /// </summary>
+    /// <response code="400">Something went wrong</response>
+    /// <response code="204">Subscription activated</response>
     [HttpPost("{subscriptionId:int}/activate")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> ActivateSubscription(int subscriptionId)
@@ -123,6 +159,11 @@ public class SubscriptionsController : ControllerBase
                    : BadRequest();
     }
     
+    /// <summary>
+    /// Change name for subscription
+    /// </summary>
+    /// <response code="400">Something went wrong</response>
+    /// <response code="204">Subscription deactivated</response>
     [HttpPost("{subscriptionId:int}/deactivate")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeactivateSubscription(int subscriptionId)

@@ -1,8 +1,8 @@
 import authorizedFetch from "./AuthorizedFetch";
 import NotFoundError from "../utils/NotFoundError";
-import {serverAddress} from "../constants";
+import { serverAddress } from "../constants";
 import User from "../components/entities/user";
-import {Role} from "../components/entities/role";
+import { Role } from "../components/entities/role";
 
 const baseApiPath = `${serverAddress}/api/v1/users`;
 
@@ -35,15 +35,12 @@ export class UsersService {
             method: 'GET'
         });
 
-        const json = await result.json();
         if (!result.ok) {
-            if (result.status === 404) {
-                throw new NotFoundError()
-            }
-            throw new Error(json.message);
+            if (result.status === 404) throw new NotFoundError()
+            throw new Error((await result.json()).message);
         }
 
-        const user: User = json;
+        const user: User = await result.json();
         return user;
     }
 
@@ -52,13 +49,12 @@ export class UsersService {
         const response = await UsersService.fetch(`${baseApiPath}/with-username/${encodeURIComponent(username)}`, {
             method: 'GET'
         });
-        const json = await response.json();
         if (!response.ok) {
             if (response.status === 404) throw new NotFoundError();
-            throw new Error(json.message);
+            throw new Error((await response.json()).message);
         }
 
-        const user: User = json;
+        const user: User = await response.json();
         return user;
     }
 
@@ -67,13 +63,12 @@ export class UsersService {
         const response = await UsersService.fetch(`${baseApiPath}/with-email/${encodeURIComponent(email)}`, {
             method: 'GET'
         });
-        const json = await response.json();
         if (!response.ok) {
             if (response.status === 404) throw new NotFoundError();
-            throw new Error(json.message);
+            throw new Error((await response.json()).message);
         }
 
-        const user: User = json;
+        const user: User = await response.json();
         return user;
     }
 
@@ -90,8 +85,7 @@ export class UsersService {
                 'Content-Type': 'application/json'
             }
         });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.message);
+        if (!response.ok) throw new Error((await response.json()).message);
     }
 
     static async changeEmailAsync(id: number, email: string) {
@@ -107,8 +101,11 @@ export class UsersService {
                 'Content-Type': 'application/json'
             }
         });
-        const json = await response.json();
-        if (!response.ok) throw new Error(json.message);
+        if (!response.ok) {
+            console.error(`Invalid email change`);
+            console.error(response);
+            throw new Error((await response.json()).message)
+        }
     }
 
     static async addUserToRoleAsync(id: number, role: Role) {

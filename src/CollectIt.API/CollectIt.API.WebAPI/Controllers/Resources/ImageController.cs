@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text;
+using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
@@ -8,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CollectIt.API.WebAPI.Controllers.Resources;
 
+/// <summary>
+/// Manage images in system
+/// </summary>
 [ApiController]
 [Route("api/images")]
 public class ImageController : Controller
@@ -23,7 +27,14 @@ public class ImageController : Controller
         _address = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
     }
 
+    /// <summary>
+    /// Find image by id
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="200">Image found</response>
     [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(ResourcesDTO.ReadImageDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> FindImageById(int id)
     {
         var image = await _imageManager.FindByIdAsync(id);
@@ -32,15 +43,23 @@ public class ImageController : Controller
         return Ok(ResourcesMappers.ToReadImageDTO(image));
     }
 
-   /* public async Task<IActionResult> FindPhysicalImageById(int id)
-    {
-        var image = await _imageManager.FindByIdAsync(id);
-        if (image is null)
-            return NotFound();
-        return PhysicalFile(image.Address, $"image/{image.Extension}");
-    }*/
+    /* public async Task<IActionResult> FindPhysicalImageById(int id)
+     {
+         var image = await _imageManager.FindByIdAsync(id);
+         if (image is null)
+             return NotFound();
+         return PhysicalFile(image.Address, $"image/{image.Extension}");
+     }*/
     
+    
+    
+    /// <summary>
+    /// Get images list 
+    /// </summary>
+    /// <response code="200">Array of images ordered by id with max size of <paramref name="pageSize"/> </response>
     [HttpGet("")]
+    [ProducesResponseType(typeof(ResourcesDTO.ReadImageDTO[]), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "page_number")] 
         [Range(1, int.MaxValue)]
         [Required]

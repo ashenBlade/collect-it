@@ -25,6 +25,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Infrastructure\CollectIt.Database.Infrastructure.csproj" />
+        <ProjectReference Include="..\..\CollectIt.MVC\CollectIt.MVC.Infrastructure\CollectIt.MVC.Infrastructure.csproj" />
         <ProjectReference Include="..\CollectIt.API.DTO.Mappers\CollectIt.API.DTO.Mappers.fsproj" />
     </ItemGroup>
 

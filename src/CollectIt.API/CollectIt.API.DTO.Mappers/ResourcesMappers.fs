@@ -7,3 +7,16 @@ open CollectIt.API.DTO.ResourcesDTO
 let ToReadImageDTO (image: Image) : ReadImageDTO =
     let dto = ReadImageDTO image.OwnerId image.Name image.Tags image.Extension image.UploadDate
     dto
+    
+    
+let ToReadVideoDTO (v: Video) =
+    let v: ReadVideoDTO = {
+        Id = v.Id
+        Duration = v.Duration
+        Extension = v.Extension
+        Name = v.Name
+        UploadDate = v.UploadDate
+        Tags = v.Tags
+        OwnerId = v.OwnerId
+    }
+    v

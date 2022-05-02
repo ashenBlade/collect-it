@@ -8,7 +8,7 @@
       <UserSecretsId>1aac714b-fb18-4b39-b75f-85ef9d7aab89</UserSecretsId>
   </PropertyGroup>
     <ItemGroup>
-        <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.1"/>
+        <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.1" />
     </ItemGroup>
 
     <ItemGroup>

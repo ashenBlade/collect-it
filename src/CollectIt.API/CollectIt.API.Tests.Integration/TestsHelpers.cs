@@ -62,6 +62,7 @@ public static class TestsHelpers
                             };
         var result = await client.SendAsync(message);
         var json = await result.Content.ReadAsStringAsync();
+        outputHelper?.WriteLine(json);
         var parsed = JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web));
         Assert.NotNull(parsed);
         return parsed;
