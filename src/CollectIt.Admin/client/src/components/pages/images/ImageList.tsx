@@ -72,11 +72,11 @@ const ImageList = () => {
                     </tbody>
                 </table>
             </div>
+                </>
+            }
             <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
                 <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
             </footer>
-                </>
-            }
         </div>
     );
 };
