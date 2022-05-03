@@ -167,4 +167,15 @@ export class UsersController {
       throw new BadRequestException();
     }
   }
+
+  @Get('/search/with-username/:username')
+  async searchUsersByUsernameEntry(@Param('username') username: string) {
+    try {
+      const users = await this.usersService.searchUsersByUsernameEntry(username);
+      return users;
+    } catch (e) {
+      console.error(e)
+      throw new BadRequestException();
+    }
+  }
 }

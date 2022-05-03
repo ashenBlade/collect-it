@@ -46,10 +46,14 @@ const UsersList = () => {
     }
 
     const onSearchUsername = (username: string) => {
-        UsersService.findUserByUsernameAsync(username).then(u => {
-            console.log(u);
-            toEditUserPage(u.id);
+        if (username === '') {
+            downloadPageNumber(1);
+            return;
+        }
+        UsersService.searchUsersByUsernameEntry(username).then(u => {
+            setUsers(u);
         }).catch(err => {
+            alert(err);
             console.error(err);
         })
     }

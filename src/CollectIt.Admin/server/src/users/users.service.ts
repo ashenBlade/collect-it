@@ -10,6 +10,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from '../roles/roles.service';
 import { Role } from '../roles/roles.model';
 import { NotFoundError } from "rxjs";
+import { Op, Sequelize } from "sequelize";
+import { SEQUELIZE_MODULE_ID } from "@nestjs/sequelize/dist/sequelize.constants";
 
 const emailRegex =
   /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
@@ -138,5 +140,16 @@ export class UsersService {
       }
     });
     if (affected[0] === 0) throw new NotFoundError('User not found');
+  }
+
+  async searchUsersByUsernameEntry(username: string) {
+    const users = await this.usersRepository.findAll({
+      where: {
+        username: {
+          [Op.iLike]: `%${username}%`
+        }
+      }
+    });
+    return users;
   }
 }
