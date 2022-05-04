@@ -23,7 +23,12 @@ public class PostgresqlMusicManager : IMusicManager
         return _context.Musics.SingleOrDefaultAsync(m => m.Id == id);
     }
 
-    public async Task<Music> CreateAsync(string name, int ownerId, string[] tags, Stream content, string extension, int duration)
+    public async Task<Music> CreateAsync(string name,
+                                         int ownerId,
+                                         string[] tags,
+                                         Stream content,
+                                         string extension,
+                                         int duration)
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
@@ -100,14 +105,18 @@ public class PostgresqlMusicManager : IMusicManager
             throw new ArgumentNullException(nameof(query));
         }
 
+        var q = _context.Musics
+                        .Where(m => m.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                        .OrderByDescending(m => m.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
+                                                                                                        query)));
         return new PagedResult<Music>()
                {
-                   Result = await _context.Musics
-                                          .Where(m => m.TagsSearchVector.Matches(query))
-                                          .OrderBy(m => m.Id)
-                                          .Skip(( pageNumber - 1 ) * pageSize)
-                                          .ToListAsync(),
-                   TotalCount = await _context.Musics.CountAsync()
+                   Result = await q
+                                 .Include(m => m.Owner)
+                                 .Skip(( pageNumber - 1 ) * pageSize)
+                                 .ToListAsync(),
+                   TotalCount = await q
+                                   .CountAsync()
                };
     }
 

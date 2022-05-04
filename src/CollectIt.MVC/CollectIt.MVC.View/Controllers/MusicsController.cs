@@ -1,28 +1,30 @@
 using System.ComponentModel.DataAnnotations;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.MVC.View.ViewModels;
 using CollectIt.MVC.View.Views.Shared.Components.MusicCards;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CollectIt.MVC.View.Controllers;
 
 [Route("musics")]
 public class MusicsController : Controller
 {
+    private const int DefaultPageSize = 15;
+
+    private static readonly HashSet<string> SupportedMusicExtensions = new() {"mp3", "ogg", "wav"};
+    private readonly ICommentManager _commentManager;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
-    private const int DefaultPageSize = 15;
-    public MusicsController(IMusicManager musicManager, UserManager userManager)
+
+    public MusicsController(IMusicManager musicManager, UserManager userManager, ICommentManager commentManager)
     {
         _musicManager = musicManager;
         _userManager = userManager;
+        _commentManager = commentManager;
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Music(int id)
     {
@@ -34,38 +36,48 @@ public class MusicsController : Controller
 
         var user = await _userManager.GetUserAsync(User);
         var model = new MusicViewModel()
-        {
-            MusicId = id,
-            Name = source.Name,
-            OwnerName = source.Owner.UserName,
-            UploadDate = source.UploadDate,
-            Address = Url.Action("DownloadMusicContent", new {musicId = id})!,
-            Tags = source.Tags,
-            IsAcquired = user is not null && await _musicManager.IsAcquiredBy(source.OwnerId, id)
-        };
+                    {
+                        MusicId = id,
+                        Name = source.Name,
+                        OwnerName = source.Owner.UserName,
+                        UploadDate = source.UploadDate,
+                        Address = Url.Action("DownloadMusicContent", new {musicId = id})!,
+                        Tags = source.Tags,
+                        IsAcquired = user is not null && await _musicManager.IsAcquiredBy(source.OwnerId, id),
+                        Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
+                                                                                                  {
+                                                                                                      Author = c.Owner
+                                                                                                                .UserName,
+                                                                                                      Comment =
+                                                                                                          c.Content,
+                                                                                                      PostTime = c
+                                                                                                         .UploadDate
+                                                                                                  })
+                    };
         return View(model);
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] 
-                                                      [Required]
-                                                      string query, 
-                                                      [Range(1, int.MaxValue)]
-                                                      [FromQuery(Name = "p")]
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string query,
+                                                      [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
                                                       int pageNumber = 1)
     {
         var musics = await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
-        return View("Musics", new MusicCardsViewModel()
-                              {
-                                  Musics = musics.Result.Select(m => new MusicViewModel()
-                                                                     {
-                                                                         Address = Url.Action("GetMusicBlob", new {id = m.Id})!,
-                                                                         Name = m.Name,
-                                                                     }).ToList(),
-                                  Query = query,
-                                  PageNumber = pageNumber,
-                                  MaxMusicsCount = musics.TotalCount
-                              });
+        return View("Musics",
+                    new MusicCardsViewModel()
+                    {
+                        Musics = musics.Result.Select(m => new MusicViewModel()
+                                                           {
+                                                               Address = Url.Action("GetMusicBlob", new {id = m.Id})!,
+                                                               Name = m.Name,
+                                                               MusicId = m.Id,
+                                                               OwnerName = m.Owner.UserName
+                                                           })
+                                       .ToList(),
+                        Query = query,
+                        PageNumber = pageNumber,
+                        MaxMusicsCount = musics.TotalCount
+                    });
     }
 
     [HttpGet("upload")]
@@ -78,9 +90,7 @@ public class MusicsController : Controller
     [HttpPost("upload")]
     [Authorize]
     public async Task<IActionResult> UploadMusic(
-        [FromForm]
-        [Required] 
-        UploadMusicViewModel model)
+        [FromForm] [Required] UploadMusicViewModel model)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
         if (!TryGetExtension(model.Content.FileName, out var extension))
@@ -93,10 +103,13 @@ public class MusicsController : Controller
                                 $"Поддерживаемые расширения видео: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}"
                         });
         }
+
         try
         {
             await using var stream = model.Content.OpenReadStream();
-            var music = await _musicManager.CreateAsync(model.Name, userId, model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries), stream, extension,
+            var music = await _musicManager.CreateAsync(model.Name, userId,
+                                                        model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                                                        stream, extension,
                                                         model.Duration);
 
             return RedirectToAction("GetQueriedMusics", new {q = ""});
@@ -124,8 +137,6 @@ public class MusicsController : Controller
         return SupportedMusicExtensions.Contains(extension = array[^1].ToLower());
     }
 
-    private static readonly HashSet<string> SupportedMusicExtensions = new() {"mp3", "ogg", "wav"};
-
     [HttpGet("{id:int}/blob")]
     public async Task<IActionResult> GetMusicBlob(int id)
     {
@@ -134,6 +145,7 @@ public class MusicsController : Controller
         {
             return View("Error", new ErrorViewModel() {Message = "Music not found"});
         }
+
         var stream = await _musicManager.GetContentAsync(id);
         return File(stream, $"audio/{music!.Extension}", $"{music.Name}.{music.Extension}");
     }

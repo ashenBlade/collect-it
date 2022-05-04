@@ -13,21 +13,52 @@
     <div class="d-flex flex-column mb-0 d-block">
         <div class="w-100 h-100 bg-light rounded">
             <div class="p-3 mih-1">
-                <vc:music-cards musics="@Model.Musics"/>
+                @* <vc:music-cards musics="@Model.Musics"/> *@
+                <table class="table table-active">
+                    <thead>
+                    <tr>
+                        <th>
+                            №
+                        </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
+                            Автор
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var (m, i) in Model.Musics.Select((m, i) => ( m, i + 1 )))
+                    {
+                        <tr onclick="window.location.href = '/musics/@m.MusicId'" style="cursor: pointer;">
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @m.Name
+                            </td>
+                            <td>
+                                @m.OwnerName
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
             </div>
             <div class="d-flex justify-content-center mh-100">
                 <ul class="pagination">
                     <li class="page-item">
-                        <button class="page-link" type="button" @(Model.PageNumber == 1 
-                                                                    ? "disabled" 
-                                                                    : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
+                        <button class="page-link" type="button" @(Model.PageNumber == 1
+                                                                      ? "disabled"
+                                                                      : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
                             previous
                         </button>
                     </li>
                     <li class="page-item">
                         <button class="page-link" type="button" @(Model.Musics.Count < Model.MaxMusicsCount
-                                                                    ? "disabled"
-                                                                    : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
+                                                                      ? "disabled"
+                                                                      : $"onclick=location.href='{Url.Action("Music", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
                             next
                         </button>
                     </li>
