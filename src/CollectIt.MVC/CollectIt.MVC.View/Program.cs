@@ -57,8 +57,6 @@ var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "content", "images
 Directory.CreateDirectory(imagePath);
 services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
 services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
-Console.WriteLine(videoPath);
-Console.WriteLine(musicPath);
 Directory.CreateDirectory(videoPath);
 Directory.CreateDirectory(musicPath);
 

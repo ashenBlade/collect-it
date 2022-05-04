@@ -1,5 +1,4 @@
-﻿@using CollectIt.MVC.View.ViewModels
-@using CollectIt.Database.Entities.Account
+﻿@using CollectIt.Database.Entities.Account
 @using CollectIt.MVC.View.Controllers
 @using CollectIt.MVC.View.Views.Shared.Components.ImageCards
 @using CollectIt.MVC.View.Views.Shared.Components.SearchBar
@@ -21,17 +20,17 @@
             <div class="d-flex justify-content-center mh-100">
                 <ul class="pagination">
                     <li class="page-item">
-                        <button class="page-link" type="button" @(Model.PageNumber == 1 
-                                                                      ? "disabled" 
+                        <button class="page-link" type="button" @(Model.PageNumber == 1
+                                                                      ? "disabled"
                                                                       : $"onclick=location.href='{Url.Action("GetImagesByQuery", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
-                            &raquo;
+                            &laquo;
                         </button>
                     </li>
                     <li class="page-item">
                         <button class="page-link" type="button" @(Model.MaxPagesCount <= Model.PageNumber
                                                                       ? "disabled"
                                                                       : $"onclick=location.href='{Url.Action("GetImagesByQuery", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
-                            &laquo;
+                            &raquo;
                         </button>
                     </li>
                 </ul>
