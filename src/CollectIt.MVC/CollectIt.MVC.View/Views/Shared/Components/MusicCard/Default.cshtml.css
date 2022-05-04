@@ -1,4 +1,4 @@
-﻿.gradient-music{
+﻿.gradient-music {
     background: linear-gradient(to right, rgb(12, 18, 28) 0%, rgb(41, 47, 56) 100%);
 }
 
@@ -39,7 +39,7 @@
     flex: 1;
 }
 
-.music-name{
+.music-name {
     font-size: 0.875rem;
     line-height: 1.43;
 }
@@ -54,7 +54,7 @@
     font-weight: 400;
 }
 
-.empty{
+.empty {
     padding: 8px 24px;
 }
 
