@@ -4,6 +4,7 @@ using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
+using CollectIt.MVC.View.Views.Shared.Components.VideoCards;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -37,8 +38,28 @@ public class VideosController : Controller
         {
             return View("Error", new ErrorViewModel() {Message = "Invalid input for videos page"});
         }
-        // var videos = await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
-        return View("Videos");
+        var result = await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
+        var videos = result.Result.ToList();
+        
+        return View("Videos",
+            new VideoCardsViewModel()
+            {
+                Videos = videos.Select(i => new VideoViewModel()
+                    {
+                        Address = Url.Action("DownloadVideoContent", new {id = i.Id})!,
+                        Name = i.Name,
+                        VideoId = i.Id,
+                        Comments = Array.Empty<CommentViewModel>(),
+                        Tags = i.Tags,
+                        OwnerName = i.Owner.UserName,
+                        UploadDate = i.UploadDate,
+                        IsAcquired = false
+                    })
+                    .ToList(),
+                PageNumber = pageNumber,
+                MaxPagesCount = ( int ) Math.Ceiling(( double ) result.TotalCount / DefaultPageSize),
+                Query = query
+            });
     }
 
     [HttpGet("{id:int}")]

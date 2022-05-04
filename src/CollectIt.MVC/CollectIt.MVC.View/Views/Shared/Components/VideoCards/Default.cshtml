@@ -1,0 +1,13 @@
+﻿@model CollectIt.MVC.View.Views.Shared.Components.VideoCards.VideoCardsViewModel
+@using CollectIt.MVC.View.Views.Shared.Components.VideoCard
+
+<!-- m-0 p-0 mb-2 -->
+<div class="d-flex">
+    <div class="resources-box">
+        @foreach (var video in Model.Videos)
+        {
+            <vc:video-card video="@video"/>
+        }
+    </div>
+</div>
+    
