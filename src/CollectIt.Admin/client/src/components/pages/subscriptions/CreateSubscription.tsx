@@ -43,6 +43,7 @@ const CreateSubscription = () => {
                             let child:Array<React.ReactElement> = [];
                             switch (selectedItem as RestrictionType){
                                 case RestrictionType.AllowAll:
+                                    break;
                                 case RestrictionType.Author:
                                     child.push(createElement('label', {}, 'Author: '))
                                     child.push(createElement('input', {className: 'form-control',
@@ -59,6 +60,7 @@ const CreateSubscription = () => {
                                         placeholder: 'Days To', type: 'number'}))
                                     break;
                                 case RestrictionType.DenyAll:
+                                    break;
                                 case RestrictionType.Size:
                                     child.push(createElement('label', {}, 'Size: '))
                                     child.push(createElement('input', {className: 'form-control',
@@ -76,10 +78,11 @@ const CreateSubscription = () => {
                         }}
                         onRemove={(selectedList, selectedItem) => {
                             const temp: React.ReactElement[] = []
+                            const r = selectedList
                             const parent = createElement('div', {id: selectedItem});
-                            for (let i = 0; i < res.length; i++){
-                                if (res[i].props.id != parent.props.id) {
-                                    temp.push(res[i])
+                            for (let idx in res){
+                                if (res[idx].props.id != parent.props.id) {
+                                    temp.push(res[idx])
                                 }
                             }
                             // @ts-ignore
