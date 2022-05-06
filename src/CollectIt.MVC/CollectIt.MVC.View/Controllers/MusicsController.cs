@@ -43,7 +43,7 @@ public class MusicsController : Controller
                         UploadDate = source.UploadDate,
                         Address = Url.Action("DownloadMusicContent", new {musicId = id})!,
                         Tags = source.Tags,
-                        IsAcquired = user is not null && await _musicManager.IsAcquiredBy(source.OwnerId, id),
+                        IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
                         Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
                                                                                                   {
                                                                                                       Author = c.Owner
