@@ -1,12 +1,9 @@
-﻿using System.Data.Common;
-using CollectIt.Database.Abstractions;
+﻿using CollectIt.Database.Abstractions;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
@@ -23,7 +20,12 @@ public class PostgresqlVideoManager : IVideoManager
         _fileManager = fileManager;
     }
 
-    public async Task<Video> CreateAsync(string name, int ownerId, string[] tags, Stream content, string extension, int duration)
+    public async Task<Video> CreateAsync(string name,
+                                         int ownerId,
+                                         string[] tags,
+                                         Stream content,
+                                         string extension,
+                                         int duration)
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
@@ -102,7 +104,7 @@ public class PostgresqlVideoManager : IVideoManager
         {
             throw new VideoNotFoundException(videoId, "Video with provided id not found");
         }
-        
+
         var filename = file.FileName;
         _fileManager.Delete(filename);
         _context.Videos.Remove(file);
@@ -130,22 +132,25 @@ public class PostgresqlVideoManager : IVideoManager
                                           .ToListAsync(),
                    TotalCount = await _context.Videos.CountAsync()
                };
-
     }
 
     public async Task<PagedResult<Video>> QueryAsync(string query, int pageNumber, int pageSize)
     {
         if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
         if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
+        var q = _context.Videos
+                        .Where(v => v.TagsSearchVector.Matches(query))
+                        .OrderByDescending(v =>
+                                               v.TagsSearchVector.Rank(EF.Functions
+                                                                         .WebSearchToTsQuery("russian", query)));
         return new PagedResult<Video>()
                {
-                   Result = await _context.Videos
-                                          .Where(v => v.TagsSearchVector.Matches(query))
-                                          .OrderBy(v => v.Id)
-                                          .Skip(( pageNumber - 1 ) * pageSize)
-                                          .Take(pageSize)
-                                          .ToListAsync(),
-                   TotalCount = await _context.Videos.CountAsync()
+                   Result = await q
+                                 .Include(v => v.Owner)
+                                 .Skip(( pageNumber - 1 ) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync(),
+                   TotalCount = await q.CountAsync()
                };
     }
 
@@ -155,6 +160,7 @@ public class PostgresqlVideoManager : IVideoManager
         {
             throw new ArgumentNullException(nameof(name));
         }
+
         var video = await _context.Videos.SingleOrDefaultAsync(v => v.Id == videoId);
         if (video is null)
         {

@@ -1,14 +1,12 @@
-﻿using CollectIt.Database.Abstractions.Resources;
+﻿using CollectIt.Database.Abstractions;
+using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Resources;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CollectIt.Database.Infrastructure.Resources.Repositories;
 
 public class PostgresqlImageManager : IImageManager
-{    
+{
     private readonly PostgresqlCollectItDbContext _context;
 
     public PostgresqlImageManager(PostgresqlCollectItDbContext context)
@@ -16,7 +14,12 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension)
+    public async Task Create(int ownerId,
+                             string address,
+                             string name,
+                             string tags,
+                             Stream uploadedFile,
+                             string extension)
     {
         var fileName = $"{Guid.NewGuid()}.{extension}";
         await using (var fileStream = new FileStream(Path.Combine(address, fileName), FileMode.Create))
@@ -25,30 +28,27 @@ public class PostgresqlImageManager : IImageManager
         }
 
         var image = new Image()
-        {
-            Tags = tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-            Name = name,
-            FileName = fileName,
-            UploadDate = DateTime.UtcNow,
-            Extension = extension,
-            OwnerId = ownerId
-        };
+                    {
+                        Tags = tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                        Name = name,
+                        FileName = fileName,
+                        UploadDate = DateTime.UtcNow,
+                        Extension = extension,
+                        OwnerId = ownerId
+                    };
         await AddAsync(image);
     }
-    
+
     public string? GetExtension(string fileName)
     {
         var ext = fileName.Split(".").Last();
         if (ext != "jpg" && ext != "png")
             return null;
-        return fileName.Split(".").Last() == "jpg" ? "jpeg" : "png";
+        return fileName.Split(".").Last() == "jpg"
+                   ? "jpeg"
+                   : "png";
     }
-    
-    private string RenamePostedImage(string name)
-    {
-        return name.Replace(" ", "-").ToLower() + "-" + (_context.Images.Count() + 1); 
-    }
-    
+
     public async Task<int> AddAsync(Image item)
     {
         await _context.Images.AddAsync(item);
@@ -63,7 +63,7 @@ public class PostgresqlImageManager : IImageManager
                              .Include(img => img.Owner)
                              .SingleOrDefaultAsync();
     }
-    
+
     public async Task RemoveAsync(Image item)
     {
         _context.Images.Remove(item);
@@ -74,7 +74,8 @@ public class PostgresqlImageManager : IImageManager
     {
         return await _context.Images
                              .Skip(( pageNumber - 1 ) * pageSize)
-                             .Take(pageSize).ToListAsync();
+                             .Take(pageSize)
+                             .ToListAsync();
     }
 
     public IAsyncEnumerable<Image> GetAllByName(string name)
@@ -96,14 +97,52 @@ public class PostgresqlImageManager : IImageManager
                        .AnyAsync(aus => aus.UserId == userId && aus.ResourceId == imageId);
     }
 
+    public async Task<PagedResult<Image>> QueryAsync(string query, int pageSize, int pageNumber)
+    {
+        if (pageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize));
+        }
+
+        if (pageNumber < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageNumber));
+        }
+
+
+        var q = _context.Images
+                        .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                        .Include(img => img.Owner)
+                        .OrderByDescending(img =>
+                                               img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
+                                                                                                         query)));
+
+        return new PagedResult<Image>()
+               {
+                   Result = await q
+                                 .Skip(( pageNumber - 1 ) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync(),
+                   TotalCount = await q
+                                   .CountAsync()
+               };
+    }
+
     public IAsyncEnumerable<Image> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
     {
         return _context.Images
                        .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
                        .Include(img => img.Owner)
-                       .OrderByDescending(img => img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian", query)))
-                       .Skip((pageNumber - 1) * pageSize)
+                       .OrderByDescending(img =>
+                                              img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
+                                                                                                        query)))
+                       .Skip(( pageNumber - 1 ) * pageSize)
                        .Take(pageSize)
                        .AsAsyncEnumerable();
+    }
+
+    private string RenamePostedImage(string name)
+    {
+        return name.Replace(" ", "-").ToLower() + "-" + ( _context.Images.Count() + 1 );
     }
 }

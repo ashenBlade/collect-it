@@ -1,36 +1,57 @@
 @using CollectIt.Database.Entities.Account
 @model CollectIt.MVC.View.ViewModels.SearchBarViewModel
 
-<form asp-controller="@Model.Controller" 
-      asp-action="@Model.Action" 
-      method="get" 
-      asp-antiforgery="false" 
+<form asp-controller="@Model.Controller"
+      asp-action="@Model.Action"
+      method="get"
+      id="search-bar-form"
+      asp-antiforgery="false"
       class="input-group rounded-pill px-6 row">
-    <select id="resource-type-select" 
-            asp-for="ResourceType" 
+    <select id="resource-type-select"
+            asp-for="ResourceType"
             class="btn bg-light rounded-start-1 rounded-end-0 p-2 col-2">
         <option value="@(( int ) ResourceType.Image)" selected="@(Model.ResourceType == ResourceType.Image)">Изображения</option>
         <option value="@(( int ) ResourceType.Video)" selected="@(Model.ResourceType == ResourceType.Video)">Видео</option>
         <option value="@(( int ) ResourceType.Music)" selected="@(Model.ResourceType == ResourceType.Music)">Музыка</option>
     </select>
-    <input id="search-bar-query" name="q"
-        asp-for="Query" 
-           placeholder="Название, тэг, гэг..." 
+    <input id="search-bar-query"
+           asp-for="Query"
+           placeholder="Название, тэг, гэг..."
            class="form-control col-6 rounded-start-0 rounded-end-0"/>
     <button type="button" id="search-bar-button" class="btn bg-light border rounded-end-1 rounded-start-0 col-2">Найти</button>
 </form>
 <script>
+const form = $('#search-bar-form');
+
 const searchBarButton = $('#search-bar-button');
+const input = $("#search-bar-query");
+
+const onSubmit = () => {
+    const selected = $('#resource-type-select');
+    let selectedResource = selected.val();
+    
+    const path = selectedResource === '@(( int ) ResourceType.Image)' ? 'images'
+            : selectedResource === '@(( int ) ResourceType.Music)' ? 'musics' 
+            : selectedResource === '@(( int ) ResourceType.Video)' ? 'videos'
+            : '';
+    console.log(`path is ${path}`);
+    if (path === '') throw new Error('FUCK');
+    const query = input.val();
+    console.log(query);
+    const url = `https://localhost:7251/${path}?q=${encodeURIComponent(query)}&p=1`;
+    console.log(url)
+    window.location.href = url;
+}
+
+input.keypress(e => {
+    if (e.which === 13) {
+        onSubmit();
+        e.preventDefault()
+    }
+})
+
 searchBarButton.on('click', e => {
     e.preventDefault();
-    const selected = $('#resource-type-select');
-    const path = selected.val() === '@(( int ) ResourceType.Image)' ? 'images'
-        : selected.val() === '@(( int ) ResourceType.Music)' ? 'musics' 
-        : selected.val() === '@(( int ) ResourceType.Video)' ? 'videos'
-        : '';
-    const query = $('#search-bar-query').val();
-    console.log(query);
-    const url = `https://localhost:7251/${encodeURIComponent(path)}?q=${encodeURIComponent(query)}`;
-    window.location.href = url;
+    onSubmit();
 })
 </script>

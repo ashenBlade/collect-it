@@ -5,7 +5,7 @@ import {
   Delete,
   Get,
   HttpException,
-  HttpStatus,
+  HttpStatus, NotFoundException,
   Param,
   ParseIntPipe,
   Post,
@@ -42,6 +42,7 @@ export class UsersController {
       username: u.username,
       email: u.email,
       roles: u.roles?.map((r) => r.name) ?? [],
+      lockout: u.lockoutEnable
     }));
     return {
       totalCount: count,
@@ -51,22 +52,16 @@ export class UsersController {
 
   @Get(':userId')
   async getUserById(
-    @Param(
-      'userId',
-      new ParseIntPipe({
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      }),
-    )
-    userId: number,
-    @Res() res: Response,
-  ) {
+    @Param('userId', new ParseIntPipe()) userId: number) {
     const user = await this.usersService.getUserByIdAsync(userId);
-    if (!user) {
-      res.status(HttpStatus.NOT_FOUND);
-    } else {
-      res.send(ToReadUserDto(user));
+    if (!user) throw new NotFoundException();
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      roles: user?.roles.map(r => r.name) ?? [],
+      lockout: user.lockoutEnable
     }
-    res.end();
   }
 
   @Get('/with-email/:email')
@@ -145,5 +140,42 @@ export class UsersController {
     @Body('role') role: string,
   ) {
     await this.usersService.removeRoleFromUser(userId, role);
+  }
+
+  @Post(':userId/activate')
+  @AuthorizeAdmin()
+  async activateUser(@Param('userId', new ParseIntPipe()) userId: number) {
+    try {
+      await this.usersService.activateUserAsync(userId);
+    } catch (e) {
+      if (e instanceof NotFoundError) throw new NotFoundException({
+        message: 'User not found'
+      });
+      throw new BadRequestException();
+    }
+  }
+
+  @Post(':userId/deactivate')
+  @AuthorizeAdmin()
+  async deactivateUser(@Param('userId', new ParseIntPipe()) userId: number) {
+    try {
+      await this.usersService.deactivateUserAsync(userId);
+    } catch (e) {
+      if (e instanceof NotFoundError) throw new NotFoundException({
+        message: 'User not found'
+      });
+      throw new BadRequestException();
+    }
+  }
+
+  @Get('/search/with-username/:username')
+  async searchUsersByUsernameEntry(@Param('username') username: string) {
+    try {
+      const users = await this.usersService.searchUsersByUsernameEntry(username);
+      return users;
+    } catch (e) {
+      console.error(e)
+      throw new BadRequestException();
+    }
   }
 }

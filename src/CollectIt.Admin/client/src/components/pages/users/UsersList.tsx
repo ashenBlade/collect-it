@@ -46,10 +46,14 @@ const UsersList = () => {
     }
 
     const onSearchUsername = (username: string) => {
-        UsersService.findUserByUsernameAsync(username).then(u => {
-            console.log(u);
-            toEditUserPage(u.id);
+        if (username === '') {
+            downloadPageNumber(1);
+            return;
+        }
+        UsersService.searchUsersByUsernameEntry(username).then(u => {
+            setUsers(u);
         }).catch(err => {
+            alert(err);
             console.error(err);
         })
     }
@@ -80,7 +84,7 @@ const UsersList = () => {
                         <td className='Cell nameCell'>Username</td>
                         <td className='Cell nameCell'>E-mail</td>
                         <td className='Cell'>Roles</td>
-                        <td className='Cell'>Subscriptions</td>
+                        <td className='Cell'>Banned</td>
                     </th>
                     </thead>
                     <tbody className='mx-auto mt-5 table-hover'>
@@ -90,17 +94,17 @@ const UsersList = () => {
                                 <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
                                 <td className='Cell nameCell'>{i.email}</td>
                                 <td className='Cell'>{i.roles}</td>
-                                <td className='Cell'>{i.subscriptions}</td>
+                                <td className='Cell'>{i.lockout ? '+' : '' }</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
-                    <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
-                        <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
-                    </footer>
                 </>
             }
+            <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
+                <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
+            </footer>
         </div>
     );
 };

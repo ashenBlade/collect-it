@@ -3,9 +3,11 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   UsePipes,
@@ -19,6 +21,8 @@ import CreationException from '../common/creation.exception';
 import { ParseResourceTypePipe } from '../common/parse-resource-type.pipe';
 import { ResourceType } from '../common/resource-type';
 import { ToReadSubscriptionDto } from './dto/read-subscription.dto';
+import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
+import { NotFoundError } from "rxjs";
 
 @Authorize()
 @Controller('api/v1/subscriptions')
@@ -175,5 +179,20 @@ export class SubscriptionsController {
         message: e.message,
       });
     }
+  }
+
+  @Patch(':subscriptionId')
+  @AuthorizeAdmin()
+  @HttpCode(204)
+  @UsePipes(ValidationPipe)
+  async updateSubscription(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number,
+      @Body() dto: UpdateSubscriptionDto) {
+      try {
+        await this.subscriptionsService.updateSubscription(subscriptionId, dto.name, dto.description);
+      } catch (e) {
+        if (e instanceof NotFoundError) {
+          throw new NotFoundException();
+        }
+      }
   }
 }

@@ -1,17 +1,40 @@
-﻿
+﻿@using CollectIt.Database.Entities.Account
+@using CollectIt.MVC.View.Controllers
+@using CollectIt.MVC.View.Views.Shared.Components.VideoCards
+@using CollectIt.MVC.View.Views.Shared.Components.SearchBar
+@model CollectIt.MVC.View.Views.Shared.Components.VideoCards.VideoCardsViewModel
 @{
-    Layout = null;
+    Layout = "_ImagesLayout";
+    ViewData["Title"] = "Видео";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<div class="h-100">
+    <div class="w-100 my-6 h-25 justify-content-center align-items-center d-flex mb-3 mt-4">
+        <vc:search-bar chosenType="@ResourceType.Video" action="@nameof(VideosController.GetQueriedVideos)" controller="Videos" query="@Model.Query"/>
+    </div>
+    <div class="d-flex flex-column mb-0 d-block">
+        <div class="w-100 h-100 bg-light rounded">
+            <div class="p-3 mih-1">
+                <vc:video-cards videos="@Model.Videos"/>
+            </div>
+            <div class="d-flex justify-content-center mh-100">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.PageNumber == 1
+                                                                      ? "disabled"
+                                                                      : $"onclick=location.href='{Url.Action("GetQueriedVideos", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
+                            &laquo;
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.MaxPagesCount <= Model.PageNumber
+                                                                      ? "disabled"
+                                                                      : $"onclick=location.href='{Url.Action("GetQueriedVideos", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
+                            &raquo;
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-</body>
-</html>

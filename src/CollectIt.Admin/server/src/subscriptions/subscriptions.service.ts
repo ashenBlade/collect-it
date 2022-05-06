@@ -6,6 +6,7 @@ import { RestrictionsService } from './restrictions/restrictions.service';
 import { ResourceType } from '../common/resource-type';
 import { RestrictionType } from './restrictions/restriction-type';
 import CreationException from '../common/creation.exception';
+import { NotFoundError } from "rxjs";
 
 @Injectable()
 export class SubscriptionsService {
@@ -118,14 +119,13 @@ export class SubscriptionsService {
 
   async getSubscriptionByIdAsync(
     subscriptionId: number,
-  ): Promise<Subscription> {
-    const subscription = await this.subscriptionsRepository.findByPk(
-      subscriptionId,
-      {
-        include: [{ all: true }],
-      },
+  ){
+    return await this.subscriptionsRepository.findByPk(
+        subscriptionId,
+        {
+          include: [ { all: true } ],
+        },
     );
-    return subscription;
   }
 
   async getSubscriptionsByResourceType(
@@ -211,5 +211,21 @@ export class SubscriptionsService {
     if (affected[0] === 0) {
       throw new Error('Subscription with provided id not found');
     }
+  }
+
+  async updateSubscription(subscriptionId: number, name: string, description: string) {
+    if (!Number.isInteger(subscriptionId)) throw new Error(`Subscription Id must be integer. Given: ${subscriptionId}`);
+    if (!(name && description)) throw new Error(`Name or description are not provided`);
+    if (name.length < 6) throw new Error(`Name length must be greater than 5. Given: ${name.length}`);
+    if (description.length < 10) throw new Error(`Description length must be greater than 9. Given: ${description.length}`);
+    const affected = await this.subscriptionsRepository.update({
+      name: name,
+      description: description
+    }, {
+      where: {
+        id: subscriptionId
+      }
+    });
+    if (affected[0] === 0) throw new NotFoundError('');
   }
 }

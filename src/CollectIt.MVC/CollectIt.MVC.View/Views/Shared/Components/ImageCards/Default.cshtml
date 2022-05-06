@@ -7,42 +7,43 @@
     var g = Model.Images.Count % 3;
 }
 
-<!-- m-0 p-0 mb-2 -->
 <div class="d-flex">
     @for (var i = 0; i < 3; i++)
+    {
+        var temp = new List<ImageViewModel>();
+        if (i * k < Model.Images.Count)
         {
-            var temp = new List<ImageViewModel>();
-            if (i * k < Model.Images.Count)
+            if (i != 1)
             {
-                if (i != 1)
-                {
-                    temp = g switch
-                    {
-                        1 => i == 0 ? Model.Images.ToList().GetRange(0, k) 
-                            : Model.Images.Skip(i * k + 1).ToList(),
-                        2 => i == 0 ? Model.Images.ToList().GetRange(0, k + 1) 
-                            : Model.Images.Skip(i * k + 1).ToList(),
-                        _ => Model.Images.Skip(i * k).ToList().GetRange(0, k)
-                    };
-                }
-                else
-                {
-                    temp = g switch
-                    {
-                        1 => Model.Images.Skip(k).ToList().GetRange(0, k + 1),
-                        2 => Model.Images.Skip(k + 1).ToList().GetRange(0, k),
-                        _ => Model.Images.Skip(k).ToList().GetRange(0, k)
-                    };
-                }
+                temp = g switch
+                       {
+                       1 => i == 0
+                                ? Model.Images.ToList().GetRange(0, k)
+                                : Model.Images.Skip(i * k + 1).ToList(),
+                       2 => i == 0
+                                ? Model.Images.ToList().GetRange(0, k + 1)
+                                : Model.Images.Skip(i * k + 1).ToList(),
+                       _ => Model.Images.Skip(i * k).ToList().GetRange(0, k)
+                       };
             }
-            
-            
-            <div class="resources-box">
+            else
+            {
+                temp = g switch
+                       {
+                       1 => Model.Images.Skip(k).ToList().GetRange(0, k + 1),
+                       2 => Model.Images.Skip(k + 1).ToList().GetRange(0, k),
+                       _ => Model.Images.Skip(k).ToList().GetRange(0, k)
+                       };
+            }
+        }
+
+
+        <div class="resources-box">
             @foreach (var image in temp)
             {
                 <vc:image-card image="@image"/>
             }
-            </div> 
-        }
+        </div>
+    }
 </div>
     

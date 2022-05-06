@@ -88,6 +88,15 @@ export class UsersService {
         if (!response.ok) throw new Error((await response.json()).message);
     }
 
+    static async searchUsersByUsernameEntry(usernameEntry: string) {
+        if(!usernameEntry) throw new Error('Entry can not be empty');
+        const response = await UsersService.fetch(`${baseApiPath}/search/with-username/${encodeURIComponent(usernameEntry)}`, {
+            method: 'GET'
+        })
+        const users: User[] = await response.json();
+        return users;
+    }
+
     static async changeEmailAsync(id: number, email: string) {
         if (!email) throw new Error('Email not provided');
         if (email.length < 6) throw new Error('Email length must be greater than 6');
@@ -135,6 +144,28 @@ export class UsersService {
             headers: {
                 'Content-Type': 'application/json'
             }
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
+    }
+
+    static async lockoutUserAsync(userId: number) {
+        if (!Number.isInteger(userId)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${userId}/deactivate`, {
+            method: 'POST',
+        });
+        if (!response.ok) {
+            const json = await response.json();
+            throw new Error(json.message);
+        }
+    }
+
+    static async activateUserAsync(userId: number) {
+        if (!Number.isInteger(userId)) throw new Error('Id must be integer');
+        const response = await UsersService.fetch(`${baseApiPath}/${userId}/activate`, {
+            method: 'POST',
         });
         if (!response.ok) {
             const json = await response.json();
