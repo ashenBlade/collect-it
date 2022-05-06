@@ -2,6 +2,7 @@ import React, {createElement, useState} from 'react';
 import {ResourceType} from "../../entities/resource-type";
 import {Multiselect} from "multiselect-react-dropdown";
 import {RestrictionType} from "../../entities/restriction-type";
+import UniversalInput from "../../UI/UniversalInput/UniversalInput";
 
 const CreateSubscription = () => {
     const [name, setName] = useState('');
@@ -37,53 +38,14 @@ const CreateSubscription = () => {
                     </select>
                     <input id='download_count' className='form-control my-2 mb-3' type='number' placeholder='Max download count'
                            onInput={e => setDownloadCount(+e.currentTarget.value)}/>
-                    <Multiselect  isObject={false} options={options} placeholder={'Restrictions'}
+                    <Multiselect  isObject={false} options={options} placeholder={'Restrictions'} className='mb-2'
                         onSelect={(selectedList, selectedItem) => {
-
-                            let child:Array<React.ReactElement> = [];
-                            switch (selectedItem as RestrictionType){
-                                case RestrictionType.AllowAll:
-                                    break;
-                                case RestrictionType.Author:
-                                    child.push(createElement('label', {}, 'Author: '))
-                                    child.push(createElement('input', {className: 'form-control',
-                                        placeholder: 'Author'}))
-                                    break;
-                                case RestrictionType.DaysAfter:
-                                    child.push(createElement('label', {}, 'Days After: '))
-                                    child.push(createElement('input', {className: 'form-control',
-                                        placeholder: 'Days After', type: 'number'}))
-                                    break;
-                                case RestrictionType.DaysTo:
-                                    child.push(createElement('label', {}, 'Days To: '))
-                                    child.push(createElement('input', {className: 'form-control',
-                                        placeholder: 'Days To', type: 'number'}))
-                                    break;
-                                case RestrictionType.DenyAll:
-                                    break;
-                                case RestrictionType.Size:
-                                    child.push(createElement('label', {}, 'Size: '))
-                                    child.push(createElement('input', {className: 'form-control',
-                                        placeholder: 'Size', type: 'number'}))
-                                    break;
-                                case RestrictionType.Tags:
-                                    child.push(createElement('label', {}, 'Tags: '))
-                                    child.push(createElement('input', {className: 'form-control',
-                                    placeholder: 'Tags separated by whitespaces'}))
-                                    break;
-                            }
-                            const element = createElement('div',
-                                {id: selectedItem, className: 'row m-0 mb-3 mt-2'}, child);
-                            setRes((res) => [...res, element]);
+                            setRes((res) => [...res, UniversalInput(selectedItem)]);
                         }}
                         onRemove={(selectedList, selectedItem) => {
                             const temp: React.ReactElement[] = []
-                            const r = selectedList
-                            const parent = createElement('div', {id: selectedItem});
-                            for (let idx in res){
-                                if (res[idx].props.id != parent.props.id) {
-                                    temp.push(res[idx])
-                                }
+                            for (let i = 0; i < selectedList.length; i++){
+                                temp.push(UniversalInput(selectedList[i]))
                             }
                             // @ts-ignore
                             setRes((res) => [temp]);}}></Multiselect>
