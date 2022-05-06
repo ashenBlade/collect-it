@@ -14,14 +14,17 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
     private readonly UserManager _userManager;
     private readonly PostgresqlCollectItDbContext _context;
     private readonly IImageManager _imageManager;
+    private readonly IMusicManager _musicManager;
 
     public ResourceAcquisitionService(UserManager userManager, 
                           PostgresqlCollectItDbContext context,
-                          IImageManager imageManager)
+                          IImageManager imageManager,
+                          IMusicManager musicManager)
     {
         _userManager = userManager;
         _context = context;
         _imageManager = imageManager;
+        _musicManager = musicManager;
     }
     
     public Task<bool> IsResourceAcquiredByUserAsync(int userId, int resourceId)
@@ -42,9 +45,15 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         return await AcquireResourceAsync(userId, image);
     }
 
-    public Task<AcquiredUserResource> AcquireMusicAsync(int userId, int musicId)
+    public async Task<AcquiredUserResource> AcquireMusicAsync(int userId, int musicId)
     {
-        throw new NotImplementedException("No music manager implemented yet");
+        var music = await _musicManager.FindByIdAsync(musicId);
+        if (music is null)
+        {
+            throw new ResourceNotFoundException(musicId, $"Music with Id = {musicId} not found");
+        }
+
+        return await AcquireResourceAsync(userId, music);
     }
 
     public Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId)
@@ -60,7 +69,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                                            || s.Subscription.Restriction.IsSatisfiedBy(resource));
         if (affordable is null)
         {
-            throw new NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire image (Id = {resource.Id}) for user (Id = {userId})");
+            throw new NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire resource (Id = {resource.Id}) for user (Id = {userId})");
         }
         var acquiredUserResource = new AcquiredUserResource()
                                    {
