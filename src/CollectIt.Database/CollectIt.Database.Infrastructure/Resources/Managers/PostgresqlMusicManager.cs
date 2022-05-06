@@ -136,6 +136,7 @@ public class PostgresqlMusicManager : IMusicManager
                {
                    Result = await _context.Musics
                                           .OrderBy(m => m.Id)
+                                          .Include(m => m.Owner)
                                           .Skip(( pageNumber - 1 ) * pageSize)
                                           .Take(pageSize)
                                           .ToListAsync(),

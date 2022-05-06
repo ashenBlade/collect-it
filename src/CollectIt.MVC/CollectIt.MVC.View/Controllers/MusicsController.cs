@@ -58,11 +58,13 @@ public class MusicsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string query,
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query,
                                                       [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
                                                       int pageNumber = 1)
     {
-        var musics = await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
+        var musics = query is null
+                         ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
+                         : await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Musics",
                     new MusicCardsViewModel()
                     {
@@ -74,7 +76,7 @@ public class MusicsController : Controller
                                                                OwnerName = m.Owner.UserName
                                                            })
                                        .ToList(),
-                        Query = query,
+                        Query = query ?? string.Empty,
                         PageNumber = pageNumber,
                         MaxMusicsCount = musics.TotalCount
                     });
