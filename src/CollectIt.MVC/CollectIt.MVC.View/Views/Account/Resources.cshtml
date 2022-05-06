@@ -12,10 +12,18 @@
         </tr>
         </thead>
         <tbody>
+        @{ var type = ""; };
         @foreach (var (resource, i) in Model.Resources
                                                 .OrderBy(s => s.Date)
                                                 .Select((s, i) => ( s, i )))
         {
+            if (resource.Extension == "jpg")
+                type = "Images";
+            if (resource.Extension == "mp3")
+                type = "Musics";
+            if (resource.Extension == "webm")
+                type = "Videos";
+            
             <tr onclick="window.location='../Musics/@resource.Id'" role="button">
             <td>
                     @(i + 1)
@@ -27,10 +35,7 @@
                     @resource.Date.ToString("D")
                 </td>
                 <td>
-                    @if (resource.Extension == "jpg")
-                    {
-                        <div>Изображение</div>
-                    }
+                    @type
                 </td>
                 <td>
                 </td>
