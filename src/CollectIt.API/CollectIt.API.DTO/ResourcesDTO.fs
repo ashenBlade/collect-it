@@ -32,6 +32,29 @@ let ReadImageDTO ownerId name tags extension uploadDate = {
     UploadDate = uploadDate
 }
 
+[<CLIMutable>]
+type UploadImageDTO = { 
+    [<Required>]
+    OwnerId : int
+    
+    [<Required>]
+    [<Range(1, Int32.MaxValue)>]
+    Name : string
+    
+    [<Required>]
+    [<DataType(DataType.Text)>]
+    Tags : string
+    
+    [<Required>]
+    Content : IFormFile
+}
+
+let UploadImageDTO name tags content ownerId = {
+    OwnerId = ownerId
+    Name = name
+    Tags = tags
+    Content = content
+}
 
 [<CLIMutable>]
 type ReadVideoDTO = {

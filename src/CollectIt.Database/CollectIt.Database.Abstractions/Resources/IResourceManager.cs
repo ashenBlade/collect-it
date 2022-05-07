@@ -8,9 +8,9 @@ public interface IResourceManager<TItem>
 {
     Task<int> AddAsync(TItem item);
     Task<TItem?> FindByIdAsync(int id);
-    Task Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension);
+    Task<TItem> Create(int ownerId, string address, string name, string tags, Stream uploadedFile, string extension);
     string? GetExtension(string fileName);
-    Task RemoveAsync(TItem item);
+    Task RemoveAsync(int id);
     IAsyncEnumerable<TItem> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15);
     
     Task<List<TItem>> GetAllPaged(int pageNumber, int pageSize);
