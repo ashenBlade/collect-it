@@ -7,6 +7,7 @@ using CollectIt.Database.Infrastructure;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
+using CollectIt.Database.Infrastructure.Resources.Managers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Infrastructure.Resources;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -115,6 +116,13 @@ public class Program
                                                                                                      "Content",
                                                                                                      "Videos")));
         builder.Services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
+        builder.Services.AddScoped<IMusicFileManager>(_ =>
+                                                          new
+                                                              GenericPhysicalFileManager(Path
+                                                                                            .Combine(Directory.GetCurrentDirectory(),
+                                                                                                     "Content",
+                                                                                                     "Musics")));
+        builder.Services.AddScoped<IMusicManager, PostgresqlMusicManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
             config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], 
