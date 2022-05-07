@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics;
-using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
-using CollectIt.Database.Entities.Resources;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using CollectIt.MVC.View.Views.Shared.Components.ImageCards;
 
 namespace CollectIt.MVC.View.Controllers;
 
@@ -19,36 +16,34 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    [HttpGet]
-    [Route("")]
+    [HttpGet("")]
     public IActionResult Index()
     {
         return View();
     }
 
-    [HttpPost]
-    [Route("")]
+    [HttpPost("")]
     [IgnoreAntiforgeryToken]
     public IActionResult Index(IndexViewModel model)
     {
         return model.ResourceType switch
                {
-                   ResourceType.Image => RedirectToAction("GetImagesByQuery", "Images", new {q = model.Query}),
-                   ResourceType.Music => RedirectToAction("GetQueriedMusics", "Musics", new {q = model.Query}),
+                   ResourceType.Image => RedirectToAction("GetImagesByQuery", "Images", new {q = model.Query, p = 1}),
+                   ResourceType.Music => RedirectToAction("GetQueriedMusics", "Musics", new {q = model.Query, p = 1}),
                    _ => View(new IndexViewModel()
                              {
                                  Query = "Данный тип пока не поддерживается", ResourceType = ResourceType.Image
                              })
                };
     }
-    
+
     [HttpGet]
     [Route("privacy")]
     public IActionResult Privacy()
     {
         return View();
     }
-    
+
     [HttpGet]
     [Route("error")]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
