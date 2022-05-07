@@ -14,7 +14,7 @@ public class PostgresqlImageManager : IImageManager
         _context = context;
     }
 
-    public async Task Create(int ownerId,
+    public async Task<Image> Create(int ownerId,
                              string address,
                              string name,
                              string tags,
@@ -37,6 +37,7 @@ public class PostgresqlImageManager : IImageManager
                         OwnerId = ownerId
                     };
         await AddAsync(image);
+        return image;
     }
 
     public string? GetExtension(string fileName)
@@ -64,10 +65,14 @@ public class PostgresqlImageManager : IImageManager
                              .SingleOrDefaultAsync();
     }
 
-    public async Task RemoveAsync(Image item)
+    public async Task RemoveAsync(int id)
     {
-        _context.Images.Remove(item);
-        await _context.SaveChangesAsync();
+        var item = await _context.Images.Where(img => img.Id == id).SingleOrDefaultAsync();
+        if (item is not null)
+        {
+            _context.Images.Remove(item);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)

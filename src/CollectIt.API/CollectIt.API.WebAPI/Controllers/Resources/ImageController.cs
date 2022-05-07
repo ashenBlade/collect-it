@@ -2,10 +2,14 @@
 using System.Text;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
+using CollectIt.API.WebAPI.DTO;
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Resources;
 
@@ -75,16 +79,104 @@ public class ImageController : Controller
             .ToArray());
     }
 
+    /// <summary>
+    /// Post Image
+    /// </summary>
+    /// <response code="404">User not found</response>
+    /// <response code="204">Image was posted</response>
+    /// <response code="400">Incorrect data</response>
     [HttpPost("post")]
-    public async Task<IActionResult> PostImage(string tags, string name, Stream uploadedFile)
+    public async Task<IActionResult> PostImage([FromForm]ResourcesDTO.UploadImageDTO dto)
     {
-        var ext = _imageManager.GetExtension(uploadedFile.ToString());
-        if (ext is null)
-            return BadRequest("unexpected file extension");
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
-            return BadRequest("you are not logged in");
-        await _imageManager.Create(user.Id, _address, name, tags, uploadedFile, ext);
-        return Ok();
+        try
+        {
+            if (!TryGetExtension(dto.Content.FileName, out var ext))
+                return BadRequest();
+            await using var stream = dto.Content.OpenReadStream();
+            var image = await _imageManager.Create(
+                dto.OwnerId, 
+                _address,
+                dto.Name, 
+                dto.Tags, 
+                stream, 
+                ext);
+
+            return CreatedAtAction("FindImageById", new {id = image.Id}, ResourcesMappers.ToReadImageDTO(image));
+        }
+        catch (UserNotFoundException)
+        {
+            return NotFound();
+        }
+    }    
+    
+    private static bool TryGetExtension(string filename, out string? extension)
+    {
+        if (filename is null)
+        {
+            throw new ArgumentNullException(nameof(filename));
+        }
+        
+        extension = null;
+        var array = filename.Split('.');
+        if (array.Length < 2)
+        {
+            return false;
+        }
+
+        extension = array[^1].ToLower();
+        return SupportedImageExtensions.Contains(extension);
+    }
+    
+    private static readonly HashSet<string> SupportedImageExtensions = new() {"png", "jpeg", "jpg", "webp", "bmp"};
+    
+    
+    /// <summary>
+    /// Delete image
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="204">Image was deleted</response>
+    [HttpDelete("delete/{id:int}")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> DeleteImageById(int id)
+    {
+        try
+        {
+            await _imageManager.RemoveAsync(id);
+            return NoContent();
+        }
+        catch 
+        {
+            return NotFound();
+        }
+    }
+    
+    
+    /// <summary>
+    /// Download Image
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="400">Physical image not found</response>
+    /// <response code="402">Payment required</response>
+    /// <response code="200">Image was found</response>
+    [HttpGet("{id:int}/download")]
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> DownloadImage(int id)
+    {
+        var source = await _imageManager.FindByIdAsync(id);
+        if (source == null)
+        {
+            return NotFound();
+        }
+
+        var userId = int.Parse(_userManager.GetUserId(User));
+        if (!await _imageManager.IsAcquiredBy(id, userId))
+        {
+            return StatusCode(StatusCodes.Status402PaymentRequired);
+        }
+
+        var file = new FileInfo(Path.Combine(_address, source.FileName));
+        return file.Exists
+            ? PhysicalFile(file.FullName, $"image/{source.Extension}", source.FileName)
+            : BadRequest(new {Message = "File not found"});
     }
 }
