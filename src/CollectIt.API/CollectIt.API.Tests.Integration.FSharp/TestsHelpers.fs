@@ -1,6 +1,7 @@
 module CollectIt.API.Tests.Integration.FSharp.TestsHelpers
 
 open System.Collections.Generic
+open System.Net
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Net.Http.Json
@@ -127,4 +128,22 @@ let sendAsync
                 | None -> ()
 
         return response
+    }
+
+let AssertStatusCodeAsync
+    (client: HttpClient)
+    (address: string)
+    (expected: HttpStatusCode)
+    (method: HttpMethod option)
+    (bearer: HttpMethod option)
+    (content: HttpContent option)
+    =
+    use message =
+        new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
+
+    message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+
+    async {
+        let! response = client.SendAsync message |> Async.AwaitTask
+        Assert.Equal(expected, response.StatusCode)
     }
