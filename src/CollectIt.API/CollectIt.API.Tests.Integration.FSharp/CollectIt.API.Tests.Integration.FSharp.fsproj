@@ -9,10 +9,10 @@
 
     <ItemGroup>
         <Compile Include="StubVideoFileManager.fs"/>
-        <Compile Include="Tests.fs"/>
         <Compile Include="CollectItWebApplicationFactory.fs"/>
-        <Compile Include="Program.fs"/>
+        <Compile Include="ConnectResult.fs"/>
         <Compile Include="TestsHelpers.fs"/>
+        <Compile Include="Tests.fs"/>
     </ItemGroup>
 
     <ItemGroup>
