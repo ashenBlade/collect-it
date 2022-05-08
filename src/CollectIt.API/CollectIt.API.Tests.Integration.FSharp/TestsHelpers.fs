@@ -64,7 +64,9 @@ let getResultParsedFromJson<'a>
         | Some c -> c
         | None -> null
 
-    use message = new HttpRequestMessage(method, address, Content = content)
+    use message =
+        new HttpRequestMessage(method, address, Content = content)
+
     message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
 
     async {
@@ -78,7 +80,51 @@ let getResultParsedFromJson<'a>
         | Some o -> o.WriteLine json
         | _ -> ()
 
-        let parsed = JsonConvert.DeserializeObject<'a> json
+        let parsed =
+            JsonConvert.DeserializeObject<'a> json
+
         Assert.NotNull parsed
         return parsed
+    }
+
+let unwrapOpt opt def =
+    match opt with
+    | Some s -> s
+    | None -> def
+
+let (??>) = unwrapOpt
+
+let sendAsync
+    (client: HttpClient)
+    (address: string)
+    (bearer: string)
+    (content: HttpContent option)
+    (output: ITestOutputHelper option)
+    (ensure: bool option)
+    (method: HttpMethod option)
+    =
+    use message =
+        new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
+
+    message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+
+    async {
+        let! response = client.SendAsync message |> Async.AwaitTask
+
+        if (ensure ??> false) then
+            try
+                response.EnsureSuccessStatusCode() |> ignore
+            with
+            | ex ->
+                match output with
+                | Some o ->
+                    let! str =
+                        response.Content.ReadAsStringAsync()
+                        |> Async.AwaitTask
+
+                    o.WriteLine str
+                    raise ex
+                | None -> ()
+
+        return response
     }
