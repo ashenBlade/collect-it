@@ -130,12 +130,12 @@ let sendAsync
         return response
     }
 
-let AssertStatusCodeAsync
+let assertStatusCodeAsync
     (client: HttpClient)
     (address: string)
+    (bearer: string)
     (expected: HttpStatusCode)
     (method: HttpMethod option)
-    (bearer: HttpMethod option)
     (content: HttpContent option)
     =
     use message =

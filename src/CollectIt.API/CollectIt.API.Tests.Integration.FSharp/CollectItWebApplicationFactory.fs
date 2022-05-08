@@ -1,6 +1,7 @@
 module CollectIt.API.Tests.Integration.FSharp.CollectItWebApplicationFactory
 
 open System
+open System.Reflection
 open CollectIt.API.Tests.Integration.FSharp.StubVideoFileManager
 open CollectIt.API.WebAPI
 open CollectIt.Database.Infrastructure
@@ -20,7 +21,7 @@ type CollectItWebApplicationFactory() =
         builder.UseEnvironment "Development" |> ignore
 
         builder.ConfigureAppConfiguration (fun config ->
-            UserSecretsConfigurationExtensions.AddUserSecrets config
+            UserSecretsConfigurationExtensions.AddUserSecrets(config, Assembly.GetExecutingAssembly())
             |> ignore)
         |> ignore
 
@@ -32,7 +33,8 @@ type CollectItWebApplicationFactory() =
                 EntityFrameworkServiceCollectionExtensions.AddDbContext<PostgresqlCollectItDbContext>(
                     services,
                     (fun config ->
-                        let connectionString = ctx.Configuration["ConnectionStrings:Postgresql:Testing"]
+                        let connectionString =
+                            ctx.Configuration["ConnectionStrings:Postgresql:Testing"]
 
                         config.UseNpgsql(
                             connectionString,

@@ -5,6 +5,7 @@
 
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <UserSecretsId>1aac714b-fb18-4b39-b75f-85ef9d7aab89</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +13,7 @@
         <Compile Include="CollectItWebApplicationFactory.fs"/>
         <Compile Include="ConnectResult.fs"/>
         <Compile Include="TestsHelpers.fs"/>
-        <Compile Include="Tests.fs"/>
+        <Compile Include="AuthorizationControllerTests.fs"/>
     </ItemGroup>
 
     <ItemGroup>
