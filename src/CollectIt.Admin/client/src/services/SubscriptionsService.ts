@@ -43,7 +43,7 @@ export default class SubscriptionsService {
         return subscription;
     }
 
-    static async updateSubscriptionBatchAsync({id, name, description}: {id: number, name: string, description: string}) {
+    static async updateSubscriptionBatchAsync(id: number, name: string, description: string) {
         if (!(name && description)) throw new Error('Name or description are not provided');
         if (name.length < 6) throw new Error(`Name length must be greater than 5. Given: ${name.length}`);
         if (description.length < 10) throw new Error(`Description length must be greater than 9. Given: ${description.length}`);

@@ -30,22 +30,20 @@ const EditMusic = () => {
     }, []);
 
     const saveName = (newName: string) => {
-        console.log('New name', newName);
         if (!music) return;
         MusicsService.changeMusicNameAsync(musicId, newName).then(_ => {
             setName(newName);
             setDisplayName(newName);
         }).catch(_ => {
-            alert('Could not change image name. Try later.')
+            alert('Could not change music name. Try later.')
         })
     }
 
     const saveTags = (newTags: string[]) => {
-        console.log('Tags', newTags)
         MusicsService.changeMusicTagsAsync(musicId, newTags).then(_ => {
             setTags(newTags);
         }).catch(_ => {
-            alert('Could not change image tags. Try later.')
+            alert('Could not change music tags. Try later.')
         })
     }
 
@@ -66,7 +64,6 @@ const EditMusic = () => {
                 loaded ?
                     <div className='col-12 p-3'>
                         <p className='h2 text-center'>{displayName}</p>
-
                         <div className='ms-4'>
                             <div className='h6 d-block'>
                                 ID: {music?.id}
