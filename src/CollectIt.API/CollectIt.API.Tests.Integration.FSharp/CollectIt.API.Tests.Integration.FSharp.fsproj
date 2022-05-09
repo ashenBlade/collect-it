@@ -15,6 +15,7 @@
         <Compile Include="TestsHelpers.fs"/>
         <Compile Include="AuthorizationControllerTests.fs"/>
         <Compile Include="RolesControllerTests.fs"/>
+        <Compile Include="UsersControllerTests.fs"/>
     </ItemGroup>
 
     <ItemGroup>
