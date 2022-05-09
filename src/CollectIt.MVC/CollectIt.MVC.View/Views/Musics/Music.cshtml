@@ -18,16 +18,16 @@
                 <button class="image-action-btn border-0 rounded-pill"><i class="fa-regular fa-share-from-square"></i> Поделиться</button>
             </div>
             <div class="image-action-btn">
-        @if (Model.IsAcquired)
-        {
-            <a href="@Model.Address" class="image-action-btn border-0 rounded-pill bg-success" download>Загрузить</a>
-        }
-        else
-        {
-            <form method="post" asp-controller="ResourceAcquiring" asp-action="BuyMusic" asp-route-musicId="@Model.MusicId">
-                <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill" value="Приобрести">
-            </form>
-        }
+                @if (Model.IsAcquired)
+                {
+                    <a href="@Model.DownloadAddress" class="image-action-btn text-dark border-0 p-2 text-decoration-none rounded-pill bg-success" download>Загрузить</a>
+                }
+                else
+                {
+                    <form method="post" asp-controller="ResourceAcquiring" asp-action="BuyMusic" asp-route-musicId="@Model.MusicId">
+                        <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill" value="Приобрести">
+                    </form>
+                }
             </div>
         </div>
     </div>
@@ -43,37 +43,38 @@
         @Model.OwnerName
     </div>
     <ul class="row p-2 m-0 l-s-t-none" style="width: 40%">
-         @foreach (var tag in Model.Tags)
-         {
-             <li class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
-                 @tag
-             </li>
-         }
+        @foreach (var tag in Model.Tags)
+        {
+            <li class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">
+                @tag
+            </li>
+        }
     </ul>
 </div>
 <div class="text-decoration-none">
-        @foreach (var comment in Model.Comments)
-        {
-            <div class="container rounded blur text-blur shadow mb-3 py-2 text-start">
-                <div class="row pb-1 border-bottom m-0 text-start">
-                    <div class="text-blur" style="width: auto; height: auto">
-                        @comment.Author
-                    </div>
-                    <div class="text-blur ms-auto" style="width: auto; height: auto">
-                        @comment.PostTime
-                    </div>
+    @foreach (var comment in Model.Comments)
+    {
+        <div class="container rounded blur text-blur shadow mb-3 py-2 text-start">
+            <div class="row pb-1 border-bottom m-0 text-start">
+                <div class="text-blur" style="width: auto; height: auto">
+                    @comment.Author
                 </div>
-                @comment.Comment
+                <div class="text-blur ms-auto" style="width: auto; height: auto">
+                    @comment.PostTime
+                </div>
             </div>
-        }
+            @comment.Comment
+        </div>
+    }
 </div>
-@if(User.Identity!.IsAuthenticated){
-<form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
-    <label class="text-blur">Добавить комментарий:</label>
-    <input type="hidden" name="ImageId" value="@Model.MusicId"/>
-    <textarea name="Content" class="form-control blur-light p-3" placeholder="Оставить комментарий"></textarea>
-    <button type="submit" class="btn btn-light rounded border-0 mt-3">Отправить комментарий</button>
-</form>
+@if (User.Identity!.IsAuthenticated)
+{
+    <form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
+        <label class="text-blur">Добавить комментарий:</label>
+        <input type="hidden" name="ImageId" value="@Model.MusicId"/>
+        <textarea name="Content" class="form-control blur-light p-3" placeholder="Оставить комментарий"></textarea>
+        <button type="submit" class="btn btn-light rounded border-0 mt-3">Отправить комментарий</button>
+    </form>
 }
 else
 {

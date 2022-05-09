@@ -194,7 +194,7 @@ public class PostgresqlMusicManager : IMusicManager
             throw new ResourceNotFoundException(musicId, "Music with provided id not found");
         }
 
-        var filename = file.Name;
+        var filename = file.FileName;
         return _fileManager.GetContent(filename);
     }
 }

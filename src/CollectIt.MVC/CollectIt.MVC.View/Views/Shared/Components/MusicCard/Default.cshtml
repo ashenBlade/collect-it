@@ -8,14 +8,15 @@
     <div class="inbox-p music-text">
         <div class="music-action-box">
             <div>
-                <button><i class="fa-solid fa-circle-play"></i></button>
+                @* <button><i class="fa-solid fa-circle-play"></i></button> *@
+                <audio src="@Model.BlobAddress" controls="controls" class="">@Model.Name</audio>
             </div>
             <div class="d-flex align-items-center music-author-box">
                 <div class="d-flex overflow-hidden flex-column justify-content-center">
                     <div class="d-flex align-items-center mb-1">
                         <div class="d-flex align-items-center me-2"></div>
                         <p class="fw-bold music-name m-0">
-                            <a asp-controller="Musics" asp-action="Music" asp-route-id="@Model.MusicId" 
+                            <a asp-controller="Musics" asp-action="Music" asp-route-id="@Model.MusicId"
                                class="d-block overflow-hidden text-nowrap music-name-link text-decoration-none">
                                 @Model.Name
                             </a>
