@@ -2,13 +2,25 @@ import React, { useState } from 'react';
 import { ResourceType } from "../../entities/resource-type";
 import { RestrictionType } from "../../entities/restriction-type";
 import { FormSelect } from "react-bootstrap";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {AuthService} from "../../../services/AuthService";
 
+interface IFormInput {
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+    count: number;
+}
+
 const CreateSubscription = () => {
+    const { register, handleSubmit } = useForm<IFormInput>();
+    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [price, setPrice] = useState<number>();
     const [duration, setDuration] = useState<number>();
+    const [price, setPrice] = useState<number>();
     const [type, setType] = useState<ResourceType>(ResourceType.Any);
     const [downloadCount, setDownloadCount] = useState<number>();
     const [error, setError] = useState<string>('');
@@ -74,28 +86,31 @@ const CreateSubscription = () => {
                            placeholder='Name'
                            value={name}
                            onInput={e => setName(e.currentTarget.value)}
-                           required/>
+                           {...register("name", { required: true, minLength: 6 })}/>
                     <input className={inputClassList}
                            type='text'
                            placeholder='Description'
                            value={description}
-                           onInput={e => setDescription(e.currentTarget.value)}/>
+                           onInput={e => setDescription(e.currentTarget.value)}
+                           {...register("description", { required: true, minLength: 10 })}/>
                     <input className={inputClassList}
                            type='number'
                            placeholder='Price'
                            value={price}
                            onInput={e => setPrice(+e.currentTarget.value)}
-                           required/>
+                           {...register("price", { required: true, min: 0 })}/>
                     <input className={inputClassList}
                            type='number'
                            value={duration}
                            placeholder='Month duration'
-                           onInput={e => setDuration(+e.currentTarget.value)}/>
+                           onInput={e => setDuration(+e.currentTarget.value)}
+                           {...register("duration", { required: true, min: 1 })}/>
                     <input className={inputClassList}
                            type='number'
                            value={downloadCount}
                            placeholder='Max download count'
-                           onInput={e => setDownloadCount(+e.currentTarget.value)}/>
+                           onInput={e => setDownloadCount(+e.currentTarget.value)}
+                           {...register("count", { required: true, min: 1 })}/>
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
                         <option value={ResourceType.Any}>Any</option>
