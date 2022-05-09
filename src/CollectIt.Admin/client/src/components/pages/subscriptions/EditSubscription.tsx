@@ -1,40 +1,50 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router";
 import Subscription from "../../entities/subscription";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import {Button} from "react-bootstrap";
+import { Button } from "react-bootstrap";
 
 const EditSubscription = () => {
     const params = useParams();
     const subscriptionId = Number(params.subscriptionId?.trim());
     const nav = useNavigate();
-    if (!Number.isInteger(subscriptionId))
+    if (!Number.isInteger(subscriptionId)) {
+        alert('Not valid subscription id provided')
         nav('/subscriptions');
-    const [sub, setSub] = useState<Subscription | null>(null);
+    }
+
+    const [subscription, setSubscription] = useState<Subscription>();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [loaded, setLoaded] = useState(false);
+    const [active, setActive] = useState(true)
 
     useEffect(() => {
-        SubscriptionsService.getSubscriptionByIdAsync(subscriptionId).then(m => {
-            setName(m.name);
-            setDescription(m.description);
-            setSub(m);
+        SubscriptionsService.getSubscriptionByIdAsync(subscriptionId).then(s => {
+            setName(s.name);
+            setDescription(s.description);
+            setActive(s.active)
+            setSubscription(s);
             setLoaded(true);
         }).catch(err => {
-            alert(err.toString())
+            console.error(err)
         })
     }, []);
 
     const saveNameAndDescription = (newName: string,newDescription: string) => {
-        if (!sub) return;
-        SubscriptionsService.updateSubscriptionBatchAsync(subscriptionId, newName, newDescription).catch(e => {
-            alert(e);
+        if (!subscription) return;
+        SubscriptionsService.updateSubscriptionBatchAsync(subscriptionId, newName, newDescription)
+        .then(() => {
+            setName(newName)
+            setDescription(newDescription)
+        })
+        .catch(e => {
+            console.error(e)
         })
     }
 
     const switchSub = () => {
-        sub?.active ? SubscriptionsService.deactivateSubscriptionAsync(subscriptionId).catch(e => {alert(e)})
+        subscription?.active ? SubscriptionsService.deactivateSubscriptionAsync(subscriptionId).catch(e => {alert(e)})
             : SubscriptionsService.activateSubscriptionAsync(subscriptionId).catch(e => {alert(e)})
     }
 
@@ -43,25 +53,25 @@ const EditSubscription = () => {
             {
                 loaded ?
                     <div className='col-12 p-3'>
-                        <p className='h2 text-center'>{sub?.name}</p>
+                        <p className='h2 text-center'>{name}</p>
                         <div className='ms-4'>
                             <div className='h6 d-block'>
-                                ID: {sub?.id}
+                                ID: {subscription?.id}
                             </div>
                             <div className='h6 d-block'>
-                                Name: {sub?.name}
+                                Name: {subscription?.name}
                             </div>
                             <div className='h6 d-block'>
-                                Description: {sub?.description}
+                                Description: {description}
                             </div>
                             <div className='h6 d-block'>
-                                Status: {sub?.active}
+                                Status: {active ? 'Active' : 'Deactivated'}
                             </div>
                             <div className='h6 d-block'>
-                                Duration: {sub?.monthDuration}
+                                Duration: {subscription?.monthDuration} months
                             </div>
                             <div className='h6 d-block'>
-                                Price: {sub?.price}
+                                Price: {subscription?.price}₽
                             </div>
                         </div>
                         Name:
@@ -69,21 +79,27 @@ const EditSubscription = () => {
                             <input type='text'
                                    className='form-control mx-1'
                                    defaultValue={name}
-                                   onChange={e => {setName(e.currentTarget.value)}}/></div>
+                                   onChange={e => {setName(e.currentTarget.value)}}/>
+                        </div>
                         Description:
                         <div className='d-flex w-100 mx-auto my-2'>
                             <input type='text'
                                    className='form-control mx-1'
                                    defaultValue={description}
-                                   onChange={e => {setDescription(e.currentTarget.value)}}/></div>
+                                   onChange={e => {setDescription(e.currentTarget.value)}}/>
+                        </div>
                         <Button type ='button'  className='btn btn-primary my-2' onClick={e => {
                             e.preventDefault();
                             saveNameAndDescription(name,description);
-                        }}>Save</Button>
+                        }}>
+                            Save
+                        </Button>
                         <Button type ='button' className='btn btn-primary my-2 mx-5' onClick={e => {
                             e.preventDefault();
                             switchSub();
-                        }}>Activate/Deactivate</Button>
+                        }}>
+                            Activate/Deactivate
+                        </Button>
                     </div>
                     : <p>Loading...</p>
             }

@@ -184,7 +184,7 @@ export class SubscriptionsController {
   @Patch(':subscriptionId')
   @AuthorizeAdmin()
   @HttpCode(204)
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   async updateSubscription(@Param('subscriptionId', new ParseIntPipe()) subscriptionId: number,
       @Body() dto: UpdateSubscriptionDto) {
       try {
@@ -193,6 +193,10 @@ export class SubscriptionsController {
         if (e instanceof NotFoundError) {
           throw new NotFoundException();
         }
+        console.error(e)
+        throw new BadRequestException({
+          message: 'Fuck this shit'
+        })
       }
   }
 }

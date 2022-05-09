@@ -52,7 +52,7 @@ export default class SubscriptionsService {
         const response = await SubscriptionsService.fetch(`${baseApiPath}/${id}`, {
             method: 'PATCH',
             headers: {
-                'ContentType': 'application/json'
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 name: name,
