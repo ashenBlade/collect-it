@@ -5,6 +5,7 @@ open System.Net
 open System.Net.Http
 open System.Net.Http.Headers
 open System.Net.Http.Json
+open CollectIt.API.Tests.Integration.FSharp.CollectItWebApplicationFactory
 open CollectIt.API.Tests.Integration.FSharp.ConnectResult
 open CollectIt.Database.Infrastructure
 open Microsoft.FSharp.Control
@@ -12,7 +13,7 @@ open Newtonsoft.Json
 open Xunit
 open Xunit.Abstractions
 
-let GetBearerForUserAsync
+let getBearerForUserAsync
     (client: HttpClient)
     (username: string option)
     (password: string option)
@@ -33,15 +34,14 @@ let GetBearerForUserAsync
           KeyValuePair("username", username)
           KeyValuePair("password", password) ]
 
-    let message =
-        new HttpRequestMessage(HttpMethod.Post, "connect/token", Content = new FormUrlEncodedContent(formContent))
 
-    async {
-        let! res = (client.SendAsync message |> Async.AwaitTask)
+    task {
+        use message =
+            new HttpRequestMessage(HttpMethod.Post, "connect/token", Content = new FormUrlEncodedContent(formContent))
 
-        let! value =
-            HttpContentJsonExtensions.ReadFromJsonAsync<ConnectResult> res.Content
-            |> Async.AwaitTask
+        let! res = client.SendAsync message
+
+        let! value = HttpContentJsonExtensions.ReadFromJsonAsync<ConnectResult> res.Content
 
         return value.Bearer
     }
@@ -65,17 +65,15 @@ let getResultParsedFromJson<'a>
         | Some c -> c
         | None -> null
 
-    use message =
-        new HttpRequestMessage(method, address, Content = content)
+    task {
+        use message =
+            new HttpRequestMessage(method, address, Content = content)
 
-    message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+        message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
 
-    async {
         let! result = client.SendAsync message |> Async.AwaitTask
 
-        let! json =
-            result.Content.ReadAsStringAsync()
-            |> Async.AwaitTask
+        let! json = result.Content.ReadAsStringAsync()
 
         match outputHelper with
         | Some o -> o.WriteLine json
@@ -104,13 +102,13 @@ let sendAsync
     (ensure: bool option)
     (method: HttpMethod option)
     =
-    use message =
-        new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
+    task {
+        use message =
+            new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
 
-    message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+        message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
 
-    async {
-        let! response = client.SendAsync message |> Async.AwaitTask
+        let! response = client.SendAsync message
 
         if (ensure ??> false) then
             try
@@ -119,9 +117,7 @@ let sendAsync
             | ex ->
                 match output with
                 | Some o ->
-                    let! str =
-                        response.Content.ReadAsStringAsync()
-                        |> Async.AwaitTask
+                    let! str = response.Content.ReadAsStringAsync()
 
                     o.WriteLine str
                     raise ex
@@ -138,12 +134,21 @@ let assertStatusCodeAsync
     (method: HttpMethod option)
     (content: HttpContent option)
     =
-    use message =
-        new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
 
-    message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+    task {
+        use message =
+            new HttpRequestMessage(method ??> HttpMethod.Get, address, Content = (content ??> null))
 
-    async {
-        let! response = client.SendAsync message |> Async.AwaitTask
+        message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
+        let! response = client.SendAsync message
         Assert.Equal(expected, response.StatusCode)
+    }
+
+type InitializationResult = { Bearer: string; Client: HttpClient }
+
+let initialize (factory: CollectItWebApplicationFactory) (username: string option) (password: string option) =
+    task {
+        let client = factory.CreateClient()
+        let! bearer = getBearerForUserAsync client username password None
+        return { Bearer = bearer; Client = client }
     }
