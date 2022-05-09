@@ -23,7 +23,7 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
 
         [<Fact>]
         member this.``Should get valid token with admin username and password``() =
-            async {
+            task {
                 let admin =
                     PostgresqlCollectItDbContext.AdminUser
 
@@ -39,14 +39,7 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                 use message =
                     new HttpRequestMessage(HttpMethod.Post, "/connect/token", Content = content)
 
-                let log x = this.log (x.ToString())
-                log 1
-
-                let! response =
-                    client.SendAsync(message, Async.DefaultCancellationToken)
-                    |> Async.AwaitTask
-
-                log 2
+                let! response = client.SendAsync(message, Async.DefaultCancellationToken)
 
                 let! result =
                     HttpContentJsonExtensions.ReadFromJsonAsync<OpenIddictResponseSuccess>(
@@ -54,34 +47,29 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                         JsonSerializerOptions(JsonSerializerDefaults.Web),
                         Async.DefaultCancellationToken
                     )
-                    |> Async.AwaitTask
 
-                log 3
                 Assert.NotNull result
                 Assert.Equal("Bearer", result.TokenType)
                 Assert.NotEmpty result.AccessToken
             }
-        //            |> Async.AwaitTask
-//            |> Async.RunSynchronously
 
         [<Fact>]
         member this.``Register user with valid username, email and password should create new user``() =
-            use client = this._factory.CreateClient()
-            let username = "SomeValidUsername"
-            let password = "SomeP@ssw0rd"
-            let email = "test@mail.ru"
-
-            let form =
-                new FormUrlEncodedContent(
-                    [ KeyValuePair("username", username)
-                      KeyValuePair("password", password)
-                      KeyValuePair("email", email) ]
-                )
-
-            let message =
-                new HttpRequestMessage(HttpMethod.Post, "/connect/register", Content = form)
-
             task {
+                use client = this._factory.CreateClient()
+                let username = "SomeValidUsername"
+                let password = "SomeP@ssw0rd"
+                let email = "test@mail.ru"
+
+                let form =
+                    new FormUrlEncodedContent(
+                        [ KeyValuePair("username", username)
+                          KeyValuePair("password", password)
+                          KeyValuePair("email", email) ]
+                    )
+
+                let message =
+                    new HttpRequestMessage(HttpMethod.Post, "/connect/register", Content = form)
 
                 let! response = client.SendAsync message
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode)
@@ -90,6 +78,34 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                 Assert.Equal(username, actual.UserName)
                 Assert.Equal(email, actual.Email)
             }
+
+        [<Fact>]
+        member this.``Register with already registered username - Should return BadRequest``() =
+            task {
+                use client = this._factory.CreateClient()
+
+                let user =
+                    PostgresqlCollectItDbContext.AdminUser
+
+                let dto: CreateUserDTO =
+                    { UserName = user.UserName
+                      Email = "oleg@mail.ru"
+                      Password = "P@ssw0rd2H@rd" }
+
+                let form =
+                    new FormUrlEncodedContent(
+                        [ KeyValuePair("username", dto.UserName)
+                          KeyValuePair("email", dto.Email)
+                          KeyValuePair("password", dto.Password) ]
+                    )
+
+                use message =
+                    new HttpRequestMessage(HttpMethod.Post, "/connect/register", Content = form)
+
+                let! response = client.SendAsync message
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode)
+            }
+
 
 
 
