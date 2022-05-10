@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from "react-router";
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router";
 import Subscription from "../../entities/subscription";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import { Button } from "react-bootstrap";
+import {Button} from "react-bootstrap";
 
 const EditSubscription = () => {
     const params = useParams();
@@ -38,13 +38,13 @@ const EditSubscription = () => {
     const saveNameAndDescription = (newName: string,newDescription: string) => {
         if (!subscription) return;
         SubscriptionsService.updateSubscriptionBatchAsync(subscriptionId, newName, newDescription)
-        .then(() => {
-            setDisplayName(newName)
-            setDisplayDescription(newDescription)
-        })
-        .catch(e => {
-            console.error(e)
-        }).then(()=>{alert('Subscription updated successfully')})
+            .then(() => {
+                setDisplayName(newName)
+                setDisplayDescription(newDescription)
+            })
+            .catch(e => {
+                console.error(e)
+            }).then(()=>{alert('Subscription updated successfully')})
     }
 
     const switchSub = () => {
@@ -105,24 +105,25 @@ const EditSubscription = () => {
                             Save
                         </Button>
                         { active ?
-                        <Button type ='button' className='btn btn-danger my-2 mx-5' onClick={e => {
-                            e.preventDefault();
-                            switchSub();
-                        }}>
-                            Deactivate
-                        </Button>
-                        :
-                        <Button type ='button' className='btn btn-success my-2 mx-5' onClick={e => {
-                            e.preventDefault();
-                            switchSub();
-                        }}>
-                            Activate
-                        </Button>}
+                            <Button type ='button' className='btn btn-danger my-2 mx-5' onClick={e => {
+                                e.preventDefault();
+                                switchSub();
+                            }}>
+                                Deactivate
+                            </Button>
+                            :
+                            <Button type ='button' className='btn btn-success my-2 mx-5' onClick={e => {
+                                e.preventDefault();
+                                switchSub();
+                            }}>
+                                Activate
+                            </Button>}
                     </div>
                     : <p>Loading...</p>
             }
         </div>
     );
 };
+
 
 export default EditSubscription;
