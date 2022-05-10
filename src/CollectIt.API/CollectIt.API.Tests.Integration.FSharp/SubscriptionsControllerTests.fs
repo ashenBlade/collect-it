@@ -11,8 +11,8 @@ open CollectIt.Database.Infrastructure
 open Xunit
 open Xunit.Abstractions
 
-
-type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
+[<Collection("Subscriptions")>]
+type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
     class
         member this._factory = factory
         member this._output = output
@@ -58,7 +58,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let expected = PostgresqlCollectItDbContext.SilverSubscription
+
+                let expected =
+                    PostgresqlCollectItDbContext.SilverSubscription
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadSubscriptionDTO>
@@ -122,8 +124,12 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let newSubscriptionName = "Some brand new subscription name"
-                let subscription = PostgresqlCollectItDbContext.BronzeSubscription
+
+                let newSubscriptionName =
+                    "Some brand new subscription name"
+
+                let subscription =
+                    PostgresqlCollectItDbContext.BronzeSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -169,8 +175,12 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let newSubscriptionDescription = "Some brand new subscription description"
-                let subscription = PostgresqlCollectItDbContext.SilverSubscription
+
+                let newSubscriptionDescription =
+                    "Some brand new subscription description"
+
+                let subscription =
+                    PostgresqlCollectItDbContext.SilverSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -216,7 +226,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let subscription = PostgresqlCollectItDbContext.GoldenSubscription
+
+                let subscription =
+                    PostgresqlCollectItDbContext.GoldenSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -263,7 +275,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let subscription = PostgresqlCollectItDbContext.GoldenSubscription
+
+                let subscription =
+                    PostgresqlCollectItDbContext.GoldenSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -357,8 +371,12 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let authorId = PostgresqlCollectItDbContext.DefaultUserOneId
-                let restriction: CreateAuthorRestrictionDTO = CreateAuthorRestrictionDTO(authorId)
+
+                let authorId =
+                    PostgresqlCollectItDbContext.DefaultUserOneId
+
+                let restriction: CreateAuthorRestrictionDTO =
+                    CreateAuthorRestrictionDTO(authorId)
 
                 let dto: CreateSubscriptionDTO =
                     { Name = "Some new subscription name"
