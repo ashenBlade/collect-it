@@ -15,7 +15,7 @@ interface IFormInput {
 }
 
 const CreateSubscription = () => {
-    const { register, handleSubmit } = useForm<IFormInput>();
+    const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({mode: 'onBlur'});
     const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
 
     const [name, setName] = useState('');
@@ -115,7 +115,7 @@ const CreateSubscription = () => {
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             <div className='p-3'>
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <p className='h2 mb-3 text-center'>Create subscription</p>
                     <input className={inputClassList}
                            type='text'
@@ -123,30 +123,40 @@ const CreateSubscription = () => {
                            value={name}
                            onInput={e => setName(e.currentTarget.value)}
                            {...register("name", { required: true, minLength: 6 })}/>
+                    {errors?.name?.type === "required" && <p className='text-danger'>This field is required</p>}
+                    {errors?.name?.type === "minLength" && <p className='text-danger'>This field must have at least 6 symbols</p>}
                     <input className={inputClassList}
                            type='text'
                            placeholder='Description'
                            value={description}
                            onInput={e => setDescription(e.currentTarget.value)}
                            {...register("description", { required: true, minLength: 10 })}/>
+                    {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
+                    {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
                     <input className={inputClassList}
                            type='number'
                            placeholder='Price'
                            value={price}
                            onInput={e => setPrice(+e.currentTarget.value)}
                            {...register("price", { required: true, min: 0 })}/>
+                    {errors?.price?.type === "required" && <p className='text-danger'>This field is required</p>}
+                    {errors?.price?.type === "minLength" && <p className='text-danger'>This field must be not negative</p>}
                     <input className={inputClassList}
                            type='number'
                            value={duration}
                            placeholder='Month duration'
                            onInput={e => setDuration(+e.currentTarget.value)}
                            {...register("duration", { required: true, min: 1 })}/>
+                    {errors?.duration?.type === "required" && <p className='text-danger'>This field is required</p>}
+                    {errors?.duration?.type === "minLength" && <p className='text-danger'>This field must be bigger then 1</p>}
                     <input className={inputClassList}
                            type='number'
                            value={downloadCount}
                            placeholder='Max download count'
                            onInput={e => setDownloadCount(+e.currentTarget.value)}
                            {...register("count", { required: true, min: 1 })}/>
+                    {errors?.count?.type === "required" && <p className='text-danger'>This field is required</p>}
+                    {errors?.count?.type === "minLength" && <p className='text-danger'>This field must be bigger then 1</p>}
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
                         <option value={ResourceType.Any}>Any</option>
