@@ -2,12 +2,25 @@ import React, { useState } from 'react';
 import { ResourceType } from "../../entities/resource-type";
 import { RestrictionType } from "../../entities/restriction-type";
 import { FormSelect } from "react-bootstrap";
+import { useForm, SubmitHandler } from "react-hook-form";
+import {AuthService} from "../../../services/AuthService";
+
+interface IFormInput {
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+    count: number;
+}
 
 const CreateSubscription = () => {
+    const { register, handleSubmit } = useForm<IFormInput>();
+    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [price, setPrice] = useState<number>();
     const [duration, setDuration] = useState<number>();
+    const [price, setPrice] = useState<number>();
     const [type, setType] = useState<ResourceType>(ResourceType.Any);
     const [downloadCount, setDownloadCount] = useState<number>();
     const [error, setError] = useState<string>('');
@@ -25,10 +38,42 @@ const CreateSubscription = () => {
     const [daysTo, setDaysTo] = useState(0);
     const [size, setSize] = useState(0);
     const [tags, setTags] = useState('');
-    const buttonClassList = 'form-control my-2 mb-3';
+    const inputClassList = 'form-control my-2 mb-3';
 
     const onRestrictionChange = (restriction: string) => {
         setCurrentRestriction(restriction);
+    }
+
+    const onClickCreateButton = async (e : React.MouseEvent) => {
+        e.preventDefault();
+        const nameCleaned = name.trim();
+        const descriptionCleaned = description.trim();
+        const priceCleaned = price;
+        const monthDurationCleaned = duration;
+        const resourceTypeCleaned = type;
+        const downloadCountCleaned = downloadCount;
+        const response = await fetch('http://localhost:7000/subscriptions/create-subscription', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: nameCleaned,
+                description: descriptionCleaned,
+                duration: monthDurationCleaned,
+                price: priceCleaned,
+                appliedResourceType: resourceTypeCleaned,
+                maxResourcesCount: downloadCountCleaned
+            }),
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            const description = await response.json();
+            const message = description.message;
+            console.error(`Response failed with code ${response.status}. Description: ${message}`);
+            setError(message);
+            return;
+        }
     }
 
     return (
@@ -36,31 +81,36 @@ const CreateSubscription = () => {
             <div className='p-3'>
                 <form>
                     <p className='h2 mb-3 text-center'>Create subscription</p>
-                    <input className={buttonClassList}
+                    <input className={inputClassList}
                            type='text'
                            placeholder='Name'
                            value={name}
-                           onInput={e => setName(e.currentTarget.value)}/>
-                    <input className={buttonClassList}
+                           onInput={e => setName(e.currentTarget.value)}
+                           {...register("name", { required: true, minLength: 6 })}/>
+                    <input className={inputClassList}
                            type='text'
                            placeholder='Description'
                            value={description}
-                           onInput={e => setDescription(e.currentTarget.value)}/>
-                    <input className={buttonClassList}
+                           onInput={e => setDescription(e.currentTarget.value)}
+                           {...register("description", { required: true, minLength: 10 })}/>
+                    <input className={inputClassList}
                            type='number'
                            placeholder='Price'
                            value={price}
-                           onInput={e => setPrice(+e.currentTarget.value)}/>
-                    <input className={buttonClassList}
+                           onInput={e => setPrice(+e.currentTarget.value)}
+                           {...register("price", { required: true, min: 0 })}/>
+                    <input className={inputClassList}
                            type='number'
                            value={duration}
                            placeholder='Month duration'
-                           onInput={e => setDuration(+e.currentTarget.value)}/>
-                    <input className={buttonClassList}
+                           onInput={e => setDuration(+e.currentTarget.value)}
+                           {...register("duration", { required: true, min: 1 })}/>
+                    <input className={inputClassList}
                            type='number'
                            value={downloadCount}
                            placeholder='Max download count'
-                           onInput={e => setDownloadCount(+e.currentTarget.value)}/>
+                           onInput={e => setDownloadCount(+e.currentTarget.value)}
+                           {...register("count", { required: true, min: 1 })}/>
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
                         <option value={ResourceType.Any}>Any</option>
@@ -75,13 +125,39 @@ const CreateSubscription = () => {
                         {options.map(o => <option value={o}>{o}</option>)}
                     </FormSelect>
 
-                    {currentRestriction === RestrictionType.DaysAfter && <input value={daysAfter} type={'number'} className={buttonClassList} onInput={e => setDaysAfter(Number(e.currentTarget.value)) } placeholder={'Days must last after resource upload'}/>}
-                    {currentRestriction === RestrictionType.DaysTo && <input value={daysTo} type={'number'} className={buttonClassList} onInput={e => setDaysTo(Number(e.currentTarget.value)) } placeholder={'Days after upload resource can be purchased'}/>}
-                    {currentRestriction === RestrictionType.Size && <input value={size} type={'number'} className={buttonClassList} onInput={e => setSize(Number(e.currentTarget.value)) } placeholder={'Max size of resource to be downloaded'}/>}
-                    {currentRestriction === RestrictionType.Tags && <input value={tags} type={'text'} className={buttonClassList} onInput={e => setTags(e.currentTarget.value) } placeholder={'Tags must resource be tagged by to purchase resource'}/>}
+                    {
+                        currentRestriction === RestrictionType.DaysAfter &&
+                        <input value={daysAfter} type={'number'}
+                               className={inputClassList}
+                               onInput={e => setDaysAfter(Number(e.currentTarget.value))}
+                               placeholder={'Days must last after resource upload'}/>
+                    }
+                    {
+                        currentRestriction === RestrictionType.DaysTo &&
+                        <input value={daysTo} type={'number'}
+                               className={inputClassList}
+                               onInput={e => setDaysTo(Number(e.currentTarget.value)) }
+                               placeholder={'Days after upload resource can be purchased'}/>
+                    }
+                    {
+                        currentRestriction === RestrictionType.Size &&
+                        <input value={size} type={'number'}
+                               className={inputClassList}
+                               onInput={e => setSize(Number(e.currentTarget.value)) }
+                               placeholder={'Max size of resource to be downloaded'}/>
+                    }
+                    {
+                        currentRestriction === RestrictionType.Tags &&
+                        <input value={tags} type={'text'}
+                               className={inputClassList}
+                               onInput={e => setTags(e.currentTarget.value) }
+                               placeholder={'Tags must resource be tagged by to purchase resource'}/>
+                    }
 
                     <div className={'justify-content-center d-flex'}>
-                        <button className='btn btn-primary justify-content-center my-2'>Create
+                        <button className='btn btn-primary justify-content-center my-2'
+                                onClick={onClickCreateButton}>
+                            Create
                         </button>
                     </div>
 

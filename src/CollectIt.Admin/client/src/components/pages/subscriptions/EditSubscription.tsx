@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from "react-router";
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router";
 import Subscription from "../../entities/subscription";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import { Button } from "react-bootstrap";
+import {Button} from "react-bootstrap";
 
 const EditSubscription = () => {
     const params = useParams();
@@ -15,15 +15,19 @@ const EditSubscription = () => {
 
     const [subscription, setSubscription] = useState<Subscription>();
     const [name, setName] = useState('');
+    const [displayName, setDisplayName] = useState('');
     const [description, setDescription] = useState('');
+    const [displayDescription, setDisplayDescription] = useState('');
     const [loaded, setLoaded] = useState(false);
-    const [active, setActive] = useState(true)
+    const [active, setActive] = useState(true);
 
     useEffect(() => {
         SubscriptionsService.getSubscriptionByIdAsync(subscriptionId).then(s => {
+            setDisplayName(s.name);
             setName(s.name);
             setDescription(s.description);
-            setActive(s.active)
+            setDisplayDescription(s.description);
+            setActive(s.active);
             setSubscription(s);
             setLoaded(true);
         }).catch(err => {
@@ -34,18 +38,24 @@ const EditSubscription = () => {
     const saveNameAndDescription = (newName: string,newDescription: string) => {
         if (!subscription) return;
         SubscriptionsService.updateSubscriptionBatchAsync(subscriptionId, newName, newDescription)
-        .then(() => {
-            setName(newName)
-            setDescription(newDescription)
-        })
-        .catch(e => {
-            console.error(e)
-        })
+            .then(() => {
+                setDisplayName(newName)
+                setDisplayDescription(newDescription)
+            })
+            .catch(e => {
+                console.error(e)
+            }).then(()=>{alert('Subscription updated successfully')})
     }
 
     const switchSub = () => {
-        subscription?.active ? SubscriptionsService.deactivateSubscriptionAsync(subscriptionId).catch(e => {alert(e)})
-            : SubscriptionsService.activateSubscriptionAsync(subscriptionId).catch(e => {alert(e)})
+        active ? SubscriptionsService.deactivateSubscriptionAsync(subscriptionId)
+                .catch(e => {alert(e)})
+                .then(()=>{setActive(false)})
+                .then(()=>{alert('Subscription deactivated successfully')})
+            : SubscriptionsService.activateSubscriptionAsync(subscriptionId)
+                .catch(e => {alert(e)})
+                .then(()=>{setActive(true)})
+                .then(()=>{alert('Subscription activated successfully')})
     }
 
     return (
@@ -53,16 +63,16 @@ const EditSubscription = () => {
             {
                 loaded ?
                     <div className='col-12 p-3'>
-                        <p className='h2 text-center'>{name}</p>
+                        <p className='h2 text-center'>{displayName}</p>
                         <div className='ms-4'>
                             <div className='h6 d-block'>
                                 ID: {subscription?.id}
                             </div>
                             <div className='h6 d-block'>
-                                Name: {subscription?.name}
+                                Name: {displayName}
                             </div>
                             <div className='h6 d-block'>
-                                Description: {description}
+                                Description: {displayDescription}
                             </div>
                             <div className='h6 d-block'>
                                 Status: {active ? 'Active' : 'Deactivated'}
@@ -78,14 +88,14 @@ const EditSubscription = () => {
                         <div className='d-flex w-100 mx-auto my-2'>
                             <input type='text'
                                    className='form-control mx-1'
-                                   defaultValue={name}
+                                   defaultValue={displayName}
                                    onChange={e => {setName(e.currentTarget.value)}}/>
                         </div>
                         Description:
                         <div className='d-flex w-100 mx-auto my-2'>
                             <input type='text'
                                    className='form-control mx-1'
-                                   defaultValue={description}
+                                   defaultValue={displayDescription}
                                    onChange={e => {setDescription(e.currentTarget.value)}}/>
                         </div>
                         <Button type ='button'  className='btn btn-primary my-2' onClick={e => {
@@ -94,17 +104,26 @@ const EditSubscription = () => {
                         }}>
                             Save
                         </Button>
-                        <Button type ='button' className='btn btn-primary my-2 mx-5' onClick={e => {
-                            e.preventDefault();
-                            switchSub();
-                        }}>
-                            Activate/Deactivate
-                        </Button>
+                        { active ?
+                            <Button type ='button' className='btn btn-danger my-2 mx-5' onClick={e => {
+                                e.preventDefault();
+                                switchSub();
+                            }}>
+                                Deactivate
+                            </Button>
+                            :
+                            <Button type ='button' className='btn btn-success my-2 mx-5' onClick={e => {
+                                e.preventDefault();
+                                switchSub();
+                            }}>
+                                Activate
+                            </Button>}
                     </div>
                     : <p>Loading...</p>
             }
         </div>
     );
 };
+
 
 export default EditSubscription;
