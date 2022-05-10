@@ -14,13 +14,15 @@ public class PostgresqlMusicManager : IMusicManager
 
     public PostgresqlMusicManager(PostgresqlCollectItDbContext context, IMusicFileManager fileManager)
     {
-        this._context = context;
+        _context = context;
         _fileManager = fileManager;
     }
 
     public Task<Music?> FindByIdAsync(int id)
     {
-        return _context.Musics.SingleOrDefaultAsync(m => m.Id == id);
+        return _context.Musics
+                       .Include(m => m.Owner)
+                       .SingleOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<Music> CreateAsync(string name,
@@ -74,7 +76,7 @@ public class PostgresqlMusicManager : IMusicManager
             var file = await _fileManager.CreateAsync(filename, content);
             return music;
         }
-        catch (IOException ioException)
+        catch (IOException)
         {
             _context.Musics.Remove(music);
             await _context.SaveChangesAsync();
@@ -109,15 +111,15 @@ public class PostgresqlMusicManager : IMusicManager
                         .Where(m => m.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
                         .OrderByDescending(m => m.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
                                                                                                         query)));
-        return new PagedResult<Music>()
-               {
-                   Result = await q
-                                 .Include(m => m.Owner)
-                                 .Skip(( pageNumber - 1 ) * pageSize)
-                                 .ToListAsync(),
-                   TotalCount = await q
-                                   .CountAsync()
-               };
+        var x = await q.Select(m => new
+                                    {
+                                        All = q.Include(m => m.Owner)
+                                               .Skip(( pageNumber - 1 ) * pageNumber)
+                                               .ToList(),
+                                        Count = q.Count()
+                                    })
+                       .FirstOrDefaultAsync();
+        return new PagedResult<Music>() {Result = x.All, TotalCount = x.Count};
     }
 
     public async Task<PagedResult<Music>> GetAllPagedAsync(int pageNumber, int pageSize)
@@ -192,7 +194,7 @@ public class PostgresqlMusicManager : IMusicManager
             throw new ResourceNotFoundException(musicId, "Music with provided id not found");
         }
 
-        var filename = file.Name;
+        var filename = file.FileName;
         return _fileManager.GetContent(filename);
     }
 }

@@ -88,4 +88,29 @@ export default class SubscriptionsService {
             throw new Error('Something went wrong')
         }
     }
+
+    static async createSubscriptionAsync(body: {
+        name: string;
+        description: string;
+        monthDuration: number;
+        price: number;
+        resourceType: ResourceType;
+        maxResourcesCount: number;
+        restriction: any }) {
+
+        let serialized = JSON.stringify(body);
+        console.log(serialized)
+        const response = await this.fetch(`${baseApiPath}`, {
+            method: 'POST',
+            body: serialized,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Could not create new subscription')
+        }
+        const subscription: Subscription = await response.json();
+        return subscription;
+    }
 }

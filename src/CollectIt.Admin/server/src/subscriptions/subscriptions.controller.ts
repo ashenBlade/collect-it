@@ -44,9 +44,12 @@ export class SubscriptionsController {
     return ToReadSubscriptionDto(subscription);
   }
 
-  @AuthorizeAdmin()
   @Post('')
+  @AuthorizeAdmin()
+  // @UsePipes(ValidationPipe)
   async createSubscription(@Body() dto: CreateSubscriptionDto) {
+    // console.log(JSON.stringify(dto))
+    // throw new NotFoundException();
     try {
       const subscription =
         await this.subscriptionsService.createSubscriptionAsync(
@@ -54,9 +57,9 @@ export class SubscriptionsController {
           dto.description,
           dto.price,
           dto.monthDuration,
-          dto.appliedResourceType,
+          dto.resourceType,
           dto.maxResourcesCount,
-          dto.active,
+          false,
           dto.restriction?.restrictionType,
           dto.restriction?.authorId,
           dto.restriction?.sizeBytes,
@@ -70,11 +73,14 @@ export class SubscriptionsController {
       return subscription;
     } catch (e) {
       if (e instanceof CreationException) {
+        console.error(`Creation exception`)
+        console.error(e)
         throw new BadRequestException({
           message: e.message,
           errors: e.errors,
         });
       }
+      console.error(e)
       throw new BadRequestException(
         {
           message: 'Could not create subscription. Try later.',

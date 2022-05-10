@@ -7,6 +7,7 @@ open CollectIt.Database.Entities.Account
 open Xunit
 open Xunit.Abstractions
 
+[<Collection("Roles")>]
 type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
     class
         member this._factory = factory

@@ -13,7 +13,6 @@
     <div class="d-flex flex-column mb-0 d-block">
         <div class="w-100 h-100 bg-light rounded">
             <div class="p-3 mih-1">
-                @* <vc:music-cards musics="@Model.Musics"/> *@
                 <table class="table table-active">
                     <thead>
                     <tr>
@@ -31,7 +30,7 @@
                     <tbody>
                     @foreach (var (m, i) in Model.Musics.Select((m, i) => ( m, i + 1 )))
                     {
-                        <tr onclick="window.location.href = '/musics/@m.MusicId'" style="cursor: pointer;">
+                        <tr onclick="window.location.href = '@Url.Action("Music", new {id = m.MusicId})'" style="cursor: pointer;">
                             <td>
                                 @i
                             </td>

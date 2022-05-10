@@ -41,7 +41,8 @@ public class MusicsController : Controller
                         Name = source.Name,
                         OwnerName = source.Owner.UserName,
                         UploadDate = source.UploadDate,
-                        Address = Url.Action("DownloadMusicContent", new {musicId = id})!,
+                        BlobAddress = Url.Action("GetMusicBlob", new {id = id})!,
+                        DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
                         Tags = source.Tags,
                         IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
                         Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
@@ -70,7 +71,8 @@ public class MusicsController : Controller
                     {
                         Musics = musics.Result.Select(m => new MusicViewModel()
                                                            {
-                                                               Address = Url.Action("GetMusicBlob", new {id = m.Id})!,
+                                                               BlobAddress =
+                                                                   Url.Action("GetMusicBlob", new {id = m.Id})!,
                                                                Name = m.Name,
                                                                MusicId = m.Id,
                                                                OwnerName = m.Owner.UserName
@@ -157,13 +159,10 @@ public class MusicsController : Controller
     public async Task<IActionResult> DownloadMusicContent(int id)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
-        if (await _musicManager.IsAcquiredBy(id, userId))
-        {
-            var image = await _musicManager.FindByIdAsync(id);
-            var stream = await _musicManager.GetContentAsync(id);
-            return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
-        }
-
-        return BadRequest();
+        if (!await _musicManager.IsAcquiredBy(id, userId))
+            return StatusCode(StatusCodes.Status402PaymentRequired);
+        var image = await _musicManager.FindByIdAsync(id);
+        var stream = await _musicManager.GetContentAsync(id);
+        return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
     }
 }

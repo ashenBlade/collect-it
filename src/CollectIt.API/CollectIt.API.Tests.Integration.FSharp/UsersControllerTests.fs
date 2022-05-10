@@ -11,7 +11,8 @@ open CollectIt.Database.Infrastructure
 open Xunit
 open Xunit.Abstractions
 
-type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
+[<Collection("Users")>]
+type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
     class
         member this._factory = factory
         member this._output = output
@@ -45,7 +46,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: GET /api/v1/users/{AdminUserId}; Return: json of admin user``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let expected = PostgresqlCollectItDbContext.AdminUser
+
+                let expected =
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadUserDTO>
@@ -90,7 +93,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.AdminUser
+
+                let user =
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! subscriptions =
                     TestsHelpers.getResultParsedFromJson<ReadUserSubscriptionDTO []>
@@ -112,7 +117,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.AdminUser
+
+                let user =
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! array =
                     TestsHelpers.getResultParsedFromJson<ReadUserSubscriptionDTO []>
@@ -131,7 +138,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: GET /api/v1/users/{UserId}/roles; Return: json array of roles for given user``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.AdminUser
+
+                let user =
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadRoleDTO []>
@@ -150,10 +159,14 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: POST /api/v1/users/{UserId}/username; With: admin bearer; Should: change username``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
+
                 let newUsername = "SomeNewUsername"
 
-                let content = new FormUrlEncodedContent([ KeyValuePair("username", newUsername) ])
+                let content =
+                    new FormUrlEncodedContent([ KeyValuePair("username", newUsername) ])
 
                 let! response =
                     TestsHelpers.sendAsync
@@ -186,8 +199,12 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let invalidUsername = "User name with whitespaces"
-                let userId = PostgresqlCollectItDbContext.DefaultUserTwoId
+
+                let invalidUsername =
+                    "User name with whitespaces"
+
+                let userId =
+                    PostgresqlCollectItDbContext.DefaultUserTwoId
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
@@ -206,12 +223,14 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             ()
             =
             task {
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some user.UserName) (Some "12345678")
 
-                let validUsername = "SomeBrandNewValidUsername"
+                let validUsername =
+                    "SomeBrandNewValidUsername"
 
                 let! response =
                     TestsHelpers.sendAsync
@@ -265,7 +284,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
                 let newEmail = "newemail@mail.ru"
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! response =
                     TestsHelpers.sendAsync
@@ -299,7 +320,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
                 let invalidEmail = "this is invalid email"
-                let user = PostgresqlCollectItDbContext.DefaultUserTwo
+
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserTwo
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
@@ -318,8 +341,11 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             ()
             =
             task {
-                let user = PostgresqlCollectItDbContext.DefaultUserTwo
-                let requester = PostgresqlCollectItDbContext.DefaultUserOne
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserTwo
+
+                let requester =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some requester.UserName) (Some "12345678")
@@ -343,7 +369,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             ()
             =
             task {
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
+
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
                 let role = Role.TechSupportRoleName
 
@@ -379,7 +407,10 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.TechSupport
+
+                let user =
+                    PostgresqlCollectItDbContext.TechSupport
+
                 let role = Role.TechSupportRoleName
 
                 let! response =
@@ -412,12 +443,15 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             ()
             =
             task {
-                let requester = PostgresqlCollectItDbContext.DefaultUserOne
+                let requester =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some requester.UserName) (Some "12345678")
 
-                let userId = PostgresqlCollectItDbContext.TechSupportUserId
+                let userId =
+                    PostgresqlCollectItDbContext.TechSupportUserId
+
                 let role = Role.TechSupportRoleName
 
                 do!
@@ -438,7 +472,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = PostgresqlCollectItDbContext.DefaultUserOneId
+
+                let userId =
+                    PostgresqlCollectItDbContext.DefaultUserOneId
 
                 let! response =
                     TestsHelpers.sendAsync
@@ -460,7 +496,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = PostgresqlCollectItDbContext.DefaultUserTwoId
+
+                let userId =
+                    PostgresqlCollectItDbContext.DefaultUserTwoId
 
                 let! response =
                     TestsHelpers.sendAsync
@@ -578,7 +616,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadUserDTO>
@@ -619,7 +659,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: GET /api/v1/users/with-email/{UserEmail}; Return: json of user``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let user = PostgresqlCollectItDbContext.DefaultUserOne
+
+                let user =
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadUserDTO>

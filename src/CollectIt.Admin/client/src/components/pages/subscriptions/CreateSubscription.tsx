@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { ResourceType } from "../../entities/resource-type";
 import { RestrictionType } from "../../entities/restriction-type";
 import { FormSelect } from "react-bootstrap";
-import { useForm, SubmitHandler } from "react-hook-form";
-import {AuthService} from "../../../services/AuthService";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import SubscriptionsService from "../../../services/SubscriptionsService";
 
 interface IFormInput {
     name: string;
@@ -14,16 +15,16 @@ interface IFormInput {
 }
 
 const CreateSubscription = () => {
-    const {  register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
+    const { register, handleSubmit } = useForm<IFormInput>();
     const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [duration, setDuration] = useState<number>();
-    const [price, setPrice] = useState<number>();
+    const [duration, setDuration] = useState(0);
+    const [price, setPrice] = useState(0);
     const [type, setType] = useState<ResourceType>(ResourceType.Any);
-    const [downloadCount, setDownloadCount] = useState<number>();
-    const [error, setError] = useState<string>('');
+    const [downloadCount, setDownloadCount] = useState(0);
+    const [error, setError] = useState('');
     const NoneRestriction = 'None';
     const options = [
         RestrictionType.AllowAll,
@@ -33,7 +34,7 @@ const CreateSubscription = () => {
         RestrictionType.Size,
         RestrictionType.Tags
     ];
-    const [currentRestriction, setCurrentRestriction] = useState(NoneRestriction);
+    const [currentRestriction, setCurrentRestriction] = useState(RestrictionType.None);
     const [daysAfter, setDaysAfter] = useState(0);
     const [daysTo, setDaysTo] = useState(0);
     const [size, setSize] = useState(0);
@@ -41,15 +42,80 @@ const CreateSubscription = () => {
     const inputClassList = 'form-control my-2 mb-3';
 
     const onRestrictionChange = (restriction: string) => {
-        setCurrentRestriction(restriction);
+        const number = Number(restriction);
+        const type = number as RestrictionType;
+        setCurrentRestriction(type);
     }
 
+    const getCurrentRestrictionDTO = () => {
+        switch (currentRestriction) {
+            case RestrictionType.None: {
+                return null;
+            }
+            case RestrictionType.Size:
+                return {
+                    restrictionType: RestrictionType.Size,
+                    size: size
+                };
+            case RestrictionType.DaysAfter:
+                return {
+                    restrictionType: RestrictionType.DaysAfter,
+                    daysAfter: daysAfter
+                };
+            case RestrictionType.DaysTo:
+                return {
+                    restrictionType: RestrictionType.DaysTo,
+                    daysTo: daysTo
+                }
+            case RestrictionType.Tags:
+                return {
+                    restrictionType: RestrictionType.Tags,
+                    tags: tags
+                }
+            case RestrictionType.DenyAll:
+                return {
+                    restrictionType: RestrictionType.DenyAll,
+                }
+            case RestrictionType.AllowAll:
+                return {
+                    restrictionType: RestrictionType.AllowAll
+                };
+            default:
+                throw new Error('Unsupported restriction type')
+        }
+    }
+    const nav = useNavigate()
 
+    const onClickCreateButton = async (e : React.MouseEvent) => {
+        e.preventDefault();
+        const nameCleaned = name.trim();
+        const descriptionCleaned = description.trim();
+        const priceCleaned = price;
+        const monthDurationCleaned = duration;
+        const resourceTypeCleaned = type;
+        const downloadCountCleaned = downloadCount;
+        await SubscriptionsService.createSubscriptionAsync({
+            name: nameCleaned,
+            description: descriptionCleaned,
+            price: priceCleaned,
+            monthDuration: monthDurationCleaned,
+            resourceType: resourceTypeCleaned,
+            maxResourcesCount: downloadCountCleaned,
+            restriction: getCurrentRestrictionDTO()
+        }).then(x => {
+            alert('Subscription created successfully')
+            nav(`/subscriptions/${x.id}`)
+        }).catch(err => {
+            console.error(err)
+            alert('Could not create subscription')
+        })
+
+    }
 
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             <div className='p-3'>
-                <form  onSubmit={handleSubmit(onSubmit)}>
+                <form>
                     <p className='h2 mb-3 text-center'>Create subscription</p>
                     <input className={inputClassList}
                            type='text'
@@ -57,35 +123,30 @@ const CreateSubscription = () => {
                            value={name}
                            onInput={e => setName(e.currentTarget.value)}
                            {...register("name", { required: true, minLength: 6 })}/>
-                    {errors.name && "Name is required"}
                     <input className={inputClassList}
                            type='text'
                            placeholder='Description'
                            value={description}
                            onInput={e => setDescription(e.currentTarget.value)}
                            {...register("description", { required: true, minLength: 10 })}/>
-                    {errors.description && "Description is required"}
                     <input className={inputClassList}
                            type='number'
                            placeholder='Price'
                            value={price}
                            onInput={e => setPrice(+e.currentTarget.value)}
                            {...register("price", { required: true, min: 0 })}/>
-                    {errors.price && "Price is required"}
                     <input className={inputClassList}
                            type='number'
                            value={duration}
                            placeholder='Month duration'
                            onInput={e => setDuration(+e.currentTarget.value)}
                            {...register("duration", { required: true, min: 1 })}/>
-                    {errors.duration && "Duration is required"}
                     <input className={inputClassList}
                            type='number'
                            value={downloadCount}
                            placeholder='Max download count'
                            onInput={e => setDownloadCount(+e.currentTarget.value)}
                            {...register("count", { required: true, min: 1 })}/>
-                    {errors.count && "Max download count is required"}
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
                         <option value={ResourceType.Any}>Any</option>
@@ -96,8 +157,14 @@ const CreateSubscription = () => {
                     <FormSelect onChange={e => {
                         onRestrictionChange(e.currentTarget.value);
                     }}>
-                        <option defaultChecked={true} value={NoneRestriction}>{NoneRestriction}</option>
-                        {options.map(o => <option value={o}>{o}</option>)}
+                        <option defaultChecked={true} value={NoneRestriction}>None</option>
+                        <option value={RestrictionType.DaysTo}>Days To</option>
+                        <option value={RestrictionType.DaysAfter}>Days After</option>
+                        <option value={RestrictionType.AllowAll}>Allow all</option>
+                        <option value={RestrictionType.DenyAll}>Deny all</option>
+                        <option value={RestrictionType.Size}>Max size</option>
+                        <option value={RestrictionType.Tags}>Tags</option>
+
                     </FormSelect>
 
                     {
@@ -131,7 +198,7 @@ const CreateSubscription = () => {
 
                     <div className={'justify-content-center d-flex'}>
                         <button className='btn btn-primary justify-content-center my-2'
-                                >
+                                onClick={onClickCreateButton}>
                             Create
                         </button>
                     </div>
