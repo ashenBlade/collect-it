@@ -1,16 +1,17 @@
 import { RestrictionType } from '../restriction-type';
-import { IsInt, Min } from 'class-validator';
+import { IsArray, IsInt, Min } from 'class-validator';
 
 export class CreateRestrictionDto {
   readonly restrictionType: RestrictionType;
   @IsInt()
-  readonly authorId: number | null;
+  readonly authorId?: number;
   @IsInt()
   @Min(1)
-  readonly daysAfter: number | null;
+  readonly daysAfter?: number;
   @Min(1)
-  readonly daysTo: number | null;
+  readonly daysTo?: number;
   @Min(1)
-  readonly sizeBytes: number | null;
-  readonly tags: string[] | null;
+  readonly sizeBytes?: number;
+  @IsArray()
+  readonly tags?: string[];
 }

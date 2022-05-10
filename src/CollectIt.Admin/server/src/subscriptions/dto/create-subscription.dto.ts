@@ -19,10 +19,9 @@ export class CreateSubscriptionDto {
   })
   @Min(0)
   readonly price: number;
-  readonly appliedResourceType: ResourceType;
+  readonly resourceType: ResourceType;
   @Min(1)
   @IsInt()
   readonly maxResourcesCount: number;
   readonly restriction: CreateRestrictionDto | null;
-  readonly active: boolean | null;
 }

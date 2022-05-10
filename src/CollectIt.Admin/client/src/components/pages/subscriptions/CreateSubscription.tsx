@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { ResourceType } from "../../entities/resource-type";
 import { RestrictionType } from "../../entities/restriction-type";
 import { FormSelect } from "react-bootstrap";
-import { useForm, SubmitHandler } from "react-hook-form";
-import {AuthService} from "../../../services/AuthService";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import SubscriptionsService from "../../../services/SubscriptionsService";
 
 interface IFormInput {
     name: string;
@@ -19,11 +20,11 @@ const CreateSubscription = () => {
 
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [duration, setDuration] = useState<number>();
-    const [price, setPrice] = useState<number>();
+    const [duration, setDuration] = useState(0);
+    const [price, setPrice] = useState(0);
     const [type, setType] = useState<ResourceType>(ResourceType.Any);
-    const [downloadCount, setDownloadCount] = useState<number>();
-    const [error, setError] = useState<string>('');
+    const [downloadCount, setDownloadCount] = useState(0);
+    const [error, setError] = useState('');
     const NoneRestriction = 'None';
     const options = [
         RestrictionType.AllowAll,
@@ -44,6 +45,45 @@ const CreateSubscription = () => {
         setCurrentRestriction(restriction);
     }
 
+    const getCurrentRestrictionDTO = () => {
+        switch (currentRestriction) {
+            case NoneRestriction: {
+                return null;
+            }
+            case RestrictionType.Size:
+                return {
+                    restrictionType: RestrictionType.Size,
+                    size: size
+                };
+            case RestrictionType.DaysAfter:
+                return {
+                    restrictionType: RestrictionType.DaysAfter,
+                    daysAfter: daysAfter
+                };
+            case RestrictionType.DaysTo:
+                return {
+                    restrictionType: RestrictionType.DaysTo,
+                    daysTo: daysTo
+                }
+            case RestrictionType.Tags:
+                return {
+                    restrictionType: RestrictionType.Tags,
+                    tags: tags
+                }
+            case RestrictionType.DenyAll:
+                return {
+                    restrictionType: RestrictionType.DenyAll,
+                }
+            case RestrictionType.AllowAll:
+                return {
+                    restrictionType: RestrictionType.AllowAll
+                };
+            default:
+                throw new Error('Unsupported restriction type')
+        }
+    }
+    const nav = useNavigate()
+
     const onClickCreateButton = async (e : React.MouseEvent) => {
         e.preventDefault();
         const nameCleaned = name.trim();
@@ -52,28 +92,22 @@ const CreateSubscription = () => {
         const monthDurationCleaned = duration;
         const resourceTypeCleaned = type;
         const downloadCountCleaned = downloadCount;
-        const response = await fetch('http://localhost:7000/subscriptions/create-subscription', {
-            method: 'POST',
-            body: JSON.stringify({
-                name: nameCleaned,
-                description: descriptionCleaned,
-                duration: monthDurationCleaned,
-                price: priceCleaned,
-                appliedResourceType: resourceTypeCleaned,
-                maxResourcesCount: downloadCountCleaned
-            }),
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        if (!response.ok) {
-            const description = await response.json();
-            const message = description.message;
-            console.error(`Response failed with code ${response.status}. Description: ${message}`);
-            setError(message);
-            return;
-        }
+        await SubscriptionsService.createSubscriptionAsync({
+            name: nameCleaned,
+            description: descriptionCleaned,
+            price: priceCleaned,
+            monthDuration: monthDurationCleaned,
+            resourceType: resourceTypeCleaned,
+            maxResourcesCount: downloadCountCleaned,
+            restriction: getCurrentRestrictionDTO()
+        }).then(x => {
+            alert('Subscription created successfully')
+            nav(`/subscriptions/${x.id}`)
+        }).catch(err => {
+            console.error(err)
+            alert('Could not create subscription')
+        })
+
     }
 
     return (
