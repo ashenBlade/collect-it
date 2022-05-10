@@ -1,9 +1,10 @@
 export enum RestrictionType {
-    DenyAll = 'Deny All',
-    AllowAll = 'Allow All',
-    DaysTo = 'Days To',
-    DaysAfter = 'Days After',
-    Author = 'Author',
-    Tags = 'Tags',
-    Size = 'Size'
+    None = 0,
+    DenyAll = 1,
+    AllowAll = 2,
+    DaysTo = 3,
+    DaysAfter = 4,
+    Author = 5,
+    Tags = 6,
+    Size = 7,
 }

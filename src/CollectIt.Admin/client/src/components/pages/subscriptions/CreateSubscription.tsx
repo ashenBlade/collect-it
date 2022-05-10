@@ -34,7 +34,7 @@ const CreateSubscription = () => {
         RestrictionType.Size,
         RestrictionType.Tags
     ];
-    const [currentRestriction, setCurrentRestriction] = useState(NoneRestriction);
+    const [currentRestriction, setCurrentRestriction] = useState(RestrictionType.None);
     const [daysAfter, setDaysAfter] = useState(0);
     const [daysTo, setDaysTo] = useState(0);
     const [size, setSize] = useState(0);
@@ -42,12 +42,14 @@ const CreateSubscription = () => {
     const inputClassList = 'form-control my-2 mb-3';
 
     const onRestrictionChange = (restriction: string) => {
-        setCurrentRestriction(restriction);
+        const number = Number(restriction);
+        const type = number as RestrictionType;
+        setCurrentRestriction(type);
     }
 
     const getCurrentRestrictionDTO = () => {
         switch (currentRestriction) {
-            case NoneRestriction: {
+            case RestrictionType.None: {
                 return null;
             }
             case RestrictionType.Size:
@@ -155,8 +157,14 @@ const CreateSubscription = () => {
                     <FormSelect onChange={e => {
                         onRestrictionChange(e.currentTarget.value);
                     }}>
-                        <option defaultChecked={true} value={NoneRestriction}>{NoneRestriction}</option>
-                        {options.map(o => <option value={o}>{o}</option>)}
+                        <option defaultChecked={true} value={NoneRestriction}>None</option>
+                        <option value={RestrictionType.DaysTo}>Days To</option>
+                        <option value={RestrictionType.DaysAfter}>Days After</option>
+                        <option value={RestrictionType.AllowAll}>Allow all</option>
+                        <option value={RestrictionType.DenyAll}>Deny all</option>
+                        <option value={RestrictionType.Size}>Max size</option>
+                        <option value={RestrictionType.Tags}>Tags</option>
+
                     </FormSelect>
 
                     {
