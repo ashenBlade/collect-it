@@ -70,131 +70,138 @@ namespace CollectIt.MVC.View.Migrations
                         {
                             Id = 3,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 16,
+                            ResourceId = 22,
                             UserId = 1
                         },
                         new
                         {
                             Id = 4,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 17,
+                            ResourceId = 16,
                             UserId = 1
                         },
                         new
                         {
                             Id = 5,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 18,
+                            ResourceId = 17,
                             UserId = 1
                         },
                         new
                         {
                             Id = 6,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 19,
+                            ResourceId = 18,
                             UserId = 1
                         },
                         new
                         {
                             Id = 7,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 1,
+                            ResourceId = 19,
                             UserId = 1
                         },
                         new
                         {
                             Id = 8,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 2,
+                            ResourceId = 1,
                             UserId = 1
                         },
                         new
                         {
                             Id = 9,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 3,
+                            ResourceId = 2,
                             UserId = 1
                         },
                         new
                         {
                             Id = 10,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 4,
+                            ResourceId = 3,
                             UserId = 1
                         },
                         new
                         {
                             Id = 11,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 5,
+                            ResourceId = 4,
                             UserId = 1
                         },
                         new
                         {
                             Id = 12,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 6,
+                            ResourceId = 5,
                             UserId = 1
                         },
                         new
                         {
                             Id = 13,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 7,
+                            ResourceId = 6,
                             UserId = 1
                         },
                         new
                         {
                             Id = 14,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 8,
+                            ResourceId = 7,
                             UserId = 1
                         },
                         new
                         {
                             Id = 15,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 9,
+                            ResourceId = 8,
                             UserId = 1
                         },
                         new
                         {
                             Id = 16,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 10,
+                            ResourceId = 9,
                             UserId = 1
                         },
                         new
                         {
                             Id = 17,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 11,
+                            ResourceId = 10,
                             UserId = 1
                         },
                         new
                         {
                             Id = 18,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 12,
+                            ResourceId = 11,
                             UserId = 1
                         },
                         new
                         {
                             Id = 19,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 13,
+                            ResourceId = 12,
                             UserId = 1
                         },
                         new
                         {
                             Id = 20,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-                            ResourceId = 14,
+                            ResourceId = 13,
                             UserId = 1
                         },
                         new
                         {
                             Id = 21,
+                            AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            ResourceId = 14,
+                            UserId = 1
+                        },
+                        new
+                        {
+                            Id = 22,
                             AcquiredDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             ResourceId = 15,
                             UserId = 1
@@ -1307,6 +1314,17 @@ namespace CollectIt.MVC.View.Migrations
                             Name = "Сильный монолог на фоне церковных песнопений и красивой картинки",
                             OwnerId = 1,
                             Tags = new[] { "аниме", "церковь", "2д", "монолог" },
+                            UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+                            Duration = 60
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Extension = "mp4",
+                            FileName = "polish-cow.mp4",
+                            Name = "Какое-то видео",
+                            OwnerId = 1,
+                            Tags = new[] { "видео", "просто", "что" },
                             UploadDate = new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
                             Duration = 60
                         });

@@ -118,10 +118,10 @@ let sendAsync
                 match output with
                 | Some o ->
                     let! str = response.Content.ReadAsStringAsync()
-
                     o.WriteLine str
-                    raise ex
                 | None -> ()
+
+                raise ex
 
         return response
     }
