@@ -18,6 +18,7 @@
         <Compile Include="UsersControllerTests.fs"/>
         <Compile Include="SubscriptionsControllerTests.fs"/>
         <Compile Include="PurchaseControllerTests.fs"/>
+        <Compile Include="VideosControllerTests.fs"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -59,8 +59,7 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let expected =
-                    PostgresqlCollectItDbContext.SilverSubscription
+                let expected = PostgresqlCollectItDbContext.SilverSubscription
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadSubscriptionDTO>
@@ -125,11 +124,9 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let newSubscriptionName =
-                    "Some brand new subscription name"
+                let newSubscriptionName = "Some brand new subscription name"
 
-                let subscription =
-                    PostgresqlCollectItDbContext.BronzeSubscription
+                let subscription = PostgresqlCollectItDbContext.BronzeSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -176,11 +173,9 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let newSubscriptionDescription =
-                    "Some brand new subscription description"
+                let newSubscriptionDescription = "Some brand new subscription description"
 
-                let subscription =
-                    PostgresqlCollectItDbContext.SilverSubscription
+                let subscription = PostgresqlCollectItDbContext.SilverSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -227,8 +222,7 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let subscription =
-                    PostgresqlCollectItDbContext.GoldenSubscription
+                let subscription = PostgresqlCollectItDbContext.GoldenSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -276,8 +270,7 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let subscription =
-                    PostgresqlCollectItDbContext.GoldenSubscription
+                let subscription = PostgresqlCollectItDbContext.GoldenSubscription
 
                 do!
                     (TestsHelpers.sendAsync
@@ -372,11 +365,9 @@ type SubscriptionsControllerTests(factory: CollectItWebApplicationFactory, outpu
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let authorId =
-                    PostgresqlCollectItDbContext.DefaultUserOneId
+                let authorId = PostgresqlCollectItDbContext.DefaultUserOneId
 
-                let restriction: CreateAuthorRestrictionDTO =
-                    CreateAuthorRestrictionDTO(authorId)
+                let restriction: CreateAuthorRestrictionDTO = CreateAuthorRestrictionDTO(authorId)
 
                 let dto: CreateSubscriptionDTO =
                     { Name = "Some new subscription name"
