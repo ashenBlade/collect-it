@@ -117,6 +117,7 @@ const CreateSubscription = () => {
             <div className='p-3'>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <p className='h2 mb-3 text-center'>Create subscription</p>
+                    <label>Name:</label>
                     <input className={inputClassList}
                            type='text'
                            placeholder='Name'
@@ -125,6 +126,7 @@ const CreateSubscription = () => {
                            {...register("name", { required: true, minLength: 6 })}/>
                     {errors?.name?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.name?.type === "minLength" && <p className='text-danger'>This field must have at least 6 symbols</p>}
+                    <label>Description:</label>
                     <input className={inputClassList}
                            type='text'
                            placeholder='Description'
@@ -133,6 +135,7 @@ const CreateSubscription = () => {
                            {...register("description", { required: true, minLength: 10 })}/>
                     {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
+                    <label>Price:</label>
                     <input className={inputClassList}
                            type='number'
                            placeholder='Price'
@@ -140,7 +143,8 @@ const CreateSubscription = () => {
                            onInput={e => setPrice(+e.currentTarget.value)}
                            {...register("price", { required: true, min: 0 })}/>
                     {errors?.price?.type === "required" && <p className='text-danger'>This field is required</p>}
-                    {errors?.price?.type === "minLength" && <p className='text-danger'>This field must be not negative</p>}
+                    {errors?.price?.type === "min" && <p className='text-danger'>This field must be not negative</p>}
+                    <label>Month duration:</label>
                     <input className={inputClassList}
                            type='number'
                            value={duration}
@@ -148,7 +152,8 @@ const CreateSubscription = () => {
                            onInput={e => setDuration(+e.currentTarget.value)}
                            {...register("duration", { required: true, min: 1 })}/>
                     {errors?.duration?.type === "required" && <p className='text-danger'>This field is required</p>}
-                    {errors?.duration?.type === "minLength" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    {errors?.duration?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    <label>Max download count:</label>
                     <input className={inputClassList}
                            type='number'
                            value={downloadCount}
@@ -156,7 +161,8 @@ const CreateSubscription = () => {
                            onInput={e => setDownloadCount(+e.currentTarget.value)}
                            {...register("count", { required: true, min: 1 })}/>
                     {errors?.count?.type === "required" && <p className='text-danger'>This field is required</p>}
-                    {errors?.count?.type === "minLength" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    {errors?.count?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    <label>Resource type:</label>
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
                         <option value={ResourceType.Any}>Any</option>
@@ -164,6 +170,7 @@ const CreateSubscription = () => {
                         <option value={ResourceType.Music}>Music</option>
                         <option value={ResourceType.Video}>Video</option>
                     </select>
+                    <label>Restriction:</label>
                     <FormSelect onChange={e => {
                         onRestrictionChange(e.currentTarget.value);
                     }}>
@@ -207,10 +214,17 @@ const CreateSubscription = () => {
                     }
 
                     <div className={'justify-content-center d-flex'}>
-                        <button className='btn btn-primary justify-content-center my-2'
-                                onClick={onClickCreateButton}>
-                            Create
-                        </button>
+                        {!(errors.name || errors.description || errors.price || errors.count || errors.duration)?
+                            <button className='btn btn-primary justify-content-center my-2'
+                                         onClick={onClickCreateButton}>
+                                Create
+                            </button>
+                            :
+                            <button className='btn btn-primary justify-content-center my-2'
+                                    disabled>
+                                Create
+                            </button>
+                        }
                     </div>
 
                     {error && <span className={'text-danger d-block text-center'}>{error}</span>}
