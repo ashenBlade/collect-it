@@ -99,4 +99,14 @@ public class ResourceAcquiringController : Controller
                 });
         }
     }
+
+    [HttpPost("video/{videoId:int}")]
+    public async Task<IActionResult> BuyVideo([Required] int videoId)
+    {
+        return View("PaymentResult",
+            new PaymentResultViewModel()
+            {
+                ErrorMessage = "Запрашиваемый ресурс не найден"
+            });
+    }
 }
