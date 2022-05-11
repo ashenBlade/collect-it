@@ -1,0 +1,6 @@
+﻿.main-video {
+    object-position: center;
+    object-fit: fill;
+    max-width: 70%;
+    max-height: 400px;
+}
