@@ -1,4 +1,4 @@
-namespace CollectIt.Database.Abstractions.Account.Exceptions;
+namespace CollectIt.Database.Abstractions.Resources.Exceptions;
 
 public class VideoNotFoundException : ResourceNotFoundException
 {

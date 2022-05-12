@@ -4,6 +4,7 @@ using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;

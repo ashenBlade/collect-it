@@ -1,6 +1,7 @@
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
