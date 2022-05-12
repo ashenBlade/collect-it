@@ -59,8 +59,8 @@ public class MusicsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query,
-                                                      [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query, 
+                                                      [FromQuery(Name = "p")] [Range(1, int.MaxValue)] 
                                                       int pageNumber = 1)
     {
         var musics = query is null

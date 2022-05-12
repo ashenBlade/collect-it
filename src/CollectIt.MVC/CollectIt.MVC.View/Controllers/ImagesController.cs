@@ -14,13 +14,13 @@ public class ImagesController : Controller
     private static readonly int MaxPageSize = 5;
 
     private static readonly HashSet<string> SupportedImageExtensions = new()
-                                                                       {
-                                                                           "png",
-                                                                           "jpeg",
-                                                                           "jpg",
-                                                                           "webp",
-                                                                           "bmp"
-                                                                       };
+    {
+        "png",
+        "jpeg",
+        "jpg",
+        "webp",
+        "bmp"
+    };
 
     private readonly ICommentManager _commentManager;
     private readonly IImageManager _imageManager;
@@ -30,9 +30,9 @@ public class ImagesController : Controller
     private readonly string address;
 
     public ImagesController(IImageManager imageManager,
-                            UserManager userManager,
-                            ICommentManager commentManager,
-                            ILogger<ImagesController> logger)
+        UserManager userManager,
+        ICommentManager commentManager,
+        ILogger<ImagesController> logger)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
@@ -42,17 +42,18 @@ public class ImagesController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetImagesByQuery([FromQuery(Name = "q")] [Required] string query,
+    public async Task<IActionResult> GetImagesByQuery([FromQuery(Name = "q")] [Required] string? query,
                                                       [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
                                                       int pageNumber = 1)
     {
-        var result = await _imageManager.QueryAsync(query, MaxPageSize, pageNumber);
-        var images = result.Result.ToList();
+        var images = query is null
+            ? await _imageManager.GetAllPagedAsync(MaxPageSize, pageNumber)
+            : await _imageManager.QueryAsync(query, MaxPageSize, pageNumber);
 
         return View("Images",
                     new ImageCardsViewModel()
                     {
-                        Images = images.Select(i => new ImageViewModel()
+                        Images = images.Result.Select(i => new ImageViewModel()
                                                     {
                                                         DownloadAddress = Url.Action("DownloadImage", new {id = i.Id})!,
                                                         PreviewAddress =
@@ -67,8 +68,8 @@ public class ImagesController : Controller
                                                     })
                                        .ToList(),
                         PageNumber = pageNumber,
-                        MaxPagesCount = ( int ) Math.Ceiling(( double ) result.TotalCount / MaxPageSize),
-                        Query = query
+                        MaxPagesCount = ( int ) Math.Ceiling(( double ) images.TotalCount / MaxPageSize),
+                        Query = query ?? string.Empty
                     });
     }
 
@@ -98,6 +99,7 @@ public class ImagesController : Controller
                         OwnerName = source.Owner.UserName,
                         UploadDate = source.UploadDate,
                         DownloadAddress = Url.Action("DownloadImage", new {id = imageId})!,
+                        PreviewAddress = Url.Action("DownloadImagePreview", new {id = imageId})!,
                         Tags = source.Tags,
                         IsAcquired = user is not null && await _imageManager.IsAcquiredBy(user.Id, imageId)
                     };

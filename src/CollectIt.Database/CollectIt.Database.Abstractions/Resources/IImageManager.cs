@@ -6,4 +6,5 @@ public interface IImageManager : IResourceManager<Image>
 {
     public Task<bool> IsAcquiredBy(int userId, int imageId);
     public Task<PagedResult<Image>> QueryAsync(string query, int pageSize, int pageNumber);
+    Task<PagedResult<Image>> GetAllPagedAsync(int pageNumber, int pageSize);
 }
