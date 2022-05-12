@@ -151,6 +151,56 @@ public class ImageController : Controller
         }
     }
     
+    /// <summary>
+    /// Change image name
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="204">Image's name was changed</response>
+    [HttpPost("{id:int}/name")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeVideoName(int id, 
+        [Required]
+        [FromForm(Name = "Name")] 
+        string name)
+    {
+        try
+        {
+            await _imageManager.ChangeNameAsync(id, name);
+            return NoContent();
+        }
+        catch (ImageNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+    
+    /// <summary>
+    /// Change image tags
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="204">Image's tags were changed</response>
+    [HttpPost("{id:int}/tags")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeImageTags(int id, 
+        [Required]
+        [FromForm(Name = "Tags")] 
+        string[] tags)
+    {
+        try
+        {
+            await _imageManager.ChangeTagsAsync(id, tags);
+            return NoContent();
+        }
+        catch (ImageNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+    
     
     /// <summary>
     /// Download Image

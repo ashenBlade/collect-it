@@ -75,6 +75,42 @@ public class PostgresqlImageManager : IImageManager
         await _context.SaveChangesAsync();
     }
 
+    public async Task ChangeNameAsync(int id, string name)
+    {
+        if (name is null)
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
+        var image = await _context.Images.SingleOrDefaultAsync(img => img.Id == id);
+        if (image is null)
+        {
+            throw new ImageNotFoundException(id, "Image with provided id not found");
+        }
+
+        image.Name = name;
+        _context.Images.Update(image);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ChangeTagsAsync(int id, string[]? tags)
+    {
+        if (tags is null)
+        {
+            throw new ArgumentNullException(nameof(tags));
+        }
+
+        var image = await _context.Images.SingleOrDefaultAsync(img => img.Id == id);
+        if (image is null)
+        {
+            throw new ImageNotFoundException(id, "Image with provided id not found");
+        }
+
+        image.Tags = tags;
+        _context.Images.Update(image);
+        await _context.SaveChangesAsync();
+    }
+    
     public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)
     {
         return await _context.Images
