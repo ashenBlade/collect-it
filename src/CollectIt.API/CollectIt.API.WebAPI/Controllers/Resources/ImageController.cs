@@ -5,6 +5,7 @@ using CollectIt.API.DTO.Mappers;
 using CollectIt.API.WebAPI.DTO;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -144,7 +145,7 @@ public class ImageController : Controller
             await _imageManager.RemoveAsync(id);
             return NoContent();
         }
-        catch 
+        catch(ImageNotFoundException)
         {
             return NotFound();
         }
