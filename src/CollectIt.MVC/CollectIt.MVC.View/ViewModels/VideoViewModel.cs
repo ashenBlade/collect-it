@@ -10,6 +10,7 @@ public class VideoViewModel
 
     public string Address { get; set; }
     
+    public string Duration { get; set; }
     public string[] Tags { get; set; }
     
     public IEnumerable<CommentViewModel> Comments { get; set; }

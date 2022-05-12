@@ -155,6 +155,30 @@ public class PostgresqlVideoManager : IVideoManager
                };
     }
 
+    public async Task<PagedResult<Video>> GetAllPagedAsync(int pageNumber, int pageSize)
+    {
+        if (pageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
+        }
+
+        if (pageNumber < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
+        }
+
+        return new PagedResult<Video>()
+        {
+            Result = await _context.Videos
+                .OrderBy(m => m.Id)
+                .Include(m => m.Owner)
+                .Skip(( pageNumber - 1 ) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(),
+            TotalCount = await _context.Videos.CountAsync()
+        };
+    }
+    
     public async Task ChangeNameAsync(int videoId, string? name)
     {
         if (name is null)

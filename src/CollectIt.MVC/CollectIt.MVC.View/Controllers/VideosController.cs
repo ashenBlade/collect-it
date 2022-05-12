@@ -22,35 +22,33 @@ public class VideosController : Controller
 
     private readonly ILogger<VideosController> _logger;
     private readonly UserManager _userManager;
+    private readonly ICommentManager _commentManager;
     private readonly IVideoManager _videoManager;
     private readonly int DefaultPageSize = 15;
 
     public VideosController(IVideoManager videoManager,
                             UserManager userManager,
-                            ILogger<VideosController> logger)
+                            ILogger<VideosController> logger, 
+                            ICommentManager commentManager)
     {
         _videoManager = videoManager;
         _userManager = userManager;
         _logger = logger;
+        _commentManager = commentManager;
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] string query,
-                                                      [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
-                                                      int pageNumber = 1)
+    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] [Required] string? query, 
+        [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
+        int pageNumber = 1)
     {
-        if (!ModelState.IsValid)
-        {
-            return View("Error", new ErrorViewModel() {Message = "Invalid input for videos page"});
-        }
-
-        var result = await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
-        var videos = result.Result.ToList();
-        _logger.LogInformation("Found: {Count}", videos.Count);
+        var videos = query is null
+            ? await _videoManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
+            : await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Videos",
                     new VideoCardsViewModel()
                     {
-                        Videos = videos.Select(i => new VideoViewModel()
+                        Videos = videos.Result.Select(i => new VideoViewModel()
                                                     {
                                                         Address = Url.Action("DownloadVideoContent", new {id = i.Id})!,
                                                         Name = i.Name,
@@ -63,21 +61,39 @@ public class VideosController : Controller
                                                     })
                                        .ToList(),
                         PageNumber = pageNumber,
-                        MaxPagesCount = ( int ) Math.Ceiling(( double ) result.TotalCount / DefaultPageSize),
+                        MaxVideosCount = videos.TotalCount,
                         Query = query
                     });
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetVideoPageAsync(int id)
+    public async Task<IActionResult> Video(int id)
     {
-        var image = await _videoManager.FindByIdAsync(id);
-        if (image is null)
+        var source = await _videoManager.FindByIdAsync(id);
+        if (source == null)
         {
-            return NotFound();
+            return View("Error");
         }
+        
+        var user = await _userManager.GetUserAsync(User);
+        var model = new VideoViewModel()
+        {
+            VideoId = id,
+            Name = source.Name,
+            OwnerName = source.Owner.UserName,
+            UploadDate = source.UploadDate,
+            Address = Url.Action("DownloadVideoContent", new {id = id})!,
+            Tags = source.Tags,
+            IsAcquired = user is not null && await _videoManager.IsAcquiredBy(id, user.Id),
+            Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel() 
+            {
+                Author = c.Owner.UserName,
+                Comment = c.Content,
+                PostTime = c.UploadDate
+            })
+        };
 
-        return View("Error", new ErrorViewModel() {Message = "Videos page is not implemented yet"});
+        return View(model);
     }
 
     [HttpGet("upload")]
