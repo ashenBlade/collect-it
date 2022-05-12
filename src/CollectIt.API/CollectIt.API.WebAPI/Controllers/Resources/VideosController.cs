@@ -96,10 +96,10 @@ public class VideosController : ControllerBase
     }
     
     /// <summary>
-    /// Change video name
+    /// Change video tags
     /// </summary>
     /// <response code="404">Video not found</response>
-    /// <response code="204">Video's name was changed</response>
+    /// <response code="204">Video's tags was changed</response>
     [HttpPost("{id:int}/tags")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -121,10 +121,10 @@ public class VideosController : ControllerBase
     }
     
     /// <summary>
-    /// Change video name
+    /// Create new video
     /// </summary>
-    /// <response code="404">Video not found</response>
-    /// <response code="204">Video's name was changed</response>
+    /// <response code="404">User not found</response>
+    /// <response code="204">Video was created</response>
     [HttpPost("")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
