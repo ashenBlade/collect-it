@@ -139,7 +139,8 @@ public class PostgresqlVideoManager : IVideoManager
         if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
         if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
         var q = _context.Videos
-                        .Where(v => v.TagsSearchVector.Matches(query))
+                        .Where(v => v.TagsSearchVector.Matches(EF.Functions
+                                                                 .WebSearchToTsQuery("russian", query)))
                         .OrderByDescending(v =>
                                                v.TagsSearchVector.Rank(EF.Functions
                                                                          .WebSearchToTsQuery("russian", query)));
