@@ -94,7 +94,9 @@ public class PostgresqlVideoManager : IVideoManager
 
     public Task<Video?> FindByIdAsync(int id)
     {
-        return _context.Videos.SingleOrDefaultAsync(v => v.Id == id);
+        return _context.Videos
+                       .Include(v => v.Owner)
+                       .SingleOrDefaultAsync(v => v.Id == id);
     }
 
     public async Task RemoveByIdAsync(int videoId)
@@ -168,17 +170,17 @@ public class PostgresqlVideoManager : IVideoManager
         }
 
         return new PagedResult<Video>()
-        {
-            Result = await _context.Videos
-                .OrderBy(m => m.Id)
-                .Include(m => m.Owner)
-                .Skip(( pageNumber - 1 ) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(),
-            TotalCount = await _context.Videos.CountAsync()
-        };
+               {
+                   Result = await _context.Videos
+                                          .OrderBy(m => m.Id)
+                                          .Include(m => m.Owner)
+                                          .Skip(( pageNumber - 1 ) * pageSize)
+                                          .Take(pageSize)
+                                          .ToListAsync(),
+                   TotalCount = await _context.Videos.CountAsync()
+               };
     }
-    
+
     public async Task ChangeNameAsync(int videoId, string? name)
     {
         if (name is null)

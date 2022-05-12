@@ -20,15 +20,16 @@ public class VideosController : Controller
                                                                         "webm"
                                                                     };
 
+    private readonly ICommentManager _commentManager;
+
     private readonly ILogger<VideosController> _logger;
     private readonly UserManager _userManager;
-    private readonly ICommentManager _commentManager;
     private readonly IVideoManager _videoManager;
     private readonly int DefaultPageSize = 15;
 
     public VideosController(IVideoManager videoManager,
                             UserManager userManager,
-                            ILogger<VideosController> logger, 
+                            ILogger<VideosController> logger,
                             ICommentManager commentManager)
     {
         _videoManager = videoManager;
@@ -38,27 +39,30 @@ public class VideosController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] [Required] string? query, 
-        [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
-        int pageNumber = 1)
+    public async Task<IActionResult> GetQueriedVideos([FromQuery(Name = "q")] [Required] string? query,
+                                                      [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
+                                                      int pageNumber = 1)
     {
         var videos = query is null
-            ? await _videoManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
-            : await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
+                         ? await _videoManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
+                         : await _videoManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Videos",
                     new VideoCardsViewModel()
                     {
-                        Videos = videos.Result.Select(i => new VideoViewModel()
-                                                    {
-                                                        Address = Url.Action("DownloadVideoContent", new {id = i.Id})!,
-                                                        Name = i.Name,
-                                                        VideoId = i.Id,
-                                                        Comments = Array.Empty<CommentViewModel>(),
-                                                        Tags = i.Tags,
-                                                        OwnerName = i.Owner.UserName,
-                                                        UploadDate = i.UploadDate,
-                                                        IsAcquired = false
-                                                    })
+                        Videos = videos.Result.Select(v => new VideoViewModel()
+                                                           {
+                                                               DownloadAddress =
+                                                                   Url.Action("DownloadVideoContent", new {id = v.Id})!,
+                                                               PreviewAddress =
+                                                                   Url.Action("DownloadVideoPreview", new {id = v.Id})!,
+                                                               Name = v.Name,
+                                                               VideoId = v.Id,
+                                                               Comments = Array.Empty<CommentViewModel>(),
+                                                               Tags = v.Tags,
+                                                               OwnerName = v.Owner.UserName,
+                                                               UploadDate = v.UploadDate,
+                                                               IsAcquired = false
+                                                           })
                                        .ToList(),
                         PageNumber = pageNumber,
                         MaxVideosCount = videos.TotalCount,
@@ -74,24 +78,28 @@ public class VideosController : Controller
         {
             return View("Error");
         }
-        
+
         var user = await _userManager.GetUserAsync(User);
         var model = new VideoViewModel()
-        {
-            VideoId = id,
-            Name = source.Name,
-            OwnerName = source.Owner.UserName,
-            UploadDate = source.UploadDate,
-            Address = Url.Action("DownloadVideoContent", new {id = id})!,
-            Tags = source.Tags,
-            IsAcquired = user is not null && await _videoManager.IsAcquiredBy(id, user.Id),
-            Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel() 
-            {
-                Author = c.Owner.UserName,
-                Comment = c.Content,
-                PostTime = c.UploadDate
-            })
-        };
+                    {
+                        VideoId = id,
+                        Name = source.Name,
+                        OwnerName = source.Owner.UserName,
+                        UploadDate = source.UploadDate,
+                        DownloadAddress = Url.Action("DownloadVideoContent", new {id = id})!,
+                        PreviewAddress = Url.Action("DownloadVideoPreview", new {id = id})!,
+                        Tags = source.Tags,
+                        IsAcquired = user is not null && await _videoManager.IsAcquiredBy(id, user.Id),
+                        Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
+                                                                                                  {
+                                                                                                      Author = c.Owner
+                                                                                                                .UserName,
+                                                                                                      Comment =
+                                                                                                          c.Content,
+                                                                                                      PostTime = c
+                                                                                                         .UploadDate
+                                                                                                  })
+                    };
 
         return View(model);
     }
@@ -160,17 +168,28 @@ public class VideosController : Controller
         return SupportedVideoFormats.Contains(extension);
     }
 
+    [HttpGet("{id:int}/preview")]
+    public async Task<IActionResult> DownloadVideoPreview(int id)
+    {
+        var video = await _videoManager.FindByIdAsync(id);
+        if (video is null)
+        {
+            return NotFound();
+        }
+
+        var content = await _videoManager.GetContentAsync(id);
+        return File(content, $"video/{video.Extension}", $"{video.Name}.{video.Extension}");
+    }
+
     [HttpGet("download/{id:int}")]
     [Authorize]
     public async Task<IActionResult> DownloadVideoContent(int id)
     {
         var userId = int.Parse(_userManager.GetUserId(User));
-        if (await _videoManager.IsAcquiredBy(id, userId))
-        {
-            var stream = await _videoManager.GetContentAsync(id);
-            return File(stream, "video/*");
-        }
-
-        return BadRequest();
+        if (!await _videoManager.IsAcquiredBy(id, userId))
+            return BadRequest();
+        var stream = await _videoManager.GetContentAsync(id);
+        var video = await _videoManager.FindByIdAsync(id);
+        return File(stream, $"video/{video.Extension}", $"{video.Name}.{video.Extension}");
     }
 }

@@ -39,9 +39,9 @@ public class MusicsController : Controller
                     {
                         MusicId = id,
                         Name = source.Name,
-                        OwnerName = source.Owner.UserName,
+                        OwnerName = source.Owner?.UserName ?? "Fuck",
                         UploadDate = source.UploadDate,
-                        BlobAddress = Url.Action("GetMusicBlob", new {id = id})!,
+                        PreviewAddress = Url.Action("GetMusicBlob", new {id = id})!,
                         DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
                         Tags = source.Tags,
                         IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
@@ -71,7 +71,7 @@ public class MusicsController : Controller
                     {
                         Musics = musics.Result.Select(m => new MusicViewModel()
                                                            {
-                                                               BlobAddress =
+                                                               PreviewAddress =
                                                                    Url.Action("GetMusicBlob", new {id = m.Id})!,
                                                                Name = m.Name,
                                                                MusicId = m.Id,
@@ -141,7 +141,7 @@ public class MusicsController : Controller
         return SupportedMusicExtensions.Contains(extension = array[^1].ToLower());
     }
 
-    [HttpGet("{id:int}/blob")]
+    [HttpGet("{id:int}/preview")]
     public async Task<IActionResult> GetMusicBlob(int id)
     {
         var music = await _musicManager.FindByIdAsync(id);

@@ -54,7 +54,9 @@ public class ImagesController : Controller
                     {
                         Images = images.Select(i => new ImageViewModel()
                                                     {
-                                                        Address = Url.Action("DownloadImage", new {id = i.Id})!,
+                                                        DownloadAddress = Url.Action("DownloadImage", new {id = i.Id})!,
+                                                        PreviewAddress =
+                                                            Url.Action("DownloadImagePreview", new {id = i.Id})!,
                                                         Name = i.Name,
                                                         ImageId = i.Id,
                                                         Comments = Array.Empty<CommentViewModel>(),
@@ -95,7 +97,7 @@ public class ImagesController : Controller
                         Name = source.Name,
                         OwnerName = source.Owner.UserName,
                         UploadDate = source.UploadDate,
-                        Address = Url.Action("DownloadImage", new {id = imageId})!,
+                        DownloadAddress = Url.Action("DownloadImage", new {id = imageId})!,
                         Tags = source.Tags,
                         IsAcquired = user is not null && await _imageManager.IsAcquiredBy(user.Id, imageId)
                     };
@@ -155,21 +157,42 @@ public class ImagesController : Controller
         return SupportedImageExtensions.Contains(extension);
     }
 
-
-    [HttpGet("download/{id:int}")]
-    /*  [Authorize]*/
-    public async Task<IActionResult> DownloadImage(int id)
+    [HttpGet("{id:int}/preview")]
+    public async Task<IActionResult> DownloadImagePreview(int id)
     {
-        var source = await _imageManager.FindByIdAsync(id);
-        if (source == null)
+        var image = await _imageManager.FindByIdAsync(id);
+        if (image is null)
         {
-            return View("Error");
+            return View("Error", new ErrorViewModel() {Message = "Image not found"});
         }
 
-        var file = new FileInfo(Path.Combine(address, source.FileName));
+        var file = new FileInfo(Path.Combine(address, image.FileName));
         return file.Exists
-                   ? PhysicalFile(file.FullName, $"image/{source.Extension}", source.FileName)
-                   : BadRequest(new {Message = "File not found"});
+                   ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
+                   : BadRequest(new {Message = "Image content not found"});
+    }
+
+
+    [HttpGet("{id:int}/download")]
+    [Authorize]
+    public async Task<IActionResult> DownloadImage(int id)
+    {
+        var userId = int.Parse(_userManager.GetUserId(User));
+        if (!await _imageManager.IsAcquiredBy(userId, id))
+        {
+            return View("Error", new ErrorViewModel {Message = "Image is not acquired by user"});
+        }
+
+        var image = await _imageManager.FindByIdAsync(id);
+        if (image is null)
+        {
+            return View("Error", new ErrorViewModel {Message = "Image not found"});
+        }
+
+        var file = new FileInfo(Path.Combine(address, image.FileName));
+        return file.Exists
+                   ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
+                   : BadRequest(new {Message = "Image content not found"});
     }
 
 

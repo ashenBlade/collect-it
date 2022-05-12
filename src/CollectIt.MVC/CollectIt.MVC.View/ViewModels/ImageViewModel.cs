@@ -1,6 +1,4 @@
-﻿using CollectIt.Database.Entities.Account;
-
-namespace CollectIt.MVC.View.ViewModels;
+﻿namespace CollectIt.MVC.View.ViewModels;
 
 public class ImageViewModel
 {
@@ -10,9 +8,10 @@ public class ImageViewModel
     public bool IsAcquired { get; set; }
     public DateTime UploadDate { get; set; }
 
-    public string Address { get; set; }
-    
+    public string DownloadAddress { get; set; }
+    public string PreviewAddress { get; set; }
+
     public string[] Tags { get; set; }
-    
+
     public IEnumerable<CommentViewModel> Comments { get; set; }
 }

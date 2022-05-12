@@ -9,7 +9,7 @@ public class MusicViewModel
     public DateTime UploadDate { get; set; }
 
     public string DownloadAddress { get; set; }
-    public string BlobAddress { get; set; }
+    public string PreviewAddress { get; set; }
 
     public string Duration { get; set; }
 

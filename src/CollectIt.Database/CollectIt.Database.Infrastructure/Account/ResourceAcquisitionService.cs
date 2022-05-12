@@ -11,22 +11,25 @@ namespace CollectIt.Database.Infrastructure.Account;
 
 public class ResourceAcquisitionService : IResourceAcquisitionService
 {
-    private readonly UserManager _userManager;
     private readonly PostgresqlCollectItDbContext _context;
     private readonly IImageManager _imageManager;
     private readonly IMusicManager _musicManager;
+    private readonly UserManager _userManager;
+    private readonly IVideoManager _videoManager;
 
-    public ResourceAcquisitionService(UserManager userManager, 
-                          PostgresqlCollectItDbContext context,
-                          IImageManager imageManager,
-                          IMusicManager musicManager)
+    public ResourceAcquisitionService(UserManager userManager,
+                                      PostgresqlCollectItDbContext context,
+                                      IImageManager imageManager,
+                                      IMusicManager musicManager,
+                                      IVideoManager videoManager)
     {
         _userManager = userManager;
         _context = context;
         _imageManager = imageManager;
         _musicManager = musicManager;
+        _videoManager = videoManager;
     }
-    
+
     public Task<bool> IsResourceAcquiredByUserAsync(int userId, int resourceId)
     {
         var resource = new Resource() {Id = resourceId};
@@ -56,9 +59,15 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         return await AcquireResourceAsync(userId, music);
     }
 
-    public Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId)
+    public async Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId)
     {
-        throw new NotImplementedException("No video manager implemented yet");
+        var music = await _videoManager.FindByIdAsync(videoId);
+        if (music is null)
+        {
+            throw new ResourceNotFoundException(videoId, $"Music with Id = {videoId} not found");
+        }
+
+        return await AcquireResourceAsync(userId, music);
     }
 
     private async Task<AcquiredUserResource> AcquireResourceAsync(int userId, Resource resource)
@@ -69,8 +78,10 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                                            || s.Subscription.Restriction.IsSatisfiedBy(resource));
         if (affordable is null)
         {
-            throw new NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire resource (Id = {resource.Id}) for user (Id = {userId})");
+            throw new
+                NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire resource (Id = {resource.Id}) for user (Id = {userId})");
         }
+
         var acquiredUserResource = new AcquiredUserResource()
                                    {
                                        UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.UtcNow,
@@ -88,7 +99,9 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                       PostgresException postgresException => postgresException.ConstraintName switch
                                                              {
                                                                  "AK_AcquiredUserResources_UserId_ResourceId" =>
-                                                                     new UserAlreadyAcquiredResourceException(resource.Id, userId),
+                                                                     new
+                                                                         UserAlreadyAcquiredResourceException(resource.Id,
+                                                                                                              userId),
                                                                  _ => postgresException
                                                              },
                       _ => exception
