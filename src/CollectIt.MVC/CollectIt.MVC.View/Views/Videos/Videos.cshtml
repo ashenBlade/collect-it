@@ -27,7 +27,7 @@
                         </button>
                     </li>
                     <li class="page-item">
-                        <button class="page-link" type="button" @(Model.MaxPagesCount <= Model.PageNumber
+                        <button class="page-link" type="button" @(Model.MaxVideosCount <= Model.PageNumber
                                                                       ? "disabled"
                                                                       : $"onclick=location.href='{Url.Action("GetQueriedVideos", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
                             &raquo;

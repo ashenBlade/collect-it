@@ -14,6 +14,7 @@ public interface IVideoManager
     Task RemoveByIdAsync(int videoId);
     Task<PagedResult<Video>> GetPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Video>> QueryAsync(string query, int pageNumber, int pageSize);
+    Task<PagedResult<Video>> GetAllPagedAsync(int pageNumber, int pageSize);
     Task ChangeNameAsync(int videoId, string name);
     Task ChangeTagsAsync(int videoId, string[] tags);
     Task<Stream> GetContentAsync(int videoId);
