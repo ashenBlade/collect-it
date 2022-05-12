@@ -85,7 +85,7 @@ public class ImageController : Controller
     /// <response code="404">User not found</response>
     /// <response code="204">Image was posted</response>
     /// <response code="400">Incorrect data</response>
-    [HttpPost("post")]
+    [HttpPost("")]
     public async Task<IActionResult> PostImage([FromForm]ResourcesDTO.UploadImageDTO dto)
     {
         try
@@ -135,8 +135,8 @@ public class ImageController : Controller
     /// </summary>
     /// <response code="404">Image not found</response>
     /// <response code="204">Image was deleted</response>
-    [HttpDelete("delete/{id:int}")]
-    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteImageById(int id)
     {
         try
