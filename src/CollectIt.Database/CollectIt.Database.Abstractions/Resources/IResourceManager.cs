@@ -17,5 +17,7 @@ public interface IResourceManager<TItem>
     
     IAsyncEnumerable<TItem> GetAllByName(string name);
     IAsyncEnumerable<TItem> GetAllByTag(string tag);
+    Task ChangeNameAsync(int id, string name);
+    Task ChangeTagsAsync(int id, string[] tags);
     
 }

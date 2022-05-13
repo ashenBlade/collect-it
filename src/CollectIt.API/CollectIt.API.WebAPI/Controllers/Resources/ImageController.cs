@@ -5,6 +5,7 @@ using CollectIt.API.DTO.Mappers;
 using CollectIt.API.WebAPI.DTO;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -85,7 +86,7 @@ public class ImageController : Controller
     /// <response code="404">User not found</response>
     /// <response code="204">Image was posted</response>
     /// <response code="400">Incorrect data</response>
-    [HttpPost("post")]
+    [HttpPost("")]
     public async Task<IActionResult> PostImage([FromForm]ResourcesDTO.UploadImageDTO dto)
     {
         try
@@ -135,8 +136,8 @@ public class ImageController : Controller
     /// </summary>
     /// <response code="404">Image not found</response>
     /// <response code="204">Image was deleted</response>
-    [HttpDelete("delete/{id:int}")]
-    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     public async Task<IActionResult> DeleteImageById(int id)
     {
         try
@@ -144,7 +145,57 @@ public class ImageController : Controller
             await _imageManager.RemoveAsync(id);
             return NoContent();
         }
-        catch 
+        catch(ImageNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+    
+    /// <summary>
+    /// Change image name
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="204">Image's name was changed</response>
+    [HttpPost("{id:int}/name")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeVideoName(int id, 
+        [Required]
+        [FromForm(Name = "Name")] 
+        string name)
+    {
+        try
+        {
+            await _imageManager.ChangeNameAsync(id, name);
+            return NoContent();
+        }
+        catch (ImageNotFoundException)
+        {
+            return NotFound();
+        }
+    }
+    
+    /// <summary>
+    /// Change image tags
+    /// </summary>
+    /// <response code="404">Image not found</response>
+    /// <response code="204">Image's tags were changed</response>
+    [HttpPost("{id:int}/tags")]
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeImageTags(int id, 
+        [Required]
+        [FromForm(Name = "Tags")] 
+        string[] tags)
+    {
+        try
+        {
+            await _imageManager.ChangeTagsAsync(id, tags);
+            return NoContent();
+        }
+        catch (ImageNotFoundException)
         {
             return NotFound();
         }
