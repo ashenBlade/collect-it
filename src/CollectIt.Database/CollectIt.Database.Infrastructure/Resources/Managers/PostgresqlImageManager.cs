@@ -146,6 +146,30 @@ public class PostgresqlImageManager : IImageManager
                        .AsAsyncEnumerable();
     }
 
+    public async Task<PagedResult<Image>> GetAllPagedAsync(int pageNumber, int pageSize)
+    {
+        if (pageSize < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
+        }
+
+        if (pageNumber < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
+        }
+
+        return new PagedResult<Image>()
+        {
+            Result = await _context.Images
+                .OrderBy(m => m.Id)
+                .Include(m => m.Owner)
+                .Skip(( pageNumber - 1 ) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(),
+            TotalCount = await _context.Images.CountAsync()
+        };
+    }
+    
     private string RenamePostedImage(string name)
     {
         return name.Replace(" ", "-").ToLower() + "-" + ( _context.Images.Count() + 1 );

@@ -13,58 +13,58 @@
         <vc:search-bar chosenType="@ResourceType.Video" action="@nameof(VideosController.GetQueriedVideos)" controller="Videos" query="@Model.Query"/>
     </div>
     <div class="d-flex flex-column mb-0 d-block">
-            <div class="w-100 h-100 bg-light rounded">
-                <div class="p-3 mih-1">
-                    <table class="table table-active">
-                        <thead>
-                        <tr>
-                            <th>
-                                №
-                            </th>
-                            <th>
-                                Название
-                            </th>
-                            <th>
-                                Автор
-                            </th>
+        <div class="w-100 h-100 bg-light rounded">
+            <div class="p-3 mih-1">
+                <table class="table table-active">
+                    <thead>
+                    <tr>
+                        <th>
+                            №
+                        </th>
+                        <th>
+                            Название
+                        </th>
+                        <th>
+                            Автор
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var (m, i) in Model.Videos.Select((m, i) => (m, i + 1)))
+                    {
+                        <tr onclick="window.location.href = '@Url.Action("Video", new {id = m.VideoId})'" style="cursor: pointer;">
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @m.Name
+                            </td>
+                            <td>
+                                @m.OwnerName
+                            </td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach (var (m, i) in Model.Videos.Select((m, i) => ( m, i + 1 )))
-                        {
-                            <tr onclick="window.location.href = '@Url.Action("Video", new {id = m.VideoId})'" style="cursor: pointer;">
-                                <td>
-                                    @i
-                                </td>
-                                <td>
-                                    @m.Name
-                                </td>
-                                <td>
-                                    @m.OwnerName
-                                </td>
-                            </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="d-flex justify-content-center mh-100">
-                    <ul class="pagination">
-                        <li class="page-item">
-                            <button class="page-link" type="button" @(Model.PageNumber == 1
-                                                                          ? "disabled"
-                                                                          : $"onclick=location.href='{Url.Action("Video", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
-                                previous
-                            </button>
-                        </li>
-                        <li class="page-item">
-                            <button class="page-link" type="button" @(Model.Videos.Count < Model.MaxVideosCount
-                                                                          ? "disabled"
-                                                                          : $"onclick=location.href='{Url.Action("Video", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
-                                next
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+                    }
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-center mh-100">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.PageNumber == 1
+                                                                    ? "disabled"
+                                                                    : $"onclick=location.href='{Url.Action("Video", new {p = Model.PageNumber - 1, q = Model.Query})}';")>
+                            &laquo;
+                        </button>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link" type="button" @(Model.Videos.Count <= Model.MaxVideosCount
+                                                                    ? "disabled"
+                                                                    : $"onclick=location.href='{Url.Action("Video", new {p = Model.PageNumber + 1, q = Model.Query})}';")>
+                            &raquo;
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
+    </div>
 </div>
