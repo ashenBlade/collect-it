@@ -47,16 +47,6 @@ public class ImageController : Controller
             return NotFound();
         return Ok(ResourcesMappers.ToReadImageDTO(image));
     }
-
-    /* public async Task<IActionResult> FindPhysicalImageById(int id)
-     {
-         var image = await _imageManager.FindByIdAsync(id);
-         if (image is null)
-             return NotFound();
-         return PhysicalFile(image.Address, $"image/{image.Extension}");
-     }*/
-    
-    
     
     /// <summary>
     /// Get images list 
@@ -225,9 +215,11 @@ public class ImageController : Controller
             return StatusCode(StatusCodes.Status402PaymentRequired);
         }
 
-        var file = new FileInfo(Path.Combine(_address, source.FileName));
-        return file.Exists
-            ? PhysicalFile(file.FullName, $"image/{source.Extension}", source.FileName)
-            : BadRequest(new {Message = "File not found"});
+        var content = System.IO.File.Open(Path.Combine(_address, source.FileName), FileMode.Open);
+      /*  return file.Exists
+            ? File(file, $"video/{file.Extension}", $"{file.Name}.{file.Extension}")
+            : BadRequest(new {Message = "File not found"});*/
+        
+        return File(content, $"image/{source.Extension}", $"{source.Name}.{source.Extension}");
     }
 }
