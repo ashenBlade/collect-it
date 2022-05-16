@@ -192,4 +192,17 @@ public class VideosController : Controller
         var video = await _videoManager.FindByIdAsync(id);
         return File(stream, $"video/{video.Extension}", $"{video.Name}.{video.Extension}");
     }
+    
+    [HttpPost("comment")]
+    [Authorize]
+    public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            return RedirectToAction("Video", new {id = model.ImageId});
+        }
+        return RedirectToAction("Video", new {id = model.ImageId});
+    }
 }
