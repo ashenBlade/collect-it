@@ -202,9 +202,12 @@ public class ImagesController : Controller
     [Authorize]
     public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
-        var user = await _userManager.GetUserAsync(User);
-        var imageId = model.ImageId;
-        var comment = await _commentManager.CreateComment(imageId, user.Id, model.Content);
-        return RedirectToAction("Image", new {id = model.ImageId});
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            return RedirectToAction("Image", new {imageId = model.ImageId});
+        }
+        return RedirectToAction("Image", new {imageId = model.ImageId});
     }
 }

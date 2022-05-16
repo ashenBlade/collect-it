@@ -165,4 +165,17 @@ public class MusicsController : Controller
         var stream = await _musicManager.GetContentAsync(id);
         return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
     }
+    
+    [HttpPost("comment")]
+    [Authorize]
+    public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            return RedirectToAction("Music", new {id = model.ImageId});
+        }
+        return RedirectToAction("Music", new {id = model.ImageId});
+    }
 }
