@@ -15,7 +15,7 @@ const SubscriptionsList = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        SubscriptionsService.getSubscriptionsPagedAsync({pageSize, pageNumber: 1, type: ResourceType.Image}).then(x => {
+        SubscriptionsService.getSubscriptionsPagedAsync(1, pageSize).then(x => {
             setSubs(x.subscriptions);
             setMaxPages(Math.ceil(x.totalCount / pageSize));
             setLoading(false);
@@ -24,9 +24,9 @@ const SubscriptionsList = () => {
 
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true);
-        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image})
+        SubscriptionsService.getSubscriptionsByResourceTypePagedAsync({pageNumber, pageSize, type: ResourceType.Image})
             .then(x => {
-                setSubs(x.subscriptions);
+                setSubs(x.subscriptions.sort((a, b) => a.id > b.id ? 1 : a.id == b.id ? 0: -1));
                 setLoading(false);
             }).catch(_ => setLoading(false))
     }

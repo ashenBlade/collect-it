@@ -128,6 +128,14 @@ export class SubscriptionsService {
     );
   }
 
+  async getSubscriptionsPagedAsync(pageNumber: number, pageSize: number) {
+    return await this.subscriptionsRepository.findAndCountAll({
+          limit: pageSize,
+          offset: (pageNumber - 1) * pageSize,
+          include: [ { all: true } ]
+        });
+  }
+
   async getSubscriptionsByResourceType(
     resourceType: ResourceType,
     pageNumber: number | null,
