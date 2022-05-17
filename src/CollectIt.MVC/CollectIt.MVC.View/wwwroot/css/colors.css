@@ -1,3 +1,11 @@
+.btn-color{
+    background: #bbbbbb;
+}
+
+.btn-color:hover{
+    background: #9a9a9a;
+}
+
 .blur{
     background: rgba(0, 0, 0, 0.57);
 }
