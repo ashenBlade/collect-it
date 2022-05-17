@@ -1,11 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import Music from "../../entities/music";
 import DeleteButton from "../../UI/DeleteButton/DeleteButton";
-import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import {useNavigate, useParams} from "react-router";
 import MusicsService from "../../../services/MusicsService";
+import {SubmitHandler, useForm} from "react-hook-form";
+
+interface IFormInput {
+    name: string;
+    tags: string;
+}
 
 const EditMusic = () => {
+    const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({mode: 'onBlur'});
+    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+
     const params = useParams();
     const musicId = Number(params.musicId?.trim());
     const nav = useNavigate();
@@ -47,6 +55,9 @@ const EditMusic = () => {
         })
     }
 
+    const saveNameAndTags = (newName: string, newTags: string[]) => {
+    }
+
     const deleteMusic = () => {
         if (window.confirm('Delete music?')) {
             MusicsService.deleteMusicByIdAsync(musicId).then(_ => {
@@ -82,16 +93,69 @@ const EditMusic = () => {
                             </div>
                         </div>
 
-                        <InputBlock id={musicId}
-                                    fieldName={'Name'}
-                                    placeholder={"Music name"}
-                                    initial={name}
-                                    onSave={e => saveName(e)}/>
-                        <InputBlock id={musicId}
-                                    fieldName={'Tags'}
-                                    placeholder={"Music tags separated by whitespace"}
-                                    initial={tags.join(' ')}
-                                    onSave={e => saveTags(e.split(' ').filter(t => t !== ''))} />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <div className='row m-0 ms-4'>
+                                <label>Name: </label>
+                                <input className='border rounded my-2 col-9 me-4'
+                                       type='text'
+                                       placeholder={'Music name'}
+                                       defaultValue={name}
+                                       onInput={e => {
+                                           setName(e.currentTarget.value)
+                                           setDisplayName(e.currentTarget.value)
+                                       }}
+                                       {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
+                                {
+                                    errors?.name?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>
+                                }
+                                {
+                                    errors?.name?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 6 symbols</p>
+                                }
+                                {
+                                    errors?.name?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long(maximum length is 20 ch)</p>
+                                }
+                            </div>
+                            <div className='row m-0 ms-4'>
+                                <label>Tags: </label>
+                                <input className='border rounded my-2 col-9 me-4'
+                                       type='text'
+                                       placeholder={'Music tags separated by whitespace'}
+                                       defaultValue={tags.join(', ')}
+                                       onInput={e => {
+                                           setTags(e.currentTarget.value.split(' ').filter(t => t !== ''))
+                                       }}
+                                       {...register("tags", { required: true, minLength: 3, maxLength: 50 })}/>
+                                {
+                                    errors?.tags?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>
+                                }
+                                {
+                                    errors?.tags?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 3 symbols</p>
+                                }
+                                {
+                                    errors?.tags?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long(maximum length is 50 ch)</p>
+                                }
+                            </div>
+                            {
+                                !(errors.name || errors.tags) ?
+                                <button className='btn btn-primary justify-content-center my-2 col-2'
+                                        onClick={e => {
+                                            e.preventDefault();
+                                            saveNameAndTags(name, tags);
+                                        }}>
+                                    Save
+                                </button>
+                                :
+                                <button className='btn btn-primary justify-content-center my-2 col-2' disabled>
+                                    Save
+                                </button>
+                            }
+                        </form>
 
                         <DeleteButton onDeleteClick={deleteMusic}/>
                     </div>

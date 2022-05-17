@@ -6,6 +6,7 @@ import User from "../../entities/user";
 import {Role} from "../../entities/role";
 import {Multiselect} from "multiselect-react-dropdown";
 
+
 const EditUser = () => {
     const params = useParams();
     const userId = Number(params.userId?.trim());
