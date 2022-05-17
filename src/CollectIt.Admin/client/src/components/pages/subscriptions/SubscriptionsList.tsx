@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router";
 import subscription from "../../entities/subscription";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import {ResourceType} from "../../entities/resource-type";
-import {Link} from "react-router-dom";
+import { ResourceType } from "../../entities/resource-type";
+import { Link } from "react-router-dom";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -26,7 +26,7 @@ const SubscriptionsList = () => {
         setLoading(true);
         SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image})
             .then(x => {
-                setSubs(x.subscriptions);
+                setSubs(x.subscriptions.sort((a, b) => a.id > b.id ? 1 : a.id == b.id ? 0: -1));
                 setLoading(false);
             }).catch(_ => setLoading(false))
     }
@@ -64,7 +64,9 @@ const SubscriptionsList = () => {
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
-                            {subs?.map(i =>
+                            {subs
+                            .sort((a, b) => a.id > b.id ? 1 : a.id ==b.id ? 0: -1)
+                            .map(i =>
                                 <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
                                     <td className='Cell idCell'>{i.id}</td>
                                     <td className='Cell'>{i.name}</td>
