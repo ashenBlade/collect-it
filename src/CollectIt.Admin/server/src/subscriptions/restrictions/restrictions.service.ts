@@ -49,6 +49,7 @@ export class RestrictionsService {
   }
 
   async createTagsRestrictionAsync(tags: string[]): Promise<Restriction> {
+    tags = tags.filter(t => t !== '');
     const restriction = await this.restrictionsRepository.create({
       restrictionType: RestrictionType.Tags,
       tags: tags,

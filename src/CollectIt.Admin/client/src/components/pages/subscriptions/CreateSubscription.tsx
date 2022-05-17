@@ -74,7 +74,7 @@ const CreateSubscription = () => {
                 if (tags.trim().length === 0) throw Error('Tags must be provided');
                 return {
                     restrictionType: RestrictionType.Tags,
-                    tags: tags.split(' ')
+                    tags: tags.split(' ').filter(t => t !== '')
                 }
             case RestrictionType.DenyAll:
                 return {
