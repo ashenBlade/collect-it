@@ -50,21 +50,21 @@ const VideoList = () => {
                         <table className={'table table-borderless table-light'}>
                             <thead>
                             <th className='firstRow usersRow'>
-                                <td className='Cell idCell color-purple '>ID</td>
-                                <td className='Cell nameCell color-purple'>Name</td>
-                                <td className='Cell idCell color-purple'>OwnerID</td>
-                                <td className='Cell color-purple'>Filename</td>
-                                <td className='Cell color-purple'>Upload time</td>
+                                <td className='Cell w-10'>ID</td>
+                                <td className='Cell w-35'>Name</td>
+                                <td className='Cell w-10'>OwnerID</td>
+                                <td className='Cell'>Filename</td>
+                                <td className='Cell'>Upload time</td>
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
                             {videos?.map(i =>
                                 <tr onClick={() => toEditVideoPage(i.id)} className='usersRow'>
-                                    <td className='Cell idCell'>{i.id}</td>
-                                    <td className='Cell nameCell'>
-                                        <div className={'bigtext'}> {i.name}</div>
+                                    <td className='Cell w-10'>{i.id}</td>
+                                    <td className='Cell w-35'>
+                                        <div className='bigtext'> {i.name}</div>
                                     </td>
-                                    <td className='Cell idCell'>{i.ownerId}</td>
+                                    <td className='Cell w-10'>{i.ownerId}</td>
                                     <td className='Cell'>{i.filename}</td>
                                     <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
                                 </tr>

@@ -56,21 +56,25 @@ const SubscriptionsList = () => {
                         <table className={'usersTable table table-borderless table-light'}>
                             <thead>
                             <th className='firstRow usersRow'>
-                                <td className='Cell idCell'>ID</td>
-                                <td className='Cell'>Name</td>
-                                <td className='Cell nameCell'>Description</td>
-                                <td className='Cell idCell'>Duration</td>
-                                <td className='Cell'>Price</td>
+                                <td className='Cell w-10'>ID</td>
+                                <td className='Cell w-20'>Name</td>
+                                <td className='Cell w-30'>Description</td>
+                                <td className='Cell w-10'>Duration</td>
+                                <td className='Cell w-10'>Price</td>
+                                <td className='Cell w-10'>Type</td>
+                                <td className='Cell w-10'>Active</td>
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
                             {subs?.map(i =>
                                 <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
-                                    <td className='Cell idCell'>{i.id}</td>
-                                    <td className='Cell'>{i.name}</td>
-                                    <td className='Cell nameCell'><div className={'bigtext'}></div>{i.description}</td>
-                                    <td className='Cell idCell'>{i.monthDuration}</td>
-                                    <td className='Cell'>{i.price}</td>
+                                    <td className='Cell w-10'>{i.id}</td>
+                                    <td className='Cell w-20'><div className='bigtext'> {i.name}</div></td>
+                                    <td className='Cell w-30'><div className='bigtext'>{i.description}</div></td>
+                                    <td className='Cell w-10'>{i.monthDuration}</td>
+                                    <td className='Cell w-10'>{i.price}</td>
+                                    <td className='Cell w-10'>{i.appliedResourceType}</td>
+                                    <td className='Cell w-10'>{i.active ? <>Active</> : <>Disabled</>}</td>
                                 </tr>
                             )}
                             </tbody>
