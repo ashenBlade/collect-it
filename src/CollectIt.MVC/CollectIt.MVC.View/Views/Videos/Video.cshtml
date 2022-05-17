@@ -76,7 +76,7 @@
 </div>
 @if (User.Identity!.IsAuthenticated)
 {
-    <form asp-controller="Images" asp-action="LeaveComment" method="post" class="text-start p-2">
+    <form asp-controller="Videos" asp-action="LeaveComment" method="post" class="text-start p-2">
         <label class="text-blur">Добавить комментарий:</label>
         <input type="hidden" name="ImageId" value="@Model.VideoId"/>
         <textarea name="Content" class="form-control blur-light p-3" placeholder="Оставить комментарий"></textarea>

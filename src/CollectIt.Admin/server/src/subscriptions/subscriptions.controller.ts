@@ -18,8 +18,6 @@ import { Authorize } from '../auth/jwt-auth.guard';
 import { AuthorizeAdmin } from '../auth/admin-jwt-auth.guard';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import CreationException from '../common/creation.exception';
-import { ParseResourceTypePipe } from '../common/parse-resource-type.pipe';
-import { ResourceType } from '../common/resource-type';
 import { ToReadSubscriptionDto } from './dto/read-subscription.dto';
 import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
 import { NotFoundError } from "rxjs";
@@ -94,13 +92,11 @@ export class SubscriptionsController {
   @Get('')
   async getSubscriptionsList(
     @Query('page_number', new ParseIntPipe()) pageNumber: number,
-    @Query('page_size', new ParseIntPipe()) pageSize: number,
-    @Query('type', new ParseResourceTypePipe()) resourceType: ResourceType,
+    @Query('page_size', new ParseIntPipe()) pageSize: number
   ) {
     try {
       const paged =
-        await this.subscriptionsService.getSubscriptionsByResourceType(
-          resourceType,
+        await this.subscriptionsService.getSubscriptionsPagedAsync(
           pageNumber,
           pageSize,
         );

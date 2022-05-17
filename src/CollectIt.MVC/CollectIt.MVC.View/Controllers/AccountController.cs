@@ -155,16 +155,20 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    [HttpPost]
+    [HttpPost("edit")]
     [Authorize]
-    [Route("edit")]
     public async Task<IActionResult> EditAccount(ProfileAccountViewModel model)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("Profile");
+        }
+
         var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _userManager.FindByIdAsync(id);
         if (user is null)
         {
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "User not found"});
         }
 
         user.UserName = model.Username;
@@ -172,38 +176,14 @@ public class AccountController : Controller
         user.Email = model.Email;
         user.NormalizedEmail = model.Email.ToUpper();
         var result = await _userManager.UpdateAsync(user);
-        var subs = await _userManager.GetSubscriptionsForUserByIdAsync(user.Id);
-
-        var accountModel = new AccountViewModel()
-                           {
-                               Email = user.UserName,
-                               UserName = user.UserName,
-                               Subscriptions = subs.Select(s => new AccountUserSubscription()
-                                                                {
-                                                                    From = s.During.Start.ToDateTimeUnspecified(),
-                                                                    To = s.During.End.ToDateTimeUnspecified(),
-                                                                    Name = s.Subscription.Name,
-                                                                    ResourceType =
-                                                                        s.Subscription.AppliedResourceType
-                                                                     == ResourceType.Image
-                                                                            ? "Изображение"
-                                                                            : "Другое",
-                                                                    LeftResourcesCount = s.LeftResourcesCount
-                                                                })
-                                                   .ToList()
-                           };
         if (result.Succeeded)
         {
             await _signInManager.RefreshSignInAsync(user);
-            return View("Profile", accountModel);
+            return RedirectToAction("Profile");
         }
 
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError("", error.Description);
-        }
-
-        return View("Profile", accountModel);
+        _logger.LogInformation($"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
+        return View("Error", new ErrorViewModel() {Message = "Ошибка при обновлении ваших данных"});
     }
 
 

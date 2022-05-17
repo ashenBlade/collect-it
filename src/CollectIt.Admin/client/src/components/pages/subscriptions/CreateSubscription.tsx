@@ -53,24 +53,28 @@ const CreateSubscription = () => {
                 return null;
             }
             case RestrictionType.Size:
+                if (size < 1) throw Error('Size must be positive');
                 return {
                     restrictionType: RestrictionType.Size,
                     size: size
                 };
             case RestrictionType.DaysAfter:
+                if (daysAfter < 1) throw Error('DaysAfter must be positive');
                 return {
                     restrictionType: RestrictionType.DaysAfter,
                     daysAfter: daysAfter
                 };
             case RestrictionType.DaysTo:
+                if (daysTo < 1) throw Error('DaysTo must be positive');
                 return {
                     restrictionType: RestrictionType.DaysTo,
                     daysTo: daysTo
                 }
             case RestrictionType.Tags:
+                if (tags.trim().length === 0) throw Error('Tags must be provided');
                 return {
                     restrictionType: RestrictionType.Tags,
-                    tags: tags
+                    tags: tags.split(' ').filter(t => t !== '')
                 }
             case RestrictionType.DenyAll:
                 return {
@@ -83,6 +87,8 @@ const CreateSubscription = () => {
             default:
                 throw new Error('Unsupported restriction type')
         }
+
+
     }
     const nav = useNavigate()
 
@@ -111,6 +117,12 @@ const CreateSubscription = () => {
         })
 
     }
+
+    const [daysToError, setDaysToError] = useState('');
+    const [daysAfterError, setDaysAfterError] = useState('');
+    const [sizeError, setSizeError] = useState('');
+    const [tagsError, setTagsError] = useState('');
+
 
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
@@ -186,31 +198,70 @@ const CreateSubscription = () => {
 
                     {
                         currentRestriction === RestrictionType.DaysAfter &&
-                        <input value={daysAfter} type={'number'}
-                               className={inputClassList}
-                               onInput={e => setDaysAfter(Number(e.currentTarget.value))}
-                               placeholder={'Days must last after resource upload'}/>
+                        <>
+                            <input value={ daysAfter } type={ 'number' }
+                                 className={ inputClassList }
+                                 onInput={ e => {
+                                     let value = Number(e.currentTarget.value);
+                                     if (value < 1) setDaysAfterError('Max days after publishing must be positive')
+                                     else setDaysAfterError('')
+                                     setDaysAfter(value)
+                                 } }
+                                 placeholder={ 'Days must last after resource upload' }/>
+                            <span className={ 'text-danger text-center' }>{ daysAfterError }</span>
+                        </>
                     }
                     {
                         currentRestriction === RestrictionType.DaysTo &&
-                        <input value={daysTo} type={'number'}
-                               className={inputClassList}
-                               onInput={e => setDaysTo(Number(e.currentTarget.value)) }
-                               placeholder={'Days after upload resource can be purchased'}/>
+                        <>
+                            <input value={ daysTo } type={ 'number' }
+                                 className={ inputClassList }
+                                 onInput={ e => {
+                                     const daysTo = Number(e.currentTarget.value);
+                                     if (daysTo < 1) setDaysToError('Max days close to publishing must be positive')
+                                     else setDaysToError('')
+                                     setDaysTo(daysTo)
+                                 } }
+                                 placeholder={ 'Days after upload resource can be purchased' }/>
+                            <span className={ 'text-danger text-center' }>{ daysToError }</span>
+                        </>
                     }
                     {
                         currentRestriction === RestrictionType.Size &&
-                        <input value={size} type={'number'}
-                               className={inputClassList}
-                               onInput={e => setSize(Number(e.currentTarget.value)) }
-                               placeholder={'Max size of resource to be downloaded'}/>
+                        <>
+                            <input value={ size } type={ 'number' }
+                                  className={ inputClassList }
+                                  onInput={ e => {
+
+                                      let size = Number(e.currentTarget.value);
+                                      if (size < 1)
+                                          setSizeError('Max size can must be positive')
+                                      else
+                                          setSizeError('')
+                                      setSize(size)
+                                  } }
+                                  placeholder={ 'Max size of resource to be downloaded' }/>
+                            <span className={ 'text-danger text-center' }>{ sizeError }</span>
+                        </>
                     }
                     {
                         currentRestriction === RestrictionType.Tags &&
-                        <input value={tags} type={'text'}
-                               className={inputClassList}
-                               onInput={e => setTags(e.currentTarget.value) }
-                               placeholder={'Tags must resource be tagged by to purchase resource'}/>
+                        <>
+                            <input value={ tags } type={ 'text' }
+                                 className={ inputClassList }
+                                 onInput={ e => {
+
+                                     let tags = e.currentTarget.value;
+                                     if (tags.trim().length === 0)
+                                         setTagsError('Tags must be provided')
+                                     else
+                                         setTagsError('')
+                                     setTags(tags)
+                                 } }
+                                 placeholder={ 'Tags must resource be tagged by to purchase resource' }/>
+                            <span className={ 'text-danger text-center' }>{ tagsError }</span>
+                        </>
+
                     }
 
                     <div className={'justify-content-center d-flex'}>
