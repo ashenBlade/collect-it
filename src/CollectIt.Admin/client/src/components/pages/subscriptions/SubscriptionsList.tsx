@@ -15,7 +15,7 @@ const SubscriptionsList = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        SubscriptionsService.getSubscriptionsPagedAsync({pageSize, pageNumber: 1, type: ResourceType.Image}).then(x => {
+        SubscriptionsService.getSubscriptionsPagedAsync(1, pageSize).then(x => {
             setSubs(x.subscriptions);
             setMaxPages(Math.ceil(x.totalCount / pageSize));
             setLoading(false);
@@ -24,7 +24,7 @@ const SubscriptionsList = () => {
 
     const downloadPageNumber = (pageNumber: number) => {
         setLoading(true);
-        SubscriptionsService.getSubscriptionsPagedAsync({pageNumber, pageSize, type: ResourceType.Image})
+        SubscriptionsService.getSubscriptionsByResourceTypePagedAsync({pageNumber, pageSize, type: ResourceType.Image})
             .then(x => {
                 setSubs(x.subscriptions.sort((a, b) => a.id > b.id ? 1 : a.id == b.id ? 0: -1));
                 setLoading(false);
@@ -61,6 +61,7 @@ const SubscriptionsList = () => {
                                 <td className='Cell nameCell'>Description</td>
                                 <td className='Cell idCell'>Duration</td>
                                 <td className='Cell'>Price</td>
+                                <td className='Cell'>Type</td>
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
@@ -73,6 +74,7 @@ const SubscriptionsList = () => {
                                     <td className='Cell nameCell'><div className={'bigtext'}></div>{i.description}</td>
                                     <td className='Cell idCell'>{i.monthDuration}</td>
                                     <td className='Cell'>{i.price}</td>
+                                    <td className='Cell'>{i.appliedResourceType}</td>
                                 </tr>
                             )}
                             </tbody>
