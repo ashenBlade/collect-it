@@ -5,7 +5,6 @@ using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.Logging;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
@@ -21,7 +20,16 @@ public class SubscriptionManager : ISubscriptionManager
         _context = context;
         _logger = logger;
     }
-    
+
+    private IQueryable<Subscription> ActiveSubscriptions
+    {
+        get
+        {
+            return _context.Subscriptions
+                           .Where(s => s.Active);
+        }
+    }
+
     public async Task<Subscription> CreateSubscriptionAsync(string name,
                                                             string description,
                                                             int monthDuration,
@@ -75,22 +83,6 @@ public class SubscriptionManager : ISubscriptionManager
               .ToListAsync();
     }
 
-    private IQueryable<Subscription> ActiveSubscriptions
-    {
-        get
-        {
-            return _context.Subscriptions
-                           .Where(s => s.Active);
-        }
-    }
-
-    public Task<List<Subscription>> GetActiveSubscriptionsAsync()
-    {
-        return _context.Subscriptions
-                       .Where(s => s.Active)
-                       .ToListAsync();
-    }
-
     public async Task DeleteSubscriptionAsync(int id)
     {
         var subscription = new Subscription() {Id = id};
@@ -99,16 +91,19 @@ public class SubscriptionManager : ISubscriptionManager
         await _context.SaveChangesAsync();
         _logger.LogInformation("Subscription with Id = {SubscriptionId} was deleted", id);
     }
-    
+
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType)
     {
         return _context.Subscriptions
                        .Include(s => s.Restriction)
-                       .Where(s => s.AppliedResourceType == resourceType)
+                       .Where(s => s.AppliedResourceType == resourceType && s.Active)
                        .ToListAsync();
     }
 
-    public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType, int pageNumber, int pageSize)
+    public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(
+        ResourceType resourceType,
+        int pageNumber,
+        int pageSize)
     {
         return ActiveSubscriptions
               .Include(s => s.Restriction)
@@ -164,14 +159,6 @@ public class SubscriptionManager : ISubscriptionManager
         }
     }
 
-    private static DbParameter CreateParameter(DbCommand command, string name, object value)
-    {
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = name;
-        parameter.Value = value;
-        return parameter;
-    }
-
     public async Task<IdentityResult> ChangeSubscriptionDescriptionAsync(int subscriptionId, string newDescription)
     {
         await using var connection = _context.Database.GetDbConnection();
@@ -205,6 +192,29 @@ public class SubscriptionManager : ISubscriptionManager
         {
             await connection.CloseAsync();
         }
+    }
+
+    public Task<Subscription?> FindSubscriptionByIdAsync(int id)
+    {
+        return _context.Subscriptions
+                       .Include(s => s.Restriction)
+                       .Where(s => s.Id == id)
+                       .SingleOrDefaultAsync();
+    }
+
+    public Task<List<Subscription>> GetActiveSubscriptionsAsync()
+    {
+        return _context.Subscriptions
+                       .Where(s => s.Active)
+                       .ToListAsync();
+    }
+
+    private static DbParameter CreateParameter(DbCommand command, string name, object value)
+    {
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = name;
+        parameter.Value = value;
+        return parameter;
     }
 
     private async Task<IdentityResult> SetActiveSubscriptionState(int subscriptionId, bool isActive)
@@ -245,13 +255,5 @@ public class SubscriptionManager : ISubscriptionManager
                                              Description = $"Subscription with Id = {subscriptionId} not found"
                                          });
         }
-    }
-
-    public Task<Subscription?> FindSubscriptionByIdAsync(int id)
-    {
-        return _context.Subscriptions
-                       .Include(s => s.Restriction)
-                       .Where(s => s.Id == id)
-                       .SingleOrDefaultAsync();
     }
 }

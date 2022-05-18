@@ -8,17 +8,18 @@ using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
- 
+
 namespace CollectIt.MVC.View.Controllers;
 
 [Authorize]
+[Route("payment")]
 public class PaymentController : Controller
 {
-    private readonly ISubscriptionService _subscriptionService;
-    private readonly UserManager _userManager;
-    private readonly ISubscriptionManager _subscriptionManager;
     private readonly ILogger<PaymentController> _logger;
     private readonly IResourceAcquisitionService _resourceAcquisitionService;
+    private readonly ISubscriptionManager _subscriptionManager;
+    private readonly ISubscriptionService _subscriptionService;
+    private readonly UserManager _userManager;
 
     public PaymentController(ISubscriptionService subscriptionService,
                              UserManager userManager,
@@ -34,18 +35,14 @@ public class PaymentController : Controller
         _resourceAcquisitionService = resourceAcquisitionService;
     }
 
-    [HttpGet]
-    [Route("/subscriptions")]
+    [HttpGet("subscriptions")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetPageWithSubscriptionCards()
+    public async Task<IActionResult> GetPageWithSubscriptionCards([FromQuery] ResourceType type)
     {
-        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(ResourceType.Image); 
-        return View("Subscriptions", new SubscriptionsViewModel()
-                                         {
-                                             Subscriptions = subscriptions
-                                         });
+        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type);
+        return View("Subscriptions", new SubscriptionsViewModel() {Subscriptions = subscriptions});
     }
-    
+
     [HttpGet]
     [Route("/subscribe")]
     public async Task<IActionResult> SubscribePage(int subscriptionId)
@@ -58,6 +55,7 @@ public class PaymentController : Controller
             {
                 return BadRequest();
             }
+
             return View("Payment", new PaymentPageViewModel() {User = user, Subscription = subscription});
         }
         catch (UserSubscriptionException us)
