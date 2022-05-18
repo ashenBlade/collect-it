@@ -20,14 +20,22 @@
     <div class="p-3 w-50 bg-white shadow rounded" style="margin-top: 200px">
         <h3 class="mb-5 mt-lg-3 text-center">Хотите оформить подписку "@Model.Subscription.Name"?</h3>
         <div class="mb-3 mt-lg-5 w-100 d-inline-flex justify-content-around">
-            <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
-                <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/>
+            <form method="post" asp-action="SubscribeLogic" asp-route-subscriptionId="@Model.Subscription.Id" asp-antiforgery="true">
+                @* <input name="subscriptionId" value="@Model.Subscription.Id" type="hidden" readonly="readonly"/> *@
                 <input name="declined" value="false" type="hidden"/>
-                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-success btn-lg" style="width: 300px; height: 70px">Да</button></div>
+                <div class="w-100 mt-lg-4">
+                    <button type="submit" name="success" class="btn btn-outline-success btn-lg" style="width: 300px; height: 70px">
+                        Да
+                    </button>
+                </div>
             </form>
             <form method="post" asp-action="SubscribeLogic" asp-antiforgery="true">
                 <input name="declined" value="true" type="hidden" readonly="readonly"/>
-                <div class ="w-100 mt-lg-4"><button type="submit" class="btn btn-outline-danger btn-lg" style="width: 300px; height: 70px">Нет</button></div>
+                <div class="w-100 mt-lg-4">
+                    <button type="submit" class="btn btn-outline-danger btn-lg" style="width: 300px; height: 70px">
+                        Нет
+                    </button>
+                </div>
             </form>
         </div>
     </div>

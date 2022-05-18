@@ -14,8 +14,206 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     internal static string AdminAccessTokenBearer =
         "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiJEN0E1NDZFNzFDRDA0MkI3MzkyMzVCOTU0MjBDOUQ1OEFGRDE4QUZCIiwidHlwIjoiYXQrand0In0.kiLie1BHwiT2-VFZd8cwoObiTDfHOUDUVuKJ9SkiyxQLi99Xc18kEo1a3xKf3Syow0ehLw9kBm7YN818bg7xaPm5vQZTOsX9ErNxan77M5chBC6cYJZxjmH8R82U2UNNQkuV6AP-g45xCvZ7bzkVRj2EzdJ9SKktxgY0gzAxlGZZvCukrl-9H-89N2GXfY_7pmwsyegi64eVOdoJj9K-cb7pdp6zCE_c9eYNgCuRySt0YjfE86e09PCF9HE1lPbxkI481Sb1gm6Gtg9WmgQIyKWd0LzZLnlGDHs_7gMZuAt2VAr-tcSl840qhZ8gJZFQ-yVMzzA6Xei2IlM_mqoXKw.sLnJoZ2PvwPIuy9iD4tPmA.0xz8a3c2vb-A5-bEwTHHoiTew_MEEa7LXQV55c8QJmpZxEejQ9PtMiuoBoaFUg9n8uPf6LD2YiKV4NFu7cGcN7LWjiYg0Nf-DyAE7UPEz8dfW000QmGr4thuNXDfrc9Mk9iaEDxJfzaOczS1ftLsfwX-05WDkbo9AW6oDUL7oC9fbWxZUYLL1xMmwunAf3sBjlZLwSHRfRD_CshjGYLC0zUsEhDnfC7MzrzYXinyj8I9GffyBZC4gu6j6-D0LP8CWyhi4Ua_wpWfJchpyN3wgTo5ZlO9AZDIT0HrrmthTjAimcgpbxIX5V036Cq7qn60RThbbcZffMiq_Qqfn11AFut6TvZttthFy1Bju9UNaxC3hZsKQvoSPWUFTlS237xrUIvevl0ft1mrrRgJMgcy51XokKRZBRrbD9FLWRNuYhWJ0OeCQ96F8CBhVeVdP-fG_ZmSHUY3gZf1F64kn_Y_bHvUzn8kS_bvYpdqYS2zTc_4sGzfW1abs373MLob_Cq97f-XhQyNzyIyFIY-aJXG0tUJ8vew37C6-rgph3RRaVVUPSl8w6v8PdVReAyFx6CXrLhubOUhYsc2WEvvFTrOsCK8c59DkQqFzKgDuz5k2BGltiDM-MifByvz6LSB1OZfuvNAC0-DSw1-U-EMmGz3fTdAYQl6boTW5I0yLpMZ4juRLST0ZAKjDkaDFOu8A4hGoLbJJYS1ETPo24RGAwTHN7N3jhKmGOFmTHZW1JgIMTBKa16opVg9DaK6Gbx1XmBZwiuhe2FA1t-bgSamKM5OwgEpblZQrpO3LGiqCsa44N6KTWu2x4W7bX3m_OjaUcVpVDGL7-AXohls_EiHlkIAmWmyllAXJo6Ep69m-rAMMHIBAGU2DusS9GmUyheu8j5snmLKEicyASc3ntN9yRemKr8EYzPq-Yj27XHt6NAClCWDV8ZKn64CdWNilEy2jzvp.wsd0CMpvV7hxnyY4MPrM1MhWLYaXiyqhPE9ZVbMh3pE";
 
+    internal static Image DefaultImage1 =
+        new Image
+        {
+            Id = 1,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Мониторы с аниме",
+            Extension = "jpg",
+            FileName = "abstract-img.jpg",
+            Tags = new[] {"аниме", "фоллаут"}
+        };
+
+    internal static Image DefaultImage2 =
+        new Image
+        {
+            Id = 2,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Птица зимородок",
+            Extension = "jpg",
+            FileName = "bird-img.jpg",
+            Tags = new[] {"птица", "природа"}
+        };
+
+    internal static Image DefaultImage3 =
+        new Image
+        {
+            Id = 3,
+            OwnerId = TechSupportUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Машина на дороге",
+            Extension = "jpg",
+            FileName = "car-img.jpg",
+            Tags = new[] {"машина"}
+        };
+
+    internal static Image DefaultImage4 =
+        new Image
+        {
+            Id = 4,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Котенок на одеяле",
+            Extension = "jpg",
+            FileName = "cat-img.jpg",
+            Tags = new[] {"кот", "животное", "питомец"}
+        };
+
+    internal static Image DefaultImage5 =
+        new Image
+        {
+            Id = 5,
+            OwnerId = TechSupportUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Стандартный американский дом",
+            Extension = "jpg",
+            FileName = "house-img.jpg",
+            Tags = new[] {"дом"}
+        };
+
+    internal static Image DefaultImage6 =
+        new Image
+        {
+            Id = 6,
+            OwnerId = DefaultUserTwoId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Осенний лес в природе",
+            Extension = "jpg",
+            FileName = "nature-img.jpg",
+            Tags = new[] {"природа"}
+        };
+
+    internal static Image DefaultImage7 =
+        new Image
+        {
+            Id = 7,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Дети за партами в школе перед учителем",
+            Extension = "jpg",
+            FileName = "school-img.jpg",
+            Tags = new[] {"школа", "дети"}
+        };
+
+    internal static Image DefaultImage8 =
+        new Image
+        {
+            Id = 8,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Кот смотрит в камеру на зеленом фоне",
+            Extension = "jpg",
+            FileName = "cat-img-2.jpg",
+            Tags = new[] {"кот", "питомец", "животное"}
+        };
+
+    internal static Image DefaultImage9 =
+        new Image
+        {
+            Id = 9,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Крутой кот в очках",
+            Extension = "jpg",
+            FileName = "cat-img-3.jpg",
+            Tags = new[] {"кот", "питомец", "животное", "очки"}
+        };
+
+    internal static Image DefaultImage10 =
+        new Image
+        {
+            Id = 10,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Белоснежный кот застыл в мяукающей позе",
+            Extension = "jpg",
+            FileName = "cat-img-4.jpg",
+            Tags = new[] {"кот", "питомец", "животное"}
+        };
+
+    internal static Image DefaultImage11 =
+        new Image
+        {
+            Id = 11,
+            OwnerId = DefaultUserTwoId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Рыжий кот заснул на полу",
+            Extension = "jpg",
+            FileName = "cat-img-5.jpg",
+            Tags = new[] {"кот", "питомец", "животное"}
+        };
+
+
+    internal static Image DefaultImage12 =
+        new Image
+        {
+            Id = 12,
+            OwnerId = DefaultUserOneId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Спящий кот прикрывается лапой от солнца",
+            Extension = "jpg",
+            FileName = "cat-img-6.jpg",
+            Tags = new[] {"кот", "питомец", "животное"}
+        };
+
+    internal static Image DefaultImage13 =
+        new Image
+        {
+            Id = 13,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "На стуле лежит кот",
+            Extension = "jpg",
+            FileName = "cat-img-7.jpg",
+            Tags = new[] {"кот", "питомец", "животное", "стул", "мебель"}
+        };
+
+    internal static Image DefaultImage14 =
+        new Image
+        {
+            Id = 14,
+            OwnerId = AdminUserId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Идущий по забору кот у причала",
+            Extension = "jpg",
+            FileName = "cat-img-8.jpg",
+            Tags = new[] {"кот", "питомец", "животное", "яхта", "море"}
+        };
+
+    internal static Image DefaultImage15 =
+        new Image
+        {
+            Id = 15,
+            OwnerId = DefaultUserOneId,
+            UploadDate =
+                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
+            Name = "Кот у елки сморит на лес",
+            Extension = "jpg",
+            FileName = "cat-img-9.jpg",
+            Tags = new[] {"кот", "питомец", "животное", "природа"}
+        };
+
     public PostgresqlCollectItDbContext(DbContextOptions<PostgresqlCollectItDbContext> options)
-        : base(options) { }
+        : base(options)
+    {
+    }
 
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserSubscription> UsersSubscriptions { get; set; }
@@ -111,7 +309,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             AppliedResourceType = ResourceType.Any,
             Description = "Этот тип подписки только для привилегированных. Скачивай что хочешь.",
             MaxResourcesCount = int.MaxValue,
-            MonthDuration = int.MaxValue,
+            MonthDuration = 120000, // Max month for datetime to add
             Price = int.MaxValue,
             RestrictionId = null,
             Active = false
@@ -306,205 +504,13 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
     internal static Music[] DefaultMusics => new[] {DefaultMusic1, DefaultMusic2, DefaultMusic3, DefaultMusic4,};
 
-    internal static Image DefaultImage1 =
-        new Image
-        {
-            Id = 1,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Мониторы с аниме",
-            Extension = "jpg",
-            FileName = "abstract-img.jpg",
-            Tags = new[] { "аниме", "фоллаут" }
-        };
-
-    internal static Image DefaultImage2 =
-        new Image
-        {
-            Id = 2,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Птица зимородок",
-            Extension = "jpg",
-            FileName = "bird-img.jpg",
-            Tags = new[] { "птица", "природа" }
-        };
-
-    internal static Image DefaultImage3 =
-        new Image
-        {
-            Id = 3,
-            OwnerId = TechSupportUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Машина на дороге",
-            Extension = "jpg",
-            FileName = "car-img.jpg",
-            Tags = new[] { "машина" }
-        };
-
-    internal static Image DefaultImage4 =
-        new Image
-        {
-            Id = 4,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Котенок на одеяле",
-            Extension = "jpg",
-            FileName = "cat-img.jpg",
-            Tags = new[] { "кот", "животное", "питомец" }
-        };
-
-    internal static Image DefaultImage5 =
-        new Image
-        {
-            Id = 5,
-            OwnerId = TechSupportUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Стандартный американский дом",
-            Extension = "jpg",
-            FileName = "house-img.jpg",
-            Tags = new[] { "дом" }
-        };
-
-    internal static Image DefaultImage6 =
-        new Image
-        {
-            Id = 6,
-            OwnerId = DefaultUserTwoId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Осенний лес в природе",
-            Extension = "jpg",
-            FileName = "nature-img.jpg",
-            Tags = new[] { "природа" }
-        };
-
-    internal static Image DefaultImage7 =
-        new Image
-        {
-            Id = 7,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Дети за партами в школе перед учителем",
-            Extension = "jpg",
-            FileName = "school-img.jpg",
-            Tags = new[] { "школа", "дети" }
-        };
-
-    internal static Image DefaultImage8 =
-        new Image
-        {
-            Id = 8,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Кот смотрит в камеру на зеленом фоне",
-            Extension = "jpg",
-            FileName = "cat-img-2.jpg",
-            Tags = new[] { "кот", "питомец", "животное" }
-        };
-
-    internal static Image DefaultImage9 =
-        new Image
-        {
-            Id = 9,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Крутой кот в очках",
-            Extension = "jpg",
-            FileName = "cat-img-3.jpg",
-            Tags = new[] { "кот", "питомец", "животное", "очки" }
-        };
-
-    internal static Image DefaultImage10 =
-        new Image
-        {
-            Id = 10,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Белоснежный кот застыл в мяукающей позе",
-            Extension = "jpg",
-            FileName = "cat-img-4.jpg",
-            Tags = new[] { "кот", "питомец", "животное" }
-        };
-
-    internal static Image DefaultImage11 =
-        new Image
-        {
-            Id = 11,
-            OwnerId = DefaultUserTwoId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Рыжий кот заснул на полу",
-            Extension = "jpg",
-            FileName = "cat-img-5.jpg",
-            Tags = new[] { "кот", "питомец", "животное" }
-        };
-
-
-    internal static Image DefaultImage12 =
-        new Image
-        {
-            Id = 12,
-            OwnerId = DefaultUserOneId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Спящий кот прикрывается лапой от солнца",
-            Extension = "jpg",
-            FileName = "cat-img-6.jpg",
-            Tags = new[] { "кот", "питомец", "животное" }
-        };
-
-    internal static Image DefaultImage13 =
-        new Image
-        {
-            Id = 13,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "На стуле лежит кот",
-            Extension = "jpg",
-            FileName = "cat-img-7.jpg",
-            Tags = new[] { "кот", "питомец", "животное", "стул", "мебель" }
-        };
-
-    internal static Image DefaultImage14 =
-        new Image
-        {
-            Id = 14,
-            OwnerId = AdminUserId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Идущий по забору кот у причала",
-            Extension = "jpg",
-            FileName = "cat-img-8.jpg",
-            Tags = new[] { "кот", "питомец", "животное", "яхта", "море" }
-        };
-
-    internal static Image DefaultImage15 =
-        new Image
-        {
-            Id = 15,
-            OwnerId = DefaultUserOneId,
-            UploadDate =
-                new DateTime(2022, 3, 27, 10, 56, 59, 207, DateTimeKind.Utc),
-            Name = "Кот у елки сморит на лес",
-            Extension = "jpg",
-            FileName = "cat-img-9.jpg",
-            Tags = new[] { "кот", "питомец", "животное", "природа" }
-        };
-    internal static Image[] DefaultImages => new[] {DefaultImage1,DefaultImage2,DefaultImage3,DefaultImage4,DefaultImage5
-        ,DefaultImage6,DefaultImage7, DefaultImage8,DefaultImage9,DefaultImage10,DefaultImage11
-        ,DefaultImage12,DefaultImage13,DefaultImage14,DefaultImage15
-    };
+    internal static Image[] DefaultImages => new[]
+                                             {
+                                                 DefaultImage1, DefaultImage2, DefaultImage3, DefaultImage4,
+                                                 DefaultImage5, DefaultImage6, DefaultImage7, DefaultImage8,
+                                                 DefaultImage9, DefaultImage10, DefaultImage11, DefaultImage12,
+                                                 DefaultImage13, DefaultImage14, DefaultImage15
+                                             };
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

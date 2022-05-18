@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
@@ -43,8 +42,7 @@ public class PaymentController : Controller
         return View("Subscriptions", new SubscriptionsViewModel() {Subscriptions = subscriptions});
     }
 
-    [HttpGet]
-    [Route("/subscribe")]
+    [HttpGet("subscribtions/{subscriptionId:int}")]
     public async Task<IActionResult> SubscribePage(int subscriptionId)
     {
         try
@@ -65,23 +63,22 @@ public class PaymentController : Controller
         }
     }
 
-    [HttpPost]
-    [Route("/subscribe")]
+    [HttpPost("subscriptions/{subscriptionId:int}")]
     public async Task<IActionResult> SubscribeLogic(int subscriptionId, bool declined)
     {
         if (declined)
         {
             return View("PaymentResult",
-                        new PaymentResultViewModel() {ErrorMessage = "Пользователь отменил оформление подписки"});
+                        new PaymentResultViewModel {ErrorMessage = "Пользователь отменил оформление подписки"});
         }
 
         try
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = int.Parse(_userManager.GetUserId(User));
             var userSubscription = await _subscriptionService.SubscribeUserAsync(userId, subscriptionId);
             return View("PaymentResult", new PaymentResultViewModel() {UserSubscription = userSubscription});
         }
-        catch (UserAlreadySubscribedException already)
+        catch (UserAlreadySubscribedException)
         {
             return View("PaymentResult",
                         new PaymentResultViewModel()
@@ -89,7 +86,7 @@ public class PaymentController : Controller
                             ErrorMessage = "Пользователь уже имеет активную подписку такого типа"
                         });
         }
-        catch (UserSubscriptionException us)
+        catch (UserSubscriptionException)
         {
             return View("PaymentResult",
                         new PaymentResultViewModel()
@@ -97,9 +94,14 @@ public class PaymentController : Controller
                             ErrorMessage = "Ошибка во время оформления подписки. Попробуйте позже."
                         });
         }
-        catch (SubscriptionNotFoundException subscriptionNotFoundException)
+        catch (SubscriptionNotFoundException)
         {
-            return BadRequest("No subscription with such id found");
+            return View("PaymentResult", new PaymentResultViewModel() {ErrorMessage = "Данной подписки не существует"});
+        }
+        catch (SubscriptionIsNotActiveException)
+        {
+            return View("PaymentResult",
+                        new PaymentResultViewModel() {ErrorMessage = "Подписка не доступна к оформлению"});
         }
     }
 }
