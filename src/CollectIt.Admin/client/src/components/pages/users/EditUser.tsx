@@ -1,13 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import InputBlock from "../../editBlocksComponents/editInputBlock/InputBlock";
 import {useNavigate, useParams} from "react-router";
 import {UsersService} from "../../../services/UsersService";
 import User from "../../entities/user";
 import {Role} from "../../entities/role";
 import {Multiselect} from "multiselect-react-dropdown";
+import {SubmitHandler, useForm} from "react-hook-form";
 
+interface IFormInput {
+    name: string;
+    email: string;
+}
 
 const EditUser = () => {
+    const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({mode: 'onBlur'});
+    const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
+
     const params = useParams();
     const userId = Number(params.userId?.trim());
     const nav = useNavigate();
@@ -75,6 +82,9 @@ const EditUser = () => {
         })
     }
 
+    const saveNameAndEmail = (newName: string, newEmail: string) => {
+    }
+
     return (
         <div className='align-items-center justify-content-center shadow border col-6 mt-4 m-auto d-block rounded'>
             {
@@ -91,16 +101,73 @@ const EditUser = () => {
                             </div>
                         </div>
 
-                        <InputBlock id={userId}
-                                    fieldName={'Name'}
-                                    placeholder={"User name"}
-                                    initial={name}
-                                    onSave={e => saveName(e)}/>
-                        <InputBlock id={userId}
-                                    fieldName={'Email'}
-                                    placeholder={"User email"}
-                                    initial={email}
-                                    onSave={e => saveEmail(e)} />
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <div className='row m-0 ms-4'>
+                                <label>Name: </label>
+                                <input className='border rounded my-2 col-9 me-4'
+                                       type='text'
+                                       placeholder={'User name'}
+                                       defaultValue={name}
+                                       onInput={e => {
+                                           setName(e.currentTarget.value)
+                                           setDisplayName(e.currentTarget.value)
+                                       }}
+                                       {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
+                                {
+                                    errors?.name?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>
+                                }
+                                {
+                                    errors?.name?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 6 symbols</p>
+                                }
+                                {
+                                    errors?.name?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long(maximum length is 20 ch)</p>
+                                }
+                            </div>
+                            <div className='row m-0 ms-4'>
+                                <label>Email: </label>
+                                <input className='border rounded my-2 col-9 me-4'
+                                       type='text'
+                                       placeholder={'User email'}
+                                       defaultValue={email}
+                                       onInput={e => {
+                                           setEmail(e.currentTarget.value)
+                                       }}
+                                       {...register("email", { required: true, minLength: 3, maxLength: 50, pattern: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/ })}/>
+                                {
+                                    errors?.email?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>
+                                }
+                                {
+                                    errors?.email?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 3 symbols</p>
+                                }
+                                {
+                                    errors?.email?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long(maximum length is 50 ch)</p>
+                                }
+                                {
+                                    errors?.email?.type === "pattern" &&
+                                    <p className='text-danger'>This should be email.</p>
+                                }
+                            </div>
+                            {
+                                !(errors.name || errors.email) ?
+                                    <button className='btn btn-primary justify-content-center my-2 col-2'
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                saveNameAndEmail(name, email);
+                                            }}>
+                                        Save
+                                    </button>
+                                    :
+                                    <button className='btn btn-primary justify-content-center my-2 col-2' disabled>
+                                        Save
+                                    </button>
+                            }
+                        </form>
                         <div className='row m-0 ms-2'>
                             <label className='ms-3'>Roles: </label>
                             <Multiselect isObject={false}
