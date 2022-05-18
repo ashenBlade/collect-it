@@ -80,9 +80,9 @@ const UsersList = () => {
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
                     <th className='firstRow usersRow'>
-                        <td className='Cell idCell'>ID</td>
-                        <td className='Cell nameCell'>Username</td>
-                        <td className='Cell nameCell'>E-mail</td>
+                        <td className='Cell w-10'>ID</td>
+                        <td className='Cell w-35'>Username</td>
+                        <td className='Cell w-35'>E-mail</td>
                         <td className='Cell'>Roles</td>
                         <td className='Cell'>Banned</td>
                     </th>
@@ -90,9 +90,9 @@ const UsersList = () => {
                     <tbody className='mx-auto mt-5 table-hover'>
                     {users?.map(i =>
                             <tr onClick={() => toEditUserPage(i.id)} className='usersRow'>
-                                <td className='Cell idCell'>{i.id}</td>
-                                <td className='Cell nameCell'><div className={'bigtext'}> {i.username}</div></td>
-                                <td className='Cell nameCell'>{i.email}</td>
+                                <td className='Cell w-10'>{i.id}</td>
+                                <td className='Cell w-35'><div className={'bigtext'}> {i.username}</div></td>
+                                <td className='Cell w-35'>{i.email}</td>
                                 <td className='Cell'>{i.roles}</td>
                                 <td className='Cell'>{i.lockout ? '+' : '' }</td>
                             </tr>
