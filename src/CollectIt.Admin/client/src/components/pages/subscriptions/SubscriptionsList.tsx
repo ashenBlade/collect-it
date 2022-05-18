@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from "react-router";
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from "react-router";
 import subscription from "../../entities/subscription";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import { ResourceType } from "../../entities/resource-type";
-import { Link } from "react-router-dom";
+import {ResourceType} from "../../entities/resource-type";
+import {Link} from "react-router-dom";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -56,25 +56,25 @@ const SubscriptionsList = () => {
                         <table className={'usersTable table table-borderless table-light'}>
                             <thead>
                             <th className='firstRow usersRow'>
-                                <td className='Cell idCell'>ID</td>
-                                <td className='Cell'>Name</td>
-                                <td className='Cell nameCell'>Description</td>
-                                <td className='Cell idCell'>Duration</td>
-                                <td className='Cell'>Price</td>
-                                <td className='Cell'>Type</td>
+                                <td className='Cell w-10'>ID</td>
+                                <td className='Cell w-20'>Name</td>
+                                <td className='Cell w-30'>Description</td>
+                                <td className='Cell w-10'>Duration</td>
+                                <td className='Cell w-10'>Price</td>
+                                <td className='Cell w-10'>Type</td>
+                                <td className='Cell w-10'>Active</td>
                             </th>
                             </thead>
                             <tbody className='mx-auto mt-5 table-hover'>
-                            {subs
-                            .sort((a, b) => a.id > b.id ? 1 : a.id ==b.id ? 0: -1)
-                            .map(i =>
+                            {subs?.map(i =>
                                 <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
-                                    <td className='Cell idCell'>{i.id}</td>
-                                    <td className='Cell'>{i.name}</td>
-                                    <td className='Cell nameCell'><div className={'bigtext'}></div>{i.description}</td>
-                                    <td className='Cell idCell'>{i.monthDuration}</td>
-                                    <td className='Cell'>{i.price}</td>
-                                    <td className='Cell'>{i.appliedResourceType}</td>
+                                    <td className='Cell w-10'>{i.id}</td>
+                                    <td className='Cell w-20'><div className='bigtext'> {i.name}</div></td>
+                                    <td className='Cell w-30'><div className='bigtext'>{i.description}</div></td>
+                                    <td className='Cell w-10'>{i.monthDuration}</td>
+                                    <td className='Cell w-10'>{i.price}</td>
+                                    <td className='Cell w-10'>{i.appliedResourceType}</td>
+                                    <td className='Cell w-10'>{i.active ? <>Active</> : <>Disabled</>}</td>
                                 </tr>
                             )}
                             </tbody>

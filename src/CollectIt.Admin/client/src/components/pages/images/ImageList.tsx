@@ -50,9 +50,9 @@ const ImageList = () => {
                 <table className={'usersTable table table-borderless table-light'}>
                     <thead>
                     <th className='firstRow usersRow'>
-                        <td className='Cell idCell'>ID</td>
-                        <td className='Cell nameCell'>Name</td>
-                        <td className='Cell idCell'>OwnerID</td>
+                        <td className='Cell w-10'>ID</td>
+                        <td className='Cell w-35'>Name</td>
+                        <td className='Cell w-10'>OwnerID</td>
                         <td className='Cell'>Filename</td>
                         <td className='Cell'>Upload time</td>
                     </th>
@@ -60,11 +60,11 @@ const ImageList = () => {
                     <tbody className='mx-auto mt-5 table-hover'>
                     {images.map(i =>
                         <tr onClick={() => toEditImagePage(i.id)} className='usersRow'>
-                            <td className='Cell idCell'>{i.id}</td>
-                            <td className='Cell nameCell'>
+                            <td className='Cell w-10'>{i.id}</td>
+                            <td className='Cell w-35'>
                                 <div className={'bigtext'}> {i.name}</div>
                             </td>
-                            <td className='Cell idCell'>{i.ownerId}</td>
+                            <td className='Cell w-10'>{i.ownerId}</td>
                             <td className='Cell'>{i.filename}</td>
                             <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
                         </tr>
