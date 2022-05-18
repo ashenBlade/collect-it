@@ -135,45 +135,50 @@ const CreateSubscription = () => {
                            placeholder='Name'
                            value={name}
                            onInput={e => setName(e.currentTarget.value)}
-                           {...register("name", { required: true, minLength: 6 })}/>
+                           {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
                     {errors?.name?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.name?.type === "minLength" && <p className='text-danger'>This field must have at least 6 symbols</p>}
+                    {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
                     <label>Description:</label>
                     <input className={inputClassList}
                            type='text'
                            placeholder='Description'
                            value={description}
                            onInput={e => setDescription(e.currentTarget.value)}
-                           {...register("description", { required: true, minLength: 10 })}/>
+                           {...register("description", { required: true, minLength: 10, maxLength: 50 })}/>
                     {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
+                    {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
                     <label>Price:</label>
                     <input className={inputClassList}
                            type='number'
                            placeholder='Price'
                            value={price}
                            onInput={e => setPrice(+e.currentTarget.value)}
-                           {...register("price", { required: true, min: 0 })}/>
+                           {...register("price", { required: true, min: 0, max: 10000 })}/>
                     {errors?.price?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.price?.type === "min" && <p className='text-danger'>This field must be not negative</p>}
+                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 10000</p>}
                     <label>Month duration:</label>
                     <input className={inputClassList}
                            type='number'
                            value={duration}
                            placeholder='Month duration'
                            onInput={e => setDuration(+e.currentTarget.value)}
-                           {...register("duration", { required: true, min: 1 })}/>
+                           {...register("duration", { required: true, min: 1, max: 1000 })}/>
                     {errors?.duration?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.duration?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
                     <label>Max download count:</label>
                     <input className={inputClassList}
                            type='number'
                            value={downloadCount}
                            placeholder='Max download count'
                            onInput={e => setDownloadCount(+e.currentTarget.value)}
-                           {...register("count", { required: true, min: 1 })}/>
+                           {...register("count", { required: true, min: 1, max: 1000 })}/>
                     {errors?.count?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.count?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
+                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
                     <label>Resource type:</label>
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>

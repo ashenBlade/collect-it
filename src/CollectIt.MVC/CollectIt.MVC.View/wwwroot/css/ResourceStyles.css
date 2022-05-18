@@ -89,3 +89,17 @@
 .s-2{
     width: 100.5%;
 }
+
+.action-btn {
+    border-radius: 50%;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.action-btn:last-of-type {
+    margin-right: 0;
+}
+
+.action-btn:first-of-type {
+    margin-left: 0;
+}
