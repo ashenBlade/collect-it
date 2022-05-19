@@ -72,9 +72,11 @@ const CreateSubscription = () => {
                 }
             case RestrictionType.Tags:
                 if (tags.trim().length === 0) throw Error('Tags must be provided');
+                const t = tags.split(' ').filter(t => t !== '')
+                if (t.some(t => t.length > 20)) throw Error('Max tag size is 20');
                 return {
                     restrictionType: RestrictionType.Tags,
-                    tags: tags.split(' ').filter(t => t !== '')
+                    tags: t
                 }
             case RestrictionType.DenyAll:
                 return {
@@ -148,7 +150,7 @@ const CreateSubscription = () => {
                            {...register("description", { required: true, minLength: 10, maxLength: 50 })}/>
                     {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
-                    {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                    {errors?.description?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
                     <label>Price:</label>
                     <input className={inputClassList}
                            type='number'
@@ -158,7 +160,7 @@ const CreateSubscription = () => {
                            {...register("price", { required: true, min: 0, max: 10000 })}/>
                     {errors?.price?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.price?.type === "min" && <p className='text-danger'>This field must be not negative</p>}
-                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 10000</p>}
+                    {errors?.price?.type === "max" && <p className='text-danger'>This field must be less then 10000</p>}
                     <label>Month duration:</label>
                     <input className={inputClassList}
                            type='number'
@@ -168,7 +170,7 @@ const CreateSubscription = () => {
                            {...register("duration", { required: true, min: 1, max: 1000 })}/>
                     {errors?.duration?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.duration?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
-                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
+                    {errors?.duration?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
                     <label>Max download count:</label>
                     <input className={inputClassList}
                            type='number'
@@ -178,7 +180,7 @@ const CreateSubscription = () => {
                            {...register("count", { required: true, min: 1, max: 1000 })}/>
                     {errors?.count?.type === "required" && <p className='text-danger'>This field is required</p>}
                     {errors?.count?.type === "min" && <p className='text-danger'>This field must be bigger then 1</p>}
-                    {errors?.name?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
+                    {errors?.count?.type === "max" && <p className='text-danger'>This field must be less then 1000</p>}
                     <label>Resource type:</label>
                     <select className='form-select mb-3'
                             onInput={e => setType(e.currentTarget.value as ResourceType)}>
@@ -255,14 +257,17 @@ const CreateSubscription = () => {
                             <input value={ tags } type={ 'text' }
                                  className={ inputClassList }
                                  onInput={ e => {
-
-                                     let tags = e.currentTarget.value;
-                                     if (tags.trim().length === 0)
+                                     const newTags = e.currentTarget.value;
+                                     const trimmed = newTags.trim();
+                                     if (trimmed.length === 0)
                                          setTagsError('Tags must be provided')
+                                     else if (trimmed.split(' ').filter(t => t !== '').some(t => t.length > 20))
+                                         setTagsError('Max size per tag is 20')
                                      else
                                          setTagsError('')
-                                     setTags(tags)
-                                 } }
+                                     setTags(newTags)
+                                 }
+                            }
                                  placeholder={ 'Tags must resource be tagged by to purchase resource' }/>
                             <span className={ 'text-danger text-center' }>{ tagsError }</span>
                         </>

@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router";
 import Subscription from "../../entities/subscription";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import {Button} from "react-bootstrap";
-import {SubmitHandler, useForm} from "react-hook-form";
+import { Button } from "react-bootstrap";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface IFormInput {
     name: string;
@@ -135,14 +135,14 @@ const EditSubscription = () => {
                         </form>
 
                         { active ?
-                            <Button type ='button' className='btn btn-danger my-2 mx-5' onClick={e => {
+                            <Button type ='button' className='btn btn-danger my-2' onClick={e => {
                                 e.preventDefault();
                                 switchSub();
                             }}>
                                 Deactivate
                             </Button>
                             :
-                            <Button type ='button' className='btn btn-success my-2 mx-5' onClick={e => {
+                            <Button type ='button' className='btn btn-success my-2' onClick={e => {
                                 e.preventDefault();
                                 switchSub();
                             }}>

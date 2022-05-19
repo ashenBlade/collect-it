@@ -21,7 +21,7 @@ import { Image } from './resources/images/images.model';
   providers: [],
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `.development.env`,
+      envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',

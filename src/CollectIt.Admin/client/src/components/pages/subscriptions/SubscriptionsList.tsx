@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router";
 import subscription from "../../entities/subscription";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import {ResourceType} from "../../entities/resource-type";
-import {Link} from "react-router-dom";
+import { ResourceType } from "../../entities/resource-type";
+import { Link } from "react-router-dom";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -16,7 +16,7 @@ const SubscriptionsList = () => {
 
     useEffect(() => {
         SubscriptionsService.getSubscriptionsPagedAsync(1, pageSize).then(x => {
-            setSubs(x.subscriptions);
+            setSubs(x.subscriptions.sort((a, b) => a.id > b.id ? 1 : a.id == b.id ? 0: -1));
             setMaxPages(Math.ceil(x.totalCount / pageSize));
             setLoading(false);
         }).catch(_ => setLoading(false))
