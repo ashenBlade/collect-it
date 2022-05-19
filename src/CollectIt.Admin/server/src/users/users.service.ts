@@ -1,21 +1,16 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, } from '@nestjs/common';
 import { User } from './users.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { RolesService } from '../roles/roles.service';
 import { Role } from '../roles/roles.model';
 import { NotFoundError } from "rxjs";
-import { Op, Sequelize } from "sequelize";
-import { SEQUELIZE_MODULE_ID } from "@nestjs/sequelize/dist/sequelize.constants";
+import { Op } from "sequelize";
 
 const emailRegex =
   /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
+
 const usernameRegex = /\w[\w\d]{5,}/;
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -151,5 +146,20 @@ export class UsersService {
       }
     });
     return users;
+  }
+
+  async updateUserBatch(id: number, name: string, email: string) {
+    if (!(name && email)) throw new Error('Name or email not provided');
+    if (!usernameRegex.test(name)) throw new Error('UserName is not valid');
+    if (!emailRegex.test(email)) throw new Error('Email is not valid');
+    const affected = await this.usersRepository.update({
+      username: name,
+      email: email
+    }, {
+      where: {
+        id: id
+      }
+    });
+    if (affected[0] === 0) throw new NotFoundError('User not found');
   }
 }

@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate, useParams} from "react-router";
-import {UsersService} from "../../../services/UsersService";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from "react-router";
+import { UsersService } from "../../../services/UsersService";
 import User from "../../entities/user";
-import {Role} from "../../entities/role";
-import {Multiselect} from "multiselect-react-dropdown";
-import {SubmitHandler, useForm} from "react-hook-form";
+import { Role } from "../../entities/role";
+import { Multiselect } from "multiselect-react-dropdown";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 interface IFormInput {
     name: string;
@@ -83,6 +83,15 @@ const EditUser = () => {
     }
 
     const saveNameAndEmail = (newName: string, newEmail: string) => {
+        if (!(newName && newEmail)) throw new Error('Name or email not provided');
+        UsersService.updateUserBatchAsync({id: userId, name: newName, email: newEmail}).then(() => {
+            setEmail(email);
+            setName(name);
+            setDisplayName(name);
+            alert('Update successful');
+        }).catch(err => {
+            alert('Could not update user')
+        })
     }
 
     return (
@@ -104,13 +113,13 @@ const EditUser = () => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='row m-0 ms-4'>
                                 <label>Name: </label>
-                                <input className='border rounded my-2 col-9 me-4'
+                                <input className='border rounded my-2 col-9 me-4 p-1'
                                        type='text'
                                        placeholder={'User name'}
                                        defaultValue={name}
                                        onInput={e => {
                                            setName(e.currentTarget.value)
-                                           setDisplayName(e.currentTarget.value)
+                                           // setDisplayName(e.currentTarget.value)
                                        }}
                                        {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
                                 {
@@ -128,7 +137,7 @@ const EditUser = () => {
                             </div>
                             <div className='row m-0 ms-4'>
                                 <label>Email: </label>
-                                <input className='border rounded my-2 col-9 me-4'
+                                <input className='border rounded my-2 col-9 me-4 p-1'
                                        type='text'
                                        placeholder={'User email'}
                                        defaultValue={email}
@@ -155,7 +164,7 @@ const EditUser = () => {
                             </div>
                             {
                                 !(errors.name || errors.email) ?
-                                    <button className='btn btn-primary justify-content-center my-2 col-2'
+                                    <button className='btn btn-primary justify-content-center my-2 ms-4 col-2'
                                             onClick={e => {
                                                 e.preventDefault();
                                                 saveNameAndEmail(name, email);
@@ -163,7 +172,7 @@ const EditUser = () => {
                                         Save
                                     </button>
                                     :
-                                    <button className='btn btn-primary justify-content-center my-2 col-2' disabled>
+                                    <button className='btn btn-primary justify-content-center col-2 ms-4' disabled>
                                         Save
                                     </button>
                             }
@@ -189,12 +198,12 @@ const EditUser = () => {
                                          selectedValues={user?.roles as Role[]}/>
                         </div>
                         {banned ?
-                            <button className='btn btn-success rounded my-2' onClick={e => {
+                            <button className='btn btn-success rounded ms-4 my-2' onClick={e => {
                                 e.preventDefault();
                                 unbanUser();
                             }}>Unban</button>
                             :
-                            <button className='btn btn-danger rounded my-2' onClick={e => {
+                            <button className='btn btn-danger rounded ms-4 my-2' onClick={e => {
                                 e.preventDefault();
                                 banUser()
                                 }}>Ban</button>

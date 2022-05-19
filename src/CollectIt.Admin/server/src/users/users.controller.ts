@@ -5,12 +5,16 @@ import {
   Delete,
   Get,
   HttpException,
-  HttpStatus, NotFoundException,
+  HttpStatus,
+  NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
   Res,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthorizeAdmin } from '../auth/admin-jwt-auth.guard';
@@ -20,6 +24,7 @@ import { Response } from 'express';
 import { NotFoundError } from 'rxjs';
 import { ParseEmailPipe } from '../common/parse-email.pipe';
 import { ParseUsernamePipe } from '../common/parse-username.pipe';
+import { UpdateUserBatchDto } from "./dto/update-user-batch.dto";
 
 @Authorize()
 @Controller('api/v1/users')
@@ -168,7 +173,7 @@ export class UsersController {
     }
   }
 
-  @Get('/search/with-username/:username')
+  @Get('search/with-username/:username')
   async searchUsersByUsernameEntry(@Param('username') username: string) {
     try {
       const users = await this.usersService.searchUsersByUsernameEntry(username);
@@ -176,6 +181,25 @@ export class UsersController {
     } catch (e) {
       console.error(e)
       throw new BadRequestException();
+    }
+  }
+
+  @Patch(':userId')
+  @AuthorizeAdmin()
+  @UsePipes(ValidationPipe)
+  async updateUserBatch(@Param('userId', new ParseIntPipe())id: number, @Body()dto: UpdateUserBatchDto) {
+    try {
+      await this.usersService.updateUserBatch(id, dto.name, dto.email);
+    } catch (e) {
+      if (e instanceof NotFoundError) {
+        throw new NotFoundException({
+          message: 'User not found'
+        })
+      }
+      console.error(e);
+      throw new BadRequestException({
+        message: 'Something went wrong'
+      })
     }
   }
 }

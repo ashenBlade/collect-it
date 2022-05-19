@@ -172,4 +172,28 @@ export class UsersService {
             throw new Error(json.message);
         }
     }
+
+    static async updateUserBatchAsync({ name, email, id }: { name: string; email: string; id: number }) {
+        if (!(name && email)) throw new Error('Name or email not provided');
+        if (name.length < 6) throw new Error('Min name length is 6');
+        if (!Number.isInteger(id)) throw new Error('Id must be integer');
+        const emailRegex =
+            /^[a-zA-Z\d.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?(?:\.[a-zA-Z\d](?:[a-zA-Z\d-]{0,61}[a-zA-Z\d])?)*$/;
+        if (!emailRegex.test(email)) throw new Error('Email is not valid');
+        const res = await UsersService.fetch(`${baseApiPath}/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                name, email
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (!res.ok) {
+            if (res.status === 404) throw new NotFoundError();
+            const err = await res.json();
+            console.error(err)
+            throw new Error('Could not update user')
+        }
+    }
 }
