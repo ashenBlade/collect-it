@@ -31,7 +31,23 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             Assert.Equal(dto1.UploadDate, dto2.UploadDate)
             assertTagsEqual dto1.Tags dto2.Tags
             ()
-          
+            
+
+        static let createImageHttpContent (dto: CreateImageDTO) : HttpContent =
+            let content = new MultipartFormDataContent()
+            content.Add(new StringContent(dto.Name), "Name")
+            content.Add(new StringContent(dto.UploadDate.ToString()), "UploadDate")
+            content.Add(new StringContent(dto.Extension), "Extension")
+            content.Add(new StringContent(dto.OwnerId.ToString()), "OwnerId")
+            Array.ForEach(dto.Tags, (fun t -> content.Add(new StringContent(t), "Tags")))
+
+            let bytes =
+                new ByteArrayContent(Array.Empty<byte>())
+
+            bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"image/{dto.Extension}")
+            content.Add(bytes, "Content", "SomeFileName.jpg")
+            content
+            
         static let toReadImageDto (img: Image) : ReadImageDTO =
             { 
               Name = img.Name
@@ -339,6 +355,37 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                         (Some HttpMethod.Get)
                         None)
 
+                client.Dispose()
+            }
+          
+
+        [<Fact>]
+        member this.``Endpoint: POST /api/images; Should: create new image``() =
+            task {
+                let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
+
+                let image: CreateImageDTO =
+                    { Content = FormFile(Stream.Null, 0, 0, "SomeName", "FileName")
+                      Extension = "jpg"
+                      Name = "Some image name"
+                      Tags = [| "hello"; "best"; "dog" |]
+                      OwnerId = PostgresqlCollectItDbContext.AdminUserId
+                      UploadDate = DateTime.UtcNow }
+
+                let content = createImageHttpContent image
+
+                let! actual =
+                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
+                        client
+                        $"/api/images"
+                        bearer
+                        (Some HttpMethod.Post)
+                        None
+                        (Some content)
+
+                Assert.NotNull actual
+                Assert.Equal(image.Name, actual.Name)
+                Assert.Equal(image.OwnerId, actual.OwnerId)
                 client.Dispose()
             }
     end
