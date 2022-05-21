@@ -6,6 +6,7 @@ import Pagination from "../../UI/Pagination/Pagination";
 import SubscriptionsService from "../../../services/SubscriptionsService";
 import { ResourceType } from "../../entities/resource-type";
 import { Link } from "react-router-dom";
+import ReactLoading from "react-loading";
 
 const SubscriptionsList = () => {
     let pageSize = 10;
@@ -46,7 +47,7 @@ const SubscriptionsList = () => {
     return (
         <div className={'container mt-5'}>
             {loading
-                ? <>Loading...</>
+                ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
                 : <>
                     <div className='ms-2 mb-3'><Link to='/subscriptions/create'>
                         <button className='btn btn-primary'>Create subscription</button>

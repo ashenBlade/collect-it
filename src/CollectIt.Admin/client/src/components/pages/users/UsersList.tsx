@@ -4,6 +4,7 @@ import Pagination from "../../UI/Pagination/Pagination";
 import {UsersService} from "../../../services/UsersService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
+import ReactLoading from "react-loading";
 
 const UsersList = () => {
     const pageSize = 10;
@@ -70,7 +71,7 @@ const UsersList = () => {
     return (
         <div className={'container mt-5'}>
             {loading
-                ? <>Loading...</>
+                ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
                 : <>
             <SearchPanel onSearch={onSearchId} placeholder={'Enter id'}/>
             <SearchPanel onSearch={onSearchEmail} placeholder={'Enter email'}/>
