@@ -112,7 +112,14 @@ public class Program
             new
                 GenericPhysicalFileManager(Path
                     .Combine(Directory.GetCurrentDirectory(),
-                        "Content",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "CollectIt.MVC",
+                        "CollectIt.MVC.View",
+                        "content",
                         "images")));
         builder.Services.AddScoped<IVideoManager, PostgresqlVideoManager>();
         builder.Services.AddScoped<IVideoFileManager>(_ =>
