@@ -2,60 +2,20 @@
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Resources;
+using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.EntityFrameworkCore;
 
-namespace CollectIt.Database.Infrastructure.Resources.Repositories;
+namespace CollectIt.Database.Infrastructure.Resources.Managers;
 
 public class PostgresqlImageManager : IImageManager
 {
     private readonly PostgresqlCollectItDbContext _context;
+    private readonly IImageFileManager _fileManager;
 
-    public PostgresqlImageManager(PostgresqlCollectItDbContext context)
+    public PostgresqlImageManager(PostgresqlCollectItDbContext context, IImageFileManager fileManager)
     {
         _context = context;
-    }
-
-    public async Task<Image> Create(int ownerId,
-        string address,
-        string name,
-        string tags,
-        Stream uploadedFile,
-        string extension)
-    {
-        var fileName = $"{Guid.NewGuid()}.{extension}";
-        await using (var fileStream = new FileStream(Path.Combine(address, fileName), FileMode.Create))
-        {
-            await uploadedFile.CopyToAsync(fileStream);
-        }
-
-        var image = new Image()
-        {
-            Tags = tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-            Name = name,
-            FileName = fileName,
-            UploadDate = DateTime.UtcNow,
-            Extension = extension,
-            OwnerId = ownerId
-        };
-        await AddAsync(image);
-        return image;
-    }
-
-    public string? GetExtension(string fileName)
-    {
-        var ext = fileName.Split(".").Last();
-        if (ext != "jpg" && ext != "png")
-            return null;
-        return fileName.Split(".").Last() == "jpg"
-            ? "jpeg"
-            : "png";
-    }
-
-    public async Task<int> AddAsync(Image item)
-    {
-        await _context.Images.AddAsync(item);
-        await _context.SaveChangesAsync();
-        return item.Id;
+        _fileManager = fileManager;
     }
 
     public async Task<Image?> FindByIdAsync(int id)
@@ -66,13 +26,58 @@ public class PostgresqlImageManager : IImageManager
             .SingleOrDefaultAsync();
     }
 
-    public async Task RemoveAsync(int id)
+    public async Task<Image> CreateAsync(string name, int ownerId, string[] tags, Stream content, string extension)
     {
-        var item = await _context.Images.Where(img => img.Id == id).SingleOrDefaultAsync();
-        if (item is null)
-            throw new ImageNotFoundException(id, $"Image with id = {id} not found in database");
-        _context.Images.Remove(item);
-        await _context.SaveChangesAsync();
+        if (name is null || string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentOutOfRangeException(nameof(name), "Image name can not be null or empty");
+        }
+
+        if (tags is null)
+        {
+            throw new ArgumentNullException(nameof(tags));
+        }
+
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
+        if (extension is null || string.IsNullOrWhiteSpace(extension))
+        {
+            throw new ArgumentOutOfRangeException(nameof(extension), "Image extension can not be null or empty");
+        }
+
+        var filename = $"{new Guid()}.{extension}";
+        var image = new Image()
+        {
+            Name = name,
+            Extension = extension,
+            OwnerId = ownerId,
+            Tags = tags,
+            FileName = filename,
+            UploadDate = DateTime.UtcNow,
+        };
+        try
+        {
+            var entity = await _context.Images.AddAsync(image);
+            image = entity.Entity;
+            await _context.SaveChangesAsync();
+            var file = await _fileManager.CreateAsync(filename, content);
+            return image;
+        }
+        catch (IOException)
+        {
+            _context.Images.Remove(image);
+            await _context.SaveChangesAsync();
+            throw;
+        }
+    }
+
+    public Task RemoveByIdAsync(int id)
+    {
+        _context.Images.Remove(new Image() {Id = id});
+        return _context.SaveChangesAsync();
     }
 
     public async Task ChangeNameAsync(int id, string name)
@@ -135,7 +140,18 @@ public class PostgresqlImageManager : IImageManager
     public Task<bool> IsAcquiredBy(int userId, int imageId)
     {
         return _context.AcquiredUserResources
-            .AnyAsync(aus => aus.UserId == userId && aus.ResourceId == imageId);
+            .AnyAsync(aur => aur.ResourceId == imageId && aur.UserId == userId);
+    }
+
+    public async Task<Stream> GetContentAsync(int id)
+    {
+        var image = await _context.Images.SingleOrDefaultAsync(img => img.Id == id);
+        if (image is null)
+        {
+            throw new ImageNotFoundException(id, "Image with specified id not found");
+        }
+
+        return _fileManager.GetContent(image.FileName);
     }
 
     public async Task<PagedResult<Image>> QueryAsync(string query, int pageSize, int pageNumber)
@@ -204,10 +220,5 @@ public class PostgresqlImageManager : IImageManager
                 .ToListAsync(),
             TotalCount = await _context.Images.CountAsync()
         };
-    }
-    
-    private string RenamePostedImage(string name)
-    {
-        return name.Replace(" ", "-").ToLower() + "-" + (_context.Images.Count() + 1);
     }
 }

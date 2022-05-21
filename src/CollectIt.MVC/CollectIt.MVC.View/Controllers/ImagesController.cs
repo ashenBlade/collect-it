@@ -124,12 +124,13 @@ public class ImagesController : Controller
             return View(model);
         }
 
-        var (name, tags) = ( model.Name, model.Tags );
         var user = await _userManager.GetUserAsync(User);
         await using var stream = model.Content.OpenReadStream();
         try
         {
-            await _imageManager.Create(user.Id, address, name, tags, stream, extension!);
+            await _imageManager.CreateAsync(model.Name, user.Id,
+                model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                stream, extension);
             return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)
@@ -139,7 +140,7 @@ public class ImagesController : Controller
             return View(model);
         }
     }
-
+    
 
     private static bool TryGetExtension(string filename, out string? extension)
     {
