@@ -12,20 +12,14 @@
         </div>
         <div class="d-flex m-0 mb-2 mt-3">
             <div class="image-action-btn">
-                <button class="image-action-btn border-0 rounded-pill btn btn-light text-decoration-none p-1"><i class="fa-regular fa-heart"></i> Сохранить</button>
-            </div>
-            <div class="image-action-btn">
-                <button class="image-action-btn border-0 rounded-pill btn btn-light text-decoration-none p-1"><i class="fa-regular fa-share-from-square"></i> Поделиться</button>
-            </div>
-            <div class="image-action-btn">
                 @if (Model.IsAcquired)
                 {
-                    <a href="@Model.DownloadAddress" class="image-action-btn text-light border-0 rounded-pill bg-success btn text-decoration-none p-1" download>Загрузить</a>
+                    <a href="@Model.DownloadAddress" class="image-action-btn text-light border-0 rounded-pill bg-success btn text-decoration-none p-1 ps-2 pe-2" download>Загрузить</a>
                 }
                 else
                 {
                     <form method="post" asp-controller="ResourceAcquiring" asp-action="BuyMusic" asp-route-musicId="@Model.MusicId">
-                        <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill" value="Приобрести">
+                        <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill ps-2 pe-2" value="Приобрести">
                     </form>
                 }
             </div>
@@ -38,11 +32,7 @@
         <h6>Дата загрузки</h6>
         <p>@Model.UploadDate</p>
     </div>
-    <div class="border-end" style="width: 30%">
-        <h6>Автор</h6>
-        @Model.OwnerName
-    </div>
-    <ul class="row p-2 m-0 l-s-t-none" style="width: 40%">
+    <ul class="row p-2 m-0 l-s-t-none" style="width: 70%">
         @foreach (var tag in Model.Tags)
         {
             <li class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">

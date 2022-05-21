@@ -16,6 +16,7 @@ public class RegisterViewModel
     [Required]
     [DataType(DataType.Text)]
     [MinLength(6, ErrorMessage = "Минимальная длина имени пользователя - 6 символов")]
+    [MaxLength(20, ErrorMessage = "Максимальная длина имени пользователя - 20 символов")]
     public string? UserName { get; set; }
 
     [Required(ErrorMessage = "Подтвердите пароль")]
