@@ -7,6 +7,7 @@
 
 <div class="rounded bg-light mb-2">
     <div class="mb-3 p-3">
+        <h2 class="h2">@Model.Name</h2>
         <div>
             <video playsinline controls loop muted height="100%" width="100%">
                 <source src="@Model.PreviewAddress" type="video/mp4"/>
@@ -16,16 +17,16 @@
             <div class="action-btn">
                 @if (Model.IsAcquired)
                 {
-                    <a href="@Model.DownloadAddress" 
-                       class="action-btn text-light border-0 rounded-pill bg-success btn text-decoration-none p-1 ps-3 pe-3" 
+                    <a href="@Model.DownloadAddress"
+                       class="action-btn text-light border-0 rounded-pill bg-success btn text-decoration-none p-1 ps-3 pe-3"
                        download>Загрузить</a>
                 }
                 else
                 {
-                    <form method="post" asp-controller="ResourceAcquiring" 
+                    <form method="post" asp-controller="ResourceAcquiring"
                           asp-action="BuyVideo" asp-route-videoId="@Model.VideoId">
-                        <input type="submit" 
-                               class="text-decoration-none btn btn-danger action-btn border-0 rounded-pill p-1 ps-3 pe-3" 
+                        <input type="submit"
+                               class="text-decoration-none btn btn-danger action-btn border-0 rounded-pill p-1 ps-3 pe-3 ps-2 pe-2"
                                value="Приобрести">
                     </form>
                 }
