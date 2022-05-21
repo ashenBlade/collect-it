@@ -16,6 +16,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsProduction())
+{
+    builder.WebHost.ConfigureKestrel(kestrel =>
+    {
+        // Configure Heroku port
+        kestrel.ListenAnyIP(int.Parse(Environment.GetEnvironmentVariable("PORT")!));
+    });
+}
 
 var services = builder.Services;
 
@@ -32,6 +40,12 @@ services.AddAuthentication(options =>
          })
         .AddGoogle(g =>
          {
+             g.CorrelationCookie = new CookieBuilder()
+                                   {
+                                       SameSite = SameSiteMode.None,
+                                       HttpOnly = false,
+                                       SecurePolicy = CookieSecurePolicy.None
+                                   };
              g.ClientId = builder.Configuration["Google:ClientId"];
              g.ClientSecret = builder.Configuration["Google:ClientSecret"];
              g.SignInScheme = IdentityConstants.ExternalScheme;

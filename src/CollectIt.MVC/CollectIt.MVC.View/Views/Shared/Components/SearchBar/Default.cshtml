@@ -38,7 +38,7 @@ const onSubmit = () => {
     if (path === '') throw new Error('FUCK');
     const query = input.val();
     console.log(query);
-    const url = `https://localhost:7251/${path}?q=${encodeURIComponent(query)}&p=1`;
+    const url = `/${path}?q=${encodeURIComponent(query)}&p=1`;
     console.log(url)
     window.location.href = url;
 }
