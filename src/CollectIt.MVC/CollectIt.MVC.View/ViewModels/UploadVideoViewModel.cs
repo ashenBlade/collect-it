@@ -5,7 +5,8 @@ namespace CollectIt.MVC.View.ViewModels;
 public class UploadVideoViewModel
 {
     [Required]
-    [MinLength(6)]
+    [MinLength(6, ErrorMessage = "Минимальная длина названия видео - 6 символов")]
+    [MaxLength(20, ErrorMessage = "Максимальная длина названия видео - 20 символов")]
     public string Name { get; set; }
     
     [Required]

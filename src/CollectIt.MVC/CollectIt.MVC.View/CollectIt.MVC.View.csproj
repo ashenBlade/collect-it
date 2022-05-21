@@ -132,6 +132,7 @@
       <_ContentIncludedByDefault Remove="Pages\Payment.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCard\Default.cshtml" />
       <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Shared\Components\CurrentResourceTypeSearchBar\Default.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
