@@ -108,6 +108,12 @@ public class Program
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
         builder.Services.AddScoped<IImageManager, PostgresqlImageManager>();
+        builder.Services.AddScoped<IImageFileManager>(_ =>
+            new
+                GenericPhysicalFileManager(Path
+                    .Combine(Directory.GetCurrentDirectory(),
+                        "Content",
+                        "images")));
         builder.Services.AddScoped<IVideoManager, PostgresqlVideoManager>();
         builder.Services.AddScoped<IVideoFileManager>(_ =>
                                                           new

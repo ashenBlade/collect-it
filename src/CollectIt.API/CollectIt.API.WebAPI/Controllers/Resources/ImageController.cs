@@ -23,13 +23,11 @@ public class ImageController : Controller
 {
     private IImageManager _imageManager;
     private UserManager _userManager;
-    private string _address;
-
+    
     public ImageController(IImageManager imageManager, UserManager userManager)
     {
         _imageManager = imageManager;
         _userManager = userManager;
-        _address = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
     }
 
     /// <summary>
@@ -49,48 +47,52 @@ public class ImageController : Controller
     }
     
     /// <summary>
-    /// Get images list 
+    /// Get list of images
     /// </summary>
-    /// <response code="200">Array of images ordered by id with max size of <paramref name="pageSize"/> </response>
+    /// <param name="query">Query to search images</param>
+    /// <param name="pageNumber">Number of page to return</param>
+    /// <param name="pageSize">Max size of page</param>
+    /// <response code="200">Returns list of videos</response>
     [HttpGet("")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadImageDTO[]), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "page_number")] 
-        [Range(1, int.MaxValue)]
+    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "q")] 
+        string? query,
         [Required]
+        [FromQuery(Name = "page_number")]
+        [Range(1, int.MaxValue)]
         int pageNumber,
-                                                           
-        [FromQuery(Name = "page_size")] 
-        [Range(1, int.MaxValue)]
         [Required]
+        [FromQuery(Name = "page_size")]
+        [Range(1, int.MaxValue)]
         int pageSize)
     {
-        var images = await _imageManager.GetAllPaged(pageNumber, pageSize);
-        return Ok(images.Select(ResourcesMappers.ToReadImageDTO)
-            .ToArray());
+        var q = query is null
+            ? await _imageManager.GetAllPagedAsync(pageNumber, pageSize)
+            : await _imageManager.QueryAsync(query, pageNumber, pageSize);
+        return Ok(q.Result.Select(ResourcesMappers.ToReadImageDTO));
     }
 
     /// <summary>
-    /// Post Image
+    /// Create new image
     /// </summary>
     /// <response code="404">User not found</response>
-    /// <response code="204">Image was posted</response>
-    /// <response code="400">Incorrect data</response>
+    /// <response code="204">Image was created</response>
     [HttpPost("")]
-    public async Task<IActionResult> PostImage([FromForm]ResourcesDTO.UploadImageDTO dto)
+    [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ResourcesDTO.CreateImageDTO), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateNewImage([Required]
+        [FromForm] 
+        ResourcesDTO.CreateImageDTO dto)
     {
         try
         {
-            if (!TryGetExtension(dto.Content.FileName, out var ext))
-                return BadRequest();
             await using var stream = dto.Content.OpenReadStream();
-            var image = await _imageManager.Create(
+            var image = await _imageManager.CreateAsync(dto.Name, 
                 dto.OwnerId, 
-                _address,
-                dto.Name, 
                 dto.Tags, 
                 stream, 
-                ext);
+                dto.Extension);
 
             return CreatedAtAction("FindImageById", new {id = image.Id}, ResourcesMappers.ToReadImageDTO(image));
         }
@@ -99,27 +101,6 @@ public class ImageController : Controller
             return NotFound();
         }
     }    
-    
-    private static bool TryGetExtension(string filename, out string? extension)
-    {
-        if (filename is null)
-        {
-            throw new ArgumentNullException(nameof(filename));
-        }
-        
-        extension = null;
-        var array = filename.Split('.');
-        if (array.Length < 2)
-        {
-            return false;
-        }
-
-        extension = array[^1].ToLower();
-        return SupportedImageExtensions.Contains(extension);
-    }
-    
-    private static readonly HashSet<string> SupportedImageExtensions = new() {"png", "jpeg", "jpg", "webp", "bmp"};
-    
     
     /// <summary>
     /// Delete image
@@ -132,7 +113,7 @@ public class ImageController : Controller
     {
         try
         {
-            await _imageManager.RemoveAsync(id);
+            await _imageManager.RemoveByIdAsync(id);
             return NoContent();
         }
         catch(ImageNotFoundException)
@@ -192,19 +173,22 @@ public class ImageController : Controller
     }
     
     
+    
     /// <summary>
-    /// Download Image
+    /// Download image content
     /// </summary>
-    /// <response code="404">Image not found</response>
-    /// <response code="400">Physical image not found</response>
-    /// <response code="402">Payment required</response>
-    /// <response code="200">Image was found</response>
+    /// <response code="200">Image was found and content returned</response>
+    /// <response code="404">Image was not found</response>
+    /// <response code="402">Image was not bought by user</response>
     [HttpGet("{id:int}/download")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> DownloadImage(int id)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status402PaymentRequired)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> DownloadImageContent(int id)
     {
-        var source = await _imageManager.FindByIdAsync(id);
-        if (source == null)
+        var file = await _imageManager.FindByIdAsync(id);
+        if (file is null)
         {
             return NotFound();
         }
@@ -214,12 +198,7 @@ public class ImageController : Controller
         {
             return StatusCode(StatusCodes.Status402PaymentRequired);
         }
-
-        var content = System.IO.File.Open(Path.Combine(_address, source.FileName), FileMode.Open);
-      /*  return file.Exists
-            ? File(file, $"video/{file.Extension}", $"{file.Name}.{file.Extension}")
-            : BadRequest(new {Message = "File not found"});*/
-        
-        return File(content, $"image/{source.Extension}", $"{source.Name}.{source.Extension}");
+        var content = await _imageManager.GetContentAsync(id);
+        return File(content, $"image/{file.Extension}", $"{file.Name}.{file.Extension}");
     }
 }

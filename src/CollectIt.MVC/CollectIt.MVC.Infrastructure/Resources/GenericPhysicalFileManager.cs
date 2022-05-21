@@ -2,7 +2,7 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 
 namespace CollectIt.MVC.Infrastructure.Resources;
 
-public class GenericPhysicalFileManager : IMusicFileManager, IVideoFileManager
+public class GenericPhysicalFileManager : IMusicFileManager, IVideoFileManager, IImageFileManager
 {
     private readonly string _basePath;
 

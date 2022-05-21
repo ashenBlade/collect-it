@@ -45,6 +45,14 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
         member private this.log msg = this._output.WriteLine msg
         member this.DefaultImages
             with private get () = PostgresqlCollectItDbContext.DefaultImages
+        member this.DefaultImage1
+            with private get () = PostgresqlCollectItDbContext.DefaultImage1
+
+        member this.DefaultImage2
+            with private get () = PostgresqlCollectItDbContext.DefaultImage2
+
+        member this.DefaultImage3
+            with private get () = PostgresqlCollectItDbContext.DefaultImage3
 
         interface IClassFixture<CollectItWebApplicationFactory>
         
@@ -78,7 +86,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let expected =
-                    this.DefaultImages[0] |> toReadImageDto
+                    this.DefaultImage1 |> toReadImageDto
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadImageDTO>
@@ -121,7 +129,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let image =
-                    this.DefaultImages[1] |> toReadImageDto
+                    this.DefaultImage2 |> toReadImageDto
                     
                 let imageId = 2;
 
@@ -247,7 +255,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
         member this.``Endpoint: DELETE /api/images/{ImageId}; Should: delete image``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let image = this.DefaultImages[2]
+                let image = this.DefaultImage3
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
@@ -271,6 +279,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
             
+ 
         [<Fact>]
         member this.``Endpoint: DELETE /api/images/{NonexistentImageId}; Return: 404 NotFound status``() =
             task {
@@ -284,7 +293,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentId}"
+                        $"/api/v1/videos/{nonexistentId}"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Delete)
@@ -319,7 +328,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
         member this.``Endpoint: GET /api/images/{ImageId}/download; Return: content of file``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let imageId = this.DefaultImages[0].Id
+                let imageId = this.DefaultImage1.Id
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
