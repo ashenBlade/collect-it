@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <InternalsVisibleTo Include="CollectIt.API.Tests.Integration" />
-        <InternalsVisibleTo Include="CollectIt.API.Tests.Integration.FSharp"/>
+        <InternalsVisibleTo Include="CollectIt.API.Tests.Integration.FSharp" />
     </ItemGroup>
     
     <ItemGroup>

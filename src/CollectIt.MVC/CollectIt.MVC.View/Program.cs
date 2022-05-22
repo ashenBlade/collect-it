@@ -70,11 +70,12 @@ services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Videos");
 var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Musics");
 var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
-Directory.CreateDirectory(imagePath);
 services.AddTransient<IVideoFileManager>(_ => new GenericPhysicalFileManager(videoPath));
 services.AddTransient<IMusicFileManager>(_ => new GenericPhysicalFileManager(musicPath));
+services.AddTransient<IImageFileManager>(_ => new GenericPhysicalFileManager(imagePath));
 Directory.CreateDirectory(videoPath);
 Directory.CreateDirectory(musicPath);
+Directory.CreateDirectory(imagePath);
 
 services.AddSignalR();
 services.AddIdentity<User, Role>(config =>

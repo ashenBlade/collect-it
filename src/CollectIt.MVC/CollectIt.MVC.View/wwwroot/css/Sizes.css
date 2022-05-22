@@ -2,6 +2,10 @@
     width: 100%;
 }
 
+.s-2{
+    width: 45.68px;
+}
+
 .h-1{
     height: 40px;
     line-height: 2.5rem;
@@ -32,12 +36,36 @@
     max-width: 80%;
 }
 
+.miw-0{
+    min-width: 45.68px;
+}
+
+.maw-0{
+    max-width: 98%;
+}
+
+.maw-1{
+    max-width: 80%;
+}
+
 .maw-2{
-    max-width: 100px;
+    max-width: 200px;
 }
 
 .miw-0{
     min-width: 45.68px;
+}
+
+.miw-1{
+    min-width: 79.9px;
+}
+
+.miw-2{
+    min-width: 139.6px;
+}
+
+.miw-3{
+    min-width: 450px;
 }
 
 .mah-1{

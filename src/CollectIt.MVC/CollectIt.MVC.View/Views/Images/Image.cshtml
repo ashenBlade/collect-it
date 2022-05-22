@@ -7,16 +7,11 @@
 
 <div class="rounded bg-light mb-2">
     <div class="mb-3 p-3">
+        <h2 class="h2">@Model.Name</h2>
         <div>
             <img src="@Model.PreviewAddress" class="img-fluid main-img mah-2" alt=""/>
         </div>
         <div class="d-flex m-0 mb-2 mt-3">
-            <div class="image-action-btn">
-                <button class="image-action-btn border-0 rounded-pill btn btn-light text-decoration-none p-1"><i class="fa-regular fa-heart"></i> Сохранить</button>
-            </div>
-            <div class="image-action-btn">
-                <button class="image-action-btn border-0 rounded-pill btn btn-light text-decoration-none p-1"><i class="fa-regular fa-share-from-square"></i> Поделиться</button>
-            </div>
             <div class="image-action-btn">
                 @if (Model.IsAcquired)
                 {
@@ -25,7 +20,7 @@
                 else
                 {
                     <form method="post" asp-controller="ResourceAcquiring" asp-action="BuyImage" asp-route-imageId="@Model.ImageId">
-                        <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill" value="Приобрести">
+                        <input type="submit" class="text-decoration-none btn btn-danger p-1 image-action-btn border-0 rounded-pill ps-2 pe-2" value="Приобрести">
                     </form>
                 }
             </div>

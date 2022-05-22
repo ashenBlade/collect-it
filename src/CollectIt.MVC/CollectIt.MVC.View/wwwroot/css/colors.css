@@ -32,6 +32,10 @@ body{
     background: rgba(0, 0, 0, 0.24);
 }
 
+.blur-dark:hover{
+    cursor: default;
+}
+
 .blur-light{
     background: rgba(255, 255, 255, 0.4);
 }

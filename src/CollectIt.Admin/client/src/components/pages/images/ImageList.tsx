@@ -4,6 +4,8 @@ import Pagination from "../../UI/Pagination/Pagination";
 import ImagesService from "../../../services/ImagesService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
+import ReactLoading from 'react-loading'
+
 
 const ImageList = () => {
     const pageSize = 10;
@@ -43,7 +45,7 @@ const ImageList = () => {
     return (
         <div className={'container mt-5'}>
             {loading
-                ? <>Loading...</>
+                ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
                 : <>
             <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
             <div className='mt-5 mx-auto'>
