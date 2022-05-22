@@ -12,6 +12,7 @@ using CollectIt.MVC.Infrastructure.Account;
 using CollectIt.MVC.Infrastructure.Resources;
 using CollectIt.MVC.View.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,15 +41,16 @@ services.AddAuthentication(options =>
          })
         .AddGoogle(g =>
          {
-             g.CorrelationCookie = new CookieBuilder()
-                                   {
-                                       SameSite = SameSiteMode.None,
-                                       HttpOnly = false,
-                                       SecurePolicy = CookieSecurePolicy.None
-                                   };
+             // g.CorrelationCookie = new CookieBuilder()
+             //                       {
+             //                           SameSite = SameSiteMode.None,
+             //                           HttpOnly = false,
+             //                           SecurePolicy = CookieSecurePolicy.None,
+             //                           Expiration = TimeSpan.FromMilliseconds(10)
+             //                       };
              g.ClientId = builder.Configuration["Google:ClientId"];
              g.ClientSecret = builder.Configuration["Google:ClientSecret"];
-             g.SignInScheme = IdentityConstants.ExternalScheme;
+             // g.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
          });
 services.AddAuthorization();
 services.AddDbContext<PostgresqlCollectItDbContext>(options =>
@@ -114,6 +116,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCookiePolicy(new CookiePolicyOptions()
+                    {
+                        HttpOnly = HttpOnlyPolicy.Always,
+                        Secure = CookieSecurePolicy.Always,
+                        MinimumSameSitePolicy = SameSiteMode.None
+                    });
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

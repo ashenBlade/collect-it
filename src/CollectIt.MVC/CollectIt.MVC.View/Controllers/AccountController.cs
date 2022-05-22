@@ -200,6 +200,7 @@ public class AccountController : Controller
         var properties =
             _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme,
                                                                      Url.Action("GoogleResponse"));
+        // var properties = new AuthenticationProperties() {RedirectUri = Url.Action("GoogleResponse")};
         return Challenge(properties, GoogleDefaults.AuthenticationScheme);
     }
 
@@ -218,7 +219,7 @@ public class AccountController : Controller
                                                                    true);
         if (result.Succeeded)
         {
-            _logger.LogTrace("User with existing account logged in using google");
+            _logger.LogInformation("User with existing account logged in using google");
             return RedirectToAction("Index", "Home");
         }
 
