@@ -2,28 +2,28 @@
     <a class="navbar-brand fw-bold text-dark" asp-controller="Home" asp-action="Index">Collect It</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
             aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon text-white"></span>
     </button>
-    <div class="navbar-collapse collapse ">
+    <div class="navbar-collapse collapse">
         <ul class="navbar-nav flex-grow-1">
-            <li class="nav-item me-4 ">
+            <li class="nav-item me-4 mb-2">
                 <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Images" asp-action="GetImagesByQuery" asp-route-query="" asp-route-pageNumber="">Изображения</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-4 mb-2">
                 <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Musics" asp-action="GetQueriedMusics" asp-route-query="" asp-route-pageNumber="">Музыка</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item mb-2">
                 <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Videos" asp-action="GetQueriedVideos" asp-route-query="" asp-route-pageNumber="">Видео</a>
             </li>
         </ul>
-        <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards" asp-route-type="Image">Подписки</a>
+        <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2 mb-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards" asp-route-type="Image">Подписки</a>
         @if (User.Identity!.IsAuthenticated)
         {
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-controller="Account" asp-action="Profile">Профиль</a>
+            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 mb-2" asp-controller="Account" asp-action="Profile">Профиль</a>
         }
         else
         {
-            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2" asp-controller="Account" asp-action="Login">Войти</a>
+            <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2 mb-2" asp-controller="Account" asp-action="Login">Войти</a>
             <a class="nav-link text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1" asp-controller="Account" asp-action="Register">Регистрация</a>
         }
     </div>
