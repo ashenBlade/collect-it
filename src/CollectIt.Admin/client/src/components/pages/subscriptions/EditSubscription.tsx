@@ -96,7 +96,7 @@ const EditSubscription = () => {
                         </div>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             Name:
-                            <div className='d-flex w-100 mx-auto my-2'>
+                            <div className='w-100 mx-auto my-2'>
                                 <input type='text'
                                        className='form-control mx-1'
                                        defaultValue={displayName}
@@ -107,7 +107,7 @@ const EditSubscription = () => {
                                 {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long(maximum length is 20 ch)</p>}
                             </div>
                             Description:
-                            <div className='d-flex w-100 mx-auto my-2'>
+                            <div className='w-100 mx-auto my-2'>
                                 <input type='text'
                                        className='form-control mx-1'
                                        defaultValue={displayDescription}
