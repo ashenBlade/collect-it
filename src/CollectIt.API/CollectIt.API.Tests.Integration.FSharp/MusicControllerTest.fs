@@ -1,4 +1,4 @@
-﻿module CollectIt.API.Tests.Integration.FSharp.ImageControllerTests
+﻿module CollectIt.API.Tests.Integration.FSharp.MusicControllerTest
 
 open System
 open System.Collections.Generic
@@ -10,12 +10,12 @@ open CollectIt.API.Tests.Integration.FSharp.CollectItWebApplicationFactory
 open CollectIt.Database.Entities.Resources
 open CollectIt.Database.Infrastructure
 open Microsoft.AspNetCore.Http
+open NodaTime
 open Xunit
 open Xunit.Abstractions
 
-
-[<Collection("Images")>]
-type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
+[<Collection("Music")>]
+type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
     class
         static let assertTagsEqual (t1: IEnumerable<string>) (t2: IEnumerable<string>) : unit =
             let s1 = set t1
@@ -24,7 +24,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             Assert.Equal(s1.Count, union.Count)
             Assert.Equal(s2.Count, union.Count)
 
-        static let assertImagesEqual (dto1: ReadImageDTO) (dto2: ReadImageDTO) : unit =
+        static let assertMusicsEqual (dto1: ReadMusicDTO) (dto2: ReadMusicDTO) : unit =
             Assert.Equal(dto1.Name, dto2.Name)
             Assert.Equal(dto1.OwnerId, dto2.OwnerId)
             Assert.Equal(dto1.UploadDate, dto2.UploadDate)
@@ -32,49 +32,51 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             ()
             
 
-        static let createImageHttpContent (dto: CreateImageDTO) : HttpContent =
+        static let createMusicHttpContent (dto: CreateMusicDTO) : HttpContent =
             let content = new MultipartFormDataContent()
             content.Add(new StringContent(dto.Name), "Name")
             content.Add(new StringContent(dto.UploadDate.ToString()), "UploadDate")
             content.Add(new StringContent(dto.Extension), "Extension")
+            content.Add(new StringContent(dto.Duration.ToString()), "Duration")
             content.Add(new StringContent(dto.OwnerId.ToString()), "OwnerId")
             Array.ForEach(dto.Tags, (fun t -> content.Add(new StringContent(t), "Tags")))
 
             let bytes =
                 new ByteArrayContent(Array.Empty<byte>())
 
-            bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"image/{dto.Extension}")
-            content.Add(bytes, "Content", "SomeFileName.jpg")
+            bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"audio/{dto.Extension}")
+            content.Add(bytes, "Content", "SomeFileName.mp3")
             content
             
-        static let toReadImageDto (img: Image) : ReadImageDTO =
+        static let toReadMusicDto (mus: Music) : ReadMusicDTO =
             { 
-              Name = img.Name
-              UploadDate = img.UploadDate
-              Extension = img.Extension
-              Tags = img.Tags
-              OwnerId = img.OwnerId }
+              Name = mus.Name
+              UploadDate = mus.UploadDate
+              Extension = mus.Extension
+              Tags = mus.Tags
+              OwnerId = mus.OwnerId
+              Duration = mus.Duration}
             
         member this._factory = factory
         member this._output = output
         member private this.log msg = this._output.WriteLine msg
-        member this.DefaultImages
-            with private get () = PostgresqlCollectItDbContext.DefaultImages
-        member this.DefaultImage1
-            with private get () = PostgresqlCollectItDbContext.DefaultImage1
+        member this.DefaultMusics
+            with private get () = PostgresqlCollectItDbContext.DefaultMusics
+        member this.DefaultMusic1
+            with private get () = PostgresqlCollectItDbContext.DefaultMusic1
 
-        member this.DefaultImage2
-            with private get () = PostgresqlCollectItDbContext.DefaultImage2
+        member this.DefaultMusic2
+            with private get () = PostgresqlCollectItDbContext.DefaultMusic2
 
-        member this.DefaultImage3
-            with private get () = PostgresqlCollectItDbContext.DefaultImage3
+        member this.DefaultMusic3
+            with private get () = PostgresqlCollectItDbContext.DefaultMusic3
 
         interface IClassFixture<CollectItWebApplicationFactory>
         
         
         
          [<Fact>]
-        member this.``Endpoint: GET /api/images?page_number=1&page_size=10; Return: json array of images ordered by id``
+        member this.``Endpoint: GET /api/music?page_number=1&page_size=10; Return: json array of musics ordered by id``
             ()
             =
             task {
@@ -83,9 +85,9 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 let pageSize = 10
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO []>
+                    TestsHelpers.getResultParsedFromJson<ReadMusicDTO []>
                         client
-                        $"/api/images?page_number={pageNumber}&page_size={pageSize}"
+                        $"/api/music?page_number={pageNumber}&page_size={pageSize}"
                         bearer
                         None
                         None
@@ -96,40 +98,42 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
         [<Fact>]
-        member this.``Endpoint: GET /api/images/{ImageId}; Return: json of required image``() =
+        member this.``Endpoint: GET /api/music/{MusicId}; Return: json of required music``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let expected =
-                    this.DefaultImage1 |> toReadImageDto
+                    this.DefaultMusic1 |> toReadMusicDto
+                    
+                let musicId = this.DefaultMusic1.Id
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
+                    TestsHelpers.getResultParsedFromJson<ReadMusicDTO>
                         client
-                        "/api/images/1"
+                        $"/api/music/{musicId}"
                         bearer
                         None
                         None
                         None
 
-                assertImagesEqual expected actual
+                assertMusicsEqual expected actual
                 client.Dispose()
             }
             
         [<Fact>]
-        member this.``Endpoint: GET /api/images/{NonexistentImageId}; Return: 404 NotFound status``() =
+        member this.``Endpoint: GET /api/music/{NonexistentMusicId}; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let nonexistentId =
-                    (this.DefaultImages
+                    (this.DefaultMusics
                      |> Array.maxBy (fun v -> v.Id)
                      |> (fun v -> v.Id + 1000))
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentId}"
+                        $"/api/music/{nonexistentId}"
                         bearer
                         HttpStatusCode.NotFound
                         None
@@ -139,22 +143,22 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
         [<Fact>]
-        member this.``Endpoint: POST /api/images/{ImageId}/name; Should: change image name``() =
+        member this.``Endpoint: POST /api/music/{MusicId}/name; Should: change music name``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let image =
-                    this.DefaultImage2 |> toReadImageDto
+                let music =
+                    this.DefaultMusic2 |> toReadMusicDto
                     
-                let imageId = 2;
+                let musicId = this.DefaultMusic2.Id;
 
                 let newName =
-                    image.Name + " some string, but still valid"
+                    music.Name + " some string, but still valid"
 
                 do!
                     (TestsHelpers.sendAsync
                         client
-                        $"/api/images/{imageId}/name"
+                        $"/api/music/{musicId}/name"
                         bearer
                         (Some(new FormUrlEncodedContent([ KeyValuePair("Name", newName) ])))
                         None
@@ -164,9 +168,9 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                      |> Async.Ignore)
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
+                    TestsHelpers.getResultParsedFromJson<ReadMusicDTO>
                         client
-                        $"/api/images/{imageId}"
+                        $"/api/music/{musicId}"
                         bearer
                         None
                         None
@@ -177,19 +181,19 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
         [<Fact>]
-        member this.``Endpoint: POST /api/images/{NonexistentImageId}/name; Return: 404 NotFound status``() =
+        member this.``Endpoint: POST /api/music/{NonexistentMusicId}/name; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let nonexistentImageId =
-                    this.DefaultImages
+                let nonexistentMusicId =
+                    this.DefaultMusics
                     |> Array.maxBy (fun v -> v.Id)
                     |> (fun v -> v.Id + 100)
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentImageId}/name"
+                        $"/api/music/{nonexistentMusicId}/name"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Post)
@@ -199,11 +203,11 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
 
         [<Fact>]
-        member this.``Endpoint: POST /api/images/{ImageId}/tags; Should: change image's tags``() =
+        member this.``Endpoint: POST /api/music/{MusicId}/tags; Should: change music's tags``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let imageId = 2;
+                let musicId = this.DefaultMusic2.Id;
 
                 let expected =
                     [| "some"; "tags"; "from"; "f#" |]
@@ -211,7 +215,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 do!
                     (TestsHelpers.sendAsync
                         client
-                        $"/api/images/{imageId}/tags"
+                        $"/api/music/{musicId}/tags"
                         bearer
                         (Some(
                             new FormUrlEncodedContent(
@@ -226,9 +230,9 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                      |> Async.Ignore)
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
+                    TestsHelpers.getResultParsedFromJson<ReadMusicDTO>
                         client
-                        $"/api/images/{imageId}"
+                        $"/api/music/{musicId}"
                         bearer
                         None
                         None
@@ -239,19 +243,19 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
         [<Fact>]
-        member this.``Endpoint: POST /api/images/{NonexistentImageId}/tags; Return: 404 NotFound status``() =
+        member this.``Endpoint: POST /api/music/{NonexistentMusicId}/tags; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let nonexistentId =
-                    (this.DefaultImages
+                    (this.DefaultMusics
                      |> Array.maxBy (fun v -> v.Id)
                      |> (fun v -> v.Id + 1000))
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentId}/tags"
+                        $"/api/music/{nonexistentId}/tags"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Post)
@@ -267,15 +271,15 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
             
         [<Fact>]
-        member this.``Endpoint: DELETE /api/images/{ImageId}; Should: delete image``() =
+        member this.``Endpoint: DELETE /api/music/{MusicId}; Should: delete music``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let image = this.DefaultImage3
+                let music = this.DefaultMusic3
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{image.Id}"
+                        $"/api/music/{music.Id}"
                         bearer
                         HttpStatusCode.NoContent
                         (Some HttpMethod.Delete)
@@ -284,7 +288,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{image.Id}"
+                        $"/api/music/{music.Id}"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Get)
@@ -296,19 +300,19 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             
  
         [<Fact>]
-        member this.``Endpoint: DELETE /api/images/{NonexistentImageId}; Return: 404 NotFound status``() =
+        member this.``Endpoint: DELETE /api/music/{NonexistentMusicId}; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let nonexistentId =
-                    this.DefaultImages
+                    this.DefaultMusics
                     |> Array.maxBy (fun v -> v.Id)
                     |> (fun x -> x.Id + 100)
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentId}"
+                        $"/api/music/{nonexistentId}"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Delete)
@@ -318,19 +322,19 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
 
         [<Fact>]
-        member this.``Endpoint: GET /api/images/{NonexistentImageId}/download; Return: 404 NotFound status``() =
+        member this.``Endpoint: GET /api/music/{NonexistentMusicId}/download; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let nonexistentId =
-                    this.DefaultImages
+                    this.DefaultMusics
                     |> Array.maxBy (fun v -> v.Id)
                     |> (fun x -> x.Id + 100)
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{nonexistentId}/download"
+                        $"/api/music/{nonexistentId}/download"
                         bearer
                         HttpStatusCode.NotFound
                         (Some HttpMethod.Get)
@@ -340,15 +344,15 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             }
     
         [<Fact>]
-        member this.``Endpoint: GET /api/images/{ImageId}/download; Return: content of file``() =
+        member this.``Endpoint: GET /api/music/{MusicId}/download; Return: content of file``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let imageId = this.DefaultImage1.Id
+                let musicId = this.DefaultMusic1.Id
 
                 do!
                     (TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/images/{imageId}/download"
+                        $"/api/music/{musicId}/download"
                         bearer
                         HttpStatusCode.OK
                         (Some HttpMethod.Get)
@@ -357,34 +361,34 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 client.Dispose()
             }
           
-
         [<Fact>]
-        member this.``Endpoint: POST /api/images; Should: create new image``() =
+        member this.``Endpoint: POST /api/music; Should: create new music``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let image: CreateImageDTO =
+                let music: CreateMusicDTO =
                     { Content = FormFile(Stream.Null, 0, 0, "SomeName", "FileName")
-                      Extension = "jpg"
-                      Name = "Some image name"
+                      Duration = 10
+                      Extension = "mp3"
+                      Name = "Some music name"
                       Tags = [| "hello"; "best"; "dog" |]
                       OwnerId = PostgresqlCollectItDbContext.AdminUserId
                       UploadDate = DateTime.UtcNow }
 
-                let content = createImageHttpContent image
+                let content = createMusicHttpContent music
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
+                    TestsHelpers.getResultParsedFromJson<ReadMusicDTO>
                         client
-                        $"/api/images"
+                        $"/api/music"
                         bearer
                         (Some HttpMethod.Post)
                         None
                         (Some content)
 
                 Assert.NotNull actual
-                Assert.Equal(image.Name, actual.Name)
-                Assert.Equal(image.OwnerId, actual.OwnerId)
+                Assert.Equal(music.Name, actual.Name)
+                Assert.Equal(music.OwnerId, actual.OwnerId)
                 client.Dispose()
             }
     end

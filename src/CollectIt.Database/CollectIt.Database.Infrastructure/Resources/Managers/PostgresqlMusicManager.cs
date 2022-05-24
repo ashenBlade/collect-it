@@ -18,11 +18,12 @@ public class PostgresqlMusicManager : IMusicManager
         _fileManager = fileManager;
     }
 
-    public Task<Music?> FindByIdAsync(int id)
+    public async Task<Music?> FindByIdAsync(int id)
     {
-        return _context.Musics
-                       .Include(m => m.Owner)
-                       .SingleOrDefaultAsync(m => m.Id == id);
+        return await _context.Musics
+            .Where(mus => mus.Id == id)
+            .Include(mus => mus.Owner)
+            .SingleOrDefaultAsync();
     }
 
     public async Task<Music> CreateAsync(string name,
@@ -146,7 +147,7 @@ public class PostgresqlMusicManager : IMusicManager
                };
     }
 
-    public async Task ChangeMusicNameAsync(int musicId, string name)
+    public async Task ChangeNameAsync(int musicId, string name)
     {
         if (name is null)
         {
@@ -163,7 +164,7 @@ public class PostgresqlMusicManager : IMusicManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task ChangeMusicTagsAsync(int musicId, string[] tags)
+    public async Task ChangeTagsAsync(int musicId, string[] tags)
     {
         if (tags is null)
         {
