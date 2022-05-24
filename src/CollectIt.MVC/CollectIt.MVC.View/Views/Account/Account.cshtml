@@ -29,4 +29,11 @@
             <input class="btn btn-primary" value="Сохранить" type="submit"/>
         </div>
     </form>
+    @if (!Model.EmailConfirmed)
+    {
+        <form asp-action="SendEmailConfirmation">
+            Ваша почта не подтверждена
+            <input type="submit" class="btn btn-success p-2" value="Подтвердить"/>
+        </form>
+    }
 </div>

@@ -8,6 +8,7 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Managers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Abstractions.TechSupport;
+using CollectIt.MVC.Infrastructure;
 using CollectIt.MVC.Infrastructure.Account;
 using CollectIt.MVC.Infrastructure.Resources;
 using CollectIt.MVC.View.Hubs;
@@ -109,6 +110,7 @@ services.AddScoped<IVideoManager, PostgresqlVideoManager>();
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
 services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();
+services.AddTransient<IMailSender, MailSender>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
