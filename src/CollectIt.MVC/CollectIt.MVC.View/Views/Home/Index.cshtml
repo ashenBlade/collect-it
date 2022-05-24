@@ -7,7 +7,7 @@
 }
 
 <div class="h-100 d-flex justify-content-center align-items-center outline-center">
-    <div class="w-75 inline-center miw-3">
+    <div class="search d-block ms-auto me-auto">
         <vc:search-bar action="@nameof(HomeController.Index)" controller="Home" chosenType="@ResourceType.Image" query="@(Model?.Query ?? string.Empty)"/>
         <h1 class = "text-center text-white mt-5">Найди все, что пожелаешь</h1>
     </div>
