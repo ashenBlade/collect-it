@@ -104,7 +104,7 @@ const EditSubscription = () => {
                                        {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
                                 {errors?.name?.type === "required" && <p className='text-danger'>This field is required</p>}
                                 {errors?.name?.type === "minLength" && <p className='text-danger'>This field must have at least 6 symbols</p>}
-                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long(maximum length is 20 ch)</p>}
                             </div>
                             Description:
                             <div className='d-flex w-100 mx-auto my-2'>
@@ -115,7 +115,7 @@ const EditSubscription = () => {
                                        {...register("description", { required: true, minLength: 10, maxLength: 50 })}/>
                                 {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
                                 {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
-                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                                {errors?.description?.type === "maxLength" && <p className='text-danger'>This field is too long(maximum length is 50 ch)</p>}
                             </div>
                             {!(errors.name || errors.description) ?
                                 <Button type='button' className='btn btn-primary my-2' onClick={e => {

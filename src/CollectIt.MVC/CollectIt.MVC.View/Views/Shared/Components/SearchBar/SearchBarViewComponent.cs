@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CollectIt.Database.Entities.Account;
 using CollectIt.MVC.View.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,14 @@ public class SearchBarViewComponent : ViewComponent
 {
     public IViewComponentResult Invoke(string? action = null, string? controller = null, string? query = null, ResourceType chosenType = ResourceType.Image)
     {
+        var type = switch (controller)
+        { 
+                "Musics" => ResourceType.Music,
+                "Videos" => ResourceType.Video,
+                _ => ResourceType.Image
+        }
+
+        ;
         return View(new SearchBarViewModel()
                     {
                         Action = action ?? "Index",
