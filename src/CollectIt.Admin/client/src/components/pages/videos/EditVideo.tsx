@@ -97,7 +97,7 @@ const EditVideo = () => {
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className='row m-0 ms-4'>
+                            <div className='m-0 ms-4'>
                                 <label>Name: </label>
                                 <input className='border rounded my-2 col-9 me-4'
                                        type='text'
@@ -121,7 +121,7 @@ const EditVideo = () => {
                                     <p className='text-danger'>This field is too long(maximum length is 20 ch)</p>
                                 }
                             </div>
-                            <div className='row m-0 ms-4'>
+                            <div className='m-0 ms-4'>
                                 <label>Tags: </label>
                                 <input className='border rounded my-2 col-9 me-4'
                                        type='text'
