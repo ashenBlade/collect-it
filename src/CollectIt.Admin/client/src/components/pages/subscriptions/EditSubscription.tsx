@@ -115,7 +115,7 @@ const EditSubscription = () => {
                                        {...register("description", { required: true, minLength: 10, maxLength: 50 })}/>
                                 {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
                                 {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
-                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                                {errors?.description?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
                             </div>
                             {!(errors.name || errors.description) ?
                                 <Button type='button' className='btn btn-primary my-2' onClick={e => {

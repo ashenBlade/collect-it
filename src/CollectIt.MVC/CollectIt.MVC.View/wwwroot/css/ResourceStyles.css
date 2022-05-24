@@ -129,13 +129,19 @@
 }
 
 /* images styles */
+
+.images-search{
+    width: 100%;
+}
 .images{
     display: flex;
 }
-
 @media(max-width: 767px){
     .images{
         display: block;
+    }
+    .images-search{
+        width: 100%;
     }
 }
 
