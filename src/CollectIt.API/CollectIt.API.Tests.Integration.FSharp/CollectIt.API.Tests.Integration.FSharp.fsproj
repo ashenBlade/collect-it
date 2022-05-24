@@ -20,6 +20,7 @@
         <Compile Include="PurchaseControllerTests.fs" />
         <Compile Include="VideosControllerTests.fs" />
         <Compile Include="ImageControllerTests.fs" />
+        <Compile Include="MusicControllerTest.fs" />
     </ItemGroup>
 
     <ItemGroup>
