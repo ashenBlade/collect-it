@@ -5,14 +5,14 @@
     ViewData["Title"] = "Подписки";
 }
 
-<ul class="text-decoration-none d-flex justify-content-around flex-xl-row flex-column">
-    <li class="btn btn-light">
+<ul class="text-decoration-none d-flex justify-content-around flex-xl-row flex-column p-0">
+    <li class="btn btn-light mb-temp">
         <a asp-action="GetPageWithSubscriptionCards" asp-route-type="Any" class="text-decoration-none text-dark">Any</a>
     </li>
-    <li class="btn btn-light">
+    <li class="btn btn-light mb-temp">
         <a asp-action="GetPageWithSubscriptionCards" asp-route-type="Image" class="text-decoration-none text-dark">Image</a>
     </li>
-    <li class="btn btn-light">
+    <li class="btn btn-light mb-temp">
         <a asp-action="GetPageWithSubscriptionCards" asp-route-type="Video" class="text-decoration-none text-dark">Video</a>
     </li>
     <li class="btn btn-light">

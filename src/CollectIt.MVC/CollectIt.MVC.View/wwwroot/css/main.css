@@ -71,11 +71,19 @@
 }
 
 .subs-center{
-    position: absolute;
-    top: 25%;
-    left: 0;
-    right: 0;
+    margin-top: 8%;
+    margin-left: auto;
+    margin-right: auto;
     list-style-type: none;
+}
+
+.mb-temp{
+    margin-bottom: 0;
+}
+@media (max-width: 767px) {
+    .mb-temp{
+        margin-bottom: 0.5rem;
+    }
 }
 
 .block-bestsub{
