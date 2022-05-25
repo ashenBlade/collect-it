@@ -106,7 +106,19 @@ services.AddIdentity<User, Role>(config =>
 services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IMusicManager, PostgresqlMusicManager>();
 services.AddScoped<IVideoManager, PostgresqlVideoManager>();
-
+services.AddScoped<IMailSender, MailSender>();
+// var options = new MailSenderOptions();
+// builder.Configuration.Bind("MailSenderOptions", options);
+var options = new MailSenderOptions()
+              {
+                  From = builder.Configuration.GetValue<string>("Mail:From"),
+                  EnableSsl = builder.Configuration.GetValue<bool>("Mail:EnableSsl"),
+                  Host = builder.Configuration.GetValue<string>("Mail:Host"),
+                  Password = builder.Configuration.GetValue<string>("Mail:Password"),
+                  Port = builder.Configuration.GetValue<int>("Mail:Port"),
+                  Username = builder.Configuration.GetValue<string>("Mail:Username")
+              };
+services.AddSingleton(options);
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
 services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();

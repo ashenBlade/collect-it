@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Web;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Entities.Account;
@@ -38,8 +37,9 @@ public class AccountController : Controller
     [Route("profile")]
     public async Task<IActionResult> Profile()
     {
-        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(userId) )
+        // var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var user = await _userManager.GetUserAsync(User);
+        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(user.Id) )
            .Select(subscription =>
                        new AccountUserSubscription()
                        {
@@ -51,7 +51,7 @@ public class AccountController : Controller
                                               ? "Изображение"
                                               : "Другое"
                        });
-        var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(userId) )
+        var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id) )
            .Select(resource =>
                        new AccountUserResource()
                        {
@@ -61,7 +61,7 @@ public class AccountController : Controller
                            Extension = resource.Resource.Extension,
                            Date = resource.AcquiredDate
                        });
-        var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(userId) )
+        var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(user.Id) )
            .Select(resource =>
                        new AccountUserResource()
                        {
@@ -78,7 +78,8 @@ public class AccountController : Controller
                         Subscriptions = subscriptions,
                         AcquiredResources = resources,
                         UsersResources = myResources,
-                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User))
+                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User)),
+                        EmailConfirmed = user.EmailConfirmed
                     };
         return View(model);
     }
@@ -112,7 +113,8 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            _mailSender.SendMail("Подтверждение почты", CreateConfirmationMailMessageBody(token), user.Email);
+            await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
+                                            user.Email);
             _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
             return RedirectToAction("Login");
         }
@@ -179,10 +181,19 @@ public class AccountController : Controller
             return View("Error", new ErrorViewModel() {Message = "User not found"});
         }
 
-        user.UserName = model.Username;
-        user.NormalizedUserName = model.Username.ToUpper();
-        user.Email = model.Email;
-        user.NormalizedEmail = model.Email.ToUpper();
+        if (user.UserName != model.Username)
+        {
+            user.UserName = model.Username;
+            user.NormalizedUserName = model.Username.ToUpper();
+        }
+
+        if (user.Email != model.Email)
+        {
+            user.Email = model.Email;
+            user.NormalizedEmail = model.Email.ToUpper();
+            user.EmailConfirmed = false;
+        }
+
         var result = await _userManager.UpdateAsync(user);
         if (result.Succeeded)
         {
@@ -245,9 +256,9 @@ public class AccountController : Controller
                     new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
     }
 
-    [HttpPost("confirm")]
     [Authorize]
-    public async Task<IActionResult> ConfirmEmail([FromForm(Name = "token")] [Required] string token)
+    [HttpGet("confirm")]
+    public async Task<IActionResult> ConfirmEmail([FromQuery(Name = "token")] [Required] string token)
     {
         try
         {
@@ -255,6 +266,7 @@ public class AccountController : Controller
             var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
+                await _signInManager.RefreshSignInAsync(user);
                 return RedirectToAction("Profile");
             }
 
@@ -275,8 +287,9 @@ public class AccountController : Controller
         {
             var user = await _userManager.GetUserAsync(User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            _mailSender.SendMail("Подтверждение почты", CreateConfirmationMailMessageBody(token), user.Email);
-            return Ok();
+            await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
+                                            user.Email);
+            return RedirectToAction("Profile");
         }
         catch (Exception e)
         {
@@ -288,10 +301,7 @@ public class AccountController : Controller
     private string CreateConfirmationMailMessageBody(string? token)
     {
         return $@"
-    <form method=""post"" href=""{Url.Action("ConfirmEmail")}"">
-        <input type=""hidden"" value=""{HttpUtility.UrlEncode(token)}""/>
-        <input type=""submit"" value=""Confirm email""/>
-    </form>
+    Confirm your account: <a href=""https://localhost:7251{Url.Action("ConfirmEmail", new {token = token})}"">Click here</a>
 ";
     }
 }
