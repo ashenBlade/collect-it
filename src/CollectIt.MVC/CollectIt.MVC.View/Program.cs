@@ -67,7 +67,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
-
+services.AddRazorPages();
 var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Videos");
 var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Musics");
 var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
@@ -149,5 +149,5 @@ app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.MapControllerRoute(
                        name: "default",
                        pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapRazorPages();
 app.Run();
