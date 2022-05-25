@@ -2,6 +2,8 @@ module CollectIt.API.Tests.Integration.FSharp.CollectItWebApplicationFactory
 
 open System
 open System.Reflection
+open CollectIt.API.Tests.Integration.FSharp.StubImageFileManager
+open CollectIt.API.Tests.Integration.FSharp.StubMusicFileManager
 open CollectIt.API.Tests.Integration.FSharp.StubVideoFileManager
 open CollectIt.API.WebAPI
 open CollectIt.Database.Infrastructure
@@ -51,6 +53,8 @@ type CollectItWebApplicationFactory() =
                 ))
             |> ServiceCollectionDescriptorExtensions.RemoveAll<IVideoFileManager>
             |> (fun services -> services.AddTransient<IVideoFileManager, StubVideoFileManager>())
+            |> (fun services -> services.AddTransient<IMusicFileManager, StubMusicFileManager>())
+            |> (fun services -> services.AddTransient<IImageFileManager, StubImageFileManager>())
             |> (fun services ->
                 let sp = services.BuildServiceProvider()
                 use scope = sp.CreateScope()

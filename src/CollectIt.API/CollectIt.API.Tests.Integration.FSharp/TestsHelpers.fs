@@ -141,6 +141,7 @@ let assertStatusCodeAsync
 
         message.Headers.Authorization <- AuthenticationHeaderValue("Bearer", bearer)
         let! response = client.SendAsync message
+        let! res = response.Content.ReadAsStringAsync()
         Assert.Equal(expected, response.StatusCode)
     }
 

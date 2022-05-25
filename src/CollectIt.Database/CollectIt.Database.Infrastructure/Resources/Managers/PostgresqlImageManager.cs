@@ -21,9 +21,9 @@ public class PostgresqlImageManager : IImageManager
     public async Task<Image?> FindByIdAsync(int id)
     {
         return await _context.Images
-            .Where(img => img.Id == id)
-            .Include(img => img.Owner)
-            .SingleOrDefaultAsync();
+                             .Where(img => img.Id == id)
+                             .Include(img => img.Owner)
+                             .SingleOrDefaultAsync();
     }
 
     public async Task<Image> CreateAsync(string name, int ownerId, string[] tags, Stream content, string extension)
@@ -50,14 +50,14 @@ public class PostgresqlImageManager : IImageManager
 
         var filename = $"{new Guid()}.{extension}";
         var image = new Image()
-        {
-            Name = name,
-            Extension = extension,
-            OwnerId = ownerId,
-            Tags = tags,
-            FileName = filename,
-            UploadDate = DateTime.UtcNow,
-        };
+                    {
+                        Name = name,
+                        Extension = extension,
+                        OwnerId = ownerId,
+                        Tags = tags,
+                        FileName = filename,
+                        UploadDate = DateTime.UtcNow,
+                    };
         try
         {
             var entity = await _context.Images.AddAsync(image);
@@ -74,10 +74,16 @@ public class PostgresqlImageManager : IImageManager
         }
     }
 
-    public Task RemoveByIdAsync(int id)
+    public async Task RemoveByIdAsync(int id)
     {
-        _context.Images.Remove(new Image() {Id = id});
-        return _context.SaveChangesAsync();
+        var image = await _context.Images.SingleOrDefaultAsync(i => i.Id == id);
+        if (image is null)
+        {
+            throw new ImageNotFoundException(id);
+        }
+
+        _context.Images.Remove(image);
+        await _context.SaveChangesAsync();
     }
 
     public async Task ChangeNameAsync(int id, string name)
@@ -115,32 +121,11 @@ public class PostgresqlImageManager : IImageManager
         _context.Images.Update(image);
         await _context.SaveChangesAsync();
     }
-    
-    public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)
-    {
-        return await _context.Images
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-    }
-
-    public IAsyncEnumerable<Image> GetAllByName(string name)
-    {
-        return _context.Images
-            .Where(img => img.NameSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", name)))
-            .Include(img => img.Owner)
-            .AsAsyncEnumerable();
-    }
-
-    public IAsyncEnumerable<Image> GetAllByTag(string tag)
-    {
-        throw new NotImplementedException();
-    }
 
     public Task<bool> IsAcquiredBy(int userId, int imageId)
     {
         return _context.AcquiredUserResources
-            .AnyAsync(aur => aur.ResourceId == imageId && aur.UserId == userId);
+                       .AnyAsync(aur => aur.ResourceId == imageId && aur.UserId == userId);
     }
 
     public async Task<Stream> GetContentAsync(int id)
@@ -168,34 +153,21 @@ public class PostgresqlImageManager : IImageManager
 
 
         var q = _context.Images
-            .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
-            .Include(img => img.Owner)
-            .OrderByDescending(img =>
-                img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
-                    query)));
+                        .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                        .Include(img => img.Owner)
+                        .OrderByDescending(img =>
+                                               img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
+                                                                                                         query)));
 
         return new PagedResult<Image>()
-        {
-            Result = await q
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(),
-            TotalCount = await q
-                .CountAsync()
-        };
-    }
-
-    public IAsyncEnumerable<Image> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
-    {
-        return _context.Images
-            .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
-            .Include(img => img.Owner)
-            .OrderByDescending(img =>
-                img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
-                    query)))
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .AsAsyncEnumerable();
+               {
+                   Result = await q
+                                 .Skip(( pageNumber - 1 ) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync(),
+                   TotalCount = await q
+                                   .CountAsync()
+               };
     }
 
     public async Task<PagedResult<Image>> GetAllPagedAsync(int pageNumber, int pageSize)
@@ -211,14 +183,48 @@ public class PostgresqlImageManager : IImageManager
         }
 
         return new PagedResult<Image>()
-        {
-            Result = await _context.Images
-                .OrderBy(m => m.Id)
-                .Include(m => m.Owner)
-                .Skip(( pageNumber - 1 ) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(),
-            TotalCount = await _context.Images.CountAsync()
-        };
+               {
+                   Result = await _context.Images
+                                          .OrderBy(m => m.Id)
+                                          .Include(m => m.Owner)
+                                          .Skip(( pageNumber - 1 ) * pageSize)
+                                          .Take(pageSize)
+                                          .ToListAsync(),
+                   TotalCount = await _context.Images.CountAsync()
+               };
+    }
+
+    public async Task<List<Image>> GetAllPaged(int pageNumber, int pageSize)
+    {
+        return await _context.Images
+                             .Skip(( pageNumber - 1 ) * pageSize)
+                             .Take(pageSize)
+                             .ToListAsync();
+    }
+
+    public IAsyncEnumerable<Image> GetAllByName(string name)
+    {
+        return _context.Images
+                       .Where(img => img.NameSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", name)))
+                       .Include(img => img.Owner)
+                       .AsAsyncEnumerable();
+    }
+
+    public IAsyncEnumerable<Image> GetAllByTag(string tag)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<Image> GetAllByQuery(string query, int pageNumber = 1, int pageSize = 15)
+    {
+        return _context.Images
+                       .Where(img => img.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
+                       .Include(img => img.Owner)
+                       .OrderByDescending(img =>
+                                              img.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
+                                                                                                        query)))
+                       .Skip(( pageNumber - 1 ) * pageSize)
+                       .Take(pageSize)
+                       .AsAsyncEnumerable();
     }
 }

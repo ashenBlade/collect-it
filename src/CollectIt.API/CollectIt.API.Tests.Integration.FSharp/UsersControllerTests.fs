@@ -342,10 +342,10 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let user =
-                    PostgresqlCollectItDbContext.DefaultUserTwo
+                    PostgresqlCollectItDbContext.DefaultUserOne
 
                 let requester =
-                    PostgresqlCollectItDbContext.DefaultUserOne
+                    PostgresqlCollectItDbContext.DefaultUserTwo
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some requester.UserName) (Some "12345678")
@@ -390,7 +390,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 let! roles =
                     TestsHelpers.getResultParsedFromJson<ReadRoleDTO []>
                         client
-                        $"/api/v1/users/{user.Id}"
+                        $"/api/v1/users/{user.Id}/roles"
                         bearer
                         None
                         None
@@ -459,7 +459,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                         client
                         $"/api/v1/users/{userId}/roles"
                         bearer
-                        HttpStatusCode.Forbidden
+                        HttpStatusCode.Unauthorized
                         (Some HttpMethod.Delete)
                         (Some(new FormUrlEncodedContent([ KeyValuePair("role_name", role) ])))
 
@@ -618,7 +618,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let user =
-                    PostgresqlCollectItDbContext.DefaultUserOne
+                    PostgresqlCollectItDbContext.DefaultUserTwo
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadUserDTO>
@@ -661,7 +661,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
                 let user =
-                    PostgresqlCollectItDbContext.DefaultUserOne
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadUserDTO>
@@ -672,6 +672,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                         None
                         None
 
+                this._output.WriteLine $"{actual.UserName} {actual.Id} {actual.Email}"
                 Assert.Equal(user.Id, actual.Id)
                 Assert.Equal(user.UserName, actual.UserName)
                 Assert.Equal(user.Email, actual.Email)

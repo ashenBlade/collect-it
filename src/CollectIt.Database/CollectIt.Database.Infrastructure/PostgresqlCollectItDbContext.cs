@@ -512,6 +512,36 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                                  DefaultImage13, DefaultImage14, DefaultImage15
                                              };
 
+    internal static UserSubscription DefaultUserOneGoldenSubscriptionUserSubscription =>
+        new UserSubscription()
+        {
+            Id = 5,
+            SubscriptionId = GoldenSubscription.Id,
+            UserId = DefaultUserOneId,
+            During = new DateInterval(new LocalDate(2022, 5, 1), new LocalDate(2022, 7, 1)),
+            LeftResourcesCount = GoldenSubscription.MaxResourcesCount
+        };
+
+    internal static UserSubscription AdminAllowAllSubscriptionUserSubscription =>
+        new UserSubscription()
+        {
+            Id = 1,
+            SubscriptionId = AllowAllSubscription.Id,
+            UserId = AdminUser.Id,
+            During = new DateInterval(new LocalDate(2000, 1, 1), LocalDate.MaxIsoValue),
+            LeftResourcesCount = AllowAllSubscription.MaxResourcesCount,
+        };
+
+    internal static UserSubscription DefaultUserOneSilverSubscriptionUserSubscription =>
+        new()
+        {
+            Id = 2,
+            SubscriptionId = SilverSubscription.Id,
+            UserId = DefaultUserOne.Id,
+            During = new DateInterval(new LocalDate(2021, 3, 1), new LocalDate(2021, 5, 9)),
+            LeftResourcesCount = 0
+        };
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -577,22 +607,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             Type = "access_token"
                         });
         builder.Entity<UserSubscription>()
-               .HasData(new UserSubscription()
-                        {
-                            Id = 1,
-                            SubscriptionId = AllowAllSubscription.Id,
-                            UserId = AdminUser.Id,
-                            During = new DateInterval(new LocalDate(2000, 1, 1), LocalDate.MaxIsoValue),
-                            LeftResourcesCount = AllowAllSubscription.MaxResourcesCount
-                        },
-                        new UserSubscription()
-                        {
-                            Id = 2,
-                            SubscriptionId = SilverSubscription.Id,
-                            UserId = DefaultUserOne.Id,
-                            During = new DateInterval(new LocalDate(2021, 3, 1), new LocalDate(2021, 5, 9)),
-                            LeftResourcesCount = 0
-                        },
+               .HasData(AdminAllowAllSubscriptionUserSubscription,
+                        DefaultUserOneSilverSubscriptionUserSubscription,
                         new UserSubscription()
                         {
                             Id = 3,
@@ -608,7 +624,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                             UserId = DefaultUserOne.Id,
                             During = new DateInterval(new LocalDate(2022, 2, 20), new LocalDate(2022, 5, 20)),
                             LeftResourcesCount = BronzeSubscription.MaxResourcesCount
-                        });
+                        },
+                        DefaultUserOneGoldenSubscriptionUserSubscription);
     }
 
     private void OnModelCreatingResources(ModelBuilder builder)
