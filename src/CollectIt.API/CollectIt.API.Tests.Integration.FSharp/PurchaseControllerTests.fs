@@ -9,7 +9,7 @@ open Xunit
 open Xunit.Abstractions
 
 [<Collection("Purchase")>]
-type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
+type PurchaseControllerTests(factory: CollectItWebApplicationFactory, output: ITestOutputHelper) =
     class
         member this._factory = factory
         member this._output = output
@@ -65,19 +65,19 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             ()
             =
             task {
+                let userSubscription =
+                    PostgresqlCollectItDbContext.DefaultUserOneGoldenSubscriptionUserSubscription
+
                 let user =
                     PostgresqlCollectItDbContext.DefaultUserOne
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some user.UserName) None
 
-                let subscription =
-                    PostgresqlCollectItDbContext.SilverSubscription
-
                 do!
                     TestsHelpers.assertStatusCodeAsync
                         client
-                        $"/api/v1/purchase/subscription/{subscription.Id}"
+                        $"/api/v1/purchase/subscription/{userSubscription.SubscriptionId}"
                         bearer
                         HttpStatusCode.BadRequest
                         (Some HttpMethod.Post)
@@ -97,8 +97,9 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                     TestsHelpers.initialize this._factory (Some user.UserName) None
 
                 let image =
-                    PostgresqlCollectItDbContext.DefaultImages
-                    |> Seq.head
+                    PostgresqlCollectItDbContext.DefaultImage1
+                //                    PostgresqlCollectItDbContext.DefaultImages
+//                    |> Seq.head
 
                 do!
                     (TestsHelpers.sendAsync
@@ -107,7 +108,7 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                         bearer
                         None
                         None
-                        None
+                        (Some true)
                         (Some HttpMethod.Post)
                      |> Async.AwaitTask
                      |> Async.Ignore)
@@ -133,7 +134,7 @@ type RolesControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             =
             task {
                 let user =
-                    PostgresqlCollectItDbContext.DefaultUserOne
+                    PostgresqlCollectItDbContext.AdminUser
 
                 let! { Bearer = bearer; Client = client } =
                     TestsHelpers.initialize this._factory (Some user.UserName) None
