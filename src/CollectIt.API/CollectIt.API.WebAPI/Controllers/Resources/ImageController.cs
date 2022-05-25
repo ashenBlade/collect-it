@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
-using CollectIt.API.WebAPI.DTO;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
-using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +20,7 @@ public class ImageController : Controller
 {
     private IImageManager _imageManager;
     private UserManager _userManager;
-    
+
     public ImageController(IImageManager imageManager, UserManager userManager)
     {
         _imageManager = imageManager;
@@ -45,30 +42,27 @@ public class ImageController : Controller
             return NotFound();
         return Ok(ResourcesMappers.ToReadImageDTO(image));
     }
-    
+
     /// <summary>
     /// Get list of images
     /// </summary>
     /// <param name="query">Query to search images</param>
     /// <param name="pageNumber">Number of page to return</param>
     /// <param name="pageSize">Max size of page</param>
-    /// <response code="200">Returns list of videos</response>
+    /// <response code="200">Returns list of images</response>
     [HttpGet("")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadImageDTO[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "q")] 
-        string? query,
-        [Required]
-        [FromQuery(Name = "page_number")]
-        [Range(1, int.MaxValue)]
-        int pageNumber,
-        [Required]
-        [FromQuery(Name = "page_size")]
-        [Range(1, int.MaxValue)]
-        int pageSize)
+    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "q")] string? query,
+                                                    [Required]
+                                                    [FromQuery(Name = "page_number")]
+                                                    [Range(1, int.MaxValue)]
+                                                    int pageNumber,
+                                                    [Required] [FromQuery(Name = "page_size")] [Range(1, int.MaxValue)]
+                                                    int pageSize)
     {
         var q = query is null
-            ? await _imageManager.GetAllPagedAsync(pageNumber, pageSize)
-            : await _imageManager.QueryAsync(query, pageNumber, pageSize);
+                    ? await _imageManager.GetAllPagedAsync(pageNumber, pageSize)
+                    : await _imageManager.QueryAsync(query, pageNumber, pageSize);
         return Ok(q.Result.Select(ResourcesMappers.ToReadImageDTO));
     }
 
@@ -81,18 +75,16 @@ public class ImageController : Controller
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResourcesDTO.CreateImageDTO), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateNewImage([Required]
-        [FromForm] 
-        ResourcesDTO.CreateImageDTO dto)
+    public async Task<IActionResult> CreateNewImage([Required] [FromForm] ResourcesDTO.CreateImageDTO dto)
     {
         try
         {
             await using var stream = dto.Content.OpenReadStream();
-            var image = await _imageManager.CreateAsync(dto.Name, 
-                dto.OwnerId, 
-                dto.Tags, 
-                stream, 
-                dto.Extension);
+            var image = await _imageManager.CreateAsync(dto.Name,
+                                                        dto.OwnerId,
+                                                        dto.Tags,
+                                                        stream,
+                                                        dto.Extension);
 
             return CreatedAtAction("FindImageById", new {id = image.Id}, ResourcesMappers.ToReadImageDTO(image));
         }
@@ -100,8 +92,8 @@ public class ImageController : Controller
         {
             return NotFound();
         }
-    }    
-    
+    }
+
     /// <summary>
     /// Delete image
     /// </summary>
@@ -116,12 +108,12 @@ public class ImageController : Controller
             await _imageManager.RemoveByIdAsync(id);
             return NoContent();
         }
-        catch(ImageNotFoundException)
+        catch (ImageNotFoundException)
         {
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Change image name
     /// </summary>
@@ -131,10 +123,8 @@ public class ImageController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeVideoName(int id, 
-        [Required]
-        [FromForm(Name = "Name")] 
-        string name)
+    public async Task<IActionResult> ChangeImageName(int id,
+                                                     [Required] [FromForm(Name = "Name")] string name)
     {
         try
         {
@@ -146,7 +136,7 @@ public class ImageController : Controller
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Change image tags
     /// </summary>
@@ -156,10 +146,8 @@ public class ImageController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeImageTags(int id, 
-        [Required]
-        [FromForm(Name = "Tags")] 
-        string[] tags)
+    public async Task<IActionResult> ChangeImageTags(int id,
+                                                     [Required] [FromForm(Name = "Tags")] string[] tags)
     {
         try
         {
@@ -171,9 +159,8 @@ public class ImageController : Controller
             return NotFound();
         }
     }
-    
-    
-    
+
+
     /// <summary>
     /// Download image content
     /// </summary>
@@ -198,6 +185,7 @@ public class ImageController : Controller
         {
             return StatusCode(StatusCodes.Status402PaymentRequired);
         }
+
         var content = await _imageManager.GetContentAsync(id);
         return File(content, $"image/{file.Extension}", $"{file.Name}.{file.Extension}");
     }

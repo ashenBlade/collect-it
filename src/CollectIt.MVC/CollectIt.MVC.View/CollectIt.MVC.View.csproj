@@ -147,13 +147,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <_ContentIncludedByDefault Remove="Pages\Payment.cshtml"/>
-        <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCard\Default.cshtml"/>
-        <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml"/>
+        <_ContentIncludedByDefault Remove="Pages\Payment.cshtml" />
+        <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCard\Default.cshtml" />
+        <_ContentIncludedByDefault Remove="Pages\Components\SubscriptionCards\Default.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Content\Videos"/>
+        <Folder Include="Content\Videos" />
     </ItemGroup>
 
     <ItemGroup>

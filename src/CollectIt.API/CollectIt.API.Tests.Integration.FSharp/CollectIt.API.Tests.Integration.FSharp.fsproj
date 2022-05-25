@@ -9,17 +9,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="StubVideoFileManager.fs" />
-        <Compile Include="CollectItWebApplicationFactory.fs" />
-        <Compile Include="ConnectResult.fs" />
-        <Compile Include="TestsHelpers.fs" />
-        <Compile Include="AuthorizationControllerTests.fs" />
-        <Compile Include="RolesControllerTests.fs" />
-        <Compile Include="UsersControllerTests.fs" />
-        <Compile Include="SubscriptionsControllerTests.fs" />
-        <Compile Include="PurchaseControllerTests.fs" />
-        <Compile Include="VideosControllerTests.fs" />
-        <Compile Include="ImageControllerTests.fs" />
+        <Compile Include="StubVideoFileManager.fs"/>
+        <Compile Include="StubMusicFileManager.fs"/>
+        <Compile Include="StubImageFileManager.fs"/>
+        <Compile Include="CollectItWebApplicationFactory.fs"/>
+        <Compile Include="ConnectResult.fs"/>
+        <Compile Include="TestsHelpers.fs"/>
+        <Compile Include="AuthorizationControllerTests.fs"/>
+        <Compile Include="RolesControllerTests.fs"/>
+        <Compile Include="UsersControllerTests.fs"/>
+        <Compile Include="SubscriptionsControllerTests.fs"/>
+        <Compile Include="PurchaseControllerTests.fs"/>
+        <Compile Include="VideosControllerTests.fs"/>
+        <Compile Include="ImageControllerTests.fs"/>
+        <Compile Include="MusicControllerTest.fs"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,4 +1,4 @@
-module Tests
+module AuthorizationControllerTests
 
 open System.Collections.Generic
 open System.Net
@@ -105,6 +105,8 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                 let! response = client.SendAsync message
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode)
             }
+
+
 
 
 

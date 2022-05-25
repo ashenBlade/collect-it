@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, { FC, useState } from 'react';
 import './Pagination.tsx.css'
 
 export interface PaginationInterface {
@@ -18,7 +18,9 @@ const Pagination: FC<PaginationInterface> = ({totalPagesCount,
             console.log(`Returning with to set = ${pageNumberToSet}, current = ${currentPage}`);
             return;
         }
+        console.log(`Old current page ${currentPage}`);
         setCurrentPage(pageNumberToSet);
+        console.log(`New current page ${currentPage}`);
         onPageChangeUser(pageNumberToSet);
     }
 
@@ -44,12 +46,14 @@ const Pagination: FC<PaginationInterface> = ({totalPagesCount,
                         <span aria-hidden={true}>&laquo;</span>
                     </a>
                 </li>
+
                 {[...Array(maxPagesCount)]
                     .map((_, i) => getPageButton(i + 1))}
 
                 <li className={'page-item cursor-pointer'} onClick={e => {
                     e.preventDefault();
-                    if (currentPage < maxPagesCount) onPageButtonClick(currentPage + 1);
+                    if (currentPage < maxPagesCount)
+                        onPageButtonClick(currentPage + 1);
                 }}>
                     <a className={'page-link'}>
                         <span aria-hidden={true}>&raquo;</span>

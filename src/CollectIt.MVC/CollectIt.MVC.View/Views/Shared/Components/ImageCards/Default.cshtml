@@ -2,12 +2,11 @@
 @using CollectIt.MVC.View.Views.Shared.Components.ImageCard
 @model CollectIt.MVC.View.Views.Shared.Components.ImageCards.ImageCardsViewModel
 @{
-    var j = 0;
     var k = Model.Images.Count / 3;
     var g = Model.Images.Count % 3;
 }
 
-<div class="d-flex">
+<div class="images">
     @for (var i = 0; i < 3; i++)
     {
         var temp = new List<ImageViewModel>();

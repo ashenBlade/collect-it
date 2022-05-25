@@ -28,11 +28,11 @@
 </div>
 
 <div class="rounded border blur-light p-2 row m-0 mb-3">
-    <div class="border-end" style="width: 30%">
+    <div class="date">
         <h6>Дата загрузки</h6>
-        <p>@Model.UploadDate</p>
+        <data value="@Model.UploadDate">@Model.UploadDate</data>
     </div>
-    <ul class="row p-2 m-0 l-s-t-none" style="width: 70%">
+    <ul class="row p-2 m-0 l-s-t-none tags-block">
         @foreach (var tag in Model.Tags)
         {
             <li class="rounded-pill blur-dark wh-0 maw-2 mah-1 me-2 mt-2">

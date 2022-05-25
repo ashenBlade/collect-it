@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import ReactLoading from "react-loading";
 
 const SubscriptionsList = () => {
-    let pageSize = 10;
+    let pageSize = 3;
 
     const [subs, setSubs] = useState<subscription[]>([]);
     const [maxPages, setMaxPages] = useState(0);
@@ -81,11 +81,11 @@ const SubscriptionsList = () => {
                             </tbody>
                         </table>
                     </div>
-                    <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
-                        <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
-                    </footer>
                 </>
             }
+            <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
+                <Pagination totalPagesCount={maxPages} onPageChange={downloadPageNumber}/>
+            </footer>
         </div>
     );
 };

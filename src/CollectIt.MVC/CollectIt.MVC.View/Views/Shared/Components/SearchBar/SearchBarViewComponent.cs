@@ -7,8 +7,18 @@ namespace CollectIt.MVC.View.Views.Shared.Components.SearchBar;
 [ViewComponent(Name = "SearchBar")]
 public class SearchBarViewComponent : ViewComponent
 {
-    public IViewComponentResult Invoke(string? action = null, string? controller = null, string? query = null, ResourceType chosenType = ResourceType.Image)
+    public IViewComponentResult Invoke(string? action = null,
+                                       string? controller = null,
+                                       string? query = null,
+                                       ResourceType chosenType = ResourceType.Image)
     {
+        var type = controller switch
+                   {
+                       "Musics" => ResourceType.Music,
+                       "Videos" => ResourceType.Video,
+                       _        => ResourceType.Image
+                   }
+            ;
         return View(new SearchBarViewModel()
                     {
                         Action = action ?? "Index",

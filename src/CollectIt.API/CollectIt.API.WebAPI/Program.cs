@@ -130,11 +130,18 @@ public class Program
                                                                                                      "Videos")));
         builder.Services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
         builder.Services.AddScoped<IMusicFileManager>(_ =>
-                                                          new
-                                                              GenericPhysicalFileManager(Path
-                                                                                            .Combine(Directory.GetCurrentDirectory(),
-                                                                                                     "Content",
-                                                                                                     "Musics")));
+            new
+                GenericPhysicalFileManager(Path
+                    .Combine(Directory.GetCurrentDirectory(),
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "CollectIt.MVC",
+                        "CollectIt.MVC.View",
+                        "content",
+                        "Musics")));
         builder.Services.AddScoped<IMusicManager, PostgresqlMusicManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {

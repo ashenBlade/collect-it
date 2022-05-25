@@ -24,6 +24,28 @@ type ReadImageDTO = {
     UploadDate : DateTime 
 }
 
+
+[<CLIMutable>]
+type ReadMusicDTO = {
+    [<Required>]
+    OwnerId : int
+    
+    [<Required>]
+    Name : string
+    
+    [<Required>]
+    Tags : string[]
+    
+    [<Required>]
+    Extension : string
+    
+    [<Required>]
+    UploadDate : DateTime
+    
+    [<Required>]
+    Duration: int
+}
+
 let ReadImageDTO ownerId name tags extension uploadDate = {
     OwnerId = ownerId
     Name = name
@@ -31,6 +53,16 @@ let ReadImageDTO ownerId name tags extension uploadDate = {
     Extension = extension
     UploadDate = uploadDate
 }
+
+let ReadMusicDTO ownerId name tags extension uploadDate duration = {
+    OwnerId = ownerId
+    Name = name
+    Tags = tags
+    Extension = extension
+    UploadDate = uploadDate
+    Duration = duration
+}
+
 
 
 [<CLIMutable>]
@@ -52,6 +84,31 @@ type CreateImageDTO = {
     
     [<Required>]
     Content: IFormFile
+}
+
+[<CLIMutable>]
+type CreateMusicDTO = {
+    [<Required>]
+    OwnerId : int
+    
+    [<Required>]
+    Name : string
+    
+    [<Required>]
+    Tags : string[]
+    
+    [<Required>]
+    Extension : string
+    
+    [<Required>]
+    UploadDate : DateTime
+    
+    [<Required>]
+    Content: IFormFile
+    
+    [<Required>]
+    [<Range(1, Int32.MaxValue)>]
+    Duration: int
 }
 
 [<CLIMutable>]

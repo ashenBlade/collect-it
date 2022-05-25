@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from "react-router";
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router";
 import Subscription from "../../entities/subscription";
 import SubscriptionsService from "../../../services/SubscriptionsService";
-import { Button } from "react-bootstrap";
-import { SubmitHandler, useForm } from "react-hook-form";
+import {Button} from "react-bootstrap";
+import {SubmitHandler, useForm} from "react-hook-form";
 
 interface IFormInput {
     name: string;
@@ -11,7 +11,7 @@ interface IFormInput {
 }
 
 const EditSubscription = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>({mode: 'onBlur'});
+    const {register, handleSubmit, formState: {errors}} = useForm<IFormInput>({mode: 'onBlur'});
     const onSubmit: SubmitHandler<IFormInput> = data => console.log(data);
 
     const params = useParams();
@@ -96,26 +96,38 @@ const EditSubscription = () => {
                         </div>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             Name:
-                            <div className='d-flex w-100 mx-auto my-2'>
+                            <div className='w-100 mx-auto my-2'>
                                 <input type='text'
                                        className='form-control mx-1'
                                        defaultValue={displayName}
-                                       onInput={e => {setName(e.currentTarget.value)}}
-                                       {...register("name", { required: true, minLength: 6, maxLength: 20 })}/>
-                                {errors?.name?.type === "required" && <p className='text-danger'>This field is required</p>}
-                                {errors?.name?.type === "minLength" && <p className='text-danger'>This field must have at least 6 symbols</p>}
-                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                                       onInput={e => {
+                                           setName(e.currentTarget.value)
+                                       }}
+                                       {...register("name", {required: true, minLength: 6, maxLength: 20})}/>
+                                {errors?.name?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>}
+                                {errors?.name?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 6 symbols</p>}
+                                {errors?.name?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long (maximum length is 20
+                                        characters)</p>}
                             </div>
                             Description:
-                            <div className='d-flex w-100 mx-auto my-2'>
+                            <div className='w-100 mx-auto my-2'>
                                 <input type='text'
                                        className='form-control mx-1'
                                        defaultValue={displayDescription}
-                                       onInput={e => {setDescription(e.currentTarget.value)}}
-                                       {...register("description", { required: true, minLength: 10, maxLength: 50 })}/>
-                                {errors?.description?.type === "required" && <p className='text-danger'>This field is required</p>}
-                                {errors?.description?.type === "minLength" && <p className='text-danger'>This field must have at least 10 symbols</p>}
-                                {errors?.name?.type === "maxLength" && <p className='text-danger'>This field is too long</p>}
+                                       onInput={e => {
+                                           setDescription(e.currentTarget.value)
+                                       }}
+                                       {...register("description", {required: true, minLength: 10, maxLength: 50})}/>
+                                {errors?.description?.type === "required" &&
+                                    <p className='text-danger'>This field is required</p>}
+                                {errors?.description?.type === "minLength" &&
+                                    <p className='text-danger'>This field must have at least 10 symbols</p>}
+                                {errors?.description?.type === "maxLength" &&
+                                    <p className='text-danger'>This field is too long (maximum length is 50
+                                        characters)</p>}
                             </div>
                             {!(errors.name || errors.description) ?
                                 <Button type='button' className='btn btn-primary my-2' onClick={e => {
