@@ -180,22 +180,30 @@ public class ImagesController : Controller
     [Authorize]
     public async Task<IActionResult> DownloadImage(int id)
     {
-        var userId = int.Parse(_userManager.GetUserId(User));
-        if (!await _imageManager.IsAcquiredBy(userId, id))
+        try
         {
-            return View("Error", new ErrorViewModel {Message = "Image is not acquired by user"});
-        }
+            var userId = int.Parse(_userManager.GetUserId(User));
+            if (!await _imageManager.IsAcquiredBy(userId, id))
+            {
+                return View("Error", new ErrorViewModel {Message = "Image is not acquired by user"});
+            }
 
-        var image = await _imageManager.FindByIdAsync(id);
-        if (image is null)
+            var image = await _imageManager.FindByIdAsync(id);
+            if (image is null)
+            {
+                return View("Error", new ErrorViewModel {Message = "Image not found"});
+            }
+
+            var file = new FileInfo(Path.Combine(address, image.FileName));
+            return file.Exists
+                ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
+                : View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
+        }
+        catch (Exception ex)
         {
-            return View("Error", new ErrorViewModel {Message = "Image not found"});
+            _logger.LogError(ex, "Error while downloading image");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
-
-        var file = new FileInfo(Path.Combine(address, image.FileName));
-        return file.Exists
-                   ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
-                   : BadRequest(new {Message = "Image content not found"});
     }
 
 
@@ -203,12 +211,21 @@ public class ImagesController : Controller
     [Authorize]
     public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = await _userManager.GetUserAsync(User);
-            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+                return RedirectToAction("Image", new {imageId = model.ImageId});
+            }
+
             return RedirectToAction("Image", new {imageId = model.ImageId});
         }
-        return RedirectToAction("Image", new {imageId = model.ImageId});
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while LeavingComment");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});
+        }
     }
 }
