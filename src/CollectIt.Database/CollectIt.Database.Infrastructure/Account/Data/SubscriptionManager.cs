@@ -65,33 +65,6 @@ public class SubscriptionManager : ISubscriptionManager
                        .ToListAsync();
     }
 
-    public Task<List<Subscription>> GetSubscriptionsAsync(ResourceType resourceType, int pageNumber, int pageSize)
-    {
-        return _context.Subscriptions
-                       .Where(s => s.AppliedResourceType == resourceType)
-                       .Skip(( pageNumber - 1 ) * pageSize)
-                       .Take(pageSize)
-                       .ToListAsync();
-    }
-
-    public Task<List<Subscription>> GetActiveSubscriptionsAsync(int pageNumber, int pageSize)
-    {
-        return ActiveSubscriptions
-              .OrderBy(s => s.Id)
-              .Skip(( pageNumber - 1 ) * pageSize)
-              .Take(pageSize)
-              .ToListAsync();
-    }
-
-    public async Task DeleteSubscriptionAsync(int id)
-    {
-        var subscription = new Subscription() {Id = id};
-        _context.Subscriptions.Attach(subscription);
-        _context.Subscriptions.Remove(subscription);
-        await _context.SaveChangesAsync();
-        _logger.LogInformation("Subscription with Id = {SubscriptionId} was deleted", id);
-    }
-
     public Task<List<Subscription>> GetActiveSubscriptionsWithResourceTypeAsync(ResourceType resourceType)
     {
         return _context.Subscriptions
@@ -202,13 +175,6 @@ public class SubscriptionManager : ISubscriptionManager
                        .SingleOrDefaultAsync();
     }
 
-    public Task<List<Subscription>> GetActiveSubscriptionsAsync()
-    {
-        return _context.Subscriptions
-                       .Where(s => s.Active)
-                       .ToListAsync();
-    }
-
     private static DbParameter CreateParameter(DbCommand command, string name, object value)
     {
         var parameter = command.CreateParameter();
@@ -247,7 +213,7 @@ public class SubscriptionManager : ISubscriptionManager
                                                                : "Could not deactivate subscription"
                                          });
         }
-        catch (SubscriptionNotFoundException subscriptionNotFoundException)
+        catch (SubscriptionNotFoundException)
         {
             return IdentityResult.Failed(new IdentityError()
                                          {

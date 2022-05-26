@@ -5,6 +5,5 @@ public class AcquisitionException : AccountException
     public AcquisitionException(string message)
         : base(message)
     {
-        
-    }    
+    }
 }

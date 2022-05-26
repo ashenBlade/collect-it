@@ -15,7 +15,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZDQkMtSFM1MTIiLCJraWQiOiJEN0E1NDZFNzFDRDA0MkI3MzkyMzVCOTU0MjBDOUQ1OEFGRDE4QUZCIiwidHlwIjoiYXQrand0In0.kiLie1BHwiT2-VFZd8cwoObiTDfHOUDUVuKJ9SkiyxQLi99Xc18kEo1a3xKf3Syow0ehLw9kBm7YN818bg7xaPm5vQZTOsX9ErNxan77M5chBC6cYJZxjmH8R82U2UNNQkuV6AP-g45xCvZ7bzkVRj2EzdJ9SKktxgY0gzAxlGZZvCukrl-9H-89N2GXfY_7pmwsyegi64eVOdoJj9K-cb7pdp6zCE_c9eYNgCuRySt0YjfE86e09PCF9HE1lPbxkI481Sb1gm6Gtg9WmgQIyKWd0LzZLnlGDHs_7gMZuAt2VAr-tcSl840qhZ8gJZFQ-yVMzzA6Xei2IlM_mqoXKw.sLnJoZ2PvwPIuy9iD4tPmA.0xz8a3c2vb-A5-bEwTHHoiTew_MEEa7LXQV55c8QJmpZxEejQ9PtMiuoBoaFUg9n8uPf6LD2YiKV4NFu7cGcN7LWjiYg0Nf-DyAE7UPEz8dfW000QmGr4thuNXDfrc9Mk9iaEDxJfzaOczS1ftLsfwX-05WDkbo9AW6oDUL7oC9fbWxZUYLL1xMmwunAf3sBjlZLwSHRfRD_CshjGYLC0zUsEhDnfC7MzrzYXinyj8I9GffyBZC4gu6j6-D0LP8CWyhi4Ua_wpWfJchpyN3wgTo5ZlO9AZDIT0HrrmthTjAimcgpbxIX5V036Cq7qn60RThbbcZffMiq_Qqfn11AFut6TvZttthFy1Bju9UNaxC3hZsKQvoSPWUFTlS237xrUIvevl0ft1mrrRgJMgcy51XokKRZBRrbD9FLWRNuYhWJ0OeCQ96F8CBhVeVdP-fG_ZmSHUY3gZf1F64kn_Y_bHvUzn8kS_bvYpdqYS2zTc_4sGzfW1abs373MLob_Cq97f-XhQyNzyIyFIY-aJXG0tUJ8vew37C6-rgph3RRaVVUPSl8w6v8PdVReAyFx6CXrLhubOUhYsc2WEvvFTrOsCK8c59DkQqFzKgDuz5k2BGltiDM-MifByvz6LSB1OZfuvNAC0-DSw1-U-EMmGz3fTdAYQl6boTW5I0yLpMZ4juRLST0ZAKjDkaDFOu8A4hGoLbJJYS1ETPo24RGAwTHN7N3jhKmGOFmTHZW1JgIMTBKa16opVg9DaK6Gbx1XmBZwiuhe2FA1t-bgSamKM5OwgEpblZQrpO3LGiqCsa44N6KTWu2x4W7bX3m_OjaUcVpVDGL7-AXohls_EiHlkIAmWmyllAXJo6Ep69m-rAMMHIBAGU2DusS9GmUyheu8j5snmLKEicyASc3ntN9yRemKr8EYzPq-Yj27XHt6NAClCWDV8ZKn64CdWNilEy2jzvp.wsd0CMpvV7hxnyY4MPrM1MhWLYaXiyqhPE9ZVbMh3pE";
 
     internal static Image DefaultImage1 =
-        new Image
+        new()
         {
             Id = 1,
             OwnerId = AdminUserId,
@@ -28,7 +28,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage2 =
-        new Image
+        new()
         {
             Id = 2,
             OwnerId = AdminUserId,
@@ -41,7 +41,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage3 =
-        new Image
+        new()
         {
             Id = 3,
             OwnerId = TechSupportUserId,
@@ -54,7 +54,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage4 =
-        new Image
+        new()
         {
             Id = 4,
             OwnerId = AdminUserId,
@@ -67,7 +67,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage5 =
-        new Image
+        new()
         {
             Id = 5,
             OwnerId = TechSupportUserId,
@@ -80,7 +80,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage6 =
-        new Image
+        new()
         {
             Id = 6,
             OwnerId = DefaultUserTwoId,
@@ -93,7 +93,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage7 =
-        new Image
+        new()
         {
             Id = 7,
             OwnerId = AdminUserId,
@@ -106,7 +106,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage8 =
-        new Image
+        new()
         {
             Id = 8,
             OwnerId = AdminUserId,
@@ -119,7 +119,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage9 =
-        new Image
+        new()
         {
             Id = 9,
             OwnerId = AdminUserId,
@@ -132,7 +132,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage10 =
-        new Image
+        new()
         {
             Id = 10,
             OwnerId = AdminUserId,
@@ -145,7 +145,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage11 =
-        new Image
+        new()
         {
             Id = 11,
             OwnerId = DefaultUserTwoId,
@@ -159,7 +159,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
 
     internal static Image DefaultImage12 =
-        new Image
+        new()
         {
             Id = 12,
             OwnerId = DefaultUserOneId,
@@ -172,7 +172,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage13 =
-        new Image
+        new()
         {
             Id = 13,
             OwnerId = AdminUserId,
@@ -185,7 +185,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage14 =
-        new Image
+        new()
         {
             Id = 14,
             OwnerId = AdminUserId,
@@ -198,7 +198,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Image DefaultImage15 =
-        new Image
+        new()
         {
             Id = 15,
             OwnerId = DefaultUserOneId,
@@ -234,19 +234,19 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Resource> Resources { get; set; }
 
     internal static Role Admin =>
-        new Role() {Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP"};
+        new() {Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "DEFAULT_STAMP"};
 
     internal static Role User =>
-        new Role() {Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP"};
+        new() {Id = 2, Name = "User", NormalizedName = "USER", ConcurrencyStamp = "DEFAULT_STAMP"};
 
     internal static Role TechSupport =>
-        new Role()
+        new()
         {
             Id = 3, Name = "Technical Support", NormalizedName = "TECHNICAL SUPPORT", ConcurrencyStamp = "DEFAULT_STAMP"
         };
 
     internal static Subscription BronzeSubscription =>
-        new Subscription()
+        new()
         {
             Id = 1,
             Name = "Бронзовая",
@@ -260,7 +260,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Subscription SilverSubscription =>
-        new Subscription()
+        new()
         {
             Id = 2,
             Name = "Серебрянная",
@@ -274,7 +274,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         };
 
     internal static Subscription GoldenSubscription =>
-        new Subscription()
+        new()
         {
             Id = 3,
             Name = "Золотая",
@@ -315,13 +315,8 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
             Active = false
         };
 
-    internal static User[] DefaultUsers
-    {
-        get
-        {
-            return new User[] {AdminUser, TechSupportUser, DefaultUserOne, DefaultUserTwo,};
-        }
-    }
+    internal static User[] DefaultUsers =>
+        new[] {AdminUser, TechSupportUser, DefaultUserOne, DefaultUserTwo,};
 
     internal static int DefaultUserTwoId => 2;
 
@@ -489,7 +484,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                                Duration = 218
                                            };
 
-    internal static Music DefaultMusic4 => new Music()
+    internal static Music DefaultMusic4 => new()
                                            {
                                                Id = 19,
                                                OwnerId = AdminUserId,
@@ -513,7 +508,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                                              };
 
     internal static UserSubscription DefaultUserOneGoldenSubscriptionUserSubscription =>
-        new UserSubscription()
+        new()
         {
             Id = 5,
             SubscriptionId = GoldenSubscription.Id,
@@ -551,7 +546,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
 
     private static void OnModelCreatingAccounts(ModelBuilder builder)
     {
-        // builder.UseOpenIddict<int>();
         builder.Entity<User>()
                .HasMany(u => u.Subscriptions)
                .WithMany(s => s.Subscribers)
@@ -682,7 +676,6 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                .HasIndex(r => r.TagsSearchVector, "IX_Resources_TagsSearchVector")
                .HasMethod("GIN");
 
-        var ownerId = DefaultUsers[0].Id;
         builder.Entity<Image>()
                .HasData(DefaultImages);
         builder.Entity<Music>()

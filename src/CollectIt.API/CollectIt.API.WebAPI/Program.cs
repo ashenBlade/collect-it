@@ -10,12 +10,8 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Managers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Infrastructure.Resources;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -28,9 +24,10 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers(opts =>
-        {
-            opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider());
-        }).AddNewtonsoftJson();
+                {
+                    opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider());
+                })
+               .AddNewtonsoftJson();
 
         builder.Services.AddCors(options =>
         {
@@ -47,32 +44,17 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(gen =>
         {
-
             var file = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var path = Path.Combine(AppContext.BaseDirectory, file);
             gen.IncludeXmlComments(path);
         });
-        
+
         builder.Services
                .AddAuthentication(config =>
                 {
                     config.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
                 })
-               .AddJwtBearer(options =>
-                {
-                    var jwtOptions = builder.Configuration.GetValue<JwtOptions>("JwtOptions");
-                    options.RequireHttpsMetadata = builder.Environment.IsProduction();
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                                                        {
-                                                            ValidateIssuer = true,
-                                                            ValidIssuer = jwtOptions.Issuer,
-                                                            ValidateAudience = true,
-                                                            ValidAudience = jwtOptions.Audience,
-                                                            ValidateLifetime = true,
-                                                            IssuerSigningKey = jwtOptions.SymmetricSecurityKey,
-                                                            ValidateIssuerSigningKey = true
-                                                        };
-                });
+               .AddJwtBearer();
         builder.Services.AddAuthorization();
 
         builder.Services.AddIdentity<User, Role>(config =>
@@ -102,25 +84,25 @@ public class Program
                .AddRoleManager<RoleManager>()
                .AddEntityFrameworkStores<PostgresqlCollectItDbContext>()
                .AddDefaultTokenProviders();
-        
-        builder.Services.AddCollectItOpenIddict(builder.Environment);
-        
+
+        builder.Services.AddCollectItOpenIddict();
+
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
         builder.Services.AddScoped<IImageManager, PostgresqlImageManager>();
         builder.Services.AddScoped<IImageFileManager>(_ =>
-            new
-                GenericPhysicalFileManager(Path
-                    .Combine(Directory.GetCurrentDirectory(),
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "CollectIt.MVC",
-                        "CollectIt.MVC.View",
-                        "content",
-                        "images")));
+                                                          new
+                                                              GenericPhysicalFileManager(Path
+                                                                                            .Combine(Directory.GetCurrentDirectory(),
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "CollectIt.MVC",
+                                                                                                     "CollectIt.MVC.View",
+                                                                                                     "content",
+                                                                                                     "images")));
         builder.Services.AddScoped<IVideoManager, PostgresqlVideoManager>();
         builder.Services.AddScoped<IVideoFileManager>(_ =>
                                                           new
@@ -130,22 +112,22 @@ public class Program
                                                                                                      "Videos")));
         builder.Services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
         builder.Services.AddScoped<IMusicFileManager>(_ =>
-            new
-                GenericPhysicalFileManager(Path
-                    .Combine(Directory.GetCurrentDirectory(),
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "..",
-                        "CollectIt.MVC",
-                        "CollectIt.MVC.View",
-                        "content",
-                        "Musics")));
+                                                          new
+                                                              GenericPhysicalFileManager(Path
+                                                                                            .Combine(Directory.GetCurrentDirectory(),
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "..",
+                                                                                                     "CollectIt.MVC",
+                                                                                                     "CollectIt.MVC.View",
+                                                                                                     "content",
+                                                                                                     "Musics")));
         builder.Services.AddScoped<IMusicManager, PostgresqlMusicManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
-            config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"], 
+            config.UseNpgsql(builder.Configuration["ConnectionStrings:Postgresql:Development"],
                              options =>
                              {
                                  options.MigrationsAssembly("CollectIt.Database.Infrastructure");
@@ -162,6 +144,7 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
         app.UseAuthentication();
         app.UseAuthorization();
 

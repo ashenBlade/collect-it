@@ -5,8 +5,7 @@ namespace CollectIt.API.WebAPI;
 
 public static class ProgramExtensions
 {
-    public static IServiceCollection AddCollectItOpenIddict(this IServiceCollection services,
-                                                            IWebHostEnvironment environment)
+    public static void AddCollectItOpenIddict(this IServiceCollection services)
     {
         services.AddOpenIddict()
                 .AddCore(options =>
@@ -44,6 +43,5 @@ public static class ProgramExtensions
                      validation.UseLocalServer();
                      validation.UseAspNetCore();
                  });
-        return services;
     }
 }

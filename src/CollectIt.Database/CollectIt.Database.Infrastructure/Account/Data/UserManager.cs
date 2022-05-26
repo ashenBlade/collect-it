@@ -1,4 +1,3 @@
-using System.Data.Common;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Entities.Resources;
@@ -6,12 +5,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NodaTime;
-using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Account.Data;
 
-public class UserManager: UserManager<User>
+public class UserManager : UserManager<User>
 {
     private readonly PostgresqlCollectItDbContext _context;
 
@@ -37,22 +34,18 @@ public class UserManager: UserManager<User>
                        .SingleOrDefaultAsync(u => u.Id == id);
     }
 
-    public Task<List<UserSubscription>> GetSubscriptionsForUserAsync(User user)
-    {
-        return GetSubscriptionsForUserByIdAsync(user.Id);
-    }
-
     public async Task<List<UserSubscription>> GetSubscriptionsForUserByIdAsync(int userId)
     {
         if (!await _context.Users.AnyAsync(u => u.Id == userId))
         {
             throw new UserNotFoundException(userId);
         }
+
         return await _context.UsersSubscriptions
-                       .Where(us => us.UserId == userId)
-                       .Include(us => us.Subscription)
-                       .Include(us => us.User)
-                       .ToListAsync();
+                             .Where(us => us.UserId == userId)
+                             .Include(us => us.Subscription)
+                             .Include(us => us.User)
+                             .ToListAsync();
     }
 
     public Task<List<AcquiredUserResource>> GetAcquiredResourcesForUserByIdAsync(int userId)
@@ -63,18 +56,13 @@ public class UserManager: UserManager<User>
                        .Include(aur => aur.User)
                        .ToListAsync();
     }
-    
+
     public Task<List<Resource>> GetUsersResourcesForUserByIdAsync(int userId)
     {
         return _context.Resources
-            .Where(r => r.OwnerId == userId)
-            .Include(r => r.Owner)
-            .ToListAsync();
-    }
-    
-    public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserAsync(User user)
-    {
-        return GetActiveSubscriptionsForUserByIdAsync(user.Id);
+                       .Where(r => r.OwnerId == userId)
+                       .Include(r => r.Owner)
+                       .ToListAsync();
     }
 
     public Task<List<ActiveUserSubscription>> GetActiveSubscriptionsForUserByIdAsync(int userId)
@@ -106,15 +94,6 @@ public class UserManager: UserManager<User>
                        .ToListAsync();
     }
 
-    public Task<bool> UserBoughtResourceAsync(int userId, int resourceId)
-    {
-        var resource = new Resource() {Id = resourceId};
-        return _context.Users
-                       .AnyAsync(u => u.AcquiredResources.Contains(resource));
-    }
-    
-    /// <exception cref="UserNotFoundException">User with provided id does not exist</exception>
-    /// <exception cref="AccountException">User with provided username already exists</exception>
     public async Task ChangeUsernameAsync(int userId, string username)
     {
         var user = await FindUserByIdAsync(userId);
@@ -125,14 +104,6 @@ public class UserManager: UserManager<User>
         }
 
         throw new AccountException(result.Errors.Select(err => err.Description).Aggregate((s, n) => $"{s}\n{n}"));
-    }
-
-    private static DbParameter CreateParameter(DbCommand command, string name, object? value)
-    {
-        var parameter = command.CreateParameter();
-        parameter.ParameterName = name;
-        parameter.Value = value;
-        return parameter;
     }
 
     public Task<List<AcquiredUserResource>> GetAcquiredUserImagesAsync(int userId)

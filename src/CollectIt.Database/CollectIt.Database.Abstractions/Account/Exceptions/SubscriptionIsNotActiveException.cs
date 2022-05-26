@@ -6,9 +6,4 @@ public class SubscriptionIsNotActiveException : SubscriptionException
         : base(subscriptionId, $"Subscription with id = {subscriptionId} is not active")
     {
     }
-
-    public SubscriptionIsNotActiveException(int subscriptionId, string message)
-        : base(subscriptionId, message)
-    {
-    }
 }
