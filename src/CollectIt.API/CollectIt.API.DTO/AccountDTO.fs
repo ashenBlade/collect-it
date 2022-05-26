@@ -53,9 +53,7 @@ type CreateRestrictionDTO =
         with public get () = this.restrictionType
         and public set value = this.restrictionType <- value
 
-    new(restrictionType: RestrictionType) = {
-        restrictionType = restrictionType
-    }
+    new(restrictionType: RestrictionType) = { restrictionType = restrictionType }
 
 
 type CreateAuthorRestrictionDTO =
@@ -67,10 +65,9 @@ type CreateAuthorRestrictionDTO =
         with get () = this.authorId
         and set value = this.authorId <- value
 
-    new(authorId: int) ={
-          inherit CreateRestrictionDTO(RestrictionType.Author)
-          authorId = authorId
-    }
+    new(authorId: int) =
+        { inherit CreateRestrictionDTO(RestrictionType.Author)
+          authorId = authorId }
 
 type CreateDaysToRestrictionDTO =
     inherit CreateRestrictionDTO
@@ -81,10 +78,9 @@ type CreateDaysToRestrictionDTO =
         with get () = this.daysTo
         and set value = this.daysTo <- value
 
-    new(daysTo: int) = {
-          inherit CreateRestrictionDTO(RestrictionType.DaysTo)
-          daysTo = daysTo
-    }
+    new(daysTo: int) =
+        { inherit CreateRestrictionDTO(RestrictionType.DaysTo)
+          daysTo = daysTo }
 
 type CreateDaysAfterRestrictionDTO =
     inherit CreateRestrictionDTO
@@ -95,10 +91,9 @@ type CreateDaysAfterRestrictionDTO =
         with get () = this.daysAfter
         and set value = this.daysAfter <- value
 
-    new(daysAfter: int) = {
-          inherit CreateRestrictionDTO(RestrictionType.DaysAfter)
-          daysAfter = daysAfter
-    }
+    new(daysAfter: int) =
+        { inherit CreateRestrictionDTO(RestrictionType.DaysAfter)
+          daysAfter = daysAfter }
 
 type CreateTagsRestrictionDTO =
     inherit CreateRestrictionDTO
@@ -109,10 +104,9 @@ type CreateTagsRestrictionDTO =
         with get () = this.tags
         and set value = this.tags <- value
 
-    new(tags: string []) ={
-          inherit CreateRestrictionDTO(RestrictionType.Tags)
-          tags = tags
-          }
+    new(tags: string []) =
+        { inherit CreateRestrictionDTO(RestrictionType.Tags)
+          tags = tags }
 
 [<CLIMutable>]
 type CreateSubscriptionDTO =
@@ -137,8 +131,7 @@ type CreateSubscriptionDTO =
       [<Range(1, Int32.MaxValue)>]
       MaxResourcesCount: int
 
-      Restriction: CreateRestrictionDTO
-    }
+      Restriction: CreateRestrictionDTO }
 
 let CreateSubscriptionDTO name description price monthDuration resourceType maxResourcesCount restriction =
     { Name = name
@@ -152,28 +145,26 @@ let CreateSubscriptionDTO name description price monthDuration resourceType maxR
 [<AllowNullLiteral>]
 type ReadRestrictionDTO =
     val mutable private restrictionType: string
+
     member this.RestrictionType
         with get () = this.restrictionType
         and set value = this.restrictionType <- value
 
-    new() = {
-        restrictionType = ""
-    }
+    new() = { restrictionType = "" }
 
 type ReadAuthorRestrictionDTO =
-    inherit ReadRestrictionDTO 
-        val mutable private authorId: int
+    inherit ReadRestrictionDTO
+    val mutable private authorId: int
 
-        member public this.AuthorId
-            with get () = this.authorId
-            and set value = this.authorId <- value
+    member this.AuthorId
+        with public get () = this.authorId
+        and public set value = this.authorId <- value
 
-        new() = {
-            inherit ReadRestrictionDTO(RestrictionType = "Author")
-            authorId = 0
-        }
-        
-        
+    new() =
+        { inherit ReadRestrictionDTO(RestrictionType = "Author")
+          authorId = 0 }
+
+
 
 type ReadDaysAfterRestrictionDTO =
     inherit ReadRestrictionDTO
@@ -183,10 +174,9 @@ type ReadDaysAfterRestrictionDTO =
         with get () = this.daysAfter
         and set value = this.daysAfter <- value
 
-    new() = {
-          inherit ReadRestrictionDTO(RestrictionType = "DaysAfter")
-          daysAfter = 0
-    }
+    new() =
+        { inherit ReadRestrictionDTO(RestrictionType = "DaysAfter")
+          daysAfter = 0 }
 
 
 type ReadDaysToRestrictionDTO =
@@ -242,8 +232,7 @@ type ReadSubscriptionDTO =
       [<Required>]
       Active: bool
 
-      Restriction: ReadRestrictionDTO
-}
+      Restriction: ReadRestrictionDTO }
 
 let ReadSubscriptionDTO
     id
@@ -376,9 +365,22 @@ type OpenIddictResponseFail = { NONE: int }
 
 
 [<CLIMutable>]
-type ReadAcquiredUserResourceDTO = {
-    PurchaseDate: DateTime
-    Id: int
-  //  Address: string
-    Name: string
-}
+type ReadAcquiredUserResourceDTO =
+    { PurchaseDate: DateTime
+      Id: int
+      //  Address: string
+      Name: string }
+
+[<CLIMutable>]
+type RegisterDTO =
+    { [<Required>]
+      [<MinLength(6)>]
+      Username: string
+
+      [<Required>]
+      [<MinLength(6)>]
+      Password: string
+
+      [<Required>]
+      [<EmailAddress>]
+      Email: string }

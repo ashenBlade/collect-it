@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using CollectIt.API.DTO.Mappers;
-using CollectIt.API.WebAPI.DTO;
 using CollectIt.API.DTO;
+using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
@@ -19,8 +17,8 @@ namespace CollectIt.API.WebAPI.Controllers.Account;
 [Route("connect")]
 public class AuthorizationController : ControllerBase
 {
-    private readonly UserManager _userManager;
     private readonly SignInManager<User> _signInManager;
+    private readonly UserManager _userManager;
 
     public AuthorizationController(UserManager userManager,
                                    SignInManager<User> signInManager)
@@ -28,8 +26,8 @@ public class AuthorizationController : ControllerBase
         _userManager = userManager;
         _signInManager = signInManager;
     }
-    
-    [HttpPost("token")] 
+
+    [HttpPost("token")]
     [Produces("application/json")]
     public async Task<IActionResult> Exchange()
     {
@@ -45,7 +43,8 @@ public class AuthorizationController : ControllerBase
         {
             var properties = new AuthenticationProperties(new Dictionary<string, string>
                                                           {
-                                                              [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                                                              [OpenIddictServerAspNetCoreConstants.Properties.Error] =
+                                                                  Errors.InvalidGrant,
                                                               [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
                                                                   "The username/password couple is invalid."
                                                           }!);
@@ -58,7 +57,8 @@ public class AuthorizationController : ControllerBase
         {
             var properties = new AuthenticationProperties(new Dictionary<string, string>
                                                           {
-                                                              [OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+                                                              [OpenIddictServerAspNetCoreConstants.Properties.Error] =
+                                                                  Errors.InvalidGrant,
                                                               [OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
                                                                   "The username/password couple is invalid."
                                                           }!);
@@ -66,13 +66,8 @@ public class AuthorizationController : ControllerBase
         }
 
         var principal = await _signInManager.CreateUserPrincipalAsync(user);
-        principal.SetScopes(new[]
-                            {
-                                Scopes.OpenId,
-                                Scopes.Email,
-                                Scopes.Profile,
-                                Scopes.Roles
-                            }.Intersect(request.GetScopes()));
+        principal.SetScopes(new[] {Scopes.OpenId, Scopes.Email, Scopes.Profile, Scopes.Roles}
+                               .Intersect(request.GetScopes()));
 
         foreach (var claim in principal.Claims)
         {
@@ -81,6 +76,7 @@ public class AuthorizationController : ControllerBase
 
         return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
+
     private IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)
     {
         // Note: by default, claims are NOT automatically included in the access and identity tokens.
@@ -91,7 +87,7 @@ public class AuthorizationController : ControllerBase
         {
             case Claims.Name:
                 yield return Destinations.AccessToken;
-                
+
                 if (principal.HasScope(Scopes.Profile))
                     yield return Destinations.IdentityToken;
 
@@ -113,7 +109,7 @@ public class AuthorizationController : ControllerBase
 
                 yield break;
 
-            case "AspNet.Identity.SecurityStamp": 
+            case "AspNet.Identity.SecurityStamp":
                 yield break;
 
             default:
@@ -128,7 +124,7 @@ public class AuthorizationController : ControllerBase
     /// <response code="400">Something went wrong</response>
     /// <response code="204">User registered</response>
     [HttpPost("register")]
-    public async Task<IActionResult> RegisterUser([FromForm]RegisterDTO dto)
+    public async Task<IActionResult> RegisterUser([FromForm] AccountDTO.RegisterDTO dto)
     {
         var (username, email, password) = ( dto.Username, dto.Email, dto.Password );
         var user = new User()
