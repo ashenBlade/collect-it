@@ -5,7 +5,7 @@
     var selected = Model.ResourceType;
     var text = selected switch
     {
-        ResourceType.Music => "Изображения",
+        ResourceType.Music => "Музыка",
         ResourceType.Video => "Видео",
         _ => "Изображения"
     };
@@ -15,13 +15,6 @@
         ResourceType.Music => "musics",
         ResourceType.Video => "videos",
         _ => "images"
-    };
-    
-    var img = selected switch
-    {
-        ResourceType.Music => "<i class=\"fa-solid fa-music\"></i>",
-        ResourceType.Video => "<i class=\"fa-solid fa-video\"></i>",
-        _ => "<i class=\"fa-solid fa-image\"></i>"
     };
 
     var check = Json.Serialize(value); 

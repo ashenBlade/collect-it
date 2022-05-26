@@ -17,14 +17,13 @@ public class SearchBarViewComponent : ViewComponent
                        "Musics" => ResourceType.Music,
                        "Videos" => ResourceType.Video,
                        _        => ResourceType.Image
-                   }
-            ;
+                   };
         return View(new SearchBarViewModel()
                     {
                         Action = action ?? "Index",
                         Controller = controller ?? "Home",
                         Query = query ?? string.Empty,
-                        ResourceType = chosenType
+                        ResourceType = type
                     });
     }
 }
