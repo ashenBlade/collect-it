@@ -17,12 +17,14 @@ public class MusicsController : Controller
     private readonly ICommentManager _commentManager;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
-
-    public MusicsController(IMusicManager musicManager, UserManager userManager, ICommentManager commentManager)
+    private readonly ILogger<ImagesController> _logger;
+    
+    public MusicsController(IMusicManager musicManager, UserManager userManager, ICommentManager commentManager, ILogger<ImagesController> logger)
     {
         _musicManager = musicManager;
         _userManager = userManager;
         _commentManager = commentManager;
+        _logger = logger;
     }
 
     [HttpGet("{id:int}")]
@@ -120,6 +122,7 @@ public class MusicsController : Controller
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error while uploading music");
             return BadRequest();
         }
     }
@@ -158,24 +161,40 @@ public class MusicsController : Controller
     [Authorize]
     public async Task<IActionResult> DownloadMusicContent(int id)
     {
-        var userId = int.Parse(_userManager.GetUserId(User));
-        if (!await _musicManager.IsAcquiredBy(id, userId))
-            return StatusCode(StatusCodes.Status402PaymentRequired);
-        var image = await _musicManager.FindByIdAsync(id);
-        var stream = await _musicManager.GetContentAsync(id);
-        return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
+        try
+        {
+            var userId = int.Parse(_userManager.GetUserId(User));
+            if (!await _musicManager.IsAcquiredBy(id, userId))
+                return StatusCode(StatusCodes.Status402PaymentRequired);
+            var image = await _musicManager.FindByIdAsync(id);
+            var stream = await _musicManager.GetContentAsync(id);
+            return File(stream, $"audio/{image!.Extension}", $"{image.Name}.{image.Extension}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while register");
+            return BadRequest();
+        }
     }
-    
+
     [HttpPost("comment")]
     [Authorize]
     public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = await _userManager.GetUserAsync(User);
-            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+                return RedirectToAction("Music", new {id = model.ImageId});
+            }
+
             return RedirectToAction("Music", new {id = model.ImageId});
+        } catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while LeavingComment");
+            return BadRequest();
         }
-        return RedirectToAction("Music", new {id = model.ImageId});
     }
 }
