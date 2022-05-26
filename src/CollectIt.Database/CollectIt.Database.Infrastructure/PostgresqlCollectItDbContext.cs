@@ -631,6 +631,12 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
         builder.Entity<Resource>()
                .HasOne(r => r.Owner)
                .WithMany(u => u.ResourcesAuthorOf);
+        // builder.Entity<Resource>()
+        //        .Property(r => r.NameSearchVector)
+        //        .IsGeneratedTsVectorColumn("russian", "Name");
+        // builder.Entity<Resource>()
+        //        .Property(r => r.TagsSearchVector)
+        //        .IsGeneratedTsVectorColumn("russian", "Tags", "Name");
         var aurId = 1;
         builder.Entity<AcquiredUserResource>()
                .HasData(DefaultVideos.Select(v => new AcquiredUserResource()
