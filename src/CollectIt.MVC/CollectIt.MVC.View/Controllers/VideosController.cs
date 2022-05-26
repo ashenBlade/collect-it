@@ -197,7 +197,7 @@ public class VideosController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while downloading video");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке видео"});
         }
     }
 
@@ -219,7 +219,7 @@ public class VideosController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while leaving comment");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});
         }
     }
 }

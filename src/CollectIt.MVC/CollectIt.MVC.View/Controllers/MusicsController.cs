@@ -123,7 +123,7 @@ public class MusicsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while uploading music");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
     }
 
@@ -173,7 +173,7 @@ public class MusicsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while register");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке музыки"});
         }
     }
 
@@ -194,7 +194,7 @@ public class MusicsController : Controller
         } catch (Exception ex)
         {
             _logger.LogError(ex, "Error while LeavingComment");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});
         }
     }
 }

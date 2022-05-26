@@ -197,12 +197,12 @@ public class ImagesController : Controller
             var file = new FileInfo(Path.Combine(address, image.FileName));
             return file.Exists
                 ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
-                : BadRequest(new {Message = "Image content not found"});
+                : View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while downloading image");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
     }
 
@@ -225,7 +225,7 @@ public class ImagesController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while LeavingComment");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});
         }
     }
 }

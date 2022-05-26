@@ -132,7 +132,7 @@ public class AccountController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while register");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при регистрации"});
         }
     }
 
@@ -168,7 +168,7 @@ public class AccountController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while Login");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при входе в аккаунт"});
         }
     }
 
@@ -185,7 +185,7 @@ public class AccountController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while LogOut");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при выходе из аккаунта"});
         }
     }
 
@@ -225,7 +225,8 @@ public class AccountController : Controller
             return RedirectToAction("Profile");
         }
 
-        _logger.LogInformation($"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
+        _logger.LogInformation(
+            $"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
         return View("Error", new ErrorViewModel() {Message = "Ошибка при обновлении ваших данных"});
     }
 
@@ -241,7 +242,7 @@ public class AccountController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while getting External loggins");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при получении external loggins"});
         }
     }
 
@@ -259,73 +260,57 @@ public class AccountController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while google login");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при попытке входа через google"});
         }
     }
 
     [Route("google-response")]
     public async Task<IActionResult> GoogleResponse()
     {
-        try
+        var info = await _signInManager.GetExternalLoginInfoAsync();
+        if (info is null)
         {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info is null)
-            {
-                _logger.LogError("Could not get google external login info");
-                return View("Error", new ErrorViewModel() {Message = "User claims were not provided"});
-            }
-
-            var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
-                info.ProviderKey,
-                true);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User with existing account logged in using google");
-                return RedirectToAction("Index", "Home");
-            }
-
-            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
-            var user = new User() {Email = email, UserName = username};
-            var identityResult = await _userManager.CreateAsync(user);
-            if (identityResult.Succeeded && (await _userManager.AddLoginAsync(user, info)).Succeeded)
-            {
-                await _signInManager.SignInAsync(user, true);
-                return RedirectToAction("Profile");
-            }
-
-
-            return View("Error",
-                new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
+            _logger.LogError("Could not get google external login info");
+            return View("Error", new ErrorViewModel() {Message = "User claims were not provided"});
         }
-        catch (Exception ex)
+
+        var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
+            info.ProviderKey,
+            true);
+        if (result.Succeeded)
         {
-            _logger.LogError(ex, "Error google signIn");
-            return BadRequest();
+            _logger.LogInformation("User with existing account logged in using google");
+            return RedirectToAction("Index", "Home");
         }
+
+        var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
+        var user = new User() {Email = email, UserName = username};
+        var identityResult = await _userManager.CreateAsync(user);
+        if (identityResult.Succeeded && (await _userManager.AddLoginAsync(user, info)).Succeeded)
+        {
+            await _signInManager.SignInAsync(user, true);
+            return RedirectToAction("Profile");
+        }
+
+
+        return View("Error",
+            new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
     }
 
     [Authorize]
     [HttpGet("confirm")]
     public async Task<IActionResult> ConfirmEmail([FromQuery(Name = "token")] [Required] string token)
     {
-        try
+        var user = await _userManager.GetUserAsync(User);
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (result.Succeeded)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-                return RedirectToAction("Profile");
-            }
+            await _signInManager.RefreshSignInAsync(user);
+            return RedirectToAction("Profile");
+        }
 
-            return View("Error", new ErrorViewModel() {Message = "Could not confirm your email. Try later"});
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while confirming email");
-            return BadRequest();
-        }
+        return View("Error", new ErrorViewModel() {Message = "Could not confirm your email. Try later"});
     }
 
     [Authorize]
@@ -337,13 +322,13 @@ public class AccountController : Controller
             var user = await _userManager.GetUserAsync(User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                                            user.Email);
+                user.Email);
             return RedirectToAction("Profile");
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while sending confirmation email");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при подтверждении почты"});
         }
     }
 
