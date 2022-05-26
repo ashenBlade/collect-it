@@ -52,10 +52,12 @@
         <div class="tab active " id="account" role="tabpanel">
             <div class="p-2">
                 @await Html.PartialAsync("Account", new ProfileAccountViewModel()
-                {
-                    Username = Model.UserName,
-                    Email = Model.Email
-                })
+
+                                                    {
+                                                        Username = Model.UserName,
+                                                        Email = Model.Email,
+                                                        EmailConfirmed = Model.EmailConfirmed
+                                                    })
             </div>
         </div>
         <div class="tab" id="subscribes" role="tabpanel">

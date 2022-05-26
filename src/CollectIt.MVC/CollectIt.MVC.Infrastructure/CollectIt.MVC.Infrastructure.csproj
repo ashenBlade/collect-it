@@ -7,8 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Infrastructure\CollectIt.Database.Infrastructure.csproj" />
-      <ProjectReference Include="..\CollectIt.MVC.Abstractions\CollectIt.MVC.Abstractions.csproj" />
+        <ProjectReference Include="..\..\CollectIt.Database\CollectIt.Database.Infrastructure\CollectIt.Database.Infrastructure.csproj"/>
+        <ProjectReference Include="..\CollectIt.MVC.Abstractions\CollectIt.MVC.Abstractions.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MailKit" Version="3.2.0"/>
     </ItemGroup>
 
 </Project>

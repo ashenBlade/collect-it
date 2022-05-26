@@ -8,6 +8,7 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Managers;
 using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Abstractions.TechSupport;
+using CollectIt.MVC.Infrastructure;
 using CollectIt.MVC.Infrastructure.Account;
 using CollectIt.MVC.Infrastructure.Resources;
 using CollectIt.MVC.View.Hubs;
@@ -66,7 +67,7 @@ services.AddDbContext<PostgresqlCollectItDbContext>(options =>
 
 services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
 services.AddScoped<ISubscriptionManager, SubscriptionManager>();
-
+services.AddRazorPages();
 var videoPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Videos");
 var musicPath = Path.Combine(Directory.GetCurrentDirectory(), "content", "Musics");
 var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
@@ -105,10 +106,23 @@ services.AddIdentity<User, Role>(config =>
 services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IMusicManager, PostgresqlMusicManager>();
 services.AddScoped<IVideoManager, PostgresqlVideoManager>();
-
+services.AddScoped<IMailSender, MailSender>();
+// var options = new MailSenderOptions();
+// builder.Configuration.Bind("MailSenderOptions", options);
+var options = new MailSenderOptions()
+              {
+                  From = builder.Configuration.GetValue<string>("Mail:From"),
+                  EnableSsl = builder.Configuration.GetValue<bool>("Mail:EnableSsl"),
+                  Host = builder.Configuration.GetValue<string>("Mail:Host"),
+                  Password = builder.Configuration.GetValue<string>("Mail:Password"),
+                  Port = builder.Configuration.GetValue<int>("Mail:Port"),
+                  Username = builder.Configuration.GetValue<string>("Mail:Username")
+              };
+services.AddSingleton(options);
 services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
 services.AddScoped<ICommentManager, CommentManager>();
 services.AddSingleton<ITechSupportChatManager, TechSupportChatManager>();
+services.AddTransient<IMailSender, MailSender>();
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -135,5 +149,5 @@ app.MapHub<TechSupportChatHub>("/tech-support/chat");
 app.MapControllerRoute(
                        name: "default",
                        pattern: "{controller=Home}/{action=Index}/{id?}");
-
+app.MapRazorPages();
 app.Run();

@@ -16,6 +16,7 @@
                 <a class="nav-link btn-light transparent text-dark rounded mx-1" asp-controller="Videos" asp-action="GetQueriedVideos" asp-route-query="" asp-route-pageNumber="">Видео</a>
             </li>
         </ul>
+        <a class="nav-link btn text-center text-dark p-0 ps-3 pe-3 end-100 h-1 me-2 mb-2" asp-page="/AboutUs">About us</a>
         <a class="nav-link btn-custom text-center btn-light c-0 rounded-pill p-0 ps-3 pe-3 end-100 h-1 me-2 mb-2" asp-controller="Payment" asp-action="GetPageWithSubscriptionCards" asp-route-type="Image">Подписки</a>
         @if (User.Identity!.IsAuthenticated)
         {
