@@ -73,16 +73,25 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
 
     private async Task<AcquiredUserResource> AcquireResourceAsync(int userId, Resource resource)
     {
-        var subscriptions = await _userManager.GetActiveSubscriptionsForUserByIdAsync(userId);
+        var subscriptions = await _userManager.GetSubscriptionsForUserByIdAsync(userId);
+        var type = resource switch
+                   {
+                       Image => ResourceType.Image,
+                       Video => ResourceType.Video,
+                       Music => ResourceType.Music
+                   };
         var affordable =
-            subscriptions.FirstOrDefault(s => s.Subscription.Restriction is null
-                                           || s.Subscription.Restriction.IsSatisfiedBy(resource));
+            subscriptions.FirstOrDefault(s => s.LeftResourcesCount > 0
+                                           && s.Subscription.AppliedResourceType == type
+                                           && ( s.Subscription.Restriction is null
+                                             || s.Subscription.Restriction.IsSatisfiedBy(resource) ));
         if (affordable is null)
         {
             throw new
                 NoSuitableSubscriptionFoundException($"No suitable subscription found to acquire resource (Id = {resource.Id}) for user (Id = {userId})");
         }
 
+        affordable.LeftResourcesCount--;
         var acquiredUserResource = new AcquiredUserResource()
                                    {
                                        UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.UtcNow,
@@ -90,6 +99,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         try
         {
             var result = await _context.AcquiredUserResources.AddAsync(acquiredUserResource);
+            _context.UsersSubscriptions.Update(affordable);
             await _context.SaveChangesAsync();
             return result.Entity;
         }

@@ -107,8 +107,6 @@ services.AddScoped<IImageManager, PostgresqlImageManager>();
 services.AddScoped<IMusicManager, PostgresqlMusicManager>();
 services.AddScoped<IVideoManager, PostgresqlVideoManager>();
 services.AddScoped<IMailSender, MailSender>();
-// var options = new MailSenderOptions();
-// builder.Configuration.Bind("MailSenderOptions", options);
 var options = new MailSenderOptions()
               {
                   From = builder.Configuration.GetValue<string>("Mail:From"),
