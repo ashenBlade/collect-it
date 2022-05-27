@@ -1,19 +1,14 @@
-using System.Security.Claims;
-using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Account.Interfaces;
-using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
-
 
 /// <summary>
 /// Manage purchase
@@ -23,10 +18,10 @@ namespace CollectIt.API.WebAPI.Controllers.Account;
 [ApiController]
 public class PurchaseController : ControllerBase
 {
-    private readonly ISubscriptionService _subscriptionService;
-    private readonly UserManager _userManager;
     private readonly ILogger<PurchaseController> _logger;
     private readonly IResourceAcquisitionService _resourceAcquisitionService;
+    private readonly ISubscriptionService _subscriptionService;
+    private readonly UserManager _userManager;
 
     public PurchaseController(ISubscriptionService subscriptionService,
                               UserManager userManager,
@@ -38,7 +33,7 @@ public class PurchaseController : ControllerBase
         _logger = logger;
         _resourceAcquisitionService = resourceAcquisitionService;
     }
-    
+
     /// <summary>
     /// Subscribe User
     /// </summary>
@@ -52,7 +47,8 @@ public class PurchaseController : ControllerBase
         try
         {
             var subscription = await _subscriptionService.SubscribeUserAsync(user.Id, subscriptionId);
-            _logger.LogInformation("User (UserId = {UserId}) successfully subscribed (SubscriptionId = {SubscriptionId}). Created user subscription id: {UserSubscriptionId}", user.Id, subscriptionId, subscription.Id);
+            _logger.LogInformation("User (UserId = {UserId}) successfully subscribed (SubscriptionId = {SubscriptionId}). Created user subscription id: {UserSubscriptionId}",
+                                   user.Id, subscriptionId, subscription.Id);
             return Ok(AccountMappers.ToReadUserSubscriptionDTO(subscription));
         }
         catch (UserAlreadySubscribedException userAlreadySubscribedException)
@@ -74,22 +70,23 @@ public class PurchaseController : ControllerBase
     [HttpPost("image/{imageId:int}")]
     public async Task<IActionResult> AcquireImage(int imageId)
     {
-        var userId = (await _userManager.GetUserAsync(User)).Id;
+        var userId = ( await _userManager.GetUserAsync(User) ).Id;
         try
         {
             var acquired = await _resourceAcquisitionService.AcquireImageAsync(userId, imageId);
-            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId}). AcquiredUserResource Id = {AquiredUserResourceId}", userId, imageId, acquired.Id);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired image (Id = {ImageId}). AcquiredUserResource Id = {AquiredUserResourceId}",
+                                   userId, imageId, acquired.Id);
             return NoContent();
         }
-        catch (UserAlreadyAcquiredResourceException alreadyAcquiredResourceException)
+        catch (UserAlreadyAcquiredResourceException)
         {
             return BadRequest("User already acquired this image");
         }
-        catch (NoSuitableSubscriptionFoundException noSuitableSubscriptionFoundException)
+        catch (NoSuitableSubscriptionFoundException)
         {
             return BadRequest("No suitable subscriptions found to acquire image");
         }
-        catch (ResourceNotFoundException resourceNotFoundException)
+        catch (ResourceNotFoundException)
         {
             return NotFound("Image with provided id not found");
         }

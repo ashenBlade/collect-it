@@ -12,16 +12,13 @@ namespace CollectIt.API.WebAPI.Controllers.Account;
 public class RolesController : ControllerBase
 {
     private readonly RoleManager _roleManager;
-    private readonly ILogger<RolesController> _logger;
 
-    public RolesController(RoleManager roleManager,
-                           ILogger<RolesController> logger)
+    public RolesController(RoleManager roleManager)
     {
         _roleManager = roleManager;
-        _logger = logger;
     }
 
-    
+
     /// <summary>
     /// Get roles list 
     /// </summary>

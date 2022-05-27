@@ -1,14 +1,10 @@
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Entities.Account;
-using CollectIt.Database.Entities.Account.Restrictions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using OpenIddict.Server.AspNetCore;
 using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Account;
@@ -21,13 +17,10 @@ namespace CollectIt.API.WebAPI.Controllers.Account;
 public class SubscriptionsController : ControllerBase
 {
     private readonly ISubscriptionManager _subscriptionManager;
-    private readonly ILogger<SubscriptionsController> _logger;
 
-    public SubscriptionsController(ISubscriptionManager subscriptionManager,
-                                   ILogger<SubscriptionsController> logger)
+    public SubscriptionsController(ISubscriptionManager subscriptionManager)
     {
         _subscriptionManager = subscriptionManager;
-        _logger = logger;
     }
 
     /// <summary>
@@ -35,19 +28,11 @@ public class SubscriptionsController : ControllerBase
     /// </summary>
     /// <response code="200">Array of subscriptions ordered by id with max size of <paramref name="pageSize"/> </response>
     [HttpGet("")]
-    public async Task<IActionResult> GetSubscriptionsPaged([FromQuery(Name = "page_number")] 
-                                                           [Range(1, int.MaxValue)]
-                                                           [Required]
-                                                           int pageNumber,
-                                                           
-                                                           [FromQuery(Name = "page_size")] 
-                                                           [Range(1, int.MaxValue)]
-                                                           [Required]
-                                                           int pageSize,
-                                                           
-                                                           [FromQuery(Name = "type")]
-                                                           [Required(ErrorMessage = "Please, specify resource type")]
-                                                           ResourceType resourceType)
+    public async Task<IActionResult> GetSubscriptionsPaged(
+        [FromQuery(Name = "page_number")] [Range(1, int.MaxValue)] [Required] int pageNumber,
+        [FromQuery(Name = "page_size")] [Range(1, int.MaxValue)] [Required]
+        int pageSize,
+        [FromQuery(Name = "type")] [Required] ResourceType resourceType)
     {
         var subscriptions = await _subscriptionManager.GetSubscriptionsAsync(pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
@@ -60,11 +45,14 @@ public class SubscriptionsController : ControllerBase
     /// </summary>
     /// <response code="200">Array of active subscriptions</response>
     [HttpGet("active")]
-    public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")][Required] ResourceType type,
-                                                            [FromQuery(Name = "page_size")][Required]int pageSize,
-                                                            [FromQuery(Name = "page_number")][Required]int pageNumber)
+    public async Task<IActionResult> GetActiveSubscriptions([FromQuery(Name = "type")] [Required] ResourceType type,
+                                                            [FromQuery(Name = "page_size")] [Required]
+                                                            int pageSize,
+                                                            [FromQuery(Name = "page_number")] [Required]
+                                                            int pageNumber)
     {
-        var subscriptions = await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type, pageNumber, pageSize);
+        var subscriptions =
+            await _subscriptionManager.GetActiveSubscriptionsWithResourceTypeAsync(type, pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)
                                .ToArray());
     }
@@ -89,28 +77,25 @@ public class SubscriptionsController : ControllerBase
     /// <response code="201">Subscription created</response>
     [HttpPost("")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> CreateSubscription([FromForm]
-                                                        [Required] 
-                                                        AccountDTO.CreateSubscriptionDTO dto, 
-                                                        [FromForm(Name = "active")]
-                                                        bool active = false)
+    public async Task<IActionResult> CreateSubscription([FromForm] [Required] AccountDTO.CreateSubscriptionDTO dto,
+                                                        [FromForm(Name = "active")] bool active = false)
     {
         var restriction = dto.Restriction is null
                               ? null
                               : AccountMappers.ToRestrictionFromCreateRestrictionDTO(dto.Restriction);
-        var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name, 
-                                                                              dto.Description, 
+        var subscription = await _subscriptionManager.CreateSubscriptionAsync(dto.Name,
+                                                                              dto.Description,
                                                                               dto.MonthDuration,
-                                                                              dto.AppliedResourceType, 
+                                                                              dto.AppliedResourceType,
                                                                               dto.Price,
                                                                               dto.MaxResourcesCount,
-                                                                              restriction, 
+                                                                              restriction,
                                                                               active);
         return CreatedAtAction("GetSubscriptionById", new {subscriptionId = subscription.Id},
                                AccountMappers.ToReadSubscriptionDTO(subscription));
     }
 
-    
+
     /// <summary>
     /// Change name for subscription
     /// </summary>
@@ -118,25 +103,25 @@ public class SubscriptionsController : ControllerBase
     /// <response code="204">Name changed</response>
     [HttpPost("{subscriptionId:int}/name")]
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId, 
-                                                            [FromForm(Name = "name")]
-                                                            [Required]
-                                                            string name)
+    public async Task<IActionResult> ChangeSubscriptionName(int subscriptionId,
+                                                            [FromForm(Name = "name")] [Required] string name)
     {
         var result = await _subscriptionManager.ChangeSubscriptionNameAsync(subscriptionId, name);
         return result.Succeeded
                    ? NoContent()
                    : BadRequest();
     }
-    
+
     /// <summary>
     /// Change name for subscription
     /// </summary>
     /// <response code="400">Something went wrong</response>
     /// <response code="204">Description changed</response>
     [HttpPost("{subscriptionId:int}/description")]
-    [Authorize(Roles = "Admin",  AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
-    public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId,[FromForm(Name = "description")][Required] string description)
+    [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+    public async Task<IActionResult> ChangeSubscriptionDescription(int subscriptionId,
+                                                                   [FromForm(Name = "description")] [Required]
+                                                                   string description)
     {
         var result = await _subscriptionManager.ChangeSubscriptionDescriptionAsync(subscriptionId, description);
         return result.Succeeded
@@ -158,7 +143,7 @@ public class SubscriptionsController : ControllerBase
                    ? NoContent()
                    : BadRequest();
     }
-    
+
     /// <summary>
     /// Change name for subscription
     /// </summary>

@@ -19,6 +19,7 @@ public class RestrictionModelBinder : IModelBinder
             context.Result = ModelBindingResult.Success(null);
             return;
         }
+
         if (types.Length is not 1)
         {
             context.ModelState.AddModelError("RestrictionType", "Multiple restriction types are not allowed");
@@ -38,12 +39,12 @@ public class RestrictionModelBinder : IModelBinder
         {
             restrictionType = ( RestrictionType ) i;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             context.Result = ModelBindingResult.Failed();
             return;
         }
-        
+
         switch (restrictionType)
         {
             case RestrictionType.Author:
@@ -58,8 +59,9 @@ public class RestrictionModelBinder : IModelBinder
                     context.Result = ModelBindingResult.Failed();
                     return;
                 }
+
                 var authorRestrictionDTO = new AccountDTO.CreateAuthorRestrictionDTO(authorId);
-                    
+
                 context.Result = ModelBindingResult.Success(authorRestrictionDTO);
                 break;
             case RestrictionType.DaysTo:
@@ -74,8 +76,9 @@ public class RestrictionModelBinder : IModelBinder
                     context.Result = ModelBindingResult.Failed();
                     return;
                 }
+
                 var daysToRestrictionDTO = new AccountDTO.CreateDaysToRestrictionDTO(daysTo);
-                    
+
                 context.Result = ModelBindingResult.Success(daysToRestrictionDTO);
                 break;
             case RestrictionType.DaysAfter:
@@ -90,8 +93,9 @@ public class RestrictionModelBinder : IModelBinder
                     context.Result = ModelBindingResult.Failed();
                     return;
                 }
+
                 var daysAfterRestrictionDTO = new AccountDTO.CreateDaysAfterRestrictionDTO(daysAfter);
-                    
+
                 context.Result = ModelBindingResult.Success(daysAfterRestrictionDTO);
                 break;
             case RestrictionType.Tags:
@@ -115,11 +119,13 @@ public class RestrictionModelBinder : IModelBinder
                     context.Result = ModelBindingResult.Failed();
                     return;
                 }
+
                 var tagsRestrictionDTO = new AccountDTO.CreateTagsRestrictionDTO(tags);
                 context.Result = ModelBindingResult.Success(tagsRestrictionDTO);
                 break;
             default:
-                context.ModelState.AddModelError("RestrictionType", $"Restriction type '{(int)restrictionType}' is not supported");
+                context.ModelState.AddModelError("RestrictionType",
+                                                 $"Restriction type '{( int ) restrictionType}' is not supported");
                 context.Result = ModelBindingResult.Success(new AccountDTO.CreateRestrictionDTO(restrictionType));
                 break;
         }

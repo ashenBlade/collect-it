@@ -185,24 +185,41 @@ public class VideosController : Controller
     [Authorize]
     public async Task<IActionResult> DownloadVideoContent(int id)
     {
-        var userId = int.Parse(_userManager.GetUserId(User));
-        if (!await _videoManager.IsAcquiredBy(id, userId))
-            return BadRequest();
-        var stream = await _videoManager.GetContentAsync(id);
-        var video = await _videoManager.FindByIdAsync(id);
-        return File(stream, $"video/{video.Extension}", $"{video.Name}.{video.Extension}");
+        try
+        {
+            var userId = int.Parse(_userManager.GetUserId(User));
+            if (!await _videoManager.IsAcquiredBy(id, userId))
+                return BadRequest();
+            var stream = await _videoManager.GetContentAsync(id);
+            var video = await _videoManager.FindByIdAsync(id);
+            return File(stream, $"video/{video.Extension}", $"{video.Name}.{video.Extension}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while downloading video");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке видео"});
+        }
     }
-    
+
     [HttpPost("comment")]
     [Authorize]
     public async Task<IActionResult> LeaveComment([FromForm] LeaveCommentVewModel model)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = await _userManager.GetUserAsync(User);
-            var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var comment = await _commentManager.CreateComment(model.ImageId, user.Id, model.Content);
+                return RedirectToAction("Video", new {id = model.ImageId});
+            }
+
             return RedirectToAction("Video", new {id = model.ImageId});
         }
-        return RedirectToAction("Video", new {id = model.ImageId});
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while leaving comment");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});
+        }
     }
 }

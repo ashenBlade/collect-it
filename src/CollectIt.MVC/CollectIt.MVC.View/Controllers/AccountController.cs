@@ -21,9 +21,9 @@ public class AccountController : Controller
     private readonly UserManager _userManager;
 
     public AccountController(ILogger<AccountController> logger,
-                             UserManager userManager,
-                             SignInManager<User> signInManager,
-                             IMailSender mailSender)
+        UserManager userManager,
+        SignInManager<User> signInManager,
+        IMailSender mailSender)
     {
         _logger = logger;
         _userManager = userManager;
@@ -39,48 +39,48 @@ public class AccountController : Controller
     {
         // var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = await _userManager.GetUserAsync(User);
-        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(user.Id) )
-           .Select(subscription =>
-                       new AccountUserSubscription()
-                       {
-                           From = subscription.During.Start.ToDateTimeUnspecified(),
-                           To = subscription.During.End.ToDateTimeUnspecified(),
-                           LeftResourcesCount = subscription.LeftResourcesCount,
-                           Name = subscription.Subscription.Name,
-                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
-                                              ? "Изображение"
-                                              : "Другое"
-                       });
-        var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id) )
-           .Select(resource =>
-                       new AccountUserResource()
-                       {
-                           Id = resource.ResourceId,
-                           FileName = resource.Resource.Name,
-                           // Address = resource.Resource.Address,
-                           Extension = resource.Resource.Extension,
-                           Date = resource.AcquiredDate
-                       });
-        var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(user.Id) )
-           .Select(resource =>
-                       new AccountUserResource()
-                       {
-                           Id = resource.Id,
-                           FileName = resource.Name,
-                           //Address = resource.Address,
-                           Extension = resource.Extension,
-                           Date = resource.UploadDate
-                       });
+        var subscriptions = (await _userManager.GetSubscriptionsForUserByIdAsync(user.Id))
+            .Select(subscription =>
+                new AccountUserSubscription()
+                {
+                    From = subscription.During.Start.ToDateTimeUnspecified(),
+                    To = subscription.During.End.ToDateTimeUnspecified(),
+                    LeftResourcesCount = subscription.LeftResourcesCount,
+                    Name = subscription.Subscription.Name,
+                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
+                        ? "Изображение"
+                        : "Другое"
+                });
+        var resources = (await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id))
+            .Select(resource =>
+                new AccountUserResource()
+                {
+                    Id = resource.ResourceId,
+                    FileName = resource.Resource.Name,
+                    // Address = resource.Resource.Address,
+                    Extension = resource.Resource.Extension,
+                    Date = resource.AcquiredDate
+                });
+        var myResources = (await _userManager.GetUsersResourcesForUserByIdAsync(user.Id))
+            .Select(resource =>
+                new AccountUserResource()
+                {
+                    Id = resource.Id,
+                    FileName = resource.Name,
+                    //Address = resource.Address,
+                    Extension = resource.Extension,
+                    Date = resource.UploadDate
+                });
         var model = new AccountViewModel()
-                    {
-                        UserName = User.FindFirstValue(ClaimTypes.Name),
-                        Email = User.FindFirstValue(ClaimTypes.Email),
-                        Subscriptions = subscriptions,
-                        AcquiredResources = resources,
-                        UsersResources = myResources,
-                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User)),
-                        EmailConfirmed = user.EmailConfirmed
-                    };
+        {
+            UserName = User.FindFirstValue(ClaimTypes.Name),
+            Email = User.FindFirstValue(ClaimTypes.Email),
+            Subscriptions = subscriptions,
+            AcquiredResources = resources,
+            UsersResources = myResources,
+            Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User)),
+            EmailConfirmed = user.EmailConfirmed
+        };
         return View(model);
     }
 
@@ -107,25 +107,33 @@ public class AccountController : Controller
             return View(model);
         }
 
-        _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
-        var user = new User {Email = model.Email, UserName = model.UserName};
-        var result = await _userManager.CreateAsync(user, model.Password);
-        if (result.Succeeded)
+        try
         {
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                                            user.Email);
-            _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
-            return RedirectToAction("Login");
-        }
+            _logger.LogInformation("User (Email: {Email}) wants to register", model.Email);
+            var user = new User {Email = model.Email, UserName = model.UserName};
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
+                    user.Email);
+                _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
+                return RedirectToAction("Login");
+            }
 
-        _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
-        foreach (var error in result.Errors)
+            _logger.LogInformation("User (Email: {Email}) has already registered", model.Email);
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
+        }
+        catch (Exception ex)
         {
-            ModelState.AddModelError("", error.Description);
+            _logger.LogError(ex, "Error while register");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при регистрации"});
         }
-
-        return View(model);
     }
 
     [HttpPost]
@@ -137,32 +145,48 @@ public class AccountController : Controller
             return View(model);
         }
 
-        _logger.LogInformation("User with email: {Email} wants to login", model.Email);
-
-        var user = await _userManager.FindByEmailAsync(model.Email);
-        if (user is null)
+        try
         {
-            ModelState.AddModelError("", "Пользователя с такой почтой не существует");
-            return View();
-        }
+            _logger.LogInformation("User with email: {Email} wants to login", model.Email);
 
-        if (!( await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false) ).Succeeded)
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+            {
+                ModelState.AddModelError("", "Пользователя с такой почтой не существует");
+                return View();
+            }
+
+            if (!(await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false)).Succeeded)
+            {
+                ModelState.AddModelError("", "Неправильный пароль");
+                return View(model);
+            }
+
+            await _signInManager.SignInAsync(user, model.RememberMe);
+            return RedirectToAction("Index", "Home");
+        }
+        catch (Exception ex)
         {
-            ModelState.AddModelError("", "Неправильный пароль");
-            return View(model);
+            _logger.LogError(ex, "Error while Login");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при входе в аккаунт"});
         }
-
-        await _signInManager.SignInAsync(user, model.RememberMe);
-        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]
     [Route("logout")]
     public async Task<IActionResult> LogOut()
     {
-        await _signInManager.SignOutAsync();
-        _logger.LogInformation("User logged out");
-        return RedirectToAction("Login");
+        try
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out");
+            return RedirectToAction("Login");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while LogOut");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при выходе из аккаунта"});
+        }
     }
 
     [HttpPost("edit")]
@@ -201,7 +225,8 @@ public class AccountController : Controller
             return RedirectToAction("Profile");
         }
 
-        _logger.LogInformation($"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
+        _logger.LogInformation(
+            $"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
         return View("Error", new ErrorViewModel() {Message = "Ошибка при обновлении ваших данных"});
     }
 
@@ -209,18 +234,34 @@ public class AccountController : Controller
     [HttpGet("external")]
     public async Task<IActionResult> GetExternalLogins()
     {
-        var logins = await _signInManager.GetExternalAuthenticationSchemesAsync();
-        return Ok(logins.Select(l => new {l.Name, l.DisplayName}));
+        try
+        {
+            var logins = await _signInManager.GetExternalAuthenticationSchemesAsync();
+            return Ok(logins.Select(l => new {l.Name, l.DisplayName}));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while getting External loggins");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при получении external loggins"});
+        }
     }
 
     [Route("google-login")]
     public IActionResult GoogleLogin()
     {
-        var properties =
-            _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme,
-                                                                     Url.Action("GoogleResponse"));
-        // var properties = new AuthenticationProperties() {RedirectUri = Url.Action("GoogleResponse")};
-        return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        try
+        {
+            var properties =
+                _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme,
+                    Url.Action("GoogleResponse"));
+            // var properties = new AuthenticationProperties() {RedirectUri = Url.Action("GoogleResponse")};
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while google login");
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при попытке входа через google"});
+        }
     }
 
     [Route("google-response")]
@@ -234,8 +275,8 @@ public class AccountController : Controller
         }
 
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
-                                                                   info.ProviderKey,
-                                                                   true);
+            info.ProviderKey,
+            true);
         if (result.Succeeded)
         {
             _logger.LogInformation("User with existing account logged in using google");
@@ -246,37 +287,30 @@ public class AccountController : Controller
         var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
         var user = new User() {Email = email, UserName = username};
         var identityResult = await _userManager.CreateAsync(user);
-        if (identityResult.Succeeded && ( await _userManager.AddLoginAsync(user, info) ).Succeeded)
+        if (identityResult.Succeeded && (await _userManager.AddLoginAsync(user, info)).Succeeded)
         {
             await _signInManager.SignInAsync(user, true);
             return RedirectToAction("Profile");
         }
 
+
         return View("Error",
-                    new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
+            new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
     }
 
     [Authorize]
     [HttpGet("confirm")]
     public async Task<IActionResult> ConfirmEmail([FromQuery(Name = "token")] [Required] string token)
     {
-        try
+        var user = await _userManager.GetUserAsync(User);
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (result.Succeeded)
         {
-            var user = await _userManager.GetUserAsync(User);
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-            if (result.Succeeded)
-            {
-                await _signInManager.RefreshSignInAsync(user);
-                return RedirectToAction("Profile");
-            }
+            await _signInManager.RefreshSignInAsync(user);
+            return RedirectToAction("Profile");
+        }
 
-            return View("Error", new ErrorViewModel() {Message = "Could not confirm your email. Try later"});
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while confirming email");
-            return BadRequest();
-        }
+        return View("Error", new ErrorViewModel() {Message = "Could not confirm your email. Try later"});
     }
 
     [Authorize]
@@ -288,13 +322,13 @@ public class AccountController : Controller
             var user = await _userManager.GetUserAsync(User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                                            user.Email);
+                user.Email);
             return RedirectToAction("Profile");
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error while sending confirmation email");
-            return BadRequest();
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при подтверждении почты"});
         }
     }
 
