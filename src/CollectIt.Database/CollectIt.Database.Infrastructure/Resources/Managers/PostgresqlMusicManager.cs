@@ -23,70 +23,12 @@ public class PostgresqlMusicManager : IMusicManager
     public async Task<Music?> FindByIdAsync(int id)
     {
         return await _context.Musics
-            .Where(mus => mus.Id == id)
-            .Include(mus => mus.Owner)
-            .SingleOrDefaultAsync();
+                             .Where(mus => mus.Id == id)
+                             .Include(mus => mus.Owner)
+                             .SingleOrDefaultAsync();
     }
 
-  /*  public async Task<Music> CreateAsync(string name,
-                                         int ownerId,
-                                         string[] tags,
-                                         Stream content,
-                                         string extension,
-                                         int duration)
-    {
-        if (name is null || string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentOutOfRangeException(nameof(name), "Music name can not be null or empty");
-        }
 
-        if (tags is null)
-        {
-            throw new ArgumentNullException(nameof(tags));
-        }
-
-        if (content is null)
-        {
-            throw new ArgumentNullException(nameof(content));
-        }
-
-        if (extension is null || string.IsNullOrWhiteSpace(extension))
-        {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Music extension can not be null or empty");
-        }
-
-        if (duration < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(duration), "Music duration must be positive");
-        }
-
-        var filename = $"{new Guid()}.{extension}";
-        var music = new Music()
-                    {
-                        Name = name,
-                        Extension = extension,
-                        Duration = duration,
-                        OwnerId = ownerId,
-                        Tags = tags,
-                        FileName = filename,
-                        UploadDate = DateTime.UtcNow,
-                    };
-        try
-        {
-            var entity = await _context.Musics.AddAsync(music);
-            music = entity.Entity;
-            await _context.SaveChangesAsync();
-            var file = await _fileManager.CreateAsync(filename, content);
-            return music;
-        }
-        catch (IOException)
-        {
-            _context.Musics.Remove(music);
-            await _context.SaveChangesAsync();
-            throw;
-        }
-    }*/
-  
     public async Task<Music> CreateAsync(string name,
                                          int ownerId,
                                          string[] tags,
@@ -164,27 +106,27 @@ public class PostgresqlMusicManager : IMusicManager
         _context.Musics.Remove(new Music() {Id = musicId});
         return _context.SaveChangesAsync();
     }
-    
-   public async Task<PagedResult<Music>> QueryAsync(string query, int pageNumber, int pageSize)
-   {
-       if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
-       if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
-       var q = _context.Musics
-           .Where(mus => mus.TagsSearchVector.Matches(EF.Functions
-               .WebSearchToTsQuery("russian", query)))
-           .OrderByDescending(mus =>
-               mus.TagsSearchVector.Rank(EF.Functions
-                   .WebSearchToTsQuery("russian", query)));
-       return new PagedResult<Music>()
-       {
-           Result = await q
-               .Include(v => v.Owner)
-               .Skip(( pageNumber - 1 ) * pageSize)
-               .Take(pageSize)
-               .ToListAsync(),
-           TotalCount = await q.CountAsync()
-       };
-   }
+
+    public async Task<PagedResult<Music>> QueryAsync(string query, int pageNumber, int pageSize)
+    {
+        if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
+        if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
+        var q = _context.Musics
+                        .Where(mus => mus.TagsSearchVector.Matches(EF.Functions
+                                                                     .WebSearchToTsQuery("russian", query)))
+                        .OrderByDescending(mus =>
+                                               mus.TagsSearchVector.Rank(EF.Functions
+                                                                           .WebSearchToTsQuery("russian", query)));
+        return new PagedResult<Music>()
+               {
+                   Result = await q
+                                 .Include(v => v.Owner)
+                                 .Skip(( pageNumber - 1 ) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync(),
+                   TotalCount = await q.CountAsync()
+               };
+    }
 
     public async Task<PagedResult<Music>> GetAllPagedAsync(int pageNumber, int pageSize)
     {

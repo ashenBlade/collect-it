@@ -69,7 +69,7 @@ public class PostgresqlImageManager : IImageManager
             var entity = await _context.Images.AddAsync(image);
             image = entity.Entity;
             await _context.SaveChangesAsync();
-            var file = await _fileManager.CreateAsync(filename, content);
+            await _fileManager.CreateAsync(filename, content);
             return image;
         }
         catch (IOException ioException)

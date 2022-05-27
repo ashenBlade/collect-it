@@ -113,48 +113,49 @@ public class ImagesController : Controller
     {
         return View();
     }
-    
-   [HttpPost("upload")]
-   [Authorize]
-   public async Task<IActionResult> UploadImage(
-       [FromForm] [Required] UploadImageViewModel viewModel)
-   {
+
+    [HttpPost("upload")]
+    [Authorize]
+    public async Task<IActionResult> UploadImage(
+        [FromForm] [Required] UploadImageViewModel viewModel)
+    {
         if (!ModelState.IsValid)
         {
-            return View(model);
+            return View(viewModel);
         }
-        
-       var userId = int.Parse(_userManager.GetUserId(User));
-       if (!TryGetExtension(viewModel.Content.FileName, out var extension))
-       {
-           return View("Error",
-               new ErrorViewModel()
-               {
-                   Message =
-                       $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}"
-               });
-       }
 
-       try
-       {
-           await using var stream = viewModel.Content.OpenReadStream();
-           var image = await _imageManager.CreateAsync(viewModel.Name, userId,
-               viewModel.Tags
-                   .Split(' ', StringSplitOptions.RemoveEmptyEntries),
-               stream,
-               extension!);
+        var userId = int.Parse(_userManager.GetUserId(User));
+        if (!TryGetExtension(viewModel.Content.FileName, out var extension))
+        {
+            return View("Error",
+                        new ErrorViewModel()
+                        {
+                            Message =
+                                $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}"
+                        });
+        }
 
-           _logger.LogInformation("Image (ImageId = {ImageId}) was created by user (UserId = {UserId})", userId,
-               image.Id);
-           return RedirectToAction("Profile", "Account");
-       }
-       catch (Exception ex)
-       {
-           _logger.LogError(ex, "Error while saving image");
-           ModelState.AddModelError("", "Error while saving image on server side");
-           return View("Error", new ErrorViewModel() {Message = "Error while saving image on server"});
-       }
-   }
+        try
+        {
+            await using var stream = viewModel.Content.OpenReadStream();
+            var image = await _imageManager.CreateAsync(viewModel.Name,
+                                                        userId,
+                                                        viewModel.Tags
+                                                                 .Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                                                        stream,
+                                                        extension!);
+
+            _logger.LogInformation("Image (ImageId = {ImageId}) was created by user (UserId = {UserId})", userId,
+                                   image.Id);
+            return RedirectToAction("Profile", "Account");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while saving image");
+            ModelState.AddModelError("", "Error while saving image on server side");
+            return View("Error", new ErrorViewModel() {Message = "Error while saving image on server"});
+        }
+    }
 
     private static bool TryGetExtension(string filename, out string? extension)
     {
@@ -183,10 +184,8 @@ public class ImagesController : Controller
             return View("Error", new ErrorViewModel() {Message = "Image not found"});
         }
 
-        var file = new FileInfo(Path.Combine(address, image.FileName));
-        return file.Exists
-                   ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
-                   : BadRequest(new {Message = "Image content not found"});
+        var stream = await _imageManager.GetContentAsync(id);
+        return File(stream, $"image/{image.Extension}", $"{image.Name}.{image.Extension}");
     }
 
 

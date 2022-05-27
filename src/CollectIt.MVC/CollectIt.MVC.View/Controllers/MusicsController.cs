@@ -18,6 +18,7 @@ public class MusicsController : Controller
     private readonly ILogger<ImagesController> _logger;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
+
     public MusicsController(IMusicManager musicManager,
                             UserManager userManager,
                             ICommentManager commentManager,
@@ -40,25 +41,25 @@ public class MusicsController : Controller
 
         var user = await _userManager.GetUserAsync(User);
         var model = new MusicViewModel()
-        {
-            MusicId = id,
-            Name = source.Name,
-            OwnerName = source.Owner?.UserName ?? "Fuck",
-            UploadDate = source.UploadDate,
-            PreviewAddress = Url.Action("GetMusicBlob", new {id = id})!,
-            DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
-            Tags = source.Tags,
-            IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
-            Comments = (await _commentManager.GetResourcesComments(id)).Select(c => new CommentViewModel()
-            {
-                Author = c.Owner
-                    .UserName,
-                Comment =
-                    c.Content,
-                PostTime = c
-                    .UploadDate
-            })
-        };
+                    {
+                        MusicId = id,
+                        Name = source.Name,
+                        OwnerName = source.Owner?.UserName ?? "Fuck",
+                        UploadDate = source.UploadDate,
+                        PreviewAddress = Url.Action("GetMusicBlob", new {id = id})!,
+                        DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
+                        Tags = source.Tags,
+                        IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
+                        Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
+                                                                                                  {
+                                                                                                      Author = c.Owner
+                                                                                                                .UserName,
+                                                                                                      Comment =
+                                                                                                          c.Content,
+                                                                                                      PostTime = c
+                                                                                                         .UploadDate
+                                                                                                  })
+                    };
         return View(model);
     }
 
@@ -68,25 +69,24 @@ public class MusicsController : Controller
                                                       int pageNumber = 1)
     {
         var musics = query is null
-            ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
-            : await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
+                         ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
+                         : await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Musics",
-            new MusicCardsViewModel()
-            {
-                Musics = musics.Result.Select(m => new MusicViewModel()
+                    new MusicCardsViewModel()
                     {
                         Musics = musics.Result.Select(mus => new MusicViewModel()
-                                                           {
-                                                               DownloadAddress =
-                                                                   Url.Action("DownloadMusicContent", new {id = mus.Id})!,
-                                                               Name = mus.Name,
-                                                               MusicId = mus.Id,
-                                                               Comments = Array.Empty<CommentViewModel>(),
-                                                               Tags = mus.Tags,
-                                                               OwnerName = mus.Owner.UserName,
-                                                               UploadDate = mus.UploadDate,
-                                                               IsAcquired = false
-                                                           })
+                                                             {
+                                                                 DownloadAddress =
+                                                                     Url.Action("DownloadMusicContent",
+                                                                                new {id = mus.Id}) !,
+                                                                 Name = mus.Name,
+                                                                 MusicId = mus.Id,
+                                                                 Comments = Array.Empty<CommentViewModel>(),
+                                                                 Tags = mus.Tags,
+                                                                 OwnerName = mus.Owner.UserName,
+                                                                 UploadDate = mus.UploadDate,
+                                                                 IsAcquired = false
+                                                             })
                                        .ToList(),
                         PageNumber = pageNumber,
                         MaxMusicsCount = musics.TotalCount,
@@ -110,22 +110,19 @@ public class MusicsController : Controller
         var userId = int.Parse(_userManager.GetUserId(User));
         if (!TryGetExtension(model.Content.FileName, out var extension))
         {
-            // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения музыки: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
-            return View("Error",
-                new ErrorViewModel()
-                {
-                    Message =
-                        $"Поддерживаемые расширения видео: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}"
-                });
+            ModelState.AddModelError("",
+                                     $"Поддерживаемые расширения музыки: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}");
+            return View(model);
         }
 
         try
         {
             await using var stream = model.Content.OpenReadStream();
             var music = await _musicManager.CreateAsync(model.Name, userId,
-                model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-                stream, extension,
-                model.Duration);
+                                                        model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                                                        stream,
+                                                        extension,
+                                                        model.Duration);
 
             return RedirectToAction("GetQueriedMusics", new {q = ""});
         }

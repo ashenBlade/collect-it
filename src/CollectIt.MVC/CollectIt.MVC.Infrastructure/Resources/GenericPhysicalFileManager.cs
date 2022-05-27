@@ -11,8 +11,6 @@ public class GenericPhysicalFileManager : IMusicFileManager, IVideoFileManager, 
         _basePath = basePath;
     }
 
-    private string GetFullPath(string filename) => Path.Combine(_basePath, filename);
-    
     public Stream GetContent(string filename)
     {
         return File.Open(GetFullPath(filename), FileMode.Open);
@@ -27,8 +25,10 @@ public class GenericPhysicalFileManager : IMusicFileManager, IVideoFileManager, 
     public async Task<FileInfo> CreateAsync(string filename, Stream content)
     {
         var fullPath = GetFullPath(filename);
-        var file = File.Open(fullPath, FileMode.CreateNew);
+        await using var file = File.Open(fullPath, FileMode.CreateNew);
         await content.CopyToAsync(file);
         return new FileInfo(fullPath);
     }
+
+    private string GetFullPath(string filename) => Path.Combine(_basePath, filename);
 }
