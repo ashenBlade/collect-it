@@ -116,20 +116,20 @@ public class VideosController : Controller
     public async Task<IActionResult> UploadVideo(
         [FromForm] [Required] UploadVideoViewModel viewModel)
     {
-        try
+        if (!ModelState.IsValid) return View(viewModel);
+        var userId = int.Parse(_userManager.GetUserId(User));
+        if (!TryGetExtension(viewModel.Content.FileName, out var extension))
         {
-            var userId = int.Parse(_userManager.GetUserId(User));
-            if (!TryGetExtension(viewModel.Content.FileName, out var extension))
-            {
-                // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
-                return View("Error",
-                    new ErrorViewModel()
-                    {
-                        Message =
-                            $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}"
-                    });
-            }
-
+            // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
+            return View("Error",
+                new ErrorViewModel()
+                {
+                    Message =
+                        $"Поддерживаемые расширения видео: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}"
+                });
+        }
+        try
+        { 
             await using var stream = viewModel.Content.OpenReadStream();
             var video = await _videoManager.CreateAsync(viewModel.Name, userId,
                 viewModel.Tags

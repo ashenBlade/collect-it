@@ -15,12 +15,13 @@ public class MusicsController : Controller
 
     private static readonly HashSet<string> SupportedMusicExtensions = new() {"mp3", "ogg", "wav"};
     private readonly ICommentManager _commentManager;
+    private readonly ILogger<ImagesController> _logger;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
-    private readonly ILogger<ImagesController> _logger;
-
-    public MusicsController(IMusicManager musicManager, UserManager userManager, ICommentManager commentManager,
-        ILogger<ImagesController> logger)
+    public MusicsController(IMusicManager musicManager,
+                            UserManager userManager,
+                            ICommentManager commentManager,
+                            ILogger<ImagesController> logger)
     {
         _musicManager = musicManager;
         _userManager = userManager;
@@ -62,9 +63,9 @@ public class MusicsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query,
-        [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
-        int pageNumber = 1)
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query, 
+                                                      [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
+                                                      int pageNumber = 1)
     {
         var musics = query is null
             ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
@@ -99,6 +100,7 @@ public class MusicsController : Controller
     public async Task<IActionResult> UploadMusic(
         [FromForm] [Required] UploadMusicViewModel model)
     {
+        if (!ModelState.IsValid) return View(model);
         var userId = int.Parse(_userManager.GetUserId(User));
         if (!TryGetExtension(model.Content.FileName, out var extension))
         {
