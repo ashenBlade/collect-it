@@ -42,7 +42,7 @@ public class PaymentController : Controller
         return View("Subscriptions", new SubscriptionsViewModel() {Subscriptions = subscriptions});
     }
 
-    [HttpGet("subscribtions/{subscriptionId:int}")]
+    [HttpGet("subscriptions/{subscriptionId:int}")]
     public async Task<IActionResult> SubscribePage(int subscriptionId)
     {
         try
@@ -71,7 +71,6 @@ public class PaymentController : Controller
             return View("PaymentResult",
                         new PaymentResultViewModel {ErrorMessage = "Пользователь отменил оформление подписки"});
         }
-
         try
         {
             var userId = int.Parse(_userManager.GetUserId(User));
