@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
@@ -26,15 +27,18 @@ public class ImagesController : Controller
     private readonly IImageManager _imageManager;
     private readonly ILogger<ImagesController> _logger;
     private readonly UserManager _userManager;
+    private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
     public ImagesController(IImageManager imageManager,
                             UserManager userManager,
                             ICommentManager commentManager,
-                            ILogger<ImagesController> logger)
+                            ILogger<ImagesController> logger,
+                            IResourceAcquisitionService resourceAcquisitionService)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
         _logger = logger;
+        _resourceAcquisitionService = resourceAcquisitionService;
         _userManager = userManager;
     }
 
@@ -143,6 +147,7 @@ public class ImagesController : Controller
 
             _logger.LogInformation("Image (ImageId = {ImageId}) was created by user (UserId = {UserId})", userId,
                                    image.Id);
+            var acquired = await _resourceAcquisitionService.AcquireImageWithoutSubscriptionAsync(userId, image.Id);
             return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)

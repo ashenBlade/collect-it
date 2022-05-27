@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
@@ -18,16 +19,18 @@ public class MusicsController : Controller
     private readonly ILogger<ImagesController> _logger;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
+    private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
     public MusicsController(IMusicManager musicManager,
                             UserManager userManager,
                             ICommentManager commentManager,
-                            ILogger<ImagesController> logger)
+                            ILogger<ImagesController> logger, IResourceAcquisitionService resourceAcquisitionService)
     {
         _musicManager = musicManager;
         _userManager = userManager;
         _commentManager = commentManager;
         _logger = logger;
+        _resourceAcquisitionService = resourceAcquisitionService;
     }
 
     [HttpGet("{id:int}")]
@@ -124,6 +127,7 @@ public class MusicsController : Controller
                                                         extension,
                                                         model.Duration);
 
+            var acquired = await _resourceAcquisitionService.AcquireMusicWithoutSubscriptionAsync(userId, music.Id);
             return RedirectToAction("GetQueriedMusics", new {q = ""});
         }
         catch (Exception ex)
