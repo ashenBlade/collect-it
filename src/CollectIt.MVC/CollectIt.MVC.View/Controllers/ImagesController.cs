@@ -80,7 +80,7 @@ public class ImagesController : Controller
         var source = await _imageManager.FindByIdAsync(imageId);
         if (source == null)
         {
-            return View("Error");
+            return View("Error", new ErrorViewModel() {Message = "Изображения не существует"});
         }
 
         var user = await _userManager.GetUserAsync(User);
@@ -124,14 +124,14 @@ public class ImagesController : Controller
         }
 
         if (!TryGetExtension(model.Content.FileName, out var extension))
-        {
-            ModelState.AddModelError("Content",
-                                     $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}");
-            return View(model);
-        }
+            {
+                ModelState.AddModelError("Content",
+                    $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}");
+                return View(model);
+            }
 
-        var user = await _userManager.GetUserAsync(User);
-        await using var stream = model.Content.OpenReadStream();
+            var user = await _userManager.GetUserAsync(User);
+            await using var stream = model.Content.OpenReadStream(); 
         try
         {
             await _imageManager.CreateAsync(model.Name, user.Id,
@@ -143,7 +143,7 @@ public class ImagesController : Controller
         {
             _logger.LogError(ex, "Error while saving image");
             ModelState.AddModelError("", "Error while uploading image");
-            return View(model);
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
     }
 
