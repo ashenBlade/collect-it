@@ -71,7 +71,6 @@ public class PaymentController : Controller
             return View("PaymentResult",
                         new PaymentResultViewModel {ErrorMessage = "Пользователь отменил оформление подписки"});
         }
-
         try
         {
             var userId = int.Parse(_userManager.GetUserId(User));
