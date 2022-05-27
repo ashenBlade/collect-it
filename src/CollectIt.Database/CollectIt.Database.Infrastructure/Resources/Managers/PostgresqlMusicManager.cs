@@ -1,9 +1,11 @@
 ﻿using CollectIt.Database.Abstractions;
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Resources.Managers;
 
@@ -26,7 +28,7 @@ public class PostgresqlMusicManager : IMusicManager
             .SingleOrDefaultAsync();
     }
 
-    public async Task<Music> CreateAsync(string name,
+  /*  public async Task<Music> CreateAsync(string name,
                                          int ownerId,
                                          string[] tags,
                                          Stream content,
@@ -82,6 +84,78 @@ public class PostgresqlMusicManager : IMusicManager
             _context.Musics.Remove(music);
             await _context.SaveChangesAsync();
             throw;
+        }
+    }*/
+  
+    public async Task<Music> CreateAsync(string name,
+                                         int ownerId,
+                                         string[] tags,
+                                         Stream content,
+                                         string extension,
+                                         int duration)
+    {
+        if (name is null || string.IsNullOrWhiteSpace(name))
+        {
+            throw new ArgumentOutOfRangeException(nameof(name), "Music name can not be null or empty");
+        }
+
+        if (tags is null)
+        {
+            throw new ArgumentNullException(nameof(tags));
+        }
+
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
+        if (extension is null || string.IsNullOrWhiteSpace(extension))
+        {
+            throw new ArgumentOutOfRangeException(nameof(extension), "Music extension can not be null or empty");
+        }
+
+        if (duration < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(duration), "Music duration must be positive");
+        }
+
+        var filename = $"{Guid.NewGuid()}.{extension}";
+        var music = new Music()
+                    {
+                        Duration = duration,
+                        Name = name,
+                        Tags = tags,
+                        FileName = filename,
+                        OwnerId = ownerId,
+                        Extension = extension,
+                        UploadDate = DateTime.UtcNow,
+                    };
+        try
+        {
+            var entity = await _context.Musics.AddAsync(music);
+            music = entity.Entity;
+            await _context.SaveChangesAsync();
+            var file = await _fileManager.CreateAsync(filename, content);
+            return music;
+        }
+        catch (IOException ioException)
+        {
+            _context.Musics.Remove(music);
+            await _context.SaveChangesAsync();
+            throw;
+        }
+        catch (DbUpdateException db)
+        {
+            throw db.InnerException switch
+                  {
+                      PostgresException p => p.ConstraintName switch
+                                             {
+                                                 "FK_Resources_AspNetUsers_OwnerId" =>
+                                                     new UserNotFoundException(music.OwnerId),
+                                                 _ => p
+                                             },
+                      _ => db
+                  };
         }
     }
 

@@ -112,34 +112,43 @@ public class ImagesController : Controller
     {
         return View();
     }
+    
+   [HttpPost("upload")]
+   [Authorize]
+   public async Task<IActionResult> UploadImage(
+       [FromForm] [Required] UploadImageViewModel viewModel)
+   {
+       var userId = int.Parse(_userManager.GetUserId(User));
+       if (!TryGetExtension(viewModel.Content.FileName, out var extension))
+       {
+           return View("Error",
+               new ErrorViewModel()
+               {
+                   Message =
+                       $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}"
+               });
+       }
 
-    [HttpPost("upload")]
-    [Authorize]
-    public async Task<IActionResult> UploadImage([Required] [FromForm] UploadImageViewModel model)
-    {
-        if (!TryGetExtension(model.Content.FileName, out var extension))
-        {
-            ModelState.AddModelError("Content",
-                                     $"Поддерживаемые расширения изображений: {SupportedImageExtensions.Aggregate((s, n) => $"{s}, {n}")}");
-            return View(model);
-        }
+       try
+       {
+           await using var stream = viewModel.Content.OpenReadStream();
+           var image = await _imageManager.CreateAsync(viewModel.Name, userId,
+               viewModel.Tags
+                   .Split(' ', StringSplitOptions.RemoveEmptyEntries),
+               stream,
+               extension!);
 
-        var user = await _userManager.GetUserAsync(User);
-        await using var stream = model.Content.OpenReadStream();
-        try
-        {
-            await _imageManager.CreateAsync(model.Name, user.Id,
-                model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-                stream, extension);
-            return RedirectToAction("Profile", "Account");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while saving image");
-            ModelState.AddModelError("", "Error while uploading image");
-            return View(model);
-        }
-    }
+           _logger.LogInformation("Image (ImageId = {ImageId}) was created by user (UserId = {UserId})", userId,
+               image.Id);
+           return RedirectToAction("Profile", "Account");
+       }
+       catch (Exception ex)
+       {
+           _logger.LogError(ex, "Error while saving image");
+           ModelState.AddModelError("", "Error while saving image on server side");
+           return View("Error", new ErrorViewModel() {Message = "Error while saving image on server"});
+       }
+   }
     
 
     private static bool TryGetExtension(string filename, out string? extension)
