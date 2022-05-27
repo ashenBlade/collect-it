@@ -116,6 +116,7 @@ public class VideosController : Controller
     public async Task<IActionResult> UploadVideo(
         [FromForm] [Required] UploadVideoViewModel viewModel)
     {
+        if (!ModelState.IsValid) return View(viewModel);
         var userId = int.Parse(_userManager.GetUserId(User));
         if (!TryGetExtension(viewModel.Content.FileName, out var extension))
         {
