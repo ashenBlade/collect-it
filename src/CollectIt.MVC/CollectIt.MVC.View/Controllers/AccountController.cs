@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using CollectIt.Database.Entities.Account;
+using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.Entities.Account;
 using CollectIt.MVC.Infrastructure;
@@ -21,9 +22,9 @@ public class AccountController : Controller
     private readonly UserManager _userManager;
 
     public AccountController(ILogger<AccountController> logger,
-        UserManager userManager,
-        SignInManager<User> signInManager,
-        IMailSender mailSender)
+                             UserManager userManager,
+                             SignInManager<User> signInManager,
+                             IMailSender mailSender)
     {
         _logger = logger;
         _userManager = userManager;
@@ -39,48 +40,60 @@ public class AccountController : Controller
     {
         // var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var user = await _userManager.GetUserAsync(User);
-        var subscriptions = (await _userManager.GetSubscriptionsForUserByIdAsync(user.Id))
-            .Select(subscription =>
-                new AccountUserSubscription()
-                {
-                    From = subscription.During.Start.ToDateTimeUnspecified(),
-                    To = subscription.During.End.ToDateTimeUnspecified(),
-                    LeftResourcesCount = subscription.LeftResourcesCount,
-                    Name = subscription.Subscription.Name,
-                    ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
-                        ? "Изображение"
-                        : "Другое"
-                });
-        var resources = (await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id))
-            .Select(resource =>
-                new AccountUserResource()
-                {
-                    Id = resource.ResourceId,
-                    FileName = resource.Resource.Name,
-                    // Address = resource.Resource.Address,
-                    Extension = resource.Resource.Extension,
-                    Date = resource.AcquiredDate
-                });
-        var myResources = (await _userManager.GetUsersResourcesForUserByIdAsync(user.Id))
-            .Select(resource =>
-                new AccountUserResource()
-                {
-                    Id = resource.Id,
-                    FileName = resource.Name,
-                    //Address = resource.Address,
-                    Extension = resource.Extension,
-                    Date = resource.UploadDate
-                });
+        var subscriptions = ( await _userManager.GetSubscriptionsForUserByIdAsync(user.Id) )
+           .Select(subscription =>
+                       new AccountUserSubscription()
+                       {
+                           From = subscription.During.Start.ToDateTimeUnspecified(),
+                           To = subscription.During.End.ToDateTimeUnspecified(),
+                           LeftResourcesCount = subscription.LeftResourcesCount,
+                           Name = subscription.Subscription.Name,
+                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
+                                              ? "Изображение"
+                                              : "Другое"
+                       });
+        var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id) )
+           .Select(resource =>
+                       new AccountUserResource()
+                       {
+                           Id = resource.ResourceId,
+                           FileName = resource.Resource.Name,
+                           // Address = resource.Resource.Address,
+                           Extension = resource.Resource.Extension,
+                           Date = resource.AcquiredDate,
+                           ResourceType = resource.Resource switch
+                                          {
+                                              Image => ResourceType.Image,
+                                              Video => ResourceType.Video,
+                                              Music => ResourceType.Music
+                                          }
+                       });
+        var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(user.Id) )
+           .Select(resource =>
+                       new AccountUserResource()
+                       {
+                           Id = resource.Id,
+                           FileName = resource.Name,
+                           //Address = resource.Address,
+                           Extension = resource.Extension,
+                           Date = resource.UploadDate,
+                           ResourceType = resource switch
+                                          {
+                                              Image => ResourceType.Image,
+                                              Video => ResourceType.Video,
+                                              Music => ResourceType.Music
+                                          }
+                       });
         var model = new AccountViewModel()
-        {
-            UserName = User.FindFirstValue(ClaimTypes.Name),
-            Email = User.FindFirstValue(ClaimTypes.Email),
-            Subscriptions = subscriptions,
-            AcquiredResources = resources,
-            UsersResources = myResources,
-            Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User)),
-            EmailConfirmed = user.EmailConfirmed
-        };
+                    {
+                        UserName = User.FindFirstValue(ClaimTypes.Name),
+                        Email = User.FindFirstValue(ClaimTypes.Email),
+                        Subscriptions = subscriptions,
+                        AcquiredResources = resources,
+                        UsersResources = myResources,
+                        Roles = await _userManager.GetRolesAsync(await _userManager.GetUserAsync(User)),
+                        EmailConfirmed = user.EmailConfirmed
+                    };
         return View(model);
     }
 
@@ -116,7 +129,7 @@ public class AccountController : Controller
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                    user.Email);
+                                                user.Email);
                 _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
                 return RedirectToAction("Login");
             }
@@ -156,7 +169,7 @@ public class AccountController : Controller
                 return View();
             }
 
-            if (!(await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false)).Succeeded)
+            if (!( await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false) ).Succeeded)
             {
                 ModelState.AddModelError("", "Неправильный пароль");
                 return View(model);
@@ -226,7 +239,7 @@ public class AccountController : Controller
         }
 
         _logger.LogInformation(
-            $"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
+                               $"Error while updating user credentials:\n{result.Errors.Select(e => $"- {e.Description}").Aggregate((s, n) => $"{s}\n{n}").ToArray()}");
         return View("Error", new ErrorViewModel() {Message = "Ошибка при обновлении ваших данных"});
     }
 
@@ -253,7 +266,7 @@ public class AccountController : Controller
         {
             var properties =
                 _signInManager.ConfigureExternalAuthenticationProperties(GoogleDefaults.AuthenticationScheme,
-                    Url.Action("GoogleResponse"));
+                                                                         Url.Action("GoogleResponse"));
             // var properties = new AuthenticationProperties() {RedirectUri = Url.Action("GoogleResponse")};
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
@@ -275,8 +288,8 @@ public class AccountController : Controller
         }
 
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider,
-            info.ProviderKey,
-            true);
+                                                                   info.ProviderKey,
+                                                                   true);
         if (result.Succeeded)
         {
             _logger.LogInformation("User with existing account logged in using google");
@@ -287,7 +300,7 @@ public class AccountController : Controller
         var username = info.Principal.FindFirstValue(ClaimTypes.Name) ?? email;
         var user = new User() {Email = email, UserName = username};
         var identityResult = await _userManager.CreateAsync(user);
-        if (identityResult.Succeeded && (await _userManager.AddLoginAsync(user, info)).Succeeded)
+        if (identityResult.Succeeded && ( await _userManager.AddLoginAsync(user, info) ).Succeeded)
         {
             await _signInManager.SignInAsync(user, true);
             return RedirectToAction("Profile");
@@ -295,7 +308,7 @@ public class AccountController : Controller
 
 
         return View("Error",
-            new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
+                    new ErrorViewModel() {Message = "Could not create account with provided google credentials"});
     }
 
     [Authorize]
@@ -322,7 +335,7 @@ public class AccountController : Controller
             var user = await _userManager.GetUserAsync(User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                user.Email);
+                                            user.Email);
             return RedirectToAction("Profile");
         }
         catch (Exception e)

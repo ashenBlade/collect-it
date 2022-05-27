@@ -1,4 +1,5 @@
-﻿@model CollectIt.MVC.View.ViewModels.AccountResourcesViewModel
+﻿@using CollectIt.Database.Entities.Account
+@model CollectIt.MVC.View.ViewModels.AccountResourcesViewModel
 
 <div class="d-flex justify-content-center w-100">
     <table class="table table-hover">
@@ -12,27 +13,31 @@
         </tr>
         </thead>
         <tbody>
-        @{ var type = ""; };
-        @foreach (var (resource, i) in Model.Resources
-            .OrderBy(s => s.Date)
-            .Select((s, i) => (s, i)))
+        @foreach (var (userResource, i) in Model.Resources
+                                                .OrderBy(s => s.Date)
+                                                .Select((s, i) => ( s, i )))
         {
-            if (resource.Extension == "jpg")
-                type = "Images";
-            if (resource.Extension == "mp3")
-                type = "Musics";
-            if (resource.Extension == "webm")
-                type = "Videos";
+            var type = userResource.ResourceType switch 
+                       {    
+                       ResourceType.Image => "Изображение",
+                       ResourceType.Video => "Видео",
+                       ResourceType.Music => "Музыка"
+                       };
 
-            <tr onclick="window.location='../@type/@resource.Id'" role="button">
+            <tr onclick="window.location='@(userResource.ResourceType switch
+                                            {
+                                            ResourceType.Image => Url.Action("Image", "Images", new {imageId = userResource.Id}),
+                                            ResourceType.Music => Url.Action("Music", "Musics", new {id = userResource.Id}),
+                                            ResourceType.Video => Url.Action("Video", "Videos", new {id = userResource.Id}),
+                                            })'" role="button">
                 <td>
                     @(i + 1)
                 </td>
                 <td>
-                    @resource.FileName
+                    @userResource.FileName
                 </td>
                 <td>
-                    @resource.Date.ToString("D")
+                    @userResource.Date.ToString("D")
                 </td>
                 <td>
                     @type
@@ -42,4 +47,5 @@
             </tr>
         }
         </tbody>
-    </table></div>
+    </table>
+</div>
