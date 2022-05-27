@@ -19,6 +19,7 @@ tabsBtn.forEach(function (item){
         $(tabId).addClass('active');
         $('.menu').toggleClass('menu-active');
         $('.content').toggleClass('content-active');
+        $('.menu-btn').toggleClass('triangle-right').toggleClass('triangle-left');
     });
 });
 // Write your JavaScript code.
