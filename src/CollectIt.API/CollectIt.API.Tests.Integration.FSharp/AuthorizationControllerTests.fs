@@ -51,6 +51,7 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                 Assert.NotNull result
                 Assert.Equal("Bearer", result.TokenType)
                 Assert.NotEmpty result.AccessToken
+                client.Dispose()
             }
 
         [<Fact>]
@@ -77,6 +78,7 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
                 Assert.NotNull actual
                 Assert.Equal(username, actual.UserName)
                 Assert.Equal(email, actual.Email)
+                client.Dispose()
             }
 
         [<Fact>]
@@ -104,11 +106,31 @@ type AuthorizationControllerTests(factory: CollectItWebApplicationFactory, outpu
 
                 let! response = client.SendAsync message
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode)
+                client.Dispose()
             }
 
+        [<Fact>]
+        member this.``POST /connect/register; With incorrect password; Should return BadRequest``() =
+            task {
+                use client = this._factory.CreateClient()
 
+                let createUserDTO: CreateUserDTO =
+                    { UserName = "ValidUsername"
+                      Email = "valid@email.com"
+                      Password = System.String.Empty }
 
+                let form =
+                    new FormUrlEncodedContent(
+                        [ KeyValuePair("username", createUserDTO.UserName)
+                          KeyValuePair("email", createUserDTO.Email)
+                          KeyValuePair("password", createUserDTO.Password) ]
+                    )
 
+                use message =
+                    new HttpRequestMessage(HttpMethod.Post, "/connect/register", Content = form)
 
-
+                let! response = client.SendAsync message
+                Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode)
+                client.Dispose()
+            }
     end
