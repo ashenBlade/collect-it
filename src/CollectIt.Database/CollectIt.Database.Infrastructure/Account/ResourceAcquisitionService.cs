@@ -83,8 +83,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         var affordable =
             subscriptions.FirstOrDefault(s => s.LeftResourcesCount > 0
                                            && s.Subscription.AppliedResourceType == type
-                                           && ( s.Subscription.Restriction is null
-                                             || s.Subscription.Restriction.IsSatisfiedBy(resource) ));
+                                           && ( s.Subscription.Restriction?.IsSatisfiedBy(resource) ?? true ));
         if (affordable is null)
         {
             throw new

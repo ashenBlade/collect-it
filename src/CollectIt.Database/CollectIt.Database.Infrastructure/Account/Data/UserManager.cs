@@ -44,6 +44,7 @@ public class UserManager : UserManager<User>
         return await _context.UsersSubscriptions
                              .Where(us => us.UserId == userId)
                              .Include(us => us.Subscription)
+                             .ThenInclude(s => s.Restriction)
                              .Include(us => us.User)
                              .ToListAsync();
     }

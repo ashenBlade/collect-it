@@ -395,6 +395,30 @@ namespace CollectIt.MVC.View.Migrations
                             MonthDuration = 120000,
                             Name = "Кардбланш",
                             Price = 2147483647
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Active = true,
+                            AppliedResourceType = "Video",
+                            Description = "Стандартная подписка на видео",
+                            MaxResourcesCount = 100,
+                            MonthDuration = 10,
+                            Name = "Хочю видео",
+                            Price = 600,
+                            RestrictionId = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Active = true,
+                            AppliedResourceType = "Music",
+                            Description = "Админу на печеньки",
+                            MaxResourcesCount = 1000,
+                            MonthDuration = 3,
+                            Name = "Люблю админа",
+                            Price = 228,
+                            RestrictionId = 2
                         });
                 });
 
@@ -1035,6 +1059,13 @@ namespace CollectIt.MVC.View.Migrations
                     b.HasIndex("AuthorId");
 
                     b.HasDiscriminator().HasValue(5);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            AuthorId = 1
+                        });
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Account.Restrictions.DaysAfterRestriction", b =>
@@ -1076,6 +1107,13 @@ namespace CollectIt.MVC.View.Migrations
                         .HasColumnType("text[]");
 
                     b.HasDiscriminator().HasValue(6);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Tags = new[] { "видео" }
+                        });
                 });
 
             modelBuilder.Entity("CollectIt.Database.Entities.Resources.Image", b =>

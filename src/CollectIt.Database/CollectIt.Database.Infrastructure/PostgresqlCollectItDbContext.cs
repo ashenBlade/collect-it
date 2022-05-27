@@ -578,6 +578,35 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         SilverSubscription,
                         GoldenSubscription,
                         AllowAllSubscription);
+        builder.Entity<TagRestriction>()
+               .HasData(new TagRestriction() {Id = 1, Tags = new[] {"видео"}});
+        builder.Entity<AuthorRestriction>()
+               .HasData(new AuthorRestriction() {Id = 2, AuthorId = 1});
+        builder.Entity<Subscription>()
+               .HasData(new Subscription()
+                        {
+                            Id = 6,
+                            Active = true,
+                            Description = "Стандартная подписка на видео",
+                            Name = "Хочю видео",
+                            Price = 600,
+                            RestrictionId = 1,
+                            AppliedResourceType = ResourceType.Video,
+                            MonthDuration = 10,
+                            MaxResourcesCount = 100
+                        },
+                        new Subscription()
+                        {
+                            Id = 7,
+                            Active = true,
+                            Description = "Админу на печеньки",
+                            Name = "Люблю админа",
+                            Price = 228,
+                            RestrictionId = 2,
+                            MonthDuration = 3,
+                            AppliedResourceType = ResourceType.Music,
+                            MaxResourcesCount = 1000
+                        });
         builder.Entity<User>()
                .HasMany(u => u.Roles)
                .WithMany(r => r.Users)
