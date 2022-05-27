@@ -1,16 +1,17 @@
-﻿@{
-    Layout = null;
+﻿@model CollectIt.MVC.View.ViewModels.ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>ОШИБКА</title>
-</head>
-<body>
-<div>
-      ТЫ КОНКРЕТНО ОШИБСЯ, ДРУЖОК-ПИРОЖОК, клуб любителей вводить не те айди в url на 2 ссылки ниже
+<div class="h-100 bg-white rounded container-fluid shadow p-3" >
+    <h2 class="text-danger">Error.</h2>
+    <h3 class="text-danger">An error occurred while processing your request.</h3>
+    
+    @if (Model.HasMessage)
+    {
+        <h3>Message</h3>
+        <p class="text-danger text-center h4">
+            @Model.Message
+        </p>
+    }
 </div>
-</body>
-</html>
