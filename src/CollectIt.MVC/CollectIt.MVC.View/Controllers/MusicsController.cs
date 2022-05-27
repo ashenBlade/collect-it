@@ -15,11 +15,13 @@ public class MusicsController : Controller
 
     private static readonly HashSet<string> SupportedMusicExtensions = new() {"mp3", "ogg", "wav"};
     private readonly ICommentManager _commentManager;
+    private readonly ILogger<ImagesController> _logger;
     private readonly IMusicManager _musicManager;
     private readonly UserManager _userManager;
-    private readonly ILogger<ImagesController> _logger;
-    
-    public MusicsController(IMusicManager musicManager, UserManager userManager, ICommentManager commentManager, ILogger<ImagesController> logger)
+    public MusicsController(IMusicManager musicManager,
+                            UserManager userManager,
+                            ICommentManager commentManager,
+                            ILogger<ImagesController> logger)
     {
         _musicManager = musicManager;
         _userManager = userManager;
@@ -33,30 +35,30 @@ public class MusicsController : Controller
         var source = await _musicManager.FindByIdAsync(id);
         if (source == null)
         {
-            return View("Error");
+            return View("Error", new ErrorViewModel() {Message = "Музыки не существует"});
         }
 
         var user = await _userManager.GetUserAsync(User);
         var model = new MusicViewModel()
-                    {
-                        MusicId = id,
-                        Name = source.Name,
-                        OwnerName = source.Owner?.UserName ?? "Fuck",
-                        UploadDate = source.UploadDate,
-                        PreviewAddress = Url.Action("GetMusicBlob", new {id = id})!,
-                        DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
-                        Tags = source.Tags,
-                        IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
-                        Comments = ( await _commentManager.GetResourcesComments(id) ).Select(c => new CommentViewModel()
-                                                                                                  {
-                                                                                                      Author = c.Owner
-                                                                                                                .UserName,
-                                                                                                      Comment =
-                                                                                                          c.Content,
-                                                                                                      PostTime = c
-                                                                                                         .UploadDate
-                                                                                                  })
-                    };
+        {
+            MusicId = id,
+            Name = source.Name,
+            OwnerName = source.Owner?.UserName ?? "Fuck",
+            UploadDate = source.UploadDate,
+            PreviewAddress = Url.Action("GetMusicBlob", new {id = id})!,
+            DownloadAddress = Url.Action("DownloadMusicContent", new {id = id})!,
+            Tags = source.Tags,
+            IsAcquired = user is not null && await _musicManager.IsAcquiredBy(id, user.Id),
+            Comments = (await _commentManager.GetResourcesComments(id)).Select(c => new CommentViewModel()
+            {
+                Author = c.Owner
+                    .UserName,
+                Comment =
+                    c.Content,
+                PostTime = c
+                    .UploadDate
+            })
+        };
         return View(model);
     }
 
@@ -66,10 +68,12 @@ public class MusicsController : Controller
                                                       int pageNumber = 1)
     {
         var musics = query is null
-                         ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
-                         : await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
+            ? await _musicManager.GetAllPagedAsync(pageNumber, DefaultPageSize)
+            : await _musicManager.QueryAsync(query, pageNumber, DefaultPageSize);
         return View("Musics",
-                    new MusicCardsViewModel()
+            new MusicCardsViewModel()
+            {
+                Musics = musics.Result.Select(m => new MusicViewModel()
                     {
                         Musics = musics.Result.Select(mus => new MusicViewModel()
                                                            {
@@ -102,32 +106,33 @@ public class MusicsController : Controller
     public async Task<IActionResult> UploadMusic(
         [FromForm] [Required] UploadMusicViewModel model)
     {
+        if (!ModelState.IsValid) return View(model);
         var userId = int.Parse(_userManager.GetUserId(User));
         if (!TryGetExtension(model.Content.FileName, out var extension))
         {
             // ModelState.AddModelError("FormFile", $"Поддерживаемые расширения музыки: {SupportedVideoFormats.Aggregate((s, n) => $"{s}, {n}")}");
             return View("Error",
-                        new ErrorViewModel()
-                        {
-                            Message =
-                                $"Поддерживаемые расширения видео: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}"
-                        });
+                new ErrorViewModel()
+                {
+                    Message =
+                        $"Поддерживаемые расширения видео: {SupportedMusicExtensions.Aggregate((s, n) => $"{s}, {n}")}"
+                });
         }
 
         try
         {
             await using var stream = model.Content.OpenReadStream();
             var music = await _musicManager.CreateAsync(model.Name, userId,
-                                                        model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
-                                                        stream, extension,
-                                                        model.Duration);
+                model.Tags.Split(' ', StringSplitOptions.RemoveEmptyEntries),
+                stream, extension,
+                model.Duration);
 
             return RedirectToAction("GetQueriedMusics", new {q = ""});
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error while uploading music");
-            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
+            return View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке музыки"});
         }
     }
 
@@ -195,7 +200,8 @@ public class MusicsController : Controller
             }
 
             return RedirectToAction("Music", new {id = model.ImageId});
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             _logger.LogError(ex, "Error while LeavingComment");
             return View("Error", new ErrorViewModel() {Message = "Ошибка при добавлении комментария"});

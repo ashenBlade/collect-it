@@ -14,13 +14,13 @@ public class ImagesController : Controller
     private static readonly int MaxPageSize = 5;
 
     private static readonly HashSet<string> SupportedImageExtensions = new()
-    {
-        "png",
-        "jpeg",
-        "jpg",
-        "webp",
-        "bmp"
-    };
+                                                                       {
+                                                                           "png",
+                                                                           "jpeg",
+                                                                           "jpg",
+                                                                           "webp",
+                                                                           "bmp"
+                                                                       };
 
     private readonly ICommentManager _commentManager;
     private readonly IImageManager _imageManager;
@@ -30,9 +30,9 @@ public class ImagesController : Controller
     private readonly string address;
 
     public ImagesController(IImageManager imageManager,
-        UserManager userManager,
-        ICommentManager commentManager,
-        ILogger<ImagesController> logger)
+                            UserManager userManager,
+                            ICommentManager commentManager,
+                            ILogger<ImagesController> logger)
     {
         _imageManager = imageManager;
         _commentManager = commentManager;
@@ -47,25 +47,26 @@ public class ImagesController : Controller
                                                       int pageNumber = 1)
     {
         var images = query is null
-            ? await _imageManager.GetAllPagedAsync(MaxPageSize, pageNumber)
-            : await _imageManager.QueryAsync(query, MaxPageSize, pageNumber);
+                         ? await _imageManager.GetAllPagedAsync(MaxPageSize, pageNumber)
+                         : await _imageManager.QueryAsync(query, MaxPageSize, pageNumber);
 
         return View("Images",
                     new ImageCardsViewModel()
                     {
                         Images = images.Result.Select(i => new ImageViewModel()
-                                                    {
-                                                        DownloadAddress = Url.Action("DownloadImage", new {id = i.Id})!,
-                                                        PreviewAddress =
-                                                            Url.Action("DownloadImagePreview", new {id = i.Id})!,
-                                                        Name = i.Name,
-                                                        ImageId = i.Id,
-                                                        Comments = Array.Empty<CommentViewModel>(),
-                                                        Tags = i.Tags,
-                                                        OwnerName = i.Owner.UserName,
-                                                        UploadDate = i.UploadDate,
-                                                        IsAcquired = false
-                                                    })
+                                                           {
+                                                               DownloadAddress =
+                                                                   Url.Action("DownloadImage", new {id = i.Id})!,
+                                                               PreviewAddress =
+                                                                   Url.Action("DownloadImagePreview", new {id = i.Id})!,
+                                                               Name = i.Name,
+                                                               ImageId = i.Id,
+                                                               Comments = Array.Empty<CommentViewModel>(),
+                                                               Tags = i.Tags,
+                                                               OwnerName = i.Owner.UserName,
+                                                               UploadDate = i.UploadDate,
+                                                               IsAcquired = false
+                                                           })
                                        .ToList(),
                         PageNumber = pageNumber,
                         MaxPagesCount = ( int ) Math.Ceiling(( double ) images.TotalCount / MaxPageSize),
@@ -79,7 +80,7 @@ public class ImagesController : Controller
         var source = await _imageManager.FindByIdAsync(imageId);
         if (source == null)
         {
-            return View("Error");
+            return View("Error", new ErrorViewModel() {Message = "Изображения не существует"});
         }
 
         var user = await _userManager.GetUserAsync(User);
@@ -118,6 +119,11 @@ public class ImagesController : Controller
    public async Task<IActionResult> UploadImage(
        [FromForm] [Required] UploadImageViewModel viewModel)
    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+        
        var userId = int.Parse(_userManager.GetUserId(User));
        if (!TryGetExtension(viewModel.Content.FileName, out var extension))
        {
@@ -149,7 +155,6 @@ public class ImagesController : Controller
            return View("Error", new ErrorViewModel() {Message = "Error while saving image on server"});
        }
    }
-    
 
     private static bool TryGetExtension(string filename, out string? extension)
     {
@@ -205,8 +210,8 @@ public class ImagesController : Controller
 
             var file = new FileInfo(Path.Combine(address, image.FileName));
             return file.Exists
-                ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
-                : View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
+                       ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
+                       : View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
         }
         catch (Exception ex)
         {
