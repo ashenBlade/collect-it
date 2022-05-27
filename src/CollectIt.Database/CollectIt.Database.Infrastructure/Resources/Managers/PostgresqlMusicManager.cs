@@ -90,38 +90,27 @@ public class PostgresqlMusicManager : IMusicManager
         _context.Musics.Remove(new Music() {Id = musicId});
         return _context.SaveChangesAsync();
     }
-
-    public async Task<PagedResult<Music>> QueryAsync(string query, int pageNumber, int pageSize)
-    {
-        if (pageSize < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
-        }
-
-        if (pageNumber < 1)
-        {
-            throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
-        }
-
-        if (query is null)
-        {
-            throw new ArgumentNullException(nameof(query));
-        }
-
-        var q = _context.Musics
-                        .Where(m => m.TagsSearchVector.Matches(EF.Functions.WebSearchToTsQuery("russian", query)))
-                        .OrderByDescending(m => m.TagsSearchVector.Rank(EF.Functions.WebSearchToTsQuery("russian",
-                                                                                                        query)));
-        var x = await q.Select(m => new
-                                    {
-                                        All = q.Include(m => m.Owner)
-                                               .Skip(( pageNumber - 1 ) * pageNumber)
-                                               .ToList(),
-                                        Count = q.Count()
-                                    })
-                       .FirstOrDefaultAsync();
-        return new PagedResult<Music>() {Result = x.All, TotalCount = x.Count};
-    }
+    
+   public async Task<PagedResult<Music>> QueryAsync(string query, int pageNumber, int pageSize)
+   {
+       if (pageNumber < 1) throw new ArgumentOutOfRangeException(nameof(pageNumber), "Page number must be positive");
+       if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize), "Page size must be positive");
+       var q = _context.Musics
+           .Where(mus => mus.TagsSearchVector.Matches(EF.Functions
+               .WebSearchToTsQuery("russian", query)))
+           .OrderByDescending(mus =>
+               mus.TagsSearchVector.Rank(EF.Functions
+                   .WebSearchToTsQuery("russian", query)));
+       return new PagedResult<Music>()
+       {
+           Result = await q
+               .Include(v => v.Owner)
+               .Skip(( pageNumber - 1 ) * pageSize)
+               .Take(pageSize)
+               .ToListAsync(),
+           TotalCount = await q.CountAsync()
+       };
+   }
 
     public async Task<PagedResult<Music>> GetAllPagedAsync(int pageNumber, int pageSize)
     {
