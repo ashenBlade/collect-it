@@ -1,9 +1,11 @@
 ﻿using CollectIt.Database.Abstractions;
+using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CollectIt.Database.Infrastructure.Resources.Managers;
 
@@ -26,7 +28,11 @@ public class PostgresqlImageManager : IImageManager
                              .SingleOrDefaultAsync();
     }
 
-    public async Task<Image> CreateAsync(string name, int ownerId, string[] tags, Stream content, string extension)
+    public async Task<Image> CreateAsync(string name,
+                                         int ownerId,
+                                         string[] tags,
+                                         Stream content,
+                                         string extension)
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
@@ -48,14 +54,14 @@ public class PostgresqlImageManager : IImageManager
             throw new ArgumentOutOfRangeException(nameof(extension), "Image extension can not be null or empty");
         }
 
-        var filename = $"{new Guid()}.{extension}";
+        var filename = $"{Guid.NewGuid()}.{extension}";
         var image = new Image()
                     {
                         Name = name,
-                        Extension = extension,
-                        OwnerId = ownerId,
                         Tags = tags,
                         FileName = filename,
+                        OwnerId = ownerId,
+                        Extension = extension,
                         UploadDate = DateTime.UtcNow,
                     };
         try
@@ -66,11 +72,24 @@ public class PostgresqlImageManager : IImageManager
             var file = await _fileManager.CreateAsync(filename, content);
             return image;
         }
-        catch (IOException)
+        catch (IOException ioException)
         {
             _context.Images.Remove(image);
             await _context.SaveChangesAsync();
             throw;
+        }
+        catch (DbUpdateException db)
+        {
+            throw db.InnerException switch
+                  {
+                      PostgresException p => p.ConstraintName switch
+                                             {
+                                                 "FK_Resources_AspNetUsers_OwnerId" =>
+                                                     new UserNotFoundException(image.OwnerId),
+                                                 _ => p
+                                             },
+                      _ => db
+                  };
         }
     }
 

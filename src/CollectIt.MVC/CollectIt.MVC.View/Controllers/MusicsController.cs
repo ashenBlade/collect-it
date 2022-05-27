@@ -63,8 +63,8 @@ public class MusicsController : Controller
     }
 
     [HttpGet("")]
-    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query, 
-                                                      [FromQuery(Name = "p")] [Range(1, int.MaxValue)]
+    public async Task<IActionResult> GetQueriedMusics([FromQuery(Name = "q")] [Required] string? query,
+                                                      [Range(1, int.MaxValue)] [FromQuery(Name = "p")]
                                                       int pageNumber = 1)
     {
         var musics = query is null
@@ -75,17 +75,23 @@ public class MusicsController : Controller
             {
                 Musics = musics.Result.Select(m => new MusicViewModel()
                     {
-                        PreviewAddress =
-                            Url.Action("GetMusicBlob", new {id = m.Id})!,
-                        Name = m.Name,
-                        MusicId = m.Id,
-                        OwnerName = m.Owner.UserName
-                    })
-                    .ToList(),
-                Query = query ?? string.Empty,
-                PageNumber = pageNumber,
-                MaxMusicsCount = musics.TotalCount
-            });
+                        Musics = musics.Result.Select(mus => new MusicViewModel()
+                                                           {
+                                                               DownloadAddress =
+                                                                   Url.Action("DownloadMusicContent", new {id = mus.Id})!,
+                                                               Name = mus.Name,
+                                                               MusicId = mus.Id,
+                                                               Comments = Array.Empty<CommentViewModel>(),
+                                                               Tags = mus.Tags,
+                                                               OwnerName = mus.Owner.UserName,
+                                                               UploadDate = mus.UploadDate,
+                                                               IsAcquired = false
+                                                           })
+                                       .ToList(),
+                        PageNumber = pageNumber,
+                        MaxMusicsCount = musics.TotalCount,
+                        Query = query
+                    });
     }
 
     [HttpGet("upload")]
