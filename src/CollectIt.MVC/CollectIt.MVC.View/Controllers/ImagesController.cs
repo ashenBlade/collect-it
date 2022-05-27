@@ -27,8 +27,6 @@ public class ImagesController : Controller
     private readonly ILogger<ImagesController> _logger;
     private readonly UserManager _userManager;
 
-    private readonly string address;
-
     public ImagesController(IImageManager imageManager,
                             UserManager userManager,
                             ICommentManager commentManager,
@@ -38,7 +36,6 @@ public class ImagesController : Controller
         _commentManager = commentManager;
         _logger = logger;
         _userManager = userManager;
-        address = Path.Combine(Directory.GetCurrentDirectory(), "content", "images");
     }
 
     [HttpGet("")]
@@ -116,8 +113,7 @@ public class ImagesController : Controller
 
     [HttpPost("upload")]
     [Authorize]
-    public async Task<IActionResult> UploadImage(
-        [FromForm] [Required] UploadImageViewModel viewModel)
+    public async Task<IActionResult> UploadImage([FromForm] [Required] UploadImageViewModel viewModel)
     {
         if (!ModelState.IsValid)
         {
@@ -178,14 +174,21 @@ public class ImagesController : Controller
     [HttpGet("{id:int}/preview")]
     public async Task<IActionResult> DownloadImagePreview(int id)
     {
-        var image = await _imageManager.FindByIdAsync(id);
-        if (image is null)
+        try
         {
-            return View("Error", new ErrorViewModel() {Message = "Image not found"});
-        }
+            var image = await _imageManager.FindByIdAsync(id);
+            if (image is null)
+            {
+                return View("Error", new ErrorViewModel() {Message = "Image not found"});
+            }
 
-        var stream = await _imageManager.GetContentAsync(id);
-        return File(stream, $"image/{image.Extension}", $"{image.Name}.{image.Extension}");
+            var stream = await _imageManager.GetContentAsync(id);
+            return File(stream, $"image/{image.Extension}", $"{image.Name}.{image.Extension}");
+        }
+        catch (IOException)
+        {
+            return View("Error", new ErrorViewModel() {Message = "Файл с изображением не найден"});
+        }
     }
 
 
@@ -207,10 +210,12 @@ public class ImagesController : Controller
                 return View("Error", new ErrorViewModel {Message = "Image not found"});
             }
 
-            var file = new FileInfo(Path.Combine(address, image.FileName));
-            return file.Exists
-                       ? PhysicalFile(file.FullName, $"image/{image.Extension}", image.FileName)
-                       : View("Error", new ErrorViewModel() {Message = "Ошибка при загрузке изображения"});
+            var content = await _imageManager.GetContentAsync(id);
+            return File(content, $"image/{image.Extension}", $"{image.Name}.{image.Extension}");
+        }
+        catch (IOException)
+        {
+            return View("Error", new ErrorViewModel() {Message = "Файл с изображением не найден"});
         }
         catch (Exception ex)
         {
