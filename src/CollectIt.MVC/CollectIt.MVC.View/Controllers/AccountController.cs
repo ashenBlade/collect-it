@@ -349,7 +349,8 @@ public class AccountController : Controller
         {
             var user = await _userManager.GetUserAsync(User);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
+            await _mailSender.SendMailAsync("Подтверждение почты",
+                                            CreateConfirmationMailMessageBody(token),
                                             user.Email);
             return RedirectToAction("Profile");
         }
@@ -363,7 +364,7 @@ public class AccountController : Controller
     private string CreateConfirmationMailMessageBody(string? token)
     {
         return $@"
-    Confirm your account: <a href=""https://localhost:7251{Url.Action("ConfirmEmail", new {token = token})}"">Click here</a>
+    Confirm your account: <a href=""https://collect-it-app.herokuapp.com{Url.Action("ConfirmEmail", new {token = token})}"">Click here</a>
 ";
     }
 }
