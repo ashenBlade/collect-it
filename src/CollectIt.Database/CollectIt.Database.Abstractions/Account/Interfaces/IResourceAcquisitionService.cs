@@ -16,4 +16,7 @@ public interface IResourceAcquisitionService
     public Task<AcquiredUserResource> AcquireImageAsync(int userId, int imageId);
     public Task<AcquiredUserResource> AcquireMusicAsync(int userId, int musicId);
     public Task<AcquiredUserResource> AcquireVideoAsync(int userId, int videoId);
+    public Task<AcquiredUserResource> AcquireImageWithoutSubscriptionAsync(int userId, int imageId);
+    public Task<AcquiredUserResource> AcquireMusicWithoutSubscriptionAsync(int userId, int musicId);
+    public Task<AcquiredUserResource> AcquireVideoWithoutSubscriptionAsync(int userId, int videoId);
 }
