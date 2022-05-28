@@ -17,7 +17,7 @@ namespace CollectIt.MVC.View.Migrations
         SELECT array_to_string(arr, sep);
     $$
     LANGUAGE SQL
-    IMMUTABLE 
+    IMMUTABLE; 
 ");
             builder.Sql(@"ALTER TABLE ""Resources""
     ADD COLUMN ""TagsSearchVector""
