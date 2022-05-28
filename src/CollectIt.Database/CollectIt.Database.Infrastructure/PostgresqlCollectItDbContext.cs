@@ -587,7 +587,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 6,
                             Active = true,
-                            Description = "Стандартная подписка на видео",
+                            Description = "Только видео с тегом \"видео\"",
                             Name = "Хочю видео",
                             Price = 600,
                             RestrictionId = 1,
@@ -599,7 +599,7 @@ public class PostgresqlCollectItDbContext : IdentityDbContext<User, Role, int>
                         {
                             Id = 7,
                             Active = true,
-                            Description = "Админу на печеньки",
+                            Description = "Только музыка Админа \"BestPhotoshoper\"",
                             Name = "Люблю админа",
                             Price = 228,
                             RestrictionId = 2,

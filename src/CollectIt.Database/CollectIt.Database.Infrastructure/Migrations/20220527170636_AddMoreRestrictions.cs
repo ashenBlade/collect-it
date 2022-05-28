@@ -24,8 +24,8 @@ namespace CollectIt.MVC.View.Migrations
                 columns: new[] { "Id", "Active", "AppliedResourceType", "Description", "MaxResourcesCount", "MonthDuration", "Name", "Price", "RestrictionId" },
                 values: new object[,]
                 {
-                    { 6, true, "Video", "Стандартная подписка на видео", 100, 10, "Хочю видео", 600, 1 },
-                    { 7, true, "Music", "Админу на печеньки", 1000, 3, "Люблю админа", 228, 2 }
+                    { 6, true, "Video", "Только видео с тегом \"видео\"", 100, 10, "Хочю видео", 600, 1 },
+                    { 7, true, "Music", "Только музыка Админа \"BestPhotoshoper\"", 1000, 3, "Люблю админа", 228, 2 }
                 });
         }
 

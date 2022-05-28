@@ -48,9 +48,16 @@ public class AccountController : Controller
                            To = subscription.During.End.ToDateTimeUnspecified(),
                            LeftResourcesCount = subscription.LeftResourcesCount,
                            Name = subscription.Subscription.Name,
-                           ResourceType = subscription.Subscription.AppliedResourceType == ResourceType.Image
-                                              ? "Изображение"
-                                              : "Другое"
+                           ResourceType = subscription.Subscription.AppliedResourceType switch
+                                          {
+                                              ResourceType.Image => "Изображение",
+                                              ResourceType.Video => "Видео",
+                                              ResourceType.Music => "Музыка",
+                                              ResourceType.Any   => "Любой",
+                                              _ => throw new ArgumentOutOfRangeException(nameof(subscription
+                                                                                               .Subscription
+                                                                                               .AppliedResourceType))
+                                          }
                        });
         var resources = ( await _userManager.GetAcquiredResourcesForUserByIdAsync(user.Id) )
            .Select(resource =>
@@ -58,14 +65,14 @@ public class AccountController : Controller
                        {
                            Id = resource.ResourceId,
                            FileName = resource.Resource.Name,
-                           // Address = resource.Resource.Address,
                            Extension = resource.Resource.Extension,
                            Date = resource.AcquiredDate,
                            ResourceType = resource.Resource switch
                                           {
                                               Image => ResourceType.Image,
                                               Video => ResourceType.Video,
-                                              Music => ResourceType.Music
+                                              Music => ResourceType.Music,
+                                              _     => ResourceType.Image
                                           }
                        });
         var myResources = ( await _userManager.GetUsersResourcesForUserByIdAsync(user.Id) )
@@ -74,14 +81,14 @@ public class AccountController : Controller
                        {
                            Id = resource.Id,
                            FileName = resource.Name,
-                           //Address = resource.Address,
                            Extension = resource.Extension,
                            Date = resource.UploadDate,
                            ResourceType = resource switch
                                           {
                                               Image => ResourceType.Image,
                                               Video => ResourceType.Video,
-                                              Music => ResourceType.Music
+                                              Music => ResourceType.Music,
+                                              _     => ResourceType.Image
                                           }
                        });
         var model = new AccountViewModel()
@@ -128,8 +135,16 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
-                                                user.Email);
+                try
+                {
+                    await _mailSender.SendMailAsync("Подтверждение почты", CreateConfirmationMailMessageBody(token),
+                                                    user.Email);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "Error while sending email confirmation");
+                }
+
                 _logger.LogInformation("User (Email: {Email}) successfully registered", model.Email);
                 return RedirectToAction("Login");
             }
