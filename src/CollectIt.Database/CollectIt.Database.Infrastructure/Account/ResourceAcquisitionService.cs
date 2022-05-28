@@ -118,4 +118,73 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                   };
         }
     }
+    
+    private async Task<AcquiredUserResource> AcquireResourceWithoutSubscriptionsAsync(int userId, Resource resource)
+    {
+        var type = resource switch
+                   {
+                       Image => ResourceType.Image,
+                       Video => ResourceType.Video,
+                       Music => ResourceType.Music
+                   };
+
+        var acquiredUserResource = new AcquiredUserResource()
+                                   {
+                                       UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.UtcNow,
+                                   };
+        try
+        {
+            var result = await _context.AcquiredUserResources.AddAsync(acquiredUserResource);
+            await _context.SaveChangesAsync();
+            return result.Entity;
+        }
+        catch (DbUpdateException exception)
+        {
+            throw exception.InnerException switch
+                  {
+                      PostgresException postgresException => postgresException.ConstraintName switch
+                                                             {
+                                                                 "AK_AcquiredUserResources_UserId_ResourceId" =>
+                                                                     new
+                                                                         UserAlreadyAcquiredResourceException(resource.Id,
+                                                                                                              userId),
+                                                                 _ => postgresException
+                                                             },
+                      _ => exception
+                  };
+        }
+    }
+    
+    public async Task<AcquiredUserResource> AcquireImageWithoutSubscriptionAsync(int userId, int imageId)
+    {
+        var image = await _imageManager.FindByIdAsync(imageId);
+        if (image is null)
+        {
+            throw new ResourceNotFoundException(image.Id, $"Image with Id = {imageId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, image);
+    }
+    
+    public async Task<AcquiredUserResource> AcquireMusicWithoutSubscriptionAsync(int userId, int musicId)
+    {
+        var music = await _musicManager.FindByIdAsync(musicId);
+        if (music is null)
+        {
+            throw new ResourceNotFoundException(music.Id, $"Music with Id = {musicId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, music);
+    }
+    
+    public async Task<AcquiredUserResource> AcquireVideoWithoutSubscriptionAsync(int userId, int videoId)
+    {
+        var video = await _videoManager.FindByIdAsync(videoId);
+        if (video is null)
+        {
+            throw new ResourceNotFoundException(video.Id, $"Video with Id = {videoId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, video);
+    }
 }

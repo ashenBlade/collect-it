@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CollectIt.Database.Abstractions.Account.Interfaces;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.MVC.View.ViewModels;
@@ -21,6 +22,7 @@ public class VideosController : Controller
     };
 
     private readonly ICommentManager _commentManager;
+    private readonly IResourceAcquisitionService _resourceAcquisitionService;
 
     private readonly ILogger<VideosController> _logger;
     private readonly UserManager _userManager;
@@ -30,12 +32,13 @@ public class VideosController : Controller
     public VideosController(IVideoManager videoManager,
         UserManager userManager,
         ILogger<VideosController> logger,
-        ICommentManager commentManager)
+        ICommentManager commentManager, IResourceAcquisitionService resourceAcquisitionService)
     {
         _videoManager = videoManager;
         _userManager = userManager;
         _logger = logger;
         _commentManager = commentManager;
+        _resourceAcquisitionService = resourceAcquisitionService;
     }
 
     [HttpGet("")]
@@ -140,6 +143,9 @@ public class VideosController : Controller
 
             _logger.LogInformation("Video (VideoId = {VideoId}) was created by user (UserId = {UserId})", userId,
                 video.Id);
+            
+            var acquired = await _resourceAcquisitionService.AcquireVideoWithoutSubscriptionAsync(userId, video.Id);
+            
             return RedirectToAction("Profile", "Account");
         }
         catch (Exception ex)
