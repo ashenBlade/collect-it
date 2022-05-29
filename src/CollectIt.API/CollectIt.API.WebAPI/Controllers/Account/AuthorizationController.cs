@@ -1,6 +1,8 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
+using CollectIt.API.WebAPI.DTO;
 using CollectIt.Database.Entities.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore;
@@ -29,7 +31,8 @@ public class AuthorizationController : ControllerBase
 
     [HttpPost("token")]
     [Produces("application/json")]
-    public async Task<IActionResult> Exchange()
+    [Consumes("application/x-www-form-urlencoded")]
+    public async Task<IActionResult> Exchange([Required] [FromForm] PasswordTokenFlowDTO dto)
     {
         var request = HttpContext.GetOpenIddictServerRequest();
         if (request is null || !request.IsPasswordGrantType())

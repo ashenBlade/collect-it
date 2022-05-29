@@ -8,10 +8,10 @@ using CollectIt.Database.Infrastructure.Account;
 using CollectIt.Database.Infrastructure.Account.Data;
 using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using CollectIt.Database.Infrastructure.Resources.Managers;
-using CollectIt.Database.Infrastructure.Resources.Repositories;
 using CollectIt.MVC.Infrastructure.Resources;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using OpenIddict.Validation.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -50,11 +50,14 @@ public class Program
         });
 
         builder.Services
-               .AddAuthentication(config =>
+               .AddAuthentication(auth =>
                 {
-                    config.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+                    auth.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
                 })
-               .AddJwtBearer();
+               .AddJwtBearer(jwt =>
+                {
+                    jwt.SaveToken = true;
+                });
         builder.Services.AddAuthorization();
 
         builder.Services.AddIdentity<User, Role>(config =>
@@ -135,7 +138,34 @@ public class Program
                              });
             config.UseOpenIddict<int>();
         });
-
+        builder.Services.AddSwaggerGen(swagger =>
+        {
+            swagger.SwaggerDoc("v1", new OpenApiInfo() {Title = "CollectIt-API", Version = "v1"});
+            swagger.AddSecurityDefinition("Bearer",
+                                          new OpenApiSecurityScheme()
+                                          {
+                                              Name = "Authorization",
+                                              Type = SecuritySchemeType.ApiKey,
+                                              Scheme = "Bearer",
+                                              BearerFormat = "JWT",
+                                              In = ParameterLocation.Header,
+                                              Description = "JWT Auth header got from OpenId Connect password flow"
+                                          });
+            swagger.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                                           {
+                                               {
+                                                   new OpenApiSecurityScheme()
+                                                   {
+                                                       Reference = new OpenApiReference()
+                                                                   {
+                                                                       Type = ReferenceType.SecurityScheme,
+                                                                       Id = "Bearer"
+                                                                   }
+                                                   },
+                                                   Array.Empty<string>()
+                                               }
+                                           });
+        });
         var app = builder.Build();
 
         app.UseHttpsRedirection();
