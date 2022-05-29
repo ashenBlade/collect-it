@@ -42,32 +42,32 @@ public class PostgresqlVideoManager : IVideoManager
                              .Trim();
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentOutOfRangeException(nameof(name), "Video name can not be null or empty");
+            throw new InvalidResourceCreationValuesException("Name is not provided");
         }
 
         if (tags is null)
         {
-            throw new ArgumentNullException(nameof(tags));
+            throw new InvalidResourceCreationValuesException("Tags not provided");
         }
 
         if (content is null)
         {
-            throw new ArgumentNullException(nameof(content));
+            throw new InvalidResourceCreationValuesException("Content of video is not provided");
         }
 
         if (extension is null || string.IsNullOrWhiteSpace(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Video extension must be provided");
+            throw new InvalidResourceCreationValuesException("Extension is not provided");
         }
 
         if (!Extensions.Contains(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), $"Video extension '{extension}' is not supported");
+            throw new InvalidResourceCreationValuesException($"Extension '{extension}' is not supported");
         }
 
         if (duration < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(duration), "Video duration must be positive");
+            throw new InvalidResourceCreationValuesException($"Duration must be positive");
         }
 
         var filename = $"{Guid.NewGuid()}.{extension}";

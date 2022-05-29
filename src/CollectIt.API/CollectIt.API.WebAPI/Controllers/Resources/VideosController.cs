@@ -137,9 +137,9 @@ public class VideosController : ControllerBase
         {
             return NotFound();
         }
-        catch (Exception e)
+        catch (InvalidResourceCreationValuesException e)
         {
-            return BadRequest();
+            return BadRequest(new {e.Message});
         }
     }
 
