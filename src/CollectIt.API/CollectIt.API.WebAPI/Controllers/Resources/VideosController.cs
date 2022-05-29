@@ -1,16 +1,12 @@
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
 using CollectIt.Database.Abstractions.Resources.Exceptions;
-using CollectIt.Database.Entities.Resources;
 using CollectIt.Database.Infrastructure.Account.Data;
-using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Server;
 using OpenIddict.Validation.AspNetCore;
 
 namespace CollectIt.API.WebAPI.Controllers.Resources;
@@ -19,8 +15,8 @@ namespace CollectIt.API.WebAPI.Controllers.Resources;
 [Route("api/v1/videos")]
 public class VideosController : ControllerBase
 {
-    private readonly IVideoManager _videoManager;
     private readonly UserManager _userManager;
+    private readonly IVideoManager _videoManager;
 
     public VideosController(IVideoManager videoManager, UserManager userManager)
     {
@@ -37,15 +33,12 @@ public class VideosController : ControllerBase
     /// <response code="200">Returns list of videos</response>
     [HttpGet("")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadVideoDTO[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetVideosPaged([FromQuery(Name = "q")] 
-                                                    string? query,
+    public async Task<IActionResult> GetVideosPaged([FromQuery(Name = "q")] string? query,
                                                     [Required]
                                                     [FromQuery(Name = "page_number")]
                                                     [Range(1, int.MaxValue)]
                                                     int pageNumber,
-                                                    [Required]
-                                                    [FromQuery(Name = "page_size")]
-                                                    [Range(1, int.MaxValue)]
+                                                    [Required] [FromQuery(Name = "page_size")] [Range(1, int.MaxValue)]
                                                     int pageSize)
     {
         var q = query is null
@@ -62,7 +55,7 @@ public class VideosController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadVideoDTO), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetVideoById([Required]int id)
+    public async Task<IActionResult> GetVideoById([Required] int id)
     {
         var video = await _videoManager.FindByIdAsync(id);
         return video is null
@@ -79,10 +72,8 @@ public class VideosController : ControllerBase
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeVideoName(int id, 
-                                                     [Required]
-                                                     [FromForm(Name = "Name")] 
-                                                     string name)
+    public async Task<IActionResult> ChangeVideoName(int id,
+                                                     [Required] [FromForm(Name = "Name")] string name)
     {
         try
         {
@@ -94,7 +85,7 @@ public class VideosController : ControllerBase
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Change video tags
     /// </summary>
@@ -104,10 +95,8 @@ public class VideosController : ControllerBase
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeVideoTags(int id, 
-                                                     [Required]
-                                                     [FromForm(Name = "Tags")] 
-                                                     string[] tags)
+    public async Task<IActionResult> ChangeVideoTags(int id,
+                                                     [Required] [FromForm(Name = "Tags")] string[] tags)
     {
         try
         {
@@ -119,27 +108,26 @@ public class VideosController : ControllerBase
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Create new video
     /// </summary>
     /// <response code="404">User not found</response>
+    /// <response code="400">Invalid values for creation provided</response>
     /// <response code="204">Video was created</response>
     [HttpPost("")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResourcesDTO.CreateVideoDTO), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateNewVideo([Required]
-                                                    [FromForm] 
-                                                    ResourcesDTO.CreateVideoDTO dto)
+    public async Task<IActionResult> CreateNewVideo([Required] [FromForm] ResourcesDTO.CreateVideoDTO dto)
     {
         try
         {
             await using var stream = dto.Content.OpenReadStream();
-            var video = await _videoManager.CreateAsync(dto.Name, 
-                                                        dto.OwnerId, 
-                                                        dto.Tags, 
-                                                        stream, 
+            var video = await _videoManager.CreateAsync(dto.Name,
+                                                        dto.OwnerId,
+                                                        dto.Tags,
+                                                        stream,
                                                         dto.Extension,
                                                         dto.Duration);
 
@@ -148,6 +136,10 @@ public class VideosController : ControllerBase
         catch (UserNotFoundException)
         {
             return NotFound();
+        }
+        catch (Exception e)
+        {
+            return BadRequest();
         }
     }
 
@@ -197,6 +189,7 @@ public class VideosController : ControllerBase
         {
             return StatusCode(StatusCodes.Status402PaymentRequired);
         }
+
         var content = await _videoManager.GetContentAsync(id);
         return File(content, $"video/{file.Extension}", $"{file.Name}.{file.Extension}");
     }

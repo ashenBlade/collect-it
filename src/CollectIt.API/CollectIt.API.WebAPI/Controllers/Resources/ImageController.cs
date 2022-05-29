@@ -70,6 +70,7 @@ public class ImageController : Controller
     /// Create new image
     /// </summary>
     /// <response code="404">User not found</response>
+    /// <response code="400">Invalid values for creation provided</response>
     /// <response code="204">Image was created</response>
     [HttpPost("")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
@@ -91,6 +92,10 @@ public class ImageController : Controller
         catch (UserNotFoundException)
         {
             return NotFound();
+        }
+        catch (Exception)
+        {
+            return BadRequest();
         }
     }
 

@@ -3,10 +3,8 @@ using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
-using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Validation.AspNetCore;
 
@@ -21,15 +19,15 @@ public class MusicController : Controller
 {
     private IMusicManager _musicManager;
     private UserManager _userManager;
-    
+
     public MusicController(IMusicManager musicManager, UserManager userManager)
     {
         _musicManager = musicManager;
-     
+
         _userManager = userManager;
     }
-    
-    
+
+
     /// <summary>
     /// Find music by id
     /// </summary>
@@ -45,7 +43,7 @@ public class MusicController : Controller
             return NotFound();
         return Ok(ResourcesMappers.ToReadMusicDTO(music));
     }
-    
+
     /// <summary>
     /// Get list of music
     /// </summary>
@@ -55,20 +53,15 @@ public class MusicController : Controller
     /// <response code="200">Returns list of music</response>
     [HttpGet("")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadMusicDTO[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetMusicPaged([FromQuery(Name = "q")] 
-        string? query,
-        [Required]
-        [FromQuery(Name = "page_number")]
-        [Range(1, int.MaxValue)]
-        int pageNumber,
-        [Required]
-        [FromQuery(Name = "page_size")]
-        [Range(1, int.MaxValue)]
-        int pageSize)
+    public async Task<IActionResult> GetMusicPaged([FromQuery(Name = "q")] string? query,
+                                                   [Required] [FromQuery(Name = "page_number")] [Range(1, int.MaxValue)]
+                                                   int pageNumber,
+                                                   [Required] [FromQuery(Name = "page_size")] [Range(1, int.MaxValue)]
+                                                   int pageSize)
     {
         var q = query is null
-            ? await _musicManager.GetAllPagedAsync(pageNumber, pageSize)
-            : await _musicManager.QueryAsync(query, pageNumber, pageSize);
+                    ? await _musicManager.GetAllPagedAsync(pageNumber, pageSize)
+                    : await _musicManager.QueryAsync(query, pageNumber, pageSize);
         return Ok(q.Result.Select(ResourcesMappers.ToReadMusicDTO));
     }
 
@@ -76,24 +69,23 @@ public class MusicController : Controller
     /// Create new music
     /// </summary>
     /// <response code="404">User not found</response>
+    /// <response code="400">Invalid values for creation provided</response>
     /// <response code="204">Music was created</response>
     [HttpPost("")]
     [Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ResourcesDTO.CreateMusicDTO), StatusCodes.Status201Created)]
-    public async Task<IActionResult> CreateNewMusic([Required]
-        [FromForm] 
-        ResourcesDTO.CreateMusicDTO dto)
+    public async Task<IActionResult> CreateNewMusic([Required] [FromForm] ResourcesDTO.CreateMusicDTO dto)
     {
         try
         {
             await using var stream = dto.Content.OpenReadStream();
-            var music = await _musicManager.CreateAsync(dto.Name, 
-                dto.OwnerId, 
-                dto.Tags, 
-                stream, 
-                dto.Extension,
-                dto.Duration);
+            var music = await _musicManager.CreateAsync(dto.Name,
+                                                        dto.OwnerId,
+                                                        dto.Tags,
+                                                        stream,
+                                                        dto.Extension,
+                                                        dto.Duration);
 
             return CreatedAtAction("FindMusicById", new {id = music.Id}, ResourcesMappers.ToReadMusicDTO(music));
         }
@@ -101,8 +93,12 @@ public class MusicController : Controller
         {
             return NotFound();
         }
+        catch (Exception)
+        {
+            return BadRequest();
+        }
     }
-    
+
     /// <summary>
     /// Delete music
     /// </summary>
@@ -132,10 +128,8 @@ public class MusicController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeMusicName(int id, 
-        [Required]
-        [FromForm(Name = "Name")] 
-        string name)
+    public async Task<IActionResult> ChangeMusicName(int id,
+                                                     [Required] [FromForm(Name = "Name")] string name)
     {
         try
         {
@@ -147,7 +141,7 @@ public class MusicController : Controller
             return NotFound();
         }
     }
-    
+
     /// <summary>
     /// Change music tags
     /// </summary>
@@ -157,10 +151,8 @@ public class MusicController : Controller
     [Authorize(Roles = "Admin", AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ChangeMusicTags(int id, 
-        [Required]
-        [FromForm(Name = "Tags")] 
-        string[] tags)
+    public async Task<IActionResult> ChangeMusicTags(int id,
+                                                     [Required] [FromForm(Name = "Tags")] string[] tags)
     {
         try
         {
@@ -172,8 +164,8 @@ public class MusicController : Controller
             return NotFound();
         }
     }
-    
-    
+
+
     /// <summary>
     /// Download music content
     /// </summary>
@@ -198,7 +190,8 @@ public class MusicController : Controller
         {
             return StatusCode(StatusCodes.Status402PaymentRequired);
         }
+
         var content = await _musicManager.GetContentAsync(id);
         return File(content, $"audio/{file.Extension}", $"{file.Name}.{file.Extension}");
-    }    
+    }
 }
