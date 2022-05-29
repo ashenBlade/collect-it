@@ -23,10 +23,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers(opts =>
-                {
-                    opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider());
-                })
+        builder.Services
+               .AddControllers(opts => opts.ModelBinderProviders.Insert(0, new RestrictionModelBinderProvider()))
                .AddNewtonsoftJson();
 
         builder.Services.AddCors(options =>
@@ -50,14 +48,9 @@ public class Program
         });
 
         builder.Services
-               .AddAuthentication(auth =>
-                {
-                    auth.DefaultAuthenticateScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-                })
-               .AddJwtBearer(jwt =>
-                {
-                    jwt.SaveToken = true;
-                });
+               .AddAuthentication(auth => auth.DefaultAuthenticateScheme =
+                                              OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
+               .AddJwtBearer(jwt => jwt.SaveToken = true);
         builder.Services.AddAuthorization();
 
         builder.Services.AddIdentity<User, Role>(config =>

@@ -53,7 +53,7 @@ public class RestrictionModelBinder : IModelBinder
                 {
                     authorId = int.Parse(context.ValueProvider.GetValue("AuthorId").FirstValue);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     context.ModelState.AddModelError("AuthorId", "Could not get author id for restriction");
                     context.Result = ModelBindingResult.Failed();
@@ -70,7 +70,7 @@ public class RestrictionModelBinder : IModelBinder
                 {
                     daysTo = int.Parse(context.ValueProvider.GetValue("DaysTo").FirstValue);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     context.ModelState.AddModelError("DaysTo", "Could not get amount of days for restriction");
                     context.Result = ModelBindingResult.Failed();
@@ -87,7 +87,7 @@ public class RestrictionModelBinder : IModelBinder
                 {
                     daysAfter = int.Parse(context.ValueProvider.GetValue("DaysAfter").FirstValue);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     context.ModelState.AddModelError("DaysAfter", "Could not get amount of days after restriction");
                     context.Result = ModelBindingResult.Failed();
@@ -104,8 +104,7 @@ public class RestrictionModelBinder : IModelBinder
                 {
                     tags = context.ValueProvider
                                   .GetValue("Tags")
-                                  .SelectMany(str => str
-                                                 .Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                                  .SelectMany(str => str.Split(' ', StringSplitOptions.RemoveEmptyEntries))
                                   .ToArray();
                     if (tags.Length == 0)
                     {
@@ -113,7 +112,7 @@ public class RestrictionModelBinder : IModelBinder
                         return;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     context.ModelState.AddModelError("Tags", "Could not get tags for restriction");
                     context.Result = ModelBindingResult.Failed();
