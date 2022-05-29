@@ -30,7 +30,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             Assert.Equal(dto1.UploadDate, dto2.UploadDate)
             assertTagsEqual dto1.Tags dto2.Tags
             ()
-            
+
 
         static let createImageHttpContent (dto: CreateImageDTO) : HttpContent =
             let content = new MultipartFormDataContent()
@@ -46,20 +46,22 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"image/{dto.Extension}")
             content.Add(bytes, "Content", "SomeFileName.jpg")
             content
-            
+
         static let toReadImageDto (img: Image) : ReadImageDTO =
-            { 
+            { Id = img.Id
               Name = img.Name
               UploadDate = img.UploadDate
               Extension = img.Extension
               Tags = img.Tags
               OwnerId = img.OwnerId }
-            
+
         member this._factory = factory
         member this._output = output
         member private this.log msg = this._output.WriteLine msg
+
         member this.DefaultImages
             with private get () = PostgresqlCollectItDbContext.DefaultImages
+
         member this.DefaultImage1
             with private get () = PostgresqlCollectItDbContext.DefaultImage1
 
@@ -70,10 +72,10 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             with private get () = PostgresqlCollectItDbContext.DefaultImage3
 
         interface IClassFixture<CollectItWebApplicationFactory>
-        
-        
-        
-         [<Fact>]
+
+
+
+        [<Fact>]
         member this.``Endpoint: GET /api/images?page_number=1&page_size=10; Return: json array of images ordered by id``
             ()
             =
@@ -94,7 +96,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 Assert.NotEmpty actual
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: GET /api/images/{ImageId}; Return: json of required image``() =
             task {
@@ -104,18 +106,12 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                     this.DefaultImage1 |> toReadImageDto
 
                 let! actual =
-                    TestsHelpers.getResultParsedFromJson<ReadImageDTO>
-                        client
-                        "/api/images/1"
-                        bearer
-                        None
-                        None
-                        None
+                    TestsHelpers.getResultParsedFromJson<ReadImageDTO> client "/api/images/1" bearer None None None
 
                 assertImagesEqual expected actual
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: GET /api/images/{NonexistentImageId}; Return: 404 NotFound status``() =
             task {
@@ -137,7 +133,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/images/{ImageId}/name; Should: change image name``() =
             task {
@@ -145,8 +141,8 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 let image =
                     this.DefaultImage2 |> toReadImageDto
-                    
-                let imageId = 2;
+
+                let imageId = 2
 
                 let newName =
                     image.Name + " some string, but still valid"
@@ -175,7 +171,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 Assert.Equal(newName, actual.Name)
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/images/{NonexistentImageId}/name; Return: 404 NotFound status``() =
             task {
@@ -203,7 +199,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let imageId = 2;
+                let imageId = 2
 
                 let expected =
                     [| "some"; "tags"; "from"; "f#" |]
@@ -237,7 +233,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 assertTagsEqual expected actual.Tags
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/images/{NonexistentImageId}/tags; Return: 404 NotFound status``() =
             task {
@@ -265,7 +261,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: DELETE /api/images/{ImageId}; Should: delete image``() =
             task {
@@ -292,9 +288,9 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 client.Dispose()
             }
-            
-            
- 
+
+
+
         [<Fact>]
         member this.``Endpoint: DELETE /api/images/{NonexistentImageId}; Return: 404 NotFound status``() =
             task {
@@ -338,7 +334,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 client.Dispose()
             }
-    
+
         [<Fact>]
         member this.``Endpoint: GET /api/images/{ImageId}/download; Return: content of file``() =
             task {
@@ -356,7 +352,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 client.Dispose()
             }
-          
+
 
         [<Fact>]
         member this.``Endpoint: POST /api/images; Should: create new image``() =

@@ -18,7 +18,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this._output = output
         member private this.log msg = this._output.WriteLine msg
 
-        member this.NonexistedUserId
+        member this.NonexistentUserId
             with private get () =
                 PostgresqlCollectItDbContext.DefaultUsers
                 |> Array.maxBy (fun x -> x.Id)
@@ -540,7 +540,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: POST /api/v1/users/{NonExistentUserId}/roles; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = this.NonexistedUserId
+                let userId = this.NonexistentUserId
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
@@ -559,7 +559,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: DELETE /api/v1/users/{NonExistentUserId}/roles; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = this.NonexistedUserId
+                let userId = this.NonexistentUserId
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
@@ -577,7 +577,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: POST /api/v1/users/{NonExistingUserId}/activate; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = this.NonexistedUserId
+                let userId = this.NonexistentUserId
 
                 do!
                     TestsHelpers.assertStatusCodeAsync
@@ -596,7 +596,7 @@ type UsersControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         member this.``Endpoint: POST /api/v1/users/{NonExistingUserId}/deactivate; Return: 404 NotFound status``() =
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
-                let userId = this.NonexistedUserId
+                let userId = this.NonexistentUserId
 
                 do!
                     TestsHelpers.assertStatusCodeAsync

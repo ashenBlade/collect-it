@@ -10,7 +10,6 @@ open CollectIt.API.Tests.Integration.FSharp.CollectItWebApplicationFactory
 open CollectIt.Database.Entities.Resources
 open CollectIt.Database.Infrastructure
 open Microsoft.AspNetCore.Http
-open NodaTime
 open Xunit
 open Xunit.Abstractions
 
@@ -30,7 +29,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             Assert.Equal(dto1.UploadDate, dto2.UploadDate)
             assertTagsEqual dto1.Tags dto2.Tags
             ()
-            
+
 
         static let createMusicHttpContent (dto: CreateMusicDTO) : HttpContent =
             let content = new MultipartFormDataContent()
@@ -47,21 +46,23 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"audio/{dto.Extension}")
             content.Add(bytes, "Content", "SomeFileName.mp3")
             content
-            
-        static let toReadMusicDto (mus: Music) : ReadMusicDTO =
-            { 
-              Name = mus.Name
-              UploadDate = mus.UploadDate
-              Extension = mus.Extension
-              Tags = mus.Tags
-              OwnerId = mus.OwnerId
-              Duration = mus.Duration}
-            
+
+        static let toReadMusicDto (music: Music) : ReadMusicDTO =
+            { Id = music.Id
+              Name = music.Name
+              UploadDate = music.UploadDate
+              Extension = music.Extension
+              Tags = music.Tags
+              OwnerId = music.OwnerId
+              Duration = music.Duration }
+
         member this._factory = factory
         member this._output = output
         member private this.log msg = this._output.WriteLine msg
+
         member this.DefaultMusics
             with private get () = PostgresqlCollectItDbContext.DefaultMusics
+
         member this.DefaultMusic1
             with private get () = PostgresqlCollectItDbContext.DefaultMusic1
 
@@ -72,10 +73,10 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             with private get () = PostgresqlCollectItDbContext.DefaultMusic3
 
         interface IClassFixture<CollectItWebApplicationFactory>
-        
-        
-        
-         [<Fact>]
+
+
+
+        [<Fact>]
         member this.``Endpoint: GET /api/music?page_number=1&page_size=10; Return: json array of musics ordered by id``
             ()
             =
@@ -96,7 +97,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 Assert.NotEmpty actual
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: GET /api/music/{MusicId}; Return: json of required music``() =
             task {
@@ -104,7 +105,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 let expected =
                     this.DefaultMusic1 |> toReadMusicDto
-                    
+
                 let musicId = this.DefaultMusic1.Id
 
                 let! actual =
@@ -119,7 +120,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 assertMusicsEqual expected actual
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: GET /api/music/{NonexistentMusicId}; Return: 404 NotFound status``() =
             task {
@@ -141,7 +142,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/music/{MusicId}/name; Should: change music name``() =
             task {
@@ -149,8 +150,8 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 let music =
                     this.DefaultMusic2 |> toReadMusicDto
-                    
-                let musicId = this.DefaultMusic2.Id;
+
+                let musicId = this.DefaultMusic2.Id
 
                 let newName =
                     music.Name + " some string, but still valid"
@@ -179,7 +180,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 Assert.Equal(newName, actual.Name)
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/music/{NonexistentMusicId}/name; Return: 404 NotFound status``() =
             task {
@@ -207,7 +208,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let musicId = this.DefaultMusic2.Id;
+                let musicId = this.DefaultMusic2.Id
 
                 let expected =
                     [| "some"; "tags"; "from"; "f#" |]
@@ -241,7 +242,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                 assertTagsEqual expected actual.Tags
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: POST /api/music/{NonexistentMusicId}/tags; Return: 404 NotFound status``() =
             task {
@@ -269,7 +270,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 client.Dispose()
             }
-            
+
         [<Fact>]
         member this.``Endpoint: DELETE /api/music/{MusicId}; Should: delete music``() =
             task {
@@ -296,9 +297,9 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 client.Dispose()
             }
-            
-            
- 
+
+
+
         [<Fact>]
         member this.``Endpoint: DELETE /api/music/{NonexistentMusicId}; Return: 404 NotFound status``() =
             task {
@@ -342,7 +343,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 client.Dispose()
             }
-    
+
         [<Fact>]
         member this.``Endpoint: GET /api/music/{MusicId}/download; Return: content of file``() =
             task {
@@ -360,7 +361,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 client.Dispose()
             }
-          
+
         [<Fact>]
         member this.``Endpoint: POST /api/music; Should: create new music``() =
             task {
