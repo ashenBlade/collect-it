@@ -20,6 +20,9 @@ public class PostgresqlMusicManager : IMusicManager
         _fileManager = fileManager;
     }
 
+    private static HashSet<string> SupportedExtensions { get; } =
+        new() {"mp3", "aac", "wav", "flac"};
+
     public async Task<Music?> FindByIdAsync(int id)
     {
         return await _context.Musics
@@ -56,6 +59,13 @@ public class PostgresqlMusicManager : IMusicManager
             throw new ArgumentOutOfRangeException(nameof(extension), "Music extension can not be null or empty");
         }
 
+        extension = extension.ToLower()
+                             .Trim();
+        if (!SupportedExtensions.Contains(extension))
+        {
+            throw new ArgumentOutOfRangeException(nameof(extension), $"Music extension '{extension}' is not supported");
+        }
+
         if (duration < 1)
         {
             throw new ArgumentOutOfRangeException(nameof(duration), "Music duration must be positive");
@@ -77,7 +87,7 @@ public class PostgresqlMusicManager : IMusicManager
             var entity = await _context.Musics.AddAsync(music);
             music = entity.Entity;
             await _context.SaveChangesAsync();
-            var file = await _fileManager.CreateAsync(filename, content);
+            await _fileManager.CreateAsync(filename, content);
             return music;
         }
         catch (IOException ioException)

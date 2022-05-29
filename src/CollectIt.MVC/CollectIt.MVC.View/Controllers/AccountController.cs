@@ -219,7 +219,7 @@ public class AccountController : Controller
 
     [HttpPost("edit")]
     [Authorize]
-    public async Task<IActionResult> EditAccount(ProfileAccountViewModel model)
+    public async Task<IActionResult> EditAccount([Required] ProfileAccountViewModel model)
     {
         if (!ModelState.IsValid)
         {

@@ -42,13 +42,6 @@ services.AddAuthentication(options =>
          })
         .AddGoogle(g =>
          {
-             // g.CorrelationCookie = new CookieBuilder()
-             //                       {
-             //                           SameSite = SameSiteMode.None,
-             //                           HttpOnly = false,
-             //                           SecurePolicy = CookieSecurePolicy.None,
-             //                           Expiration = TimeSpan.FromMilliseconds(10)
-             //                       };
              g.ClientId = builder.Configuration["Google:ClientId"];
              g.ClientSecret = builder.Configuration["Google:ClientSecret"];
              // g.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;

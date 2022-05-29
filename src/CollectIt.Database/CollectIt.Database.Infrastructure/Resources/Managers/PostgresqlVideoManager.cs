@@ -7,7 +7,7 @@ using CollectIt.Database.Infrastructure.Resources.FileManagers;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
-namespace CollectIt.Database.Infrastructure.Resources.Repositories;
+namespace CollectIt.Database.Infrastructure.Resources.Managers;
 
 public class PostgresqlVideoManager : IVideoManager
 {
@@ -21,6 +21,16 @@ public class PostgresqlVideoManager : IVideoManager
         _fileManager = fileManager;
     }
 
+    private static HashSet<string> Extensions { get; } = new()
+                                                         {
+                                                             "mp4",
+                                                             "mov",
+                                                             "wmv",
+                                                             "avi",
+                                                             "webm",
+                                                             "avi"
+                                                         };
+
     public async Task<Video> CreateAsync(string name,
                                          int ownerId,
                                          string[] tags,
@@ -28,6 +38,8 @@ public class PostgresqlVideoManager : IVideoManager
                                          string extension,
                                          int duration)
     {
+        extension = extension.ToLower()
+                             .Trim();
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
             throw new ArgumentOutOfRangeException(nameof(name), "Video name can not be null or empty");
@@ -45,7 +57,12 @@ public class PostgresqlVideoManager : IVideoManager
 
         if (extension is null || string.IsNullOrWhiteSpace(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Video extension can not be null or empty");
+            throw new ArgumentOutOfRangeException(nameof(extension), "Video extension must be provided");
+        }
+
+        if (!Extensions.Contains(extension))
+        {
+            throw new ArgumentOutOfRangeException(nameof(extension), $"Video extension '{extension}' is not supported");
         }
 
         if (duration < 1)
@@ -69,10 +86,10 @@ public class PostgresqlVideoManager : IVideoManager
             var entity = await _context.Videos.AddAsync(video);
             video = entity.Entity;
             await _context.SaveChangesAsync();
-            var file = await _fileManager.CreateAsync(filename, content);
+            await _fileManager.CreateAsync(filename, content);
             return video;
         }
-        catch (IOException ioException)
+        catch (IOException)
         {
             _context.Videos.Remove(video);
             await _context.SaveChangesAsync();

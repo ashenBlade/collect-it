@@ -20,6 +20,15 @@ public class PostgresqlImageManager : IImageManager
         _fileManager = fileManager;
     }
 
+    public static HashSet<string> SupportedExtensions { get; } = new()
+                                                                 {
+                                                                     "jpeg",
+                                                                     "png",
+                                                                     "bmp",
+                                                                     "jpg",
+                                                                     "webp"
+                                                                 };
+
     public async Task<Image?> FindByIdAsync(int id)
     {
         return await _context.Images
@@ -49,9 +58,17 @@ public class PostgresqlImageManager : IImageManager
             throw new ArgumentNullException(nameof(content));
         }
 
-        if (extension is null || string.IsNullOrWhiteSpace(extension))
+        if (string.IsNullOrWhiteSpace(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Image extension can not be null or empty");
+            throw new ArgumentOutOfRangeException(nameof(extension), "Image extension must be provided");
+        }
+
+        extension = extension.ToLower()
+                             .Trim();
+
+        if (!SupportedExtensions.Contains(extension))
+        {
+            throw new ArgumentOutOfRangeException(nameof(extension), $"Image extension '{extension}' is not supported");
         }
 
         var filename = $"{Guid.NewGuid()}.{extension}";
