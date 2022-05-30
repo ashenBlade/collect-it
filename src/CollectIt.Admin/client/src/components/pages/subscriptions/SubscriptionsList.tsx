@@ -7,7 +7,6 @@ import SubscriptionsService from "../../../services/SubscriptionsService";
 import { ResourceType } from "../../entities/resource-type";
 import { Link } from "react-router-dom";
 import ReactLoading from "react-loading";
-import "../../../../css/index.css";
 
 const SubscriptionsList = () => {
     let pageSize = 5;

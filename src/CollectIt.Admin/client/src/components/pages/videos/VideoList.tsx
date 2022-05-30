@@ -5,7 +5,6 @@ import Pagination from "../../UI/Pagination/Pagination";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import ReactLoading from "react-loading";
-import "../../../../css/index.css";
 
 const VideoList = () => {
     let pageSize = 10;
