@@ -1,0 +1,69 @@
+.bg-white {
+    background: white;
+}
+
+.btn-logout{
+    right: 5%;
+    top: 10%;
+    bottom: 10%;
+}
+
+.usersTable{
+    table-layout: fixed;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.usersRow{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px 0px 1px;
+    position: relative;
+    width: 100%;
+    height: 41px;
+    background: #000000;
+}
+
+.usersRow:hover {
+    background: #D8DBF5;
+    cursor: pointer;
+}
+
+.Cell{
+    word-wrap: break-word;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+    height: 40px;
+    width: 22.5%;
+    background: #FFFFFF;
+}
+
+.w-10 {
+    width: 10%;
+}
+
+.w-20 {
+    width: 20%;
+}
+
+.w-30 {
+    width: 30%;
+}
+
+.w-35 {
+    width: 35%;
+}
+
+.bigtext{
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.color-purple{
+    background-color: #D8DBF5;
+}

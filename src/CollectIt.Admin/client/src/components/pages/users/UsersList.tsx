@@ -5,6 +5,7 @@ import {UsersService} from "../../../services/UsersService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import ReactLoading from "react-loading";
+import "../../../styles/ListStyle.css";
 
 const UsersList = () => {
     const pageSize = 10;
