@@ -5,7 +5,7 @@ import ImagesService from "../../../services/ImagesService";
 import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import ReactLoading from 'react-loading'
-import "../../../styles/ListStyle.css";
+import "../../../../css/index.css";
 
 
 const ImageList = () => {
