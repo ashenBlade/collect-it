@@ -39,7 +39,7 @@ public class SubscriptionManager : ISubscriptionManager
                                                             Restriction? restriction,
                                                             bool active = false)
     {
-        var subscription = new Subscription()
+        var subscription = new Subscription
                            {
                                Name = name,
                                Description = description,
@@ -47,7 +47,7 @@ public class SubscriptionManager : ISubscriptionManager
                                MaxResourcesCount = maxResourcesCount,
                                AppliedResourceType = appliedResourceType,
                                Restriction = restriction,
-                               Active = true,
+                               Active = active,
                                Price = price
                            };
         var result = await _context.Subscriptions.AddAsync(subscription);

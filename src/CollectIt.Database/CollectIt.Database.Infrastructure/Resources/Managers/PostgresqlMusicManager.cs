@@ -41,34 +41,34 @@ public class PostgresqlMusicManager : IMusicManager
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentOutOfRangeException(nameof(name), "Music name can not be null or empty");
+            throw new InvalidResourceCreationValuesException("Music name can not be null or empty");
         }
 
         if (tags is null)
         {
-            throw new ArgumentNullException(nameof(tags));
+            throw new InvalidResourceCreationValuesException("Tags were not provided");
         }
 
         if (content is null)
         {
-            throw new ArgumentNullException(nameof(content));
+            throw new InvalidResourceCreationValuesException("Content was not provided");
         }
 
         if (extension is null || string.IsNullOrWhiteSpace(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Music extension can not be null or empty");
+            throw new InvalidResourceCreationValuesException("Music extension can not be null or empty");
         }
 
         extension = extension.ToLower()
                              .Trim();
         if (!SupportedExtensions.Contains(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), $"Music extension '{extension}' is not supported");
+            throw new InvalidResourceCreationValuesException($"Music extension '{extension}' is not supported");
         }
 
         if (duration < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(duration), "Music duration must be positive");
+            throw new InvalidResourceCreationValuesException("Music duration must be positive");
         }
 
         var filename = $"{Guid.NewGuid()}.{extension}";

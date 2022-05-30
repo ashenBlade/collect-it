@@ -1,14 +1,15 @@
 import React, {useState} from 'react';
 import {AuthService} from "../../../services/AuthService";
+import {serverAddress} from "../../../constants";
 
 // Only for tests
 const testJwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhc2RmQG1haWwucnUiLCJyb2xlcyI6WyJBZG1pbiJdLCJpYXQiOjE2NTA1MjU2NjYsImV4cCI6MTY2MDg5MzY2Niwic3ViIjoiMSJ9.od7EHL8Bp4snLiGhNDpC9t-Sp98TEF443BxslYHDtgw';
-const isTest = process.env.NODE_ENV === 'development' || true;
+const isTest = process.env.NODE_ENV === 'development' || false;
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string>('');
-    const onClickLoginButton = async (e : React.MouseEvent) => {
+    const onClickLoginButton = async (e: React.MouseEvent) => {
         e.preventDefault();
         const usernameCleaned = username.trim();
         const passwordCleaned = password;
@@ -16,7 +17,7 @@ const Login = () => {
             setError('Fill password and username');
             return;
         }
-        const response = await fetch('http://localhost:7000/auth/login', {
+        const response = await fetch(`${serverAddress}/auth/login`, {
             method: 'POST',
             body: JSON.stringify({
                 password: passwordCleaned,

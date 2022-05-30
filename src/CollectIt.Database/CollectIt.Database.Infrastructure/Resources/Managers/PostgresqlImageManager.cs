@@ -45,22 +45,22 @@ public class PostgresqlImageManager : IImageManager
     {
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentOutOfRangeException(nameof(name), "Image name can not be null or empty");
+            throw new InvalidResourceCreationValuesException("Image name can not be null or empty");
         }
 
         if (tags is null)
         {
-            throw new ArgumentNullException(nameof(tags));
+            throw new InvalidResourceCreationValuesException("Tags not provided");
         }
 
         if (content is null)
         {
-            throw new ArgumentNullException(nameof(content));
+            throw new InvalidResourceCreationValuesException("Content of image not provided");
         }
 
         if (string.IsNullOrWhiteSpace(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), "Image extension must be provided");
+            throw new InvalidResourceCreationValuesException("Image extension must be provided");
         }
 
         extension = extension.ToLower()
@@ -68,7 +68,7 @@ public class PostgresqlImageManager : IImageManager
 
         if (!SupportedExtensions.Contains(extension))
         {
-            throw new ArgumentOutOfRangeException(nameof(extension), $"Image extension '{extension}' is not supported");
+            throw new InvalidResourceCreationValuesException($"Image extension '{extension}' is not supported");
         }
 
         var filename = $"{Guid.NewGuid()}.{extension}";

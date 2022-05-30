@@ -52,7 +52,7 @@ public class ImageController : Controller
     /// <response code="200">Returns list of images</response>
     [HttpGet("")]
     [ProducesResponseType(typeof(ResourcesDTO.ReadImageDTO[]), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "q")] string? query,
+    public async Task<IActionResult> GetImagesPaged([FromQuery(Name = "q")] [MaxLength(100)] string? query,
                                                     [Required]
                                                     [FromQuery(Name = "page_number")]
                                                     [Range(1, int.MaxValue)]
@@ -80,9 +80,10 @@ public class ImageController : Controller
     {
         try
         {
+            var ownerId = int.Parse(_userManager.GetUserId(User));
             await using var stream = dto.Content.OpenReadStream();
             var image = await _imageManager.CreateAsync(dto.Name,
-                                                        dto.OwnerId,
+                                                        ownerId,
                                                         dto.Tags,
                                                         stream,
                                                         dto.Extension);
@@ -91,11 +92,11 @@ public class ImageController : Controller
         }
         catch (UserNotFoundException)
         {
-            return NotFound();
+            return NotFound(new {Message = "User with provided id was not found"});
         }
-        catch (Exception)
+        catch (InvalidResourceCreationValuesException e)
         {
-            return BadRequest();
+            return BadRequest(new {e.Message});
         }
     }
 

@@ -9,6 +9,8 @@ open CollectIt.Database.Entities.Account.Restrictions
 [<CLIMutable>]
 type CreateUserDTO =
     { [<Required>]
+      [<MinLength(6)>]
+      [<MaxLength(20)>]
       UserName: string
 
       [<Required>]
@@ -17,6 +19,8 @@ type CreateUserDTO =
 
       [<Required>]
       [<DataType(DataType.Password)>]
+      [<MinLength(6)>]
+      [<MaxLength(20)>]
       Password: string }
 
 let CreateUserDTO username email password =
@@ -111,9 +115,13 @@ type CreateTagsRestrictionDTO =
 [<CLIMutable>]
 type CreateSubscriptionDTO =
     { [<Required>]
+      [<MinLength(6)>]
+      [<MaxLength(20)>]
       Name: string
 
       [<Required>]
+      [<MinLength(10)>]
+      [<MaxLength(50)>]
       Description: string
 
       [<Required>]
@@ -375,12 +383,15 @@ type ReadAcquiredUserResourceDTO =
 type RegisterDTO =
     { [<Required>]
       [<MinLength(6)>]
+      [<MaxLength(30)>]
       Username: string
 
       [<Required>]
       [<MinLength(6)>]
+      [<MaxLength(50)>]
       Password: string
 
       [<Required>]
       [<EmailAddress>]
+      [<MaxLength(50)>]
       Email: string }

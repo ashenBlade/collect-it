@@ -28,7 +28,8 @@ public class PostgresqlVideoManager : IVideoManager
                                                              "wmv",
                                                              "avi",
                                                              "webm",
-                                                             "avi"
+                                                             "avi",
+                                                             "mkv"
                                                          };
 
     public async Task<Video> CreateAsync(string name,
@@ -38,8 +39,6 @@ public class PostgresqlVideoManager : IVideoManager
                                          string extension,
                                          int duration)
     {
-        extension = extension.ToLower()
-                             .Trim();
         if (name is null || string.IsNullOrWhiteSpace(name))
         {
             throw new InvalidResourceCreationValuesException("Name is not provided");
@@ -59,6 +58,9 @@ public class PostgresqlVideoManager : IVideoManager
         {
             throw new InvalidResourceCreationValuesException("Extension is not provided");
         }
+
+        extension = extension.ToLower()
+                             .Trim();
 
         if (!Extensions.Contains(extension))
         {

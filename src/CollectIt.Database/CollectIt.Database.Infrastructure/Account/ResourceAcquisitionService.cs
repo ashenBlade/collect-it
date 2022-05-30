@@ -43,7 +43,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         var image = await _imageManager.FindByIdAsync(imageId);
         if (image is null)
         {
-            throw new ResourceNotFoundException(image.Id, $"Image with Id = {imageId} not found");
+            throw new ResourceNotFoundException(imageId, $"Image with Id = {imageId} not found");
         }
 
         return await AcquireResourceAsync(userId, image);
@@ -71,6 +71,39 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         return await AcquireResourceAsync(userId, music);
     }
 
+    public async Task<AcquiredUserResource> AcquireImageWithoutSubscriptionAsync(int userId, int imageId)
+    {
+        var image = await _imageManager.FindByIdAsync(imageId);
+        if (image is null)
+        {
+            throw new ResourceNotFoundException(image.Id, $"Image with Id = {imageId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, image);
+    }
+
+    public async Task<AcquiredUserResource> AcquireMusicWithoutSubscriptionAsync(int userId, int musicId)
+    {
+        var music = await _musicManager.FindByIdAsync(musicId);
+        if (music is null)
+        {
+            throw new ResourceNotFoundException(music.Id, $"Music with Id = {musicId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, music);
+    }
+
+    public async Task<AcquiredUserResource> AcquireVideoWithoutSubscriptionAsync(int userId, int videoId)
+    {
+        var video = await _videoManager.FindByIdAsync(videoId);
+        if (video is null)
+        {
+            throw new ResourceNotFoundException(video.Id, $"Video with Id = {videoId} not found");
+        }
+
+        return await AcquireResourceWithoutSubscriptionsAsync(userId, video);
+    }
+
     private async Task<AcquiredUserResource> AcquireResourceAsync(int userId, Resource resource)
     {
         var subscriptions = await _userManager.GetSubscriptionsForUserByIdAsync(userId);
@@ -78,11 +111,14 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                    {
                        Image => ResourceType.Image,
                        Video => ResourceType.Video,
-                       Music => ResourceType.Music
+                       Music => ResourceType.Music,
+                       _     => throw new NotSupportedException("Unknown resource type")
                    };
+        var resourceId = resource.Id;
         var affordable =
             subscriptions.FirstOrDefault(s => s.LeftResourcesCount > 0
-                                           && s.Subscription.AppliedResourceType == type
+                                           && ( s.Subscription.AppliedResourceType == type
+                                             || s.Subscription.AppliedResourceType is ResourceType.Any )
                                            && ( s.Subscription.Restriction?.IsSatisfiedBy(resource) ?? true ));
         if (affordable is null)
         {
@@ -91,9 +127,9 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
         }
 
         affordable.LeftResourcesCount--;
-        var acquiredUserResource = new AcquiredUserResource()
+        var acquiredUserResource = new AcquiredUserResource
                                    {
-                                       UserId = userId, ResourceId = resource.Id, AcquiredDate = DateTime.UtcNow,
+                                       UserId = userId, ResourceId = resourceId, AcquiredDate = DateTime.UtcNow,
                                    };
         try
         {
@@ -110,7 +146,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                                                              {
                                                                  "AK_AcquiredUserResources_UserId_ResourceId" =>
                                                                      new
-                                                                         UserAlreadyAcquiredResourceException(resource.Id,
+                                                                         UserAlreadyAcquiredResourceException(resourceId,
                                                                                                               userId),
                                                                  _ => postgresException
                                                              },
@@ -118,7 +154,7 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                   };
         }
     }
-    
+
     private async Task<AcquiredUserResource> AcquireResourceWithoutSubscriptionsAsync(int userId, Resource resource)
     {
         var type = resource switch
@@ -153,38 +189,5 @@ public class ResourceAcquisitionService : IResourceAcquisitionService
                       _ => exception
                   };
         }
-    }
-    
-    public async Task<AcquiredUserResource> AcquireImageWithoutSubscriptionAsync(int userId, int imageId)
-    {
-        var image = await _imageManager.FindByIdAsync(imageId);
-        if (image is null)
-        {
-            throw new ResourceNotFoundException(image.Id, $"Image with Id = {imageId} not found");
-        }
-
-        return await AcquireResourceWithoutSubscriptionsAsync(userId, image);
-    }
-    
-    public async Task<AcquiredUserResource> AcquireMusicWithoutSubscriptionAsync(int userId, int musicId)
-    {
-        var music = await _musicManager.FindByIdAsync(musicId);
-        if (music is null)
-        {
-            throw new ResourceNotFoundException(music.Id, $"Music with Id = {musicId} not found");
-        }
-
-        return await AcquireResourceWithoutSubscriptionsAsync(userId, music);
-    }
-    
-    public async Task<AcquiredUserResource> AcquireVideoWithoutSubscriptionAsync(int userId, int videoId)
-    {
-        var video = await _videoManager.FindByIdAsync(videoId);
-        if (video is null)
-        {
-            throw new ResourceNotFoundException(video.Id, $"Video with Id = {videoId} not found");
-        }
-
-        return await AcquireResourceWithoutSubscriptionsAsync(userId, video);
     }
 }

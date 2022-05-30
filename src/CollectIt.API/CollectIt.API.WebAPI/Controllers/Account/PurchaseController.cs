@@ -51,11 +51,11 @@ public class PurchaseController : ControllerBase
                                    user.Id, subscriptionId, subscription.Id);
             return Ok(AccountMappers.ToReadUserSubscriptionDTO(subscription));
         }
-        catch (UserAlreadySubscribedException userAlreadySubscribedException)
+        catch (UserAlreadySubscribedException)
         {
             return BadRequest("User already has such subscription active");
         }
-        catch (SubscriptionNotFoundException subscriptionNotFoundException)
+        catch (SubscriptionNotFoundException)
         {
             return NotFound($"Subscription with id = {subscriptionId} not found");
         }
@@ -89,6 +89,68 @@ public class PurchaseController : ControllerBase
         catch (ResourceNotFoundException)
         {
             return NotFound("Image with provided id not found");
+        }
+    }
+
+    /// <summary>
+    /// Acquire music
+    /// </summary>
+    /// <response code="404">Music with provided <paramref name="musicId">id</paramref> not found</response>
+    /// <response code="400">No suitable subscriptions found to acquire music or user already acquired this music</response>
+    /// <response code="204">Music acquired</response>
+    [HttpPost("music/{musicId:int}")]
+    public async Task<IActionResult> AcquireMusic(int musicId)
+    {
+        var userId = ( await _userManager.GetUserAsync(User) ).Id;
+        try
+        {
+            var acquired = await _resourceAcquisitionService.AcquireMusicAsync(userId, musicId);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired music (Id = {MusicId}). AcquiredUserResource Id = {AcquiredUserResourceId}",
+                                   userId, musicId, acquired.Id);
+            return NoContent();
+        }
+        catch (UserAlreadyAcquiredResourceException)
+        {
+            return BadRequest("User already acquired this music");
+        }
+        catch (NoSuitableSubscriptionFoundException)
+        {
+            return BadRequest("No suitable subscriptions found to acquire music");
+        }
+        catch (ResourceNotFoundException)
+        {
+            return NotFound("Music with provided id not found");
+        }
+    }
+
+    /// <summary>
+    /// Acquire video
+    /// </summary>
+    /// <response code="404">Video with provided <paramref name="videoId">id</paramref> not found</response>
+    /// <response code="400">No suitable subscriptions found to acquire video or user already acquired this video</response>
+    /// <response code="204">Video acquired</response>
+    [HttpPost("video/{videoId:int}")]
+    public async Task<IActionResult> AcquireVideo(int videoId)
+    {
+        var userId = ( await _userManager.GetUserAsync(User) ).Id;
+        try
+        {
+            var acquired = await _resourceAcquisitionService.AcquireMusicAsync(userId, videoId);
+            _logger.LogInformation("User (Id = {UserId}) successfully acquired video (Id = {MusicId}). AcquiredUserResource Id = {AcquiredUserResourceId}",
+                                   userId, videoId, acquired.Id);
+            return NoContent();
+        }
+        catch (UserAlreadyAcquiredResourceException)
+        {
+            return BadRequest("User already acquired this video");
+        }
+        catch (NoSuitableSubscriptionFoundException)
+        {
+            return BadRequest("No suitable subscriptions found to acquire video");
+        }
+        catch (ResourceNotFoundException)
+        {
+            return NotFound("Video with provided id not found");
         }
     }
 }

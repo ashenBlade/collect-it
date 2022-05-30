@@ -3,6 +3,7 @@ using CollectIt.API.DTO;
 using CollectIt.API.DTO.Mappers;
 using CollectIt.Database.Abstractions.Account.Exceptions;
 using CollectIt.Database.Abstractions.Resources;
+using CollectIt.Database.Abstractions.Resources.Exceptions;
 using CollectIt.Database.Infrastructure.Account.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,9 +80,10 @@ public class MusicController : Controller
     {
         try
         {
+            var ownerId = int.Parse(_userManager.GetUserId(User));
             await using var stream = dto.Content.OpenReadStream();
             var music = await _musicManager.CreateAsync(dto.Name,
-                                                        dto.OwnerId,
+                                                        ownerId,
                                                         dto.Tags,
                                                         stream,
                                                         dto.Extension,
@@ -93,9 +95,9 @@ public class MusicController : Controller
         {
             return NotFound();
         }
-        catch (Exception)
+        catch (InvalidResourceCreationValuesException e)
         {
-            return BadRequest();
+            return BadRequest(new {e.Message});
         }
     }
 

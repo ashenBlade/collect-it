@@ -29,10 +29,10 @@ public class SubscriptionsController : ControllerBase
     /// <response code="200">Array of subscriptions ordered by id with max size of <paramref name="pageSize"/> </response>
     [HttpGet("")]
     public async Task<IActionResult> GetSubscriptionsPaged(
-        [FromQuery(Name = "page_number")] [Range(1, int.MaxValue)] [Required] int pageNumber,
+        [FromQuery(Name = "page_number")] [Range(1, int.MaxValue)] [Required]
+        int pageNumber,
         [FromQuery(Name = "page_size")] [Range(1, int.MaxValue)] [Required]
-        int pageSize,
-        [FromQuery(Name = "type")] [Required] ResourceType resourceType)
+        int pageSize)
     {
         var subscriptions = await _subscriptionManager.GetSubscriptionsAsync(pageNumber, pageSize);
         return Ok(subscriptions.Select(AccountMappers.ToReadSubscriptionDTO)

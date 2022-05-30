@@ -123,9 +123,10 @@ public class VideosController : ControllerBase
     {
         try
         {
+            var ownerId = int.Parse(_userManager.GetUserId(User));
             await using var stream = dto.Content.OpenReadStream();
             var video = await _videoManager.CreateAsync(dto.Name,
-                                                        dto.OwnerId,
+                                                        ownerId,
                                                         dto.Tags,
                                                         stream,
                                                         dto.Extension,

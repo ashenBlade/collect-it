@@ -70,19 +70,16 @@ let ReadMusicDTO id ownerId name tags extension uploadDate duration =
 [<CLIMutable>]
 type CreateImageDTO =
     { [<Required>]
-      OwnerId: int
-
-      [<Required>]
+      [<MinLength(6)>]
+      [<MaxLength(30)>]
       Name: string
 
       [<Required>]
       Tags: string []
 
       [<Required>]
+      [<MaxLength(10)>]
       Extension: string
-
-      [<Required>]
-      UploadDate: DateTime
 
       [<Required>]
       Content: IFormFile }
@@ -90,19 +87,16 @@ type CreateImageDTO =
 [<CLIMutable>]
 type CreateMusicDTO =
     { [<Required>]
-      OwnerId: int
-
-      [<Required>]
+      [<MinLength(6)>]
+      [<MaxLength(30)>]
       Name: string
 
       [<Required>]
       Tags: string []
 
       [<Required>]
+      [<MaxLength(10)>]
       Extension: string
-
-      [<Required>]
-      UploadDate: DateTime
 
       [<Required>]
       Content: IFormFile
@@ -149,19 +143,16 @@ let ReadVideoDTO id ownerId extension name tags duration uploadDate : ReadVideoD
 [<CLIMutable>]
 type CreateVideoDTO =
     { [<Required>]
-      OwnerId: int
-
-      [<Required>]
+      [<MinLength(6)>]
+      [<MaxLength(30)>]
       Name: string
 
       [<Required>]
       Tags: string []
 
       [<Required>]
+      [<MaxLength(10)>]
       Extension: string
-
-      [<Required>]
-      UploadDate: DateTime
 
       [<Required>]
       [<Range(1, Int32.MaxValue)>]

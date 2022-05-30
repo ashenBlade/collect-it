@@ -86,40 +86,23 @@ public class Program
         builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
         builder.Services.AddScoped<ISubscriptionService, PostgresqlSubscriptionService>();
         builder.Services.AddScoped<IImageManager, PostgresqlImageManager>();
+        var imagesPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Images");
         builder.Services.AddScoped<IImageFileManager>(_ =>
-                                                          new
-                                                              GenericPhysicalFileManager(Path
-                                                                                            .Combine(Directory.GetCurrentDirectory(),
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "CollectIt.MVC",
-                                                                                                     "CollectIt.MVC.View",
-                                                                                                     "content",
-                                                                                                     "images")));
+        {
+            return new GenericPhysicalFileManager(imagesPath);
+        });
         builder.Services.AddScoped<IVideoManager, PostgresqlVideoManager>();
+        var videosPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Videos");
         builder.Services.AddScoped<IVideoFileManager>(_ =>
-                                                          new
-                                                              GenericPhysicalFileManager(Path
-                                                                                            .Combine(Directory.GetCurrentDirectory(),
-                                                                                                     "Content",
-                                                                                                     "Videos")));
+        {
+            return new GenericPhysicalFileManager(videosPath);
+        });
         builder.Services.AddScoped<IResourceAcquisitionService, ResourceAcquisitionService>();
+        var musicsPath = Path.Combine(Directory.GetCurrentDirectory(), "Content", "Musics");
         builder.Services.AddScoped<IMusicFileManager>(_ =>
-                                                          new
-                                                              GenericPhysicalFileManager(Path
-                                                                                            .Combine(Directory.GetCurrentDirectory(),
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "..",
-                                                                                                     "CollectIt.MVC",
-                                                                                                     "CollectIt.MVC.View",
-                                                                                                     "content",
-                                                                                                     "Musics")));
+        {
+            return new GenericPhysicalFileManager(musicsPath);
+        });
         builder.Services.AddScoped<IMusicManager, PostgresqlMusicManager>();
         builder.Services.AddDbContext<PostgresqlCollectItDbContext>(config =>
         {
