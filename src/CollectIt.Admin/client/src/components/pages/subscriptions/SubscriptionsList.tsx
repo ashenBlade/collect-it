@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import ReactLoading from "react-loading";
 
 const SubscriptionsList = () => {
-    let pageSize = 3;
+    let pageSize = 5;
 
     const [subs, setSubs] = useState<subscription[]>([]);
     const [maxPages, setMaxPages] = useState(0);
