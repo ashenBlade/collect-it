@@ -62,9 +62,9 @@ const VideoList = () => {
                             {videos.map(v =>
                                 <tr onClick={() => toEditVideoPage(v.id)} style={{cursor: "pointer"}}>
                                     <td>{v.id}</td>
-                                    <td className="CellOverflow">{v.name}</td>
+                                    <td className="cell-overflow">{v.name}</td>
                                     <td>{v.ownerId}</td>
-                                    <td className="CellOverflow">{v.filename}</td>
+                                    <td className="cell-overflow">{v.filename}</td>
                                     <td>{new Date(v.uploadDate).toLocaleDateString('ru')}</td>
                                 </tr>
                             )}

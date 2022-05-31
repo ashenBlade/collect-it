@@ -63,9 +63,9 @@ const MusicList = () => {
                             {musics?.map(u =>
                                 <tr onClick={() => toEditMusicPage(u.id)} style={{cursor: "pointer"}}>
                                     <td>{u.id}</td>
-                                    <td className="CellOverflow">{u.name}</td>
+                                    <td className="cell-overflow">{u.name}</td>
                                     <td>{u.ownerId}</td>
-                                    <td className="CellOverflow">{u.filename}</td>
+                                    <td className="cell-overflow">{u.filename}</td>
                                     <td>{new Date(u.uploadDate).toLocaleDateString('ru')}</td>
                                 </tr>
                             )}

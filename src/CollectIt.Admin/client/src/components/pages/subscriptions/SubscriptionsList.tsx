@@ -70,9 +70,9 @@ const SubscriptionsList = () => {
                             {subs?.map(u =>
                                 <tr onClick={() => toEditSubscriptionPage(u.id)} style={{cursor: "pointer"}}>
                                     <td>{u.id}</td>
-                                    <td className="CellOverflow">{u.name}</td>
-                                    <td>{u.description}</td>
-                                    <td className="CellOverflow">{u.monthDuration}</td>
+                                    <td className="cell-overflow">{u.name}</td>
+                                    <td className="cell-overflow">{u.description}</td>
+                                    <td>{u.monthDuration}</td>
                                     <td>{u.price}</td>
                                     <td>{u.appliedResourceType}</td>
                                     <td>{u.active ? <>Active</> : <>Disabled</>}</td>

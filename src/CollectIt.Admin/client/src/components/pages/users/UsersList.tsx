@@ -91,10 +91,10 @@ const UsersList = () => {
                             {users?.map(u =>
                                 <tr onClick={() => toEditUserPage(u.id)} style={{cursor: "pointer"}}>
                                     <td>{u.id}</td>
-                                    <td className="CellOverflow">{u.username}</td>
+                                    <td className="cell-overflow">{u.username}</td>
                                     <td>{u.email}</td>
-                                    <td className="CellOverflow">{u.roles}</td>
-                                    <td className="CellOverflow">{u.lockout ? '+' : '' }</td>
+                                    <td className="cell-overflow">{u.roles}</td>
+                                    <td className="cell-overflow">{u.lockout ? '+' : '' }</td>
                                 </tr>
                             )}
                             </tbody>
