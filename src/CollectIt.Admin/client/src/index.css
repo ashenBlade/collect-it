@@ -18,10 +18,10 @@ code {
 }
 
 .cell-overflow{
-  maxWidth: 25vw;
-  textOverflow: ellipsis;
+  max-width: 25vw;
+  text-overflow: ellipsis;
   overflow: hidden;
-  whiteSpace: nowrap;
+  white-space: nowrap;
 }
 
 .bg-white {

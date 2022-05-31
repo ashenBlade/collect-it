@@ -4,6 +4,8 @@ http {
     server {
         listen ${PORT};
         root /www/content;
+        default_type application/octet-stream;
+        include /etc/nginx/mime.types;
 
         location / {
             try_files $uri $uri/index.html /index.html =404;
