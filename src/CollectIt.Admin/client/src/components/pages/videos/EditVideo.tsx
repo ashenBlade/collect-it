@@ -76,7 +76,7 @@ const EditVideo = () => {
             {
                 loaded ?
                     <div className='col-12 p-3'>
-                        <p className='h2 text-center'>Edit Resource {displayName}</p>
+                        <p className='h2 text-center'>{displayName}</p>
 
                         <div className='ms-4'>
                             <div className='h6 d-block'>

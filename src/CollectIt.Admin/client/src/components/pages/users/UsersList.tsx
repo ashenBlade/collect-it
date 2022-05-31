@@ -73,34 +73,33 @@ const UsersList = () => {
             {loading
                 ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
                 : <>
-            <SearchPanel onSearch={onSearchId} placeholder={'Enter id'}/>
-            <SearchPanel onSearch={onSearchEmail} placeholder={'Enter email'}/>
-            <SearchPanel onSearch={onSearchUsername} placeholder={'Enter username'}/>
-
-            <div className='mt-5 mx-auto'>
-                <table className={'usersTable table table-borderless table-light'}>
-                    <thead>
-                    <th className='firstRow usersRow'>
-                        <td className='Cell w-10'>ID</td>
-                        <td className='Cell w-35'>Username</td>
-                        <td className='Cell w-35'>E-mail</td>
-                        <td className='Cell'>Roles</td>
-                        <td className='Cell'>Banned</td>
-                    </th>
-                    </thead>
-                    <tbody className='mx-auto mt-5 table-hover'>
-                    {users?.map(i =>
-                            <tr onClick={() => toEditUserPage(i.id)} className='usersRow'>
-                                <td className='Cell w-10'>{i.id}</td>
-                                <td className='Cell w-35'><div className={'bigtext'}> {i.username}</div></td>
-                                <td className='Cell w-35'>{i.email}</td>
-                                <td className='Cell'>{i.roles}</td>
-                                <td className='Cell'>{i.lockout ? '+' : '' }</td>
+                    <SearchPanel onSearch={onSearchId} placeholder={'Enter id'}/>
+                    <SearchPanel onSearch={onSearchEmail} placeholder={'Enter email'}/>
+                    <SearchPanel onSearch={onSearchUsername} placeholder={'Enter username'}/>
+                    <div className='mt-5 mx-auto'>
+                        <table className='table table-hover table-striped table-w-100'>
+                            <thead>
+                            <tr>
+                                <td>Id</td>
+                                <td>UserName</td>
+                                <td>E-mail</td>
+                                <td>Roles</td>
+                                <td>Banned</td>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            </thead>
+                            <tbody>
+                            {users?.map(u =>
+                                <tr onClick={() => toEditUserPage(u.id)} style={{cursor: "pointer"}}>
+                                    <td>{u.id}</td>
+                                    <td className="cell-overflow">{u.username}</td>
+                                    <td>{u.email}</td>
+                                    <td className="cell-overflow">{u.roles}</td>
+                                    <td className="cell-overflow">{u.lockout ? '+' : '' }</td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
+                    </div>
                 </>
             }
             <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>
