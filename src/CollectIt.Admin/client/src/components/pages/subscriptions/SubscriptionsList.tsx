@@ -54,28 +54,28 @@ const SubscriptionsList = () => {
                     </Link></div>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter subscription id'}/>
                     <div className='mt-5 mx-auto'>
-                        <table className={'usersTable table table-borderless table-light'}>
+                        <table className='table table-hover table-striped table-w-100'>
                             <thead>
-                            <th className='firstRow usersRow'>
-                                <td className='Cell w-10'>ID</td>
-                                <td className='Cell w-20'>Name</td>
-                                <td className='Cell w-30'>Description</td>
-                                <td className='Cell w-10'>Duration</td>
-                                <td className='Cell w-10'>Price</td>
-                                <td className='Cell w-10'>Type</td>
-                                <td className='Cell w-10'>Active</td>
-                            </th>
+                            <tr>
+                                <td>ID</td>
+                                <td>Name</td>
+                                <td>Description</td>
+                                <td>Duration</td>
+                                <td>Price</td>
+                                <td>Type</td>
+                                <td>Active</td>
+                            </tr>
                             </thead>
-                            <tbody className='mx-auto mt-5 table-hover'>
-                            {subs?.map(i =>
-                                <tr onClick={() => toEditSubscriptionPage(i.id)} className='usersRow'>
-                                    <td className='Cell w-10'>{i.id}</td>
-                                    <td className='Cell w-20'><div className='bigtext'> {i.name}</div></td>
-                                    <td className='Cell w-30'><div className='bigtext'>{i.description}</div></td>
-                                    <td className='Cell w-10'>{i.monthDuration}</td>
-                                    <td className='Cell w-10'>{i.price}</td>
-                                    <td className='Cell w-10'>{i.appliedResourceType}</td>
-                                    <td className='Cell w-10'>{i.active ? <>Active</> : <>Disabled</>}</td>
+                            <tbody>
+                            {subs?.map(u =>
+                                <tr onClick={() => toEditSubscriptionPage(u.id)} style={{cursor: "pointer"}}>
+                                    <td>{u.id}</td>
+                                    <td className="CellOverflow">{u.name}</td>
+                                    <td>{u.description}</td>
+                                    <td className="CellOverflow">{u.monthDuration}</td>
+                                    <td>{u.price}</td>
+                                    <td>{u.appliedResourceType}</td>
+                                    <td>{u.active ? <>Active</> : <>Disabled</>}</td>
                                 </tr>
                             )}
                             </tbody>

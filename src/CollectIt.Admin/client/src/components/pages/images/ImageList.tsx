@@ -6,7 +6,6 @@ import {useNavigate} from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import ReactLoading from 'react-loading'
 
-
 const ImageList = () => {
     const pageSize = 10;
 
@@ -47,33 +46,31 @@ const ImageList = () => {
             {loading
                 ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
                 : <>
-            <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
-            <div className='mt-5 mx-auto'>
-                <table className={'usersTable table table-borderless table-light'}>
-                    <thead>
-                    <th className='firstRow usersRow'>
-                        <td className='Cell w-10'>ID</td>
-                        <td className='Cell w-35'>Name</td>
-                        <td className='Cell w-10'>OwnerID</td>
-                        <td className='Cell'>Filename</td>
-                        <td className='Cell'>Upload time</td>
-                    </th>
-                    </thead>
-                    <tbody className='mx-auto mt-5 table-hover'>
-                    {images.map(i =>
-                        <tr onClick={() => toEditImagePage(i.id)} className='usersRow'>
-                            <td className='Cell w-10'>{i.id}</td>
-                            <td className='Cell w-35'>
-                                <div className={'bigtext'}> {i.name}</div>
-                            </td>
-                            <td className='Cell w-10'>{i.ownerId}</td>
-                            <td className='Cell'>{i.filename}</td>
-                            <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
+                    <SearchPanel onSearch={onSearch} placeholder={'Enter id of image'}/>
+                    <div className='mt-5 mx-auto'>
+                        <table className='table table-hover table-striped table-w-100'>
+                            <thead>
+                            <tr>
+                                <td>Id</td>
+                                <td>Name</td>
+                                <td>OwnerId</td>
+                                <td>Filename</td>
+                                <td>Upload date</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {images?.map(u =>
+                                <tr onClick={() => toEditImagePage(u.id)} style={{cursor: "pointer"}}>
+                                    <td>{u.id}</td>
+                                    <td className="CellOverflow">{u.name}</td>
+                                    <td>{u.ownerId}</td>
+                                    <td className="CellOverflow">{u.filename}</td>
+                                    <td>{new Date(u.uploadDate).toLocaleDateString('ru')}</td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
+                    </div>
                 </>
             }
             <footer className={'footer fixed-bottom d-flex mb-0 justify-content-center'}>

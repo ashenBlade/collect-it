@@ -49,26 +49,24 @@ const MusicList = () => {
                 : <>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter id of music'}/>
                     <div className='mt-5 mx-auto'>
-                        <table className={'table table-borderless table-light'}>
+                        <table className='table table-hover table-striped table-w-100'>
                             <thead>
-                            <th className='usersRow'>
-                                <td className='Cell w-10'>ID</td>
-                                <td className='Cell w-35'>Name</td>
-                                <td className='Cell w-10'>OwnerID</td>
-                                <td className='Cell'>Filename</td>
-                                <td className='Cell'>Upload time</td>
-                            </th>
+                            <tr>
+                                <td>Id</td>
+                                <td>Name</td>
+                                <td>OwnerId</td>
+                                <td>Filename</td>
+                                <td>Upload date</td>
+                            </tr>
                             </thead>
-                            <tbody className='mx-auto mt-5 table-hover'>
-                            {musics?.map(i =>
-                                <tr onClick={() => toEditMusicPage(i.id)} className='usersRow'>
-                                    <td className='Cell w-10'>{i.id}</td>
-                                    <td className='Cell w-35'>
-                                        <div className={'bigtext'}>{i.name}</div>
-                                    </td>
-                                    <td className='Cell w-10'>{i.ownerId}</td>
-                                    <td className='Cell'>{i.filename}</td>
-                                    <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
+                            <tbody>
+                            {musics?.map(u =>
+                                <tr onClick={() => toEditMusicPage(u.id)} style={{cursor: "pointer"}}>
+                                    <td>{u.id}</td>
+                                    <td className="CellOverflow">{u.name}</td>
+                                    <td>{u.ownerId}</td>
+                                    <td className="CellOverflow">{u.filename}</td>
+                                    <td>{new Date(u.uploadDate).toLocaleDateString('ru')}</td>
                                 </tr>
                             )}
                             </tbody>

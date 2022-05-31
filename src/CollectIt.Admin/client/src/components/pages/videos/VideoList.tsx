@@ -48,34 +48,7 @@ const VideoList = () => {
                 : <>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter id of video'}/>
                     <div className='mt-5 mx-auto'>
-                        {/*<table className={'table table-borderless table-light'}>*/}
-                        {/*    <thead>*/}
-                        {/*    <th className='firstRow usersRow'>*/}
-                        {/*        <td className='Cell w-10'>ID</td>*/}
-                        {/*        <td className='Cell w-35'>Name</td>*/}
-                        {/*        <td className='Cell w-10'>OwnerID</td>*/}
-                        {/*        <td className='Cell w-10'>Filename</td>*/}
-                        {/*        <td className='Cell w-10'>Upload time</td>*/}
-                        {/*    </th>*/}
-                        {/*    </thead>*/}
-                        {/*    <tbody className='mx-auto mt-5 table-hover'>*/}
-                        {/*    {videos?.map(i =>*/}
-                        {/*        <tr onClick={() => toEditVideoPage(i.id)} className='usersRow'>*/}
-                        {/*            <td className='Cell w-10'>{i.id}</td>*/}
-                        {/*            <td className='Cell w-35'>*/}
-                        {/*                <span className='bigtext'>{i.name}</span>*/}
-                        {/*            </td>*/}
-                        {/*            <td className='Cell w-10'>{i.ownerId}</td>*/}
-                        {/*            <td className='Cell w-10'>{i.filename}</td>*/}
-                        {/*            <td className='Cell w-10'>{new Date(i.uploadDate).toLocaleString('ru')}</td>*/}
-                        {/*        </tr>*/}
-                        {/*    )}*/}
-                        {/*    </tbody>*/}
-                        {/*</table>*/}
-                        <table style={{
-                            tableLayout: 'auto',
-                            width: '100%'
-                        }} className='table table-hover table-striped'>
+                        <table className='table table-hover table-striped table-w-100'>
                             <thead>
                             <tr>
                                 <td>Id</td>
@@ -86,25 +59,15 @@ const VideoList = () => {
                             </tr>
                             </thead>
                             <tbody>
-                            { videos.map(v =>
-                                <tr>
+                            {videos.map(v =>
+                                <tr onClick={() => toEditVideoPage(v.id)} style={{cursor: "pointer"}}>
                                     <td>{v.id}</td>
-                                    <td style={{
-                                        maxWidth: '25vw',
-                                        textOverflow: 'ellipsis',
-                                        overflow: 'hidden',
-                                        whiteSpace: 'nowrap'
-                                    }}>{v.name}</td>
+                                    <td className="CellOverflow">{v.name}</td>
                                     <td>{v.ownerId}</td>
-                                    <td style={{
-                                        maxWidth: '25vw',
-                                        textOverflow: 'ellipsis',
-                                        overflow: 'hidden',
-                                        whiteSpace: 'nowrap'
-                                    }}>{v.filename}</td>
+                                    <td className="CellOverflow">{v.filename}</td>
                                     <td>{new Date(v.uploadDate).toLocaleDateString('ru')}</td>
                                 </tr>
-                            ) }
+                            )}
                             </tbody>
                         </table>
                     </div>
