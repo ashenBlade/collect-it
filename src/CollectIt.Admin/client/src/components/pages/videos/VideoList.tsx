@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Video from "../../entities/video";
 import VideosService from "../../../services/VideosService";
 import Pagination from "../../UI/Pagination/Pagination";
-import {useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 import SearchPanel from "../../UI/SearchPanel/SearchPanel";
 import ReactLoading from "react-loading";
 
@@ -44,32 +44,67 @@ const VideoList = () => {
     return (
         <div className={'container mt-5'}>
             {loading
-                ? <><ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' /></>
+                ? <ReactLoading className={'mx-auto'} type={'spinningBubbles'} color={'black'} height='200px' width='200px' />
                 : <>
                     <SearchPanel onSearch={onSearch} placeholder={'Enter id of video'}/>
                     <div className='mt-5 mx-auto'>
-                        <table className={'table table-borderless table-light'}>
+                        {/*<table className={'table table-borderless table-light'}>*/}
+                        {/*    <thead>*/}
+                        {/*    <th className='firstRow usersRow'>*/}
+                        {/*        <td className='Cell w-10'>ID</td>*/}
+                        {/*        <td className='Cell w-35'>Name</td>*/}
+                        {/*        <td className='Cell w-10'>OwnerID</td>*/}
+                        {/*        <td className='Cell w-10'>Filename</td>*/}
+                        {/*        <td className='Cell w-10'>Upload time</td>*/}
+                        {/*    </th>*/}
+                        {/*    </thead>*/}
+                        {/*    <tbody className='mx-auto mt-5 table-hover'>*/}
+                        {/*    {videos?.map(i =>*/}
+                        {/*        <tr onClick={() => toEditVideoPage(i.id)} className='usersRow'>*/}
+                        {/*            <td className='Cell w-10'>{i.id}</td>*/}
+                        {/*            <td className='Cell w-35'>*/}
+                        {/*                <span className='bigtext'>{i.name}</span>*/}
+                        {/*            </td>*/}
+                        {/*            <td className='Cell w-10'>{i.ownerId}</td>*/}
+                        {/*            <td className='Cell w-10'>{i.filename}</td>*/}
+                        {/*            <td className='Cell w-10'>{new Date(i.uploadDate).toLocaleString('ru')}</td>*/}
+                        {/*        </tr>*/}
+                        {/*    )}*/}
+                        {/*    </tbody>*/}
+                        {/*</table>*/}
+                        <table style={{
+                            tableLayout: 'auto',
+                            width: '100%'
+                        }} className='table table-hover table-striped'>
                             <thead>
-                            <th className='firstRow usersRow'>
-                                <td className='Cell w-10'>ID</td>
-                                <td className='Cell w-35'>Name</td>
-                                <td className='Cell w-10'>OwnerID</td>
-                                <td className='Cell'>Filename</td>
-                                <td className='Cell'>Upload time</td>
-                            </th>
+                            <tr>
+                                <td>Id</td>
+                                <td>Name</td>
+                                <td>OwnerId</td>
+                                <td>Filename</td>
+                                <td>Upload date</td>
+                            </tr>
                             </thead>
-                            <tbody className='mx-auto mt-5 table-hover'>
-                            {videos?.map(i =>
-                                <tr onClick={() => toEditVideoPage(i.id)} className='usersRow'>
-                                    <td className='Cell w-10'>{i.id}</td>
-                                    <td className='Cell w-35'>
-                                        <div className='bigtext'> {i.name}</div>
-                                    </td>
-                                    <td className='Cell w-10'>{i.ownerId}</td>
-                                    <td className='Cell'>{i.filename}</td>
-                                    <td className='Cell'>{new Date(i.uploadDate).toLocaleString('ru')}</td>
+                            <tbody>
+                            { videos.map(v =>
+                                <tr>
+                                    <td>{v.id}</td>
+                                    <td style={{
+                                        maxWidth: '25vw',
+                                        textOverflow: 'ellipsis',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap'
+                                    }}>{v.name}</td>
+                                    <td>{v.ownerId}</td>
+                                    <td style={{
+                                        maxWidth: '25vw',
+                                        textOverflow: 'ellipsis',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap'
+                                    }}>{v.filename}</td>
+                                    <td>{new Date(v.uploadDate).toLocaleDateString('ru')}</td>
                                 </tr>
-                            )}
+                            ) }
                             </tbody>
                         </table>
                     </div>
