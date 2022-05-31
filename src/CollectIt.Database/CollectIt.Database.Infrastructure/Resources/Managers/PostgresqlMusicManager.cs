@@ -31,6 +31,7 @@ public class PostgresqlMusicManager : IMusicManager
                              .SingleOrDefaultAsync();
     }
 
+    private static readonly HashSet<string> Extensions = new() {"mp3", "ogg", "wav"};
 
     public async Task<Music> CreateAsync(string name,
                                          int ownerId,
@@ -57,6 +58,11 @@ public class PostgresqlMusicManager : IMusicManager
         if (extension is null || string.IsNullOrWhiteSpace(extension))
         {
             throw new InvalidResourceCreationValuesException("Music extension can not be null or empty");
+        }
+        
+        if (!Extensions.Contains(extension))
+        {
+            throw new InvalidResourceCreationValuesException($"Extension '{extension}' is not supported");
         }
 
         extension = extension.ToLower()
