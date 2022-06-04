@@ -36,13 +36,12 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
         static let createVideoHttpContent (dto: CreateVideoDTO) : HttpContent =
             let content = new MultipartFormDataContent()
             content.Add(new StringContent(dto.Name), "Name")
-            content.Add(new StringContent(dto.UploadDate.ToString()), "UploadDate")
             content.Add(new StringContent(dto.Extension), "Extension")
             content.Add(new StringContent(dto.Duration.ToString()), "Duration")
-            content.Add(new StringContent(dto.OwnerId.ToString()), "OwnerId")
             Array.ForEach(dto.Tags, (fun t -> content.Add(new StringContent(t), "Tags")))
 
-            let bytes = new ByteArrayContent(Array.Empty<byte>())
+            let bytes =
+                new ByteArrayContent(Array.Empty<byte>())
 
             bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"video/{dto.Extension}")
             content.Add(bytes, "Content", "SomeFileName.webp")
@@ -112,7 +111,8 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let expected = this.DefaultVideo1 |> toReadVideoDto
+                let expected =
+                    this.DefaultVideo1 |> toReadVideoDto
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadVideoDTO>
@@ -154,9 +154,11 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let video = this.DefaultVideo2 |> toReadVideoDto
+                let video =
+                    this.DefaultVideo2 |> toReadVideoDto
 
-                let newName = video.Name + " some string, but still valid"
+                let newName =
+                    video.Name + " some string, but still valid"
 
                 do!
                     (TestsHelpers.sendAsync
@@ -210,9 +212,11 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let video = this.DefaultVideo2 |> toReadVideoDto
+                let video =
+                    this.DefaultVideo2 |> toReadVideoDto
 
-                let expected = [| "some"; "tags"; "from"; "f#" |]
+                let expected =
+                    [| "some"; "tags"; "from"; "f#" |]
 
                 do!
                     (TestsHelpers.sendAsync
@@ -283,9 +287,7 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                       Duration = 10
                       Extension = "webm"
                       Name = "Some video name"
-                      Tags = [| "hello"; "best"; "dog" |]
-                      OwnerId = PostgresqlCollectItDbContext.AdminUserId
-                      UploadDate = DateTime.UtcNow }
+                      Tags = [| "hello"; "best"; "dog" |] }
 
                 let content = createVideoHttpContent video
 
@@ -301,7 +303,6 @@ type VideosControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                 Assert.NotNull actual
                 Assert.NotEqual(0, actual.Id)
                 Assert.Equal(video.Name, actual.Name)
-                Assert.Equal(video.OwnerId, actual.OwnerId)
                 client.Dispose()
             }
 

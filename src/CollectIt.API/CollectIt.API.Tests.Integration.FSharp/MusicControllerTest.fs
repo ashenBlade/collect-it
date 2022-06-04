@@ -34,10 +34,8 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
         static let createMusicHttpContent (dto: CreateMusicDTO) : HttpContent =
             let content = new MultipartFormDataContent()
             content.Add(new StringContent(dto.Name), "Name")
-            content.Add(new StringContent(dto.UploadDate.ToString()), "UploadDate")
             content.Add(new StringContent(dto.Extension), "Extension")
             content.Add(new StringContent(dto.Duration.ToString()), "Duration")
-            content.Add(new StringContent(dto.OwnerId.ToString()), "OwnerId")
             Array.ForEach(dto.Tags, (fun t -> content.Add(new StringContent(t), "Tags")))
 
             let bytes =
@@ -372,9 +370,7 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
                       Duration = 10
                       Extension = "mp3"
                       Name = "Some music name"
-                      Tags = [| "hello"; "best"; "dog" |]
-                      OwnerId = PostgresqlCollectItDbContext.AdminUserId
-                      UploadDate = DateTime.UtcNow }
+                      Tags = [| "hello"; "best"; "dog" |] }
 
                 let content = createMusicHttpContent music
 
@@ -389,7 +385,6 @@ type MusicControllerTests(factory: CollectItWebApplicationFactory, output: ITest
 
                 Assert.NotNull actual
                 Assert.Equal(music.Name, actual.Name)
-                Assert.Equal(music.OwnerId, actual.OwnerId)
                 client.Dispose()
             }
     end

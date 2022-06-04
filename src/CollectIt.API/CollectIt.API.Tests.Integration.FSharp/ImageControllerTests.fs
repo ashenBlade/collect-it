@@ -35,13 +35,10 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
         static let createImageHttpContent (dto: CreateImageDTO) : HttpContent =
             let content = new MultipartFormDataContent()
             content.Add(new StringContent(dto.Name), "Name")
-            content.Add(new StringContent(dto.UploadDate.ToString()), "UploadDate")
             content.Add(new StringContent(dto.Extension), "Extension")
-            content.Add(new StringContent(dto.OwnerId.ToString()), "OwnerId")
             Array.ForEach(dto.Tags, (fun t -> content.Add(new StringContent(t), "Tags")))
 
-            let bytes =
-                new ByteArrayContent(Array.Empty<byte>())
+            let bytes = new ByteArrayContent(Array.Empty<byte>())
 
             bytes.Headers.ContentType <- Headers.MediaTypeHeaderValue($"image/{dto.Extension}")
             content.Add(bytes, "Content", "SomeFileName.jpg")
@@ -102,8 +99,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let expected =
-                    this.DefaultImage1 |> toReadImageDto
+                let expected = this.DefaultImage1 |> toReadImageDto
 
                 let! actual =
                     TestsHelpers.getResultParsedFromJson<ReadImageDTO> client "/api/images/1" bearer None None None
@@ -139,13 +135,11 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
             task {
                 let! { Bearer = bearer; Client = client } = TestsHelpers.initialize this._factory None None
 
-                let image =
-                    this.DefaultImage2 |> toReadImageDto
+                let image = this.DefaultImage2 |> toReadImageDto
 
                 let imageId = 2
 
-                let newName =
-                    image.Name + " some string, but still valid"
+                let newName = image.Name + " some string, but still valid"
 
                 do!
                     (TestsHelpers.sendAsync
@@ -201,8 +195,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 let imageId = 2
 
-                let expected =
-                    [| "some"; "tags"; "from"; "f#" |]
+                let expected = [| "some"; "tags"; "from"; "f#" |]
 
                 do!
                     (TestsHelpers.sendAsync
@@ -363,9 +356,7 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
                     { Content = FormFile(Stream.Null, 0, 0, "SomeName", "FileName")
                       Extension = "jpg"
                       Name = "Some image name"
-                      Tags = [| "hello"; "best"; "dog" |]
-                      OwnerId = PostgresqlCollectItDbContext.AdminUserId
-                      UploadDate = DateTime.UtcNow }
+                      Tags = [| "hello"; "best"; "dog" |] }
 
                 let content = createImageHttpContent image
 
@@ -380,7 +371,6 @@ type ImagesControllerTests(factory: CollectItWebApplicationFactory, output: ITes
 
                 Assert.NotNull actual
                 Assert.Equal(image.Name, actual.Name)
-                Assert.Equal(image.OwnerId, actual.OwnerId)
                 client.Dispose()
             }
     end
