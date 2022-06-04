@@ -37,6 +37,15 @@ public class PostgresqlImageManager : IImageManager
                              .SingleOrDefaultAsync();
     }
 
+    private static readonly HashSet<string> Extensions = new()
+    {
+        "png",
+        "jpeg",
+        "jpg",
+        "webp",
+        "bmp"
+    };
+    
     public async Task<Image> CreateAsync(string name,
                                          int ownerId,
                                          string[] tags,
@@ -61,6 +70,11 @@ public class PostgresqlImageManager : IImageManager
         if (string.IsNullOrWhiteSpace(extension))
         {
             throw new InvalidResourceCreationValuesException("Image extension must be provided");
+        }
+
+        if (!Extensions.Contains(extension))
+        {
+            throw new InvalidResourceCreationValuesException($"Extension '{extension}' is not supported");
         }
 
         extension = extension.ToLower()
